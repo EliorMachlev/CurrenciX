@@ -1,24 +1,21 @@
 package com.eliormachlev.currencix.model
 
-import com.squareup.moshi.Json
-import com.squareup.moshi.JsonClass
 import java.math.BigDecimal
 import java.math.MathContext
 import java.time.LocalDate
 import java.time.LocalTime
 
-@JsonClass(generateAdapter = true)
 data class ExchangeRates(
-    @field:Json(name = "success") val success: Boolean?,
-    @field:Json(name = "error") val error: String?,
-    @field:Json(name = "base") val base: Currency?,
-    @field:Json(name = "date") val date: LocalDate?,
-    @field:Json(name = "rates") val rates: List<Rate>?,
-    @Transient val time: LocalTime? = null,
-    @Transient val provider: ApiProvider? = null,
+    val success: Boolean?,
+    val error: String?,
+    val base: Currency?,
+    val date: LocalDate?,
+    val rates: List<Rate>?,
+    val time: LocalTime? = null,
+    val provider: ApiProvider? = null,
     // Set when these rates came from the fallback provider because this one
     // — the user's main provider — couldn't be reached.
-    @Transient val fallbackFrom: ApiProvider? = null,
+    val fallbackFrom: ApiProvider? = null,
 )
 
 fun ExchangeRates.rateFor(currency: Currency?): Rate? = currency?.let { c -> rates?.firstOrNull { it.currency == c } }

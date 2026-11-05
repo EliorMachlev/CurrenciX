@@ -4,80 +4,59 @@ import com.eliormachlev.currencix.model.ApiProvider
 import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.model.Rate
 import com.eliormachlev.currencix.model.Timeline
-import com.squareup.moshi.JsonReader
-import java.io.IOException
-import java.math.BigDecimal
+import com.eliormachlev.currencix.model.provider.api.InforEuroFailure
+import com.eliormachlev.currencix.model.provider.api.InforEuroHistory
+import com.eliormachlev.currencix.model.provider.api.InforEuroPeriod
+import com.eliormachlev.currencix.model.provider.api.InforEuroPeriods
 import java.time.LocalDate
 
-internal class InforEuroTimelineAdapter(
-    private val startDate: LocalDate,
-    private val endDate: LocalDate,
-) : ResponseAdapter<Timeline>(Timeline::class.java) {
-    private val base: String = Currency.EUR.iso4217Alpha()
-
-    @Synchronized
-    @Throws(IOException::class)
-    override fun fromJson(reader: JsonReader): Timeline =
-        reader.readArrayOrError(
-            onError = ::errorResponse,
-        ) { r ->
-            val rates =
-                buildMap {
-                    while (r.hasNext()) {
-                        processEntry(r, this)
-                    }
-                }
+/**
+ * One currency's InforEuro history as the app's timeline, each rate standing
+ * for every day of its period. Periods that start before the month of
+ * [startDate] are left out. Its message when it has none.
+ */
+internal fun InforEuroHistory.toTimeline(
+    startDate: LocalDate,
+    endDate: LocalDate,
+): Timeline {
+    val base = Currency.EUR.iso4217Alpha()
+    return when (this) {
+        is InforEuroPeriods -> {
+            val rates = sortedMapOf<LocalDate, Rate>()
+            periods.forEach { it.spreadInto(rates, startDate.withDayOfMonth(1)) }
             Timeline(
                 success = rates.isNotEmpty(),
                 error = null,
                 base = base,
                 startDate = startDate,
                 endDate = endDate,
-                rates = rates.toSortedMap(compareBy { it }),
+                rates = rates,
                 provider = ApiProvider.INFOR_EURO,
             )
         }
 
-    private fun processEntry(
-        reader: JsonReader,
-        rates: MutableMap<LocalDate, Rate>,
-    ) {
-        reader.beginObject()
-        var currencyIso: Currency? = null
-        var value: BigDecimal? = null
-        var dateStart: LocalDate? = null
-        var dateEnd: LocalDate? = null
-        while (reader.hasNext()) {
-            when (reader.nextName()) {
-                "currencyIso" -> currencyIso = Currency.fromString(reader.nextString())
-                "amount" -> value = BigDecimal(reader.nextString())
-                "dateStart" -> dateStart = LocalDate.parse(reader.nextString(), SLASHED_DATE_FORMATTER)
-                "dateEnd" -> dateEnd = LocalDate.parse(reader.nextString(), SLASHED_DATE_FORMATTER)
-                else -> reader.skipValue()
-            }
-        }
-        reader.endObject()
-
-        val rate = rateOrNull(currencyIso, value) ?: return
-        if (dateStart == null || dateEnd == null) return
-        // inclusive: before-or-equal start
-        if (startDate.withDayOfMonth(1).isAfter(dateStart)) return
-
-        var date: LocalDate = dateEnd
-        while (!date.isBefore(dateStart)) {
-            rates[date] = rate
-            date = date.minusDays(1)
+        is InforEuroFailure -> {
+            Timeline(
+                success = false,
+                error = message,
+                base = base,
+                startDate = null,
+                endDate = null,
+                rates = null,
+                provider = ApiProvider.INFOR_EURO,
+            )
         }
     }
+}
 
-    private fun errorResponse(message: String?): Timeline =
-        Timeline(
-            success = false,
-            error = message,
-            base = base,
-            startDate = null,
-            endDate = null,
-            rates = null,
-            provider = ApiProvider.INFOR_EURO,
-        )
+// The period's rate on each of its days, when it starts no earlier than [from].
+private fun InforEuroPeriod.spreadInto(
+    rates: MutableMap<LocalDate, Rate>,
+    from: LocalDate,
+) {
+    val rate = rateOrNull(currencyIso?.let(Currency::fromString), amount) ?: return
+    val start = dateStart?.let { LocalDate.parse(it, SLASHED_DATE_FORMATTER) } ?: return
+    val end = dateEnd?.let { LocalDate.parse(it, SLASHED_DATE_FORMATTER) } ?: return
+    if (from.isAfter(start) || end.isBefore(start)) return
+    dateSequence(start, end).forEach { rates[it] = rate }
 }

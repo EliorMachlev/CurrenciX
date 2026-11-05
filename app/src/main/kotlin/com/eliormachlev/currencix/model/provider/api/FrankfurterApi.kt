@@ -1,7 +1,7 @@
 package com.eliormachlev.currencix.model.provider.api
 
-import com.eliormachlev.currencix.model.ExchangeRates
-import com.eliormachlev.currencix.model.Timeline
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Path
@@ -13,9 +13,9 @@ import retrofit2.http.Query
  * The endpoints mirror the raw-OkHttp URLs previously built by
  * `FrankfurterApp.ratesUrl` / `.timelineUrl` — see
  * [https://frankfurter.dev/](https://frankfurter.dev/) for the upstream
- * schema. Response decoding delegates to the same custom Moshi adapters
- * (`FrankfurterAppRatesAdapter`, `FrankfurterAppTimelineAdapter`) already
- * used by the raw path, so wire-format handling is unchanged.
+ * schema. The bodies decode to [FrankfurterRates] and [FrankfurterTimeline],
+ * which `FrankfurterAppRatesAdapter` / `FrankfurterAppTimelineAdapter` turn
+ * into the app's model.
  *
  * `datePath` accepts either `latest` or an ISO-8601 date; the timeline
  * variant expects a `<start>..<end>` range in a single path segment.
@@ -28,7 +28,7 @@ internal interface FrankfurterApi {
     suspend fun getRates(
         @Path("datePath") datePath: String,
         @Query("base") base: String,
-    ): Response<ExchangeRates>
+    ): Response<FrankfurterRates>
 
     @GET("{start}..{end}")
     suspend fun getTimeline(
@@ -36,5 +36,22 @@ internal interface FrankfurterApi {
         @Path("end") end: String,
         @Query("base") base: String,
         @Query("symbols") symbols: String,
-    ): Response<Timeline>
+    ): Response<FrankfurterTimeline>
 }
+
+/** `{base, date, rates: {USD: 1.08, …}}`. */
+@Serializable
+internal class FrankfurterRates(
+    val base: String? = null,
+    val date: IsoDate? = null,
+    val rates: Map<String, Decimal>? = null,
+)
+
+/** `{base, start_date, end_date, rates: {date: {USD: 1.09}}}`; a day may have no rate. */
+@Serializable
+internal class FrankfurterTimeline(
+    val base: String? = null,
+    @SerialName("start_date") val startDate: IsoDate? = null,
+    @SerialName("end_date") val endDate: IsoDate? = null,
+    val rates: Map<String, Map<String, Decimal>>? = null,
+)

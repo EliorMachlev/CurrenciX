@@ -147,14 +147,14 @@
     <string name="credit_lib_typeface">Font</string>
     <string name="credit_lib_vico">Grafikoni</string>
     <string name="credit_lib_okhttp">HTTP klijent</string>
-    <string name="credit_lib_moshi">JSON parser</string>
+    <string name="credit_lib_json">JSON parser</string>
     <string name="credit_lib_wire">Protocol Buffers (spremanje košarica, putovanja i naknada)</string>
     <string name="credit_lib_timber">Zapisivanje dnevnika</string>
     <string name="credit_lib_bouncy_castle">Izvođenje ključa Argon2id za šifrirane sigurnosne kopije</string>
     <string name="credit_lib_tink">AES-GCM šifriranje sigurnosnih kopija</string>
     <string name="credit_lib_kotlin">Izvršno okruženje jezika i standardna biblioteka</string>
     <string name="credit_lib_coroutines">Asinkrono programiranje (koriste ga druge biblioteke)</string>
-    <string name="credit_lib_okio">Osnovne U/I operacije (koriste ih OkHttp i Moshi)</string>
+    <string name="credit_lib_okio">Osnovne U/I operacije (koriste ih OkHttp i Retrofit)</string>
     <string name="credit_terms_of_service_title">Uvjeti pružanja usluge</string>
     <string name="credit_terms_of_service_subtitle">Uvjeti korištenja, izjava o odricanju od jamstva, obavijest o točnosti tečajeva.</string>
     <string name="credits_section_legal">Pravne informacije</string>

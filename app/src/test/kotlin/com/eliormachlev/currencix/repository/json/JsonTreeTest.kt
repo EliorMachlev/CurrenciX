@@ -1,11 +1,13 @@
 package com.eliormachlev.currencix.repository.json
 
+import kotlinx.serialization.json.jsonPrimitive
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertThrows
 import org.junit.Assert.assertTrue
 import org.junit.Test
+import kotlinx.serialization.json.JsonObject as JsonElementObject
 
 // The JSON the app writes for itself, read and written without org.json.
 class JsonTreeTest {
@@ -47,7 +49,7 @@ class JsonTreeTest {
             assertEquals("v", obj.optObjects("list").single().optString("k"))
             assertEquals(listOf("x", "y"), obj.optArray("set"))
         }
-        assertTrue("pretty text is indented", jsonText(value, pretty = true).contains("\n  \"id\""))
+        assertTrue("pretty text is indented", jsonText(value, pretty = true).contains("\n    \"id\""))
     }
 
     @Test
@@ -57,5 +59,22 @@ class JsonTreeTest {
         }
         assertThrows(MalformedJsonException::class.java) { parseJsonArray("{}") }
         assertEquals(listOf(1.0, "x"), parseJsonArray("[1, \"x\"]"))
+    }
+
+    @Test
+    fun `a field given twice in one object is malformed, however its name is written`() {
+        listOf("""{"a":1,"\u0061":2}""", """{"o":{"k":1,"k":2}}""", """{"l":[{"k":1,"k":2}]}""").forEach { text ->
+            assertThrows(text, MalformedJsonException::class.java) { parseJsonObject(text) }
+        }
+        // The same name in two objects, or as a value, is no repeat.
+        val obj = parseJsonObject("""{"a":{"a":1},"b":["a","a"],"c":"\"a\"","d":{"a":[{"a":2}]}}""")
+        assertEquals(listOf("a", "b", "c", "d"), obj.keys)
+    }
+
+    @Test
+    fun `the tree keeps a number's digits`() {
+        val rate = (parseJsonElement("""{"r":0.10000000000000000555}""") as JsonElementObject).getValue("r")
+        assertEquals("0.10000000000000000555", rate.jsonPrimitive.content)
+        assertThrows(MalformedJsonException::class.java) { parseJsonElement("{\"r\":}") }
     }
 }

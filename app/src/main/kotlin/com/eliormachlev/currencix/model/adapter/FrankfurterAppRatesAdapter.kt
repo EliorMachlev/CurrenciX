@@ -1,34 +1,28 @@
 package com.eliormachlev.currencix.model.adapter
 
 import com.eliormachlev.currencix.model.Currency
+import com.eliormachlev.currencix.model.ExchangeRates
 import com.eliormachlev.currencix.model.Rate
-import com.squareup.moshi.JsonReader
-import java.io.IOException
+import com.eliormachlev.currencix.model.provider.api.FrankfurterRates
 import java.math.BigDecimal
 
-/*
- * Converts currency object to array of currencies.
- * Also removes some unwanted values and adds some wanted ones.
+/**
+ * Frankfurter's rates as the app's: a list, with the [base] added (at 1)
+ * when the response leaves it out, FOK riding on DKK, and currencies the
+ * app doesn't know left out.
  */
-internal class FrankfurterAppRatesAdapter(
-    private val base: Currency,
-) : ResponseAdapter<List<Rate>>(RATE_LIST_TYPE) {
-    @Synchronized
-    @Throws(IOException::class)
-    override fun fromJson(reader: JsonReader): List<Rate> =
-        buildList {
-            reader.beginObject()
-            // convert
-            while (reader.hasNext()) {
-                val name: String = reader.nextName()
-                val value: BigDecimal = BigDecimal(reader.nextString())
-                Currency.fromString(name)?.let { add(Rate(it, value)) }
-            }
-            reader.endObject()
-            // add base - but only if it's missing in the api response!
-            if (none { rate -> rate.currency == base }) {
-                add(Rate(base, BigDecimal.ONE))
-            }
-            addFokFromDkkIfMissing()
-        }
-}
+internal fun FrankfurterRates.toExchangeRates(base: Currency): ExchangeRates =
+    ExchangeRates(
+        success = null,
+        error = null,
+        base = this.base?.let(Currency::valueOf),
+        date = date,
+        rates =
+            rates?.let { quoted ->
+                buildList {
+                    quoted.forEach { (name, value) -> Currency.fromString(name)?.let { add(Rate(it, value)) } }
+                    if (none { rate -> rate.currency == base }) add(Rate(base, BigDecimal.ONE))
+                    addFokFromDkkIfMissing()
+                }
+            },
+    )

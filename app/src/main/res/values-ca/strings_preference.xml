@@ -147,14 +147,14 @@
     <string name="credit_lib_typeface">Tipus de lletra</string>
     <string name="credit_lib_vico">Gràfics</string>
     <string name="credit_lib_okhttp">Client HTTP</string>
-    <string name="credit_lib_moshi">Analitzador de JSON</string>
+    <string name="credit_lib_json">Analitzador de JSON</string>
     <string name="credit_lib_wire">Protocol Buffers (com es desen els carros, viatges i comissions)</string>
     <string name="credit_lib_timber">Registre d\'esdeveniments</string>
     <string name="credit_lib_bouncy_castle">Derivació de claus Argon2id per a les còpies de seguretat xifrades</string>
     <string name="credit_lib_tink">Xifratge AES-GCM per a les còpies de seguretat</string>
     <string name="credit_lib_kotlin">Entorn d\'execució i biblioteca estàndard del llenguatge</string>
     <string name="credit_lib_coroutines">Programació asíncrona (la fan servir altres biblioteques)</string>
-    <string name="credit_lib_okio">Primitives d\'E/S (les fan servir OkHttp i Moshi)</string>
+    <string name="credit_lib_okio">Primitives d\'E/S (les fan servir OkHttp i Retrofit)</string>
     <string name="credit_terms_of_service_title">Termes del servei</string>
     <string name="credit_terms_of_service_subtitle">Condicions d\'ús, renúncia de garantia, avís sobre l\'exactitud dels tipus.</string>
     <string name="credits_section_legal">Avís legal</string>

@@ -146,14 +146,14 @@
     <string name="credit_lib_typeface">Γραμματοσειρά</string>
     <string name="credit_lib_vico">Γραφήματα</string>
     <string name="credit_lib_okhttp">Πρόγραμμα-πελάτης HTTP</string>
-    <string name="credit_lib_moshi">Αναλυτής JSON</string>
+    <string name="credit_lib_json">Αναλυτής JSON</string>
     <string name="credit_lib_wire">Protocol Buffers (αποθήκευση καλαθιών, ταξιδιών και χρεώσεων)</string>
     <string name="credit_lib_timber">Καταγραφή συμβάντων</string>
     <string name="credit_lib_bouncy_castle">Παραγωγή κλειδιών Argon2id για κρυπτογραφημένα αντίγραφα ασφαλείας</string>
     <string name="credit_lib_tink">Κρυπτογράφηση AES-GCM για αντίγραφα ασφαλείας</string>
     <string name="credit_lib_kotlin">Περιβάλλον εκτέλεσης και τυπική βιβλιοθήκη της γλώσσας</string>
     <string name="credit_lib_coroutines">Ασύγχρονος προγραμματισμός (χρησιμοποιείται από άλλες βιβλιοθήκες)</string>
-    <string name="credit_lib_okio">Βασικές λειτουργίες I/O (χρησιμοποιούνται από τα OkHttp και Moshi)</string>
+    <string name="credit_lib_okio">Βασικές λειτουργίες I/O (χρησιμοποιούνται από τα OkHttp και Retrofit)</string>
     <string name="credit_terms_of_service_title">Όροι υπηρεσίας</string>
     <string name="credit_terms_of_service_subtitle">Όροι χρήσης, αποποίηση εγγύησης, ειδοποίηση ακρίβειας ισοτιμιών.</string>
     <string name="credits_section_legal">Νομικά</string>

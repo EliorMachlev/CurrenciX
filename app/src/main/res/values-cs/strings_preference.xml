@@ -148,14 +148,14 @@
     <string name="credit_lib_typeface">Písmo</string>
     <string name="credit_lib_vico">Grafy</string>
     <string name="credit_lib_okhttp">Klient HTTP</string>
-    <string name="credit_lib_moshi">Parser JSON</string>
+    <string name="credit_lib_json">Parser JSON</string>
     <string name="credit_lib_wire">Protocol Buffers (ukládání košíků, cest a poplatků)</string>
     <string name="credit_lib_timber">Protokolování</string>
     <string name="credit_lib_bouncy_castle">Odvození klíče Argon2id pro šifrované zálohy</string>
     <string name="credit_lib_tink">Šifrování záloh pomocí AES-GCM</string>
     <string name="credit_lib_kotlin">Běhové prostředí jazyka a standardní knihovna</string>
     <string name="credit_lib_coroutines">Asynchronní programování (používají jiné knihovny)</string>
-    <string name="credit_lib_okio">Základní I/O operace (používají OkHttp a Moshi)</string>
+    <string name="credit_lib_okio">Základní I/O operace (používají OkHttp a Retrofit)</string>
     <string name="credit_terms_of_service_title">Podmínky služby</string>
     <string name="credit_terms_of_service_subtitle">Podmínky použití, prohlášení o vyloučení záruky, upozornění o přesnosti kurzů.</string>
     <string name="credits_section_legal">Právní informace</string>

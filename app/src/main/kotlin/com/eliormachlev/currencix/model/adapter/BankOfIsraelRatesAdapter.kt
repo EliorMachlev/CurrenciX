@@ -4,88 +4,39 @@ import com.eliormachlev.currencix.model.ApiProvider
 import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.model.ExchangeRates
 import com.eliormachlev.currencix.model.Rate
-import com.squareup.moshi.JsonReader
-import java.io.IOException
+import com.eliormachlev.currencix.model.provider.api.BankOfIsraelRate
+import com.eliormachlev.currencix.model.provider.api.BankOfIsraelRates
 import java.math.BigDecimal
 import java.math.MathContext
-import java.time.LocalDate
 import java.time.OffsetDateTime
 
-internal class BankOfIsraelRatesAdapter : ResponseAdapter<ExchangeRates>(ExchangeRates::class.java) {
-    @Synchronized
-    @Throws(IOException::class)
-    override fun fromJson(reader: JsonReader): ExchangeRates? {
-        if (reader.skipIfNotObject()) return null
-
-        var date: LocalDate? = null
-        val rates = mutableListOf<Rate>()
-
-        reader.beginObject()
-        while (reader.hasNext()) {
-            when (reader.nextName()) {
-                "exchangeRates" -> date = readEntries(reader, rates)
-                else -> reader.skipValue()
-            }
-        }
-        reader.endObject()
-
-        if (rates.isNotEmpty()) {
-            rates.add(Rate(Currency.ILS, BigDecimal.ONE))
-            rates.addFokFromDkkIfMissing()
-        }
-
-        return ExchangeRates(
-            success = rates.isNotEmpty(),
-            error = if (rates.isEmpty()) NO_DATA_ERROR else null,
-            base = Currency.ILS,
-            date = date,
-            rates = rates,
-            provider = ApiProvider.BANK_OF_ISRAEL,
-        )
+/**
+ * Bank of Israel's PublicApi rates as the app's: shekels per unit inverted
+ * to units per shekel, ILS added at 1, dated by the newest update.
+ */
+internal fun BankOfIsraelRates.toExchangeRates(): ExchangeRates {
+    val entries = exchangeRates.orEmpty()
+    val rates = entries.mapNotNullTo(mutableListOf(), BankOfIsraelRate::toRate)
+    if (rates.isNotEmpty()) {
+        rates.add(Rate(Currency.ILS, BigDecimal.ONE))
+        rates.addFokFromDkkIfMissing()
     }
+    return ExchangeRates(
+        success = rates.isNotEmpty(),
+        error = if (rates.isEmpty()) NO_DATA_ERROR else null,
+        base = Currency.ILS,
+        date = entries.mapNotNull { entry -> entry.lastUpdate?.let { OffsetDateTime.parse(it).toLocalDate() } }.maxOrNull(),
+        rates = rates,
+        provider = ApiProvider.BANK_OF_ISRAEL,
+    )
+}
 
-    private fun readEntries(
-        reader: JsonReader,
-        rates: MutableList<Rate>,
-    ): LocalDate? {
-        var latestDate: LocalDate? = null
-        reader.beginArray()
-        while (reader.hasNext()) {
-            val (rate, obsDate) = readEntry(reader)
-            if (rate != null) rates.add(rate)
-            if (obsDate != null && (latestDate == null || obsDate.isAfter(latestDate))) {
-                latestDate = obsDate
-            }
-        }
-        reader.endArray()
-        return latestDate
-    }
-
-    private fun readEntry(reader: JsonReader): Pair<Rate?, LocalDate?> {
-        var code: String? = null
-        var value: BigDecimal? = null
-        var unit: BigDecimal = BigDecimal.ONE
-        var date: LocalDate? = null
-
-        reader.beginObject()
-        while (reader.hasNext()) {
-            when (reader.nextName()) {
-                "key" -> code = reader.nextString()
-                "currentExchangeRate" -> value = BigDecimal(reader.nextString())
-                "unit" -> unit = BigDecimal(reader.nextString())
-                "lastUpdate" -> date = OffsetDateTime.parse(reader.nextString()).toLocalDate()
-                else -> reader.skipValue()
-            }
-        }
-        reader.endObject()
-
-        val currency = code?.let(Currency::fromString)
-        val rate =
-            if (currency != null && value != null && value.signum() > 0) {
-                Rate(currency, unit.divide(value, MathContext.DECIMAL128))
-            } else {
-                null
-            }
-        return rate to date
+private fun BankOfIsraelRate.toRate(): Rate? {
+    val currency = key?.let(Currency::fromString)
+    val shekels = currentExchangeRate
+    return if (currency != null && shekels != null && shekels.signum() > 0) {
+        Rate(currency, (unit ?: BigDecimal.ONE).divide(shekels, MathContext.DECIMAL128))
+    } else {
+        null
     }
 }

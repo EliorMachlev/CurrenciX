@@ -145,14 +145,14 @@
     <string name="credit_lib_typeface">Schriftart</string>
     <string name="credit_lib_vico">Diagramme</string>
     <string name="credit_lib_okhttp">HTTP-Client</string>
-    <string name="credit_lib_moshi">JSON-Parser</string>
+    <string name="credit_lib_json">JSON-Parser</string>
     <string name="credit_lib_wire">Protocol Buffers (Speicherformat für Warenkörbe, Reisen und Gebühren)</string>
     <string name="credit_lib_timber">Protokollierung</string>
     <string name="credit_lib_bouncy_castle">Argon2id-Schlüsselableitung für verschlüsselte Sicherungen</string>
     <string name="credit_lib_tink">AES-GCM-Verschlüsselung für Sicherungen</string>
     <string name="credit_lib_kotlin">Laufzeitumgebung und Standardbibliothek der Sprache</string>
     <string name="credit_lib_coroutines">Asynchrone Programmierung (von anderen Bibliotheken genutzt)</string>
-    <string name="credit_lib_okio">I/O-Grundbausteine (von OkHttp und Moshi genutzt)</string>
+    <string name="credit_lib_okio">I/O-Grundbausteine (von OkHttp und Retrofit genutzt)</string>
     <string name="credit_terms_of_service_title">Nutzungsbedingungen</string>
     <string name="credit_terms_of_service_subtitle">Nutzungsbedingungen, Gewährleistungsausschluss, Hinweis zur Kursgenauigkeit.</string>
     <string name="credits_section_legal">Rechtliches</string>

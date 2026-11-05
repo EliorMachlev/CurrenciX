@@ -145,14 +145,14 @@
     <string name="credit_lib_typeface">Lettertype</string>
     <string name="credit_lib_vico">Grafieken</string>
     <string name="credit_lib_okhttp">HTTP-client</string>
-    <string name="credit_lib_moshi">JSON-parser</string>
+    <string name="credit_lib_json">JSON-parser</string>
     <string name="credit_lib_wire">Protocol Buffers (opslag van winkelwagens, reizen en kosten)</string>
     <string name="credit_lib_timber">Logboekregistratie</string>
     <string name="credit_lib_bouncy_castle">Argon2id-sleutelafleiding voor versleutelde back-ups</string>
     <string name="credit_lib_tink">AES-GCM-versleuteling voor back-ups</string>
     <string name="credit_lib_kotlin">Taalruntime en standaardbibliotheek</string>
     <string name="credit_lib_coroutines">Asynchroon programmeren (gebruikt door andere bibliotheken)</string>
-    <string name="credit_lib_okio">I/O-basisfuncties (gebruikt door OkHttp en Moshi)</string>
+    <string name="credit_lib_okio">I/O-basisfuncties (gebruikt door OkHttp en Retrofit)</string>
     <string name="credit_terms_of_service_title">Servicevoorwaarden</string>
     <string name="credit_terms_of_service_subtitle">Gebruiksvoorwaarden, uitsluiting van garantie, opmerking over koersnauwkeurigheid.</string>
     <string name="credits_section_legal">Juridisch</string>

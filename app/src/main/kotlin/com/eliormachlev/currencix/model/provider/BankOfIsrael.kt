@@ -9,17 +9,15 @@ import com.eliormachlev.currencix.model.ExchangeRates
 import com.eliormachlev.currencix.model.Rate
 import com.eliormachlev.currencix.model.Timeline
 import com.eliormachlev.currencix.model.adapter.BankOfIsraelObservation
-import com.eliormachlev.currencix.model.adapter.BankOfIsraelRatesAdapter
 import com.eliormachlev.currencix.model.adapter.BankOfIsraelSdmxParser
 import com.eliormachlev.currencix.model.adapter.NO_DATA_ERROR
 import com.eliormachlev.currencix.model.adapter.addFokFromDkkIfMissing
 import com.eliormachlev.currencix.model.adapter.rateOrNull
-import com.eliormachlev.currencix.model.adapter.register
+import com.eliormachlev.currencix.model.adapter.toExchangeRates
 import com.eliormachlev.currencix.model.hostOf
 import com.eliormachlev.currencix.model.provider.api.BankOfIsraelApi
 import com.eliormachlev.currencix.util.HttpClientProvider
 import com.eliormachlev.currencix.util.fetch
-import com.squareup.moshi.Moshi
 import java.math.BigDecimal
 import java.math.MathContext
 import java.time.LocalDate
@@ -39,9 +37,6 @@ private val UNIT_PER_CURRENCY: Map<String, BigDecimal> =
     )
 
 private fun unitFor(currency: String): BigDecimal = UNIT_PER_CURRENCY[currency] ?: BigDecimal.ONE
-
-// The PublicApi rates adapter is stateless, so one Moshi serves every request.
-private val LATEST_RATES_MOSHI: Moshi = moshi { register(BankOfIsraelRatesAdapter()) }
 
 class BankOfIsrael : ApiProvider.Api {
     override val name = "Bank of Israel"
@@ -70,8 +65,8 @@ class BankOfIsrael : ApiProvider.Api {
     // timeline come from the SDMX-JSON feed instead, which stays on raw OkHttp
     // (see BankOfIsraelApi for why).
     private suspend fun fetchLatestRates(context: Context?): Result<ExchangeRates> {
-        val api = retrofitApi<BankOfIsraelApi>(context, LATEST_RATES_MOSHI)
-        return fetchRetrofit { api.getLatestRates() }
+        val api = retrofitApi<BankOfIsraelApi>(context)
+        return fetchRetrofit({ api.getLatestRates() }) { it.toExchangeRates() }
             .map { it.copy(provider = ApiProvider.BANK_OF_ISRAEL) }
     }
 

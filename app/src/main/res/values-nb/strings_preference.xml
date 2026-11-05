@@ -146,14 +146,14 @@
     <string name="credit_lib_typeface">Skrifttype</string>
     <string name="credit_lib_vico">Diagrammer</string>
     <string name="credit_lib_okhttp">HTTP-klient</string>
-    <string name="credit_lib_moshi">JSON-parser</string>
+    <string name="credit_lib_json">JSON-parser</string>
     <string name="credit_lib_wire">Protocol Buffers (slik lagres handlekurver, reiser og gebyrer)</string>
     <string name="credit_lib_timber">Logging</string>
     <string name="credit_lib_bouncy_castle">Argon2id-nøkkelavledning for krypterte sikkerhetskopier</string>
     <string name="credit_lib_tink">AES-GCM-kryptering av sikkerhetskopier</string>
     <string name="credit_lib_kotlin">Språkets kjøretidsmiljø og standardbibliotek</string>
     <string name="credit_lib_coroutines">Asynkron programmering (brukes av andre biblioteker)</string>
-    <string name="credit_lib_okio">I/O-primitiver (brukes av OkHttp og Moshi)</string>
+    <string name="credit_lib_okio">I/O-primitiver (brukes av OkHttp og Retrofit)</string>
     <string name="credit_terms_of_service_title">Vilkår for tjenesten</string>
     <string name="credit_terms_of_service_subtitle">Bruksvilkår, garantifraskrivelse, merknad om kursnøyaktighet.</string>
     <string name="credits_section_legal">Juridisk</string>

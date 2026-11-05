@@ -145,14 +145,14 @@
     <string name="credit_lib_typeface">Jenis huruf</string>
     <string name="credit_lib_vico">Grafik</string>
     <string name="credit_lib_okhttp">Klien HTTP</string>
-    <string name="credit_lib_moshi">Parser JSON</string>
+    <string name="credit_lib_json">Parser JSON</string>
     <string name="credit_lib_wire">Protocol Buffers (cara keranjang, perjalanan, dan biaya disimpan)</string>
     <string name="credit_lib_timber">Pencatatan log</string>
     <string name="credit_lib_bouncy_castle">Derivasi kunci Argon2id untuk cadangan terenkripsi</string>
     <string name="credit_lib_tink">Enkripsi AES-GCM untuk cadangan</string>
     <string name="credit_lib_kotlin">Runtime bahasa dan pustaka standar</string>
     <string name="credit_lib_coroutines">Pemrograman asinkron (digunakan oleh pustaka lain)</string>
-    <string name="credit_lib_okio">Primitif I/O (digunakan oleh OkHttp dan Moshi)</string>
+    <string name="credit_lib_okio">Primitif I/O (digunakan oleh OkHttp dan Retrofit)</string>
     <string name="credit_terms_of_service_title">Ketentuan layanan</string>
     <string name="credit_terms_of_service_subtitle">Ketentuan penggunaan, penafian jaminan, pemberitahuan akurasi nilai tukar.</string>
     <string name="credits_section_legal">Hukum</string>

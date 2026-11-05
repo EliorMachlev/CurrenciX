@@ -5,12 +5,12 @@ import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.util.ApiHttpError
 import com.eliormachlev.currencix.util.HttpClientProvider
 import kotlinx.coroutines.runBlocking
+import kotlinx.serialization.SerializationException
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
-import java.io.IOException
 import java.time.LocalDate
 
 private const val HTTP_UNAUTHORIZED = 401
@@ -36,21 +36,15 @@ private val END: LocalDate = LocalDate.of(2024, 3, 31)
 class ProviderRequestTest {
     @get:Rule val http = StubHttpRule()
 
-    // The default stub body is a JSON `null`. Adapters that treat a non-object
-    // payload as "no data" (Frankfurter, Open Exchange Rates, Bank of Israel)
-    // decode it to null, which must surface as "<provider>: empty JSON". The
-    // Bank of Canada and InforEuro adapters reject it with a JsonDataException
-    // instead — the same on either transport, so those tests only pin the request.
+    // The default stub body is a JSON `null`, which isn't any provider's
+    // response object: it fails to decode (SerializationException), never
+    // reaching the provider as rates. Most tests here only pin the request.
 
     private fun assertRequested(vararg expected: String) = assertEquals(expected.toList(), http.requests.map { it.toString() })
 
-    private fun assertEmptyJson(
-        result: Result<*>,
-        providerName: String,
-    ) {
+    private fun assertUndecodable(result: Result<*>) {
         val error = result.exceptionOrNull()
-        assertTrue("expected IOException, got $error", error is IOException && error !is ApiHttpError)
-        assertEquals("$providerName: empty JSON", error?.message)
+        assertTrue("expected SerializationException, got $error", error is SerializationException)
     }
 
     // --- Frankfurter (Retrofit) ------------------------------------------------
@@ -61,7 +55,7 @@ class ProviderRequestTest {
             val provider = FrankfurterApp()
             val result = provider.getRates(null, null, ApiSecrets.EMPTY)
             assertRequested("https://api.frankfurter.dev/v1/latest?base=EUR")
-            assertEmptyJson(result, provider.name)
+            assertUndecodable(result)
         }
 
     @Test
@@ -80,7 +74,7 @@ class ProviderRequestTest {
             val result = provider.getRates(null, null, ApiSecrets(API_KEY))
             assertRequested("https://openexchangerates.org/api/latest.json?prettyprint=false&show_alternative=false")
             assertEquals("the key goes in the header, never the URL", listOf("Token $API_KEY"), http.authorizations)
-            assertEmptyJson(result, provider.name)
+            assertUndecodable(result)
         }
 
     @Test
@@ -168,13 +162,11 @@ class ProviderRequestTest {
         }
 
     @Test
-    fun `a non-object body is a labelled empty-JSON error`() =
+    fun `a body that isn't the provider's JSON object fails to decode`() =
         runBlocking {
-            // Any non-object top-level value, not just `null`, must be consumed
-            // by the adapter so the transport sees a complete document.
             http.body = "[]"
             val provider = OpenExchangerates()
-            assertEmptyJson(provider.getRates(null, null, ApiSecrets(API_KEY)), provider.name)
+            assertUndecodable(provider.getRates(null, null, ApiSecrets(API_KEY)))
         }
 
     @Test
@@ -194,7 +186,7 @@ class ProviderRequestTest {
             val provider = BankOfIsrael()
             val result = provider.getRates(null, null, ApiSecrets.EMPTY)
             assertRequested("https://boi.org.il/PublicApi/GetExchangeRates")
-            assertEmptyJson(result, provider.name)
+            assertUndecodable(result)
         }
 
     @Test

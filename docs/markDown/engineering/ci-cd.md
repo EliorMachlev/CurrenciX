@@ -73,7 +73,7 @@ Weekly, Mondays, 7-day cooldown, in `.github/dependabot.yml`:
 | `github-actions` | `/` | 5 |
 | `pip` | `/.github/scripts`, `/.github/semgrep`, `/.github/zizmor`, `/.github/docs-checks` (hash-pinned; one grouped PR) | 5 |
 
-Grouped: `androidx.*`; Kotlin + KSP; Moshi; OkHttp; test dependencies; all actions. A Gradle update fails dependency verification until its checksums are recorded: run **Update dependency checksums** on its branch once the update looks right.
+Grouped: `androidx.*`; Kotlin; OkHttp; test dependencies; all actions. A Gradle update fails dependency verification until its checksums are recorded: run **Update dependency checksums** on its branch once the update looks right.
 
 ## Permissions
 

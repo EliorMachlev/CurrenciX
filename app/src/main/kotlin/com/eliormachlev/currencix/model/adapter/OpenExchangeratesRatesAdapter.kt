@@ -4,94 +4,28 @@ import com.eliormachlev.currencix.model.ApiProvider
 import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.model.ExchangeRates
 import com.eliormachlev.currencix.model.Rate
-import com.squareup.moshi.JsonReader
-import java.io.IOException
-import java.math.BigDecimal
+import com.eliormachlev.currencix.model.provider.api.OpenExchangeratesRates
 import java.time.Instant
-import java.time.LocalDate
-import java.time.LocalTime
 import java.time.ZoneId
 
-internal class OpenExchangeratesRatesAdapter : ResponseAdapter<ExchangeRates>(ExchangeRates::class.java) {
-    @Synchronized
-    @Throws(IOException::class)
-    override fun fromJson(reader: JsonReader): ExchangeRates? {
-        var base: Currency? = null
-        var date: LocalDate? = null
-        var time: LocalTime? = null
-        var errorMessage: String? = null
-
-        if (reader.skipIfNotObject()) return null
-
-        val rates =
-            buildList {
-                reader.beginObject()
-                while (reader.hasNext()) {
-                    if (reader.peek() != JsonReader.Token.NAME) continue
-                    when (reader.nextName()) {
-                        FIELD_RATES -> {
-                            addAll(parseRates(reader))
-                        }
-
-                        "timestamp" -> {
-                            val zoned =
-                                Instant
-                                    .ofEpochSecond(reader.nextLong())
-                                    .atZone(ZoneId.systemDefault())
-                            date = zoned.toLocalDate()
-                            time = zoned.toLocalTime().withSecond(0).withNano(0)
-                        }
-
-                        FIELD_BASE -> {
-                            base = Currency.fromString(reader.nextString())
-                        }
-
-                        FIELD_MESSAGE -> {
-                            errorMessage = reader.nextString()
-                        }
-
-                        else -> {
-                            reader.skipValue()
-                        }
-                    }
-                }
-                reader.endObject()
-                addFokFromDkkIfMissing()
-            }
-
-        return if (rates.isNotEmpty()) {
-            ExchangeRates(
-                success = true,
-                error = null,
-                base = base,
-                date = date,
-                time = time,
-                rates = rates,
-                provider = ApiProvider.OPEN_EXCHANGERATES,
-            )
-        } else {
-            ExchangeRates(
-                success = false,
-                error = errorMessage,
-                base = base,
-                date = date,
-                time = time,
-                rates = null,
-                provider = ApiProvider.OPEN_EXCHANGERATES,
-            )
-        }
-    }
-
-    private fun parseRates(reader: JsonReader): List<Rate> =
+/**
+ * Open Exchange Rates' answer as the app's rates, dated and timed (to the
+ * minute) in the phone's zone; its message when there are no rates.
+ */
+internal fun OpenExchangeratesRates.toExchangeRates(): ExchangeRates {
+    val zoned = timestamp?.let { Instant.ofEpochSecond(it).atZone(ZoneId.systemDefault()) }
+    val known =
         buildList {
-            reader.beginObject()
-            while (reader.hasNext()) {
-                val name = Currency.fromString(reader.nextName())
-                val value: BigDecimal = BigDecimal(reader.nextString())
-                if (name != null) {
-                    add(Rate(name, value))
-                }
-            }
-            reader.endObject()
+            rates?.forEach { (name, value) -> Currency.fromString(name)?.let { add(Rate(it, value)) } }
+            addFokFromDkkIfMissing()
         }
+    return ExchangeRates(
+        success = known.isNotEmpty(),
+        error = if (known.isEmpty()) message else null,
+        base = base?.let(Currency::fromString),
+        date = zoned?.toLocalDate(),
+        time = zoned?.toLocalTime()?.withSecond(0)?.withNano(0),
+        rates = known.takeIf { it.isNotEmpty() },
+        provider = ApiProvider.OPEN_EXCHANGERATES,
+    )
 }

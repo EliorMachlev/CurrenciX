@@ -146,14 +146,14 @@
     <string name="credit_lib_typeface">Yazı tipi</string>
     <string name="credit_lib_vico">Grafikler</string>
     <string name="credit_lib_okhttp">HTTP istemcisi</string>
-    <string name="credit_lib_moshi">JSON ayrıştırıcı</string>
+    <string name="credit_lib_json">JSON ayrıştırıcı</string>
     <string name="credit_lib_wire">Protocol Buffers (sepetlerin, gezilerin ve ücretlerin saklanması)</string>
     <string name="credit_lib_timber">Günlük kaydı</string>
     <string name="credit_lib_bouncy_castle">Şifreli yedekler için Argon2id anahtar türetme</string>
     <string name="credit_lib_tink">Yedekler için AES-GCM şifreleme</string>
     <string name="credit_lib_kotlin">Dil çalışma zamanı ve standart kütüphane</string>
     <string name="credit_lib_coroutines">Asenkron programlama (diğer kütüphaneler tarafından kullanılır)</string>
-    <string name="credit_lib_okio">G/Ç temel öğeleri (OkHttp ve Moshi tarafından kullanılır)</string>
+    <string name="credit_lib_okio">G/Ç temel öğeleri (OkHttp ve Retrofit tarafından kullanılır)</string>
     <string name="credit_terms_of_service_title">Hizmet şartları</string>
     <string name="credit_terms_of_service_subtitle">Kullanım şartları, garanti reddi, kur doğruluğu bildirimi.</string>
     <string name="credits_section_legal">Yasal</string>

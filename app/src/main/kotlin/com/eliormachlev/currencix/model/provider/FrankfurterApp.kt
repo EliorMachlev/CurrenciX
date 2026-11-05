@@ -7,9 +7,8 @@ import com.eliormachlev.currencix.model.ApiSecrets
 import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.model.ExchangeRates
 import com.eliormachlev.currencix.model.Timeline
-import com.eliormachlev.currencix.model.adapter.FrankfurterAppRatesAdapter
-import com.eliormachlev.currencix.model.adapter.FrankfurterAppTimelineAdapter
-import com.eliormachlev.currencix.model.adapter.register
+import com.eliormachlev.currencix.model.adapter.toExchangeRates
+import com.eliormachlev.currencix.model.adapter.toTimeline
 import com.eliormachlev.currencix.model.provider.api.FrankfurterApi
 import java.time.LocalDate
 
@@ -37,11 +36,10 @@ class FrankfurterApp : ApiProvider.Api {
         // Currency conversions are done relatively to each other - so it basically doesn't matter
         // which base is used here. However, Euro is a strong currency, preventing rounding errors.
         val base = Currency.EUR
-        val api = api(context, base, symbol = null)
+        val api = retrofitApi<FrankfurterApi>(context)
         val datePath = date?.format(ISO_DATE) ?: LATEST_DATE_PATH
-        return fetchRetrofit {
-            api.getRates(datePath = datePath, base = base.toString())
-        }.map { it.copy(provider = ApiProvider.FRANKFURTER_APP) }
+        return fetchRetrofit({ api.getRates(datePath = datePath, base = base.toString()) }) { it.toExchangeRates(base) }
+            .map { it.copy(provider = ApiProvider.FRANKFURTER_APP) }
     }
 
     override suspend fun getTimeline(
@@ -52,35 +50,18 @@ class FrankfurterApp : ApiProvider.Api {
         endDate: LocalDate,
         secrets: ApiSecrets,
     ): Result<Timeline> {
-        val api = api(context, base, symbol)
-        return fetchRetrofit {
+        val api = retrofitApi<FrankfurterApi>(context)
+        return fetchRetrofit({
             api.getTimeline(
                 start = startDate.format(ISO_DATE),
                 end = endDate.format(ISO_DATE),
                 base = base.apiCodeOrDkkForFok(),
                 symbols = symbol.apiCodeOrDkkForFok(),
             )
-        }.map { timeline ->
-            // change dkk base back to fok, if needed
-            if (base == Currency.FOK) timeline.copy(base = base.iso4217Alpha()) else timeline
-        }.map { it.copy(provider = ApiProvider.FRANKFURTER_APP) }
+        }) { it.toTimeline(symbol) }
+            .map { timeline ->
+                // change dkk base back to fok, if needed
+                if (base == Currency.FOK) timeline.copy(base = base.iso4217Alpha()) else timeline
+            }.map { it.copy(provider = ApiProvider.FRANKFURTER_APP) }
     }
-
-    // Builds a per-request Retrofit-bound API. The two custom Moshi adapters
-    // are per-request (they close over the requested [base] / [symbol]), so
-    // the Retrofit instance and its FrankfurterApi proxy have to be built
-    // per-request too. Cost is negligible — no I/O, no reflection.
-    private fun api(
-        context: Context?,
-        base: Currency,
-        symbol: Currency?,
-    ): FrankfurterApi =
-        retrofitApi(
-            context,
-            moshi {
-                register(FrankfurterAppRatesAdapter(base))
-                register(SHARED_LOCAL_DATE_ADAPTER)
-                if (symbol != null) register(FrankfurterAppTimelineAdapter(symbol))
-            },
-        )
 }

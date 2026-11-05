@@ -150,14 +150,14 @@
     <string name="credit_lib_typeface">الخط</string>
     <string name="credit_lib_vico">الرسوم البيانية</string>
     <string name="credit_lib_okhttp">عميل HTTP</string>
-    <string name="credit_lib_moshi">محلّل JSON</string>
+    <string name="credit_lib_json">محلّل JSON</string>
     <string name="credit_lib_wire">Protocol Buffers (طريقة تخزين السلال والرحلات والرسوم المحفوظة)</string>
     <string name="credit_lib_timber">تسجيل السجلات</string>
     <string name="credit_lib_bouncy_castle">اشتقاق المفاتيح بخوارزمية Argon2id للنسخ الاحتياطية المشفّرة</string>
     <string name="credit_lib_tink">تشفير AES-GCM للنسخ الاحتياطية</string>
     <string name="credit_lib_kotlin">بيئة تشغيل اللغة ومكتبتها القياسية</string>
     <string name="credit_lib_coroutines">البرمجة غير المتزامنة (تستخدمها مكتبات أخرى)</string>
-    <string name="credit_lib_okio">عناصر الإدخال/الإخراج الأساسية (تستخدمها OkHttp وMoshi)</string>
+    <string name="credit_lib_okio">عناصر الإدخال/الإخراج الأساسية (تستخدمها OkHttp وRetrofit)</string>
     <string name="credit_terms_of_service_title">شروط الخدمة</string>
     <string name="credit_terms_of_service_subtitle">شروط الاستخدام، إخلاء المسؤولية عن الضمان، إشعار دقة الأسعار.</string>
     <string name="credits_section_legal">قانوني</string>

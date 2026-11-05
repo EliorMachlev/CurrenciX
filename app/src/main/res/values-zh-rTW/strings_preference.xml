@@ -144,14 +144,14 @@
     <string name="credit_lib_typeface">字型</string>
     <string name="credit_lib_vico">圖表</string>
     <string name="credit_lib_okhttp">HTTP 用戶端</string>
-    <string name="credit_lib_moshi">JSON 剖析器</string>
+    <string name="credit_lib_json">JSON 剖析器</string>
     <string name="credit_lib_wire">Protocol Buffers（用於儲存購物車、旅行與費用）</string>
     <string name="credit_lib_timber">記錄</string>
     <string name="credit_lib_bouncy_castle">為加密備份提供 Argon2id 金鑰衍生</string>
     <string name="credit_lib_tink">為備份提供 AES-GCM 加密</string>
     <string name="credit_lib_kotlin">語言執行階段與標準函式庫</string>
     <string name="credit_lib_coroutines">非同步程式設計（供其他函式庫使用）</string>
-    <string name="credit_lib_okio">I/O 基本元件（供 OkHttp 與 Moshi 使用）</string>
+    <string name="credit_lib_okio">I/O 基本元件（供 OkHttp 與 Retrofit 使用）</string>
     <string name="credit_terms_of_service_title">服務條款</string>
     <string name="credit_terms_of_service_subtitle">使用條款、免責聲明、匯率準確性說明。</string>
     <string name="credits_section_legal">法律</string>

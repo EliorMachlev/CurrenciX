@@ -45,7 +45,7 @@ Both kinds sit behind `CachedStore<S>` (`PrefStore` is the preferences flavour).
 - **Timelines are files.** Each provider's history per pair is `filesDir/timelines/<providerId>_<BASE>_<SYMBOL>.json` (`TimelineFiles`): saving one pair rewrites one file (atomically, via `.tmp`), the last few stay parsed in memory, and it's under `filesDir` so the system never discards years of history to free space.
 - **Bad data is dropped, not fatal.** A rate or history that won't parse is dropped and fetched again, and counted per store (`DroppedCacheEntries`), so a store that keeps dropping, a write bug, shows in the log.
 
-The app's own JSON (backups, cart files, disk caches) goes through Moshi's streaming reader and writer (`repository/json/JsonTree.kt`), with lenient reads for hand-edited or older files. No `org.json`, no Moshi reflection: provider responses use KSP-generated or hand-written adapters.
+The app's own JSON (backups, cart files, disk caches) goes through kotlinx.serialization's JSON tree (`repository/json/JsonTree.kt`), with lenient reads for hand-edited or older files; a field given twice in one object makes the file malformed (`DuplicateFieldName.kt`), as the tree would keep only the last. Indented files use four spaces. No `org.json` and no reflection; provider responses are `@Serializable` classes instead ([networking.md](networking.md)).
 
 The one file outside DataStore: a cart's export / import through the Storage Access Framework (`CartExporter`), a one-off transfer, not storage.
 

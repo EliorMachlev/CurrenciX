@@ -10,7 +10,6 @@ import com.eliormachlev.currencix.model.provider.FrankfurterApp
 import com.eliormachlev.currencix.model.provider.InforEuro
 import com.eliormachlev.currencix.model.provider.NorgesBank
 import com.eliormachlev.currencix.model.provider.OpenExchangerates
-import com.squareup.moshi.JsonClass
 import java.net.URI
 import java.time.LocalDate
 import java.time.LocalTime
@@ -58,7 +57,6 @@ enum class ProviderReliability {
  * most useful first — wider coverage and steadier service. Nothing persists
  * the ordinal (the stored value is [id]), so reordering entries is safe.
  */
-@JsonClass(generateAdapter = false) // see https://stackoverflow.com/a/64085370/421140
 enum class ApiProvider(
     val id: Int, // safer ordinal; DON'T CHANGE!
     private val implementation: Api,

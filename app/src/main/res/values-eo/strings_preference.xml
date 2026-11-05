@@ -143,14 +143,14 @@
     <string name="credit_lib_typeface">Tiparo</string>
     <string name="credit_lib_vico">Diagramoj</string>
     <string name="credit_lib_okhttp">HTTP-kliento</string>
-    <string name="credit_lib_moshi">JSON-analizilo</string>
+    <string name="credit_lib_json">JSON-analizilo</string>
     <string name="credit_lib_wire">Protocol Buffers (kiel konserviĝas ĉaroj, vojaĝoj kaj kotizoj)</string>
     <string name="credit_lib_timber">Protokolado</string>
     <string name="credit_lib_bouncy_castle">Ŝlosila derivado per Argon2id por ĉifritaj sekurkopioj</string>
     <string name="credit_lib_tink">AES-GCM-ĉifrado por sekurkopioj</string>
     <string name="credit_lib_kotlin">Rultempo de la lingvo kaj norma biblioteko</string>
     <string name="credit_lib_coroutines">Nesinkrona programado (uzata de aliaj bibliotekoj)</string>
-    <string name="credit_lib_okio">Bazaj enig-eligaj elementoj (uzataj de OkHttp kaj Moshi)</string>
+    <string name="credit_lib_okio">Bazaj enig-eligaj elementoj (uzataj de OkHttp kaj Retrofit)</string>
     <string name="credit_terms_of_service_title">Servkondiĉoj</string>
     <string name="credit_terms_of_service_subtitle">Uzokondiĉoj, malgarantio, avizo pri la precizeco de kurzoj.</string>
     <string name="credits_section_legal">Juraĵoj</string>
