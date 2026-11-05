@@ -108,6 +108,28 @@ val fuzzTestClass = "com.eliormachlev.currencix.FuzzTest"
 val liveProviderTestClass = "com.eliormachlev.currencix.repository.ExchangeRatesServiceTest"
 val separateTestRuns = mapOf("fuzzTests" to fuzzTestClass, "liveProviders" to liveProviderTestClass)
 
+// Robolectric, and the Android framework jar it runs the tests on. Robolectric
+// would download that jar from Maven Central while the tests run, outside
+// Gradle's cache and dependency verification, and a rate-limited download
+// (HTTP 429) failed whole test runs. Gradle resolves it instead (cached, and
+// checked against gradle/verification-metadata.xml), and the tests run
+// Robolectric offline against that copy. The jar's version is the one this
+// Robolectric release maps SDK 34 to (every test's @Config(sdk = [34])), so a
+// new Robolectric can need a new one: offline, a wrong one fails each test
+// with "Unable to locate dependency" rather than downloading.
+val robolectricVersion = "4.17"
+val robolectricAndroidAll = "org.robolectric:android-all-instrumented:14-robolectric-10818077-i7"
+val robolectricJarsConfiguration =
+    configurations.create("robolectricJars") {
+        isCanBeConsumed = false
+        isTransitive = false
+    }
+val robolectricJars =
+    tasks.register<Sync>("robolectricJars") {
+        from(robolectricJarsConfiguration)
+        into(layout.buildDirectory.dir("robolectric-jars"))
+    }
+
 val buildsBundle = gradle.startParameter.taskNames.any { it.substringAfterLast(':').startsWith("bundle") }
 
 android {
@@ -209,6 +231,10 @@ android {
         unitTests.isIncludeAndroidResources = true
         unitTests.all {
             it.useJUnitPlatform()
+            // Robolectric reads its Android jar from robolectricJars, never the network.
+            it.inputs.files(robolectricJars).withPropertyName("robolectricJars")
+            it.systemProperty("robolectric.offline", "true")
+            it.systemProperty("robolectric.dependency.dir", robolectricJars.get().destinationDir.absolutePath)
             it.testLogging {
                 events("failed")
                 exceptionFormat = org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
@@ -514,7 +540,8 @@ dependencies {
     val roborazziVersion = "1.77.0"
     testImplementation("io.github.takahirom.roborazzi:roborazzi:$roborazziVersion")
     testImplementation("io.github.takahirom.roborazzi:roborazzi-compose:$roborazziVersion")
-    testImplementation("org.robolectric:robolectric:4.17")
+    testImplementation("org.robolectric:robolectric:$robolectricVersion")
+    robolectricJarsConfiguration(robolectricAndroidAll)
     testImplementation("androidx.compose.ui:ui-test-junit4")
     testImplementation("androidx.compose.ui:ui-test-manifest")
     // Coroutines and Flows on a virtual clock (runTest), and Flow emissions

@@ -42,6 +42,8 @@ Versions live in the build files; Dependabot keeps them current. What's worth kn
 - **Logging and debug tools:** Timber writes a local rotating file only. Chucker is debug-only (`library-no-op` in release); LeakCanary and JankStats are debug-only.
 - **Build plugins:** Spotless (ktlint), detekt, `ben-manes.versions` (`dependencyUpdates`), `androidx.baselineprofile`, CycloneDX (the release SBOM).
 - **Tests:** JUnit 4 and Jupiter (vintage engine), Mockito, Robolectric, Roborazzi (JVM screenshots of every Compose surface, no emulator), Konsist (layer boundaries), Jazzer (fuzzing), `kotlinx-coroutines-test` and Turbine (coroutines and Flows on a virtual clock).
+
+Robolectric runs offline. The Android jar it runs tests on (`android-all-instrumented`, SDK 34) is resolved by Gradle like any other dependency, so it's cached and checked against `verification-metadata.xml`. The tests then read it from `app/build/robolectric-jars` and never download it at test time. A new Robolectric release can need a new jar: update `robolectricAndroidAll` in `app/build.gradle.kts` with it (Dependabot ignores that coordinate, since its "newer" versions are other SDKs).
 - **Coverage and licenses:** Kover measures the unit tests' line and branch coverage (`koverXmlReport<Variant>`; CI puts a summary on each test run, `coverage-summary.py`); it stays off for the fuzz runs, which Jazzer instruments. Licensee (`licenseeAndroidFdroidRelease`, in the F-Droid lint job) fails on a library whose license isn't Apache-2.0 or BSD-3-Clause; two libraries are allowed by name ([exceptions.md](exceptions.md) #17, #18).
 
 ## Live provider tests

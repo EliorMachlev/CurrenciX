@@ -30,6 +30,12 @@ updates:
         dependency-type: "development"
         patterns:
           - "*"
+    # Robolectric's Android jar is versioned by Android release, not by age:
+    # a "newer" one is another SDK's, not an update of the SDK 34 one the tests
+    # run on. It changes with Robolectric, by hand (see robolectricAndroidAll
+    # in app/build.gradle.kts); offline, a stale one fails every test.
+    ignore:
+      - dependency-name: "org.robolectric:android-all-instrumented"
 
   # GitHub Actions
   - package-ecosystem: "github-actions"
