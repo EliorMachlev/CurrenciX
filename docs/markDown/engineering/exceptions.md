@@ -71,7 +71,7 @@ The build's own tools and compilers: Gradle and the Android Gradle plugin, and c
 - **What the check says:** Macrobenchmark fails a run on an emulator (`EMULATOR`), which "isn't representative of real user devices".
 - **Why it can't be fixed:** the fix is a physical device. CI has none: the baseline profiles are generated, and the benchmarks run, on a Gradle Managed Device (an API 34 emulator, [#4](#4-to-6-incubating-android-gradle-plugin-apis)), and a device farm would be a paid service outside the project's setup. Without the setting, neither job can run at all.
 - **Why the check is wrong here:** the numbers are used to compare a build with and without its profile on the same emulator, and to catch large regressions, never as absolute timings. A baseline profile lists the code a run uses, which is the same on an emulator. The setting turns the error into a warning, which every run still prints ([Macrobenchmark instrumentation arguments](https://developer.android.com/topic/performance/benchmarking/macrobenchmark-instrumentation-args)).
-- **What is excluded:** `EMULATOR` alone, the one argument in that file. Every other benchmark error (`DEBUGGABLE`, `LOW-BATTERY`, `NOT-PROFILEABLE`, `METHOD-TRACING-ENABLED`) still fails the run.
+- **What is excluded:** `EMULATOR` alone, the one argument in that file. Every other benchmark error that applies to a run (such as `DEBUGGABLE` or `LOW-BATTERY`) still fails it.
 
 ### Package exceptions
 
