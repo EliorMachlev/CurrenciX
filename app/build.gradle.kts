@@ -120,11 +120,17 @@ val separateTestRuns = mapOf("fuzzTests" to fuzzTestClass, "liveProviders" to li
 val robolectricVersion = "4.17"
 val robolectricAndroidAll = "org.robolectric:android-all-instrumented:14-robolectric-10818077-i7"
 // Declared on one configuration, resolved (that jar alone) through another.
-val robolectricAndroidAllScope = configurations.dependencyScope("robolectricAndroidAll")
+// The roles are set by hand: dependencyScope() and resolvable() are still @Incubating.
+val robolectricAndroidAllScope =
+    configurations.create("robolectricAndroidAll") {
+        isCanBeConsumed = false
+        isCanBeResolved = false
+    }
 val robolectricAndroidAllJars =
-    configurations.resolvable("robolectricAndroidAllJars") {
-        extendsFrom(robolectricAndroidAllScope.get())
+    configurations.create("robolectricAndroidAllJars") {
+        isCanBeConsumed = false
         isTransitive = false
+        extendsFrom(robolectricAndroidAllScope)
     }
 val robolectricJars =
     tasks.register<Sync>("robolectricJars") {
