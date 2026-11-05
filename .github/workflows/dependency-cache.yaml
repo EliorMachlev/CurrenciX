@@ -114,8 +114,14 @@ jobs:
         with:
           cache-disabled: true
 
+      # Plus two tasks for the tools fetched through detached configurations,
+      # which no project lists: Spotless's ktlint and AGP's aapt2. Fails on a
+      # failed download, so a partial cache is never saved.
       - name: Resolve every dependency
-        run: ./gradlew --no-configuration-cache --init-script .github/scripts/resolve-dependencies.init.gradle.kts resolveDependencies
+        run: >-
+          ./gradlew --no-configuration-cache
+          --init-script .github/scripts/resolve-dependencies.init.gradle.kts
+          resolveDependencies spotlessCheck :app:processFdroidDebugResources
 
       # Gradle's layout for a read-only cache: the modules-2 folder without
       # its lock files and cleanup marker.
