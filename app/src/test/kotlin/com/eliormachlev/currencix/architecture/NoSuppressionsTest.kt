@@ -128,6 +128,8 @@ class NoSuppressionsTest {
         const val APP_BUILD = "app/build.gradle.kts"
         const val PROFILE_BUILD = "baselineprofile/build.gradle.kts"
         const val UNSTABLE_API_RULE = "UnstableApiUsage"
+        const val BENCHMARK_ERRORS = "androidx.benchmark.suppressErrors"
+        const val EMULATOR_LINE = "testInstrumentationRunnerArguments[\"$BENCHMARK_ERRORS\"] = \"EMULATOR\""
 
         const val OWASP_SUPPRESSIONS = "config/owasp/suppressions.xml"
         const val OWASP_WORKFLOW = ".github/workflows/owasp-dependency-check.yaml"
@@ -264,6 +266,14 @@ class NoSuppressionsTest {
                     incubating(PROFILE_BUILD, 5, "testedApks", "v.instrumentationRunnerArguments.put("),
                     incubating(APP_BUILD, 6, "generateLocaleConfig", "generateLocaleConfig = true"),
                 ) +
+                RecordedException(
+                    PROFILE_BUILD,
+                    EMULATOR_LINE,
+                    BENCHMARK_ERRORS,
+                    "EMULATOR",
+                    // The emulator check alone, never a list of errors.
+                    Regex(Regex.escape(EMULATOR_LINE) + "\\s*$", RegexOption.MULTILINE),
+                ) +
                 // Each CVE, for Square's Wire runtime only.
                 listOf(WIRE_CVE, WIRE_SERVER_CVE).map(::wireSuppression) +
                 listOf(
@@ -383,6 +393,8 @@ class NoSuppressionsTest {
                 Regex("""zizmor:\s*ignore"""),
                 // Gradle dependency verification: files accepted without a checksum
                 Regex("""<(trust|ignored-key|trusted-key)\s"""),
+                // AndroidX Benchmark: a configuration error turned into a warning
+                Regex("""androidx\.benchmark\.suppressErrors"""),
             )
 
         // detekt's baseline-<module>.xml / detekt-baseline.xml and lint's lint-baseline.xml.

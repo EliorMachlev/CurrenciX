@@ -34,7 +34,8 @@ android {
         // CI runs these on an emulator (see the managed device below).
         // Macrobenchmark refuses emulators by default because their numbers
         // aren't representative; here they're used for with/without-profile
-        // comparisons and catching large regressions, not absolute timings.
+        // comparisons and catching large regressions, not absolute timings
+        // (exceptions.md #20).
         testInstrumentationRunnerArguments["androidx.benchmark.suppressErrors"] = "EMULATOR"
     }
 
