@@ -17,14 +17,14 @@ The split is permanent, not an unfinished migration: the XML feeds go through SA
 
 ## Provider contract
 
-Each provider is a class in `model/provider/` implementing `ApiProvider.Api`:
+Each provider is a class in [`model/provider/`](../../../../app/src/main/kotlin/com/eliormachlev/currencix/model/provider) implementing `ApiProvider.Api`:
 
 ```kotlin
 suspend fun getRates(context: Context?, date: LocalDate?, secrets: ApiSecrets): Result<ExchangeRates>
 suspend fun getTimeline(context: Context?, base: Currency, symbol: Currency, startDate: LocalDate, endDate: LocalDate, secrets: ApiSecrets = ApiSecrets.EMPTY): Result<Timeline>
 ```
 
-`ApiProvider` is an enum whose entries implement it, so switching provider is one DataStore write. Only each entry's `id` is stored, so reordering the enum is safe. Each provider maps its own schema to the shared model: a mapping from its response classes (`model/adapter/`), a SAX parser (Norges Bank, Bank Rossii) or `BankOfIsraelSdmxParser`. A historical date queries the history endpoint instead of the live one.
+`ApiProvider` is an enum whose entries implement it, so switching provider is one DataStore write. Only each entry's `id` is stored, so reordering the enum is safe. Each provider maps its own schema to the shared model: a mapping from its response classes ([`model/adapter/`](../../../../app/src/main/kotlin/com/eliormachlev/currencix/model/adapter)), a SAX parser (Norges Bank, Bank Rossii) or `BankOfIsraelSdmxParser`. A historical date queries the history endpoint instead of the live one.
 
 **AllRatesToday** is built from its [OpenAPI spec](https://allratestoday.com/api/openapi.json), `GET /api/v1/rates`: latest is `?source=EUR` (a past day adds `time=<day>T12:00:00Z`); a timeline is `?group=day&source=&target=&from=&to=<end + 1 day>` (`to` is exclusive), FOK asked for as DKK.
 
@@ -45,7 +45,7 @@ suspend fun getTimeline(context: Context?, base: Currency, symbol: Currency, sta
 
 ## When the cache is skipped
 
-- **Revalidating.** A refresh the user asks for (pull, back online, a new historical date) and the scheduled refresh run under `revalidating()`: `Cache-Control: max-age=0`, so an unchanged answer comes back as a few-byte `304`. Other loads let a fresh cached answer stand (`util/Revalidation.kt`).
+- **Revalidating.** A refresh the user asks for (pull, back online, a new historical date) and the scheduled refresh run under `revalidating()`: `Cache-Control: max-age=0`, so an unchanged answer comes back as a few-byte `304`. Other loads let a fresh cached answer stand ([`util/Revalidation.kt`](../../../../app/src/main/kotlin/com/eliormachlev/currencix/util/Revalidation.kt)).
 - **Back online.** When the connection returns, the converter fetches at once (`ConverterStatus`), after any refresh started offline has ended, and a failure from the outage stops counting, so "provider unreachable" drops immediately. Connectivity comes from `NetworkStatusLiveData`, which tracks validated networks from the callbacks rather than asking `ConnectivityManager` inside them, where the answer lags.
 - **Unreachable clears** on the next successful refresh, a `304` included.
 - **Timelines in pieces** (`timelineFetchRanges`): the tail since the last cached day, then what's missing before the first, a year at a time going back. The chart shows each piece as it lands and the window is stored after each, so a longer period reuses a shorter one and nothing is fetched twice. History is kept up to 10 years.
@@ -58,7 +58,7 @@ Two things keep a struggling main provider from holding the screen: after a fail
 
 ## Background refresh
 
-WorkManager, off by default (`worker/RateRefreshScheduler.kt`), following the provider's `PublicationSchedule`:
+WorkManager, off by default ([`worker/RateRefreshScheduler.kt`](../../../../app/src/main/kotlin/com/eliormachlev/currencix/worker/RateRefreshScheduler.kt)), following the provider's `PublicationSchedule`:
 
 - A provider that publishes at a known time is refreshed once, 30 minutes after each publication, as one-off work that queues the next: Frankfurter (16:00 Berlin), Norges Bank (16:00 Oslo), Bank of Canada (16:30 Toronto), Bank of Israel and Bank Rossii (15:30 local) daily, InforEuro on the 1st (06:00 Brussels).
 - One that updates many times a day (Open Exchangerates, AllRatesToday) follows **Refresh every** (15 min to 24 h, default 1 h, `RefreshInterval`); for scheduled providers that row is greyed out.

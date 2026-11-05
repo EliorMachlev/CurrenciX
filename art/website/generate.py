@@ -34,7 +34,7 @@ ICONS = sorted({
     # look and feel
     "palette", "contrast", "devices", "translate", "widgets", "accessibility_new",
     # privacy and security
-    "block", "lock", "visibility_off", "save", "shield",
+    "block", "lock", "visibility_off", "save", "verified_user", "shield",
     # open source and links
     "swap_horiz", "backspace",
 })

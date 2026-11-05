@@ -36,7 +36,7 @@ Any non-master push builds a debug APK artifact for review.
 
 Warnings and findings get fixed, not hidden.
 
-- **No suppressions of any kind:** `@Suppress`, `@file:Suppress`, `@SuppressLint`, `@SuppressWarnings`, `tools:ignore`, `//noinspection`, `ktlint-disable`, `nosemgrep`, a Dependency-Check `<suppress>`, a CodeQL exclusion, a Gradle verification trust entry, detekt or lint baseline entries, a rule turned off in `detekt.yml` / `lint.xml` / `.editorconfig`, `-dontwarn`, warning-silencing compiler flags, and in workflows a `continue-on-error` step, `# shellcheck disable=`, an actionlint `-ignore` or `# zizmor: ignore`. (`@OptIn` is an explicit opt-in, not a suppression.)
+- **No suppressions of any kind:** `@Suppress`, `@file:Suppress`, `@SuppressLint`, `@SuppressWarnings`, `tools:ignore`, `//noinspection`, `ktlint-disable`, `nosemgrep`, a Dependency-Check `<suppress>`, a CodeQL exclusion, a Gradle verification trust entry, detekt or lint baseline entries, a rule turned off in [`detekt.yml`](../../../config/detekt/detekt.yml) / `lint.xml` / [`.editorconfig`](../../../.editorconfig), `-dontwarn`, warning-silencing compiler flags, and in workflows a `continue-on-error` step, `# shellcheck disable=`, an actionlint `-ignore` or `# zizmor: ignore`. (`@OptIn` is an explicit opt-in, not a suppression.)
 - **No workaround that only makes a warning go away:** no wrapper, reflection or cast around a deprecated call, no rename or restructure just so an analyzer stops matching, no file excluded from a check. If the problem is still there, so is the warning.
 - **Fix the cause:** migrate off the deprecated API, split the function, make the parameters a type, remove the dead code.
 - **No real fix yet?** Leave the warning visible and say so in the PR.
@@ -48,7 +48,7 @@ The only exceptions are in [exceptions.md](exceptions.md), each with the reason 
 - [ ] `./gradlew check assembleDebug` passes (includes the Konsist tests)
 - [ ] New behaviour has tests; a bug fix has a test that fails without it (Robolectric for Android and Compose, plain JUnit otherwise)
 - [ ] `detekt` and `spotlessCheck` are clean, and nothing is suppressed beyond [exceptions.md](exceptions.md)
-- [ ] Changed a Compose screen? Look over its screenshots (the Screenshots workflow uploads them per push; locally `./gradlew :app:recordRoborazziFdroidDebug --tests "com.eliormachlev.currencix.screenshots.*"`)
+- [ ] Changed a Compose screen? Look over its screenshots (the Screenshots workflow uploads them per push, and on a branch uploads the ones that differ from master's as `screenshot-changes-<sha>`; locally `./gradlew :app:recordRoborazziFdroidDebug --tests "com.eliormachlev.currencix.screenshots.*"`)
 - [ ] Added a dependency? Check its licence works for F-Droid, and record its checksums ([build.md](build.md#dependency-verification))
 - [ ] Changed the website? `python3 .github/scripts/site-assets.py stamp docs` ([website.md](website.md))
 

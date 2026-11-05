@@ -5,7 +5,7 @@ CurrenciX is **MVVM** with a repository layer, in Kotlin: Compose screens in one
 | Topic | What's in it |
 |---|---|
 | [Data](data.md) | DataStore settings and Protobuf files, the stores, the rate cache, refresh state |
-| [Networking](networking.md) | The OkHttp client, Retrofit vs raw feeds, fallback and slow providers, background refresh, startup warm-up |
+| [Networking](networking.md) | The OkHttp client, Retrofit with kotlinx.serialization vs raw feeds, fallback and slow providers, background refresh, startup warm-up |
 | [UI](ui.md) | Navigation, two panes, sheets and text fields, theme, motion, right-to-left, predictive back |
 | [Features](features.md) | Converter, outside the app, cart and trips, receipt scanning, chart, rate alerts, problem reports |
 | [Website](../website.md) | The GitHub Pages site |
@@ -45,12 +45,13 @@ Konsist tests (`ArchitectureTest`) hold the View / ViewModel / Repository / Mode
 app/src/main/kotlin/com/eliormachlev/currencix/
 ├── CurrenciesApplication.kt   # Warms provider DNS and the stores, installs the crash recorder
 ├── model/                     # ApiProvider (8 providers + the Api interface), Currency (173), rates, timelines
-│   ├── adapter/               # JSON / XML adapters per provider
-│   └── provider/              # One class per provider; api/ holds the Retrofit interfaces
+│   ├── adapter/               # Per provider: decoded responses → rates / timelines, and the XML parsers
+│   └── provider/              # One class per provider; api/ holds the Retrofit interfaces and @Serializable responses
 ├── repository/                # Database and its stores, ExchangeRatesRepository, BackupManager, SavedProtos
 │   ├── cache/                 # Memory → disk → network rate cache
+│   ├── json/                  # The app's own JSON files: JsonTree, DuplicateFieldName
 │   └── persistence/           # PersistenceKey, CachedStore / PrefStore, Pref, SavedDataFile
-├── viewmodel/                 # main (conversion pipeline), preference, timeline, cart
+├── viewmodel/                 # main (conversion pipeline), preference, timeline, cart, util (StateFlow helpers)
 ├── view/
 │   ├── main/                  # MainActivity + the converter route
 │   ├── navigation/            # Screen keys, AppNavigator, AppNavHost, screen motion

@@ -1,8 +1,8 @@
 package com.eliormachlev.currencix.repository.cache
 
+import com.eliormachlev.currencix.util.AppDispatchers
 import com.eliormachlev.currencix.util.revalidating
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.plus
 import kotlinx.coroutines.withContext
@@ -56,7 +56,7 @@ internal class RateCache<K : RateCacheKey, V : Any>(
     private val nowMillis: () -> Long = System::currentTimeMillis,
     // Coroutine scope for in-flight fetches. SupervisorJob so a cancelled
     // caller doesn't cancel unrelated in-flight fetches sharing the scope.
-    private val scope: CoroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.IO),
+    private val scope: CoroutineScope = CoroutineScope(SupervisorJob() + AppDispatchers.production.io),
     // Per-key TTL policy. Defaulted so callers that don't need per-key
     // variance can pass a single duration once at construction.
     private val ttlFor: (K) -> Long = { DEFAULT_TTL_MS },

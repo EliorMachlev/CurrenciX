@@ -67,7 +67,7 @@ Security-vulnerability reporting is governed by [`SECURITY.md`](../../../SECURIT
 
 ## 10. Changes to the Terms
 
-The maintainer may update these Terms from time to time. Material changes will be reflected by updating the **Effective** and **Last reviewed** dates at the top of this document and noting the change in the project changelog. Continued use of the App after a change constitutes acceptance of the updated Terms.
+The maintainer may update these Terms from time to time. Material changes will be reflected by updating the **Effective** and **Last reviewed** dates at the top of this document and noting the change in the notes of the next release ([GitHub Releases](https://github.com/EliorMachlev/CurrenciX/releases)). Continued use of the App after a change constitutes acceptance of the updated Terms.
 
 ## 11. Governing law and venue
 

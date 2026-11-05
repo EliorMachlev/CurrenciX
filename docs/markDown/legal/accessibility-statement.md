@@ -68,13 +68,13 @@ The whole app is Jetpack Compose (Material 3), so accessibility comes from Compo
 
 The maintainer is a single individual and comprehensive third-party accessibility audits have not yet been commissioned. The following are known or possible limitations. If you encounter one, please report it using the contact channel below.
 
-- **Third-party audit**: A comprehensive third-party accessibility audit has not yet been commissioned. Assessment is currently maintainer-run using TalkBack, Android Accessibility Scanner, and CI lint rules.
+- **Third-party audit**: A comprehensive third-party accessibility audit has not yet been commissioned. Assessment is currently maintainer-run using TalkBack, Android Accessibility Scanner, and the automated checks in CI (see [Conformance assessment](#conformance-assessment)).
 - **Chart data exposure**: The Vico line chart's per-day data points are not individually reachable by accessibility services. The spoken summary and the statistics tiles cover the visible period; a per-day table or sonified view is not provided.
 - **Changing values aren't announced**: When a rate refresh changes the converted amount, TalkBack doesn't announce it by itself (no live region); the new value is read when focus reaches it.
-- **Localised content descriptions**: The app is in 32 languages (English plus 31 translations), and Android Lint fails the build on a string missing from any of them, so content descriptions are translated too; the quality of the translations inherited from the upstream `sal0max/currencies` project varies.
+- **Localised content descriptions**: The app is in 32 languages (English plus 31 translations), and Android Lint fails the build on a string missing from any of them, so content descriptions are translated too; the quality of the translations inherited from the upstream [Currencies](https://github.com/sal0max/currencies) project varies.
 - **Wallpaper colour palettes**: **Wallpaper colors** (on by default) builds the palette from the user's wallpaper at runtime, so its contrast can't be verified for every wallpaper ahead of time; the sample palettes checked pass, and Material's tonal palettes keep text and surfaces several tones apart. Turning it off in Settings → Look & Feel gives the fixed light / dark / pure-black themes, whose every role pair is checked.
 - **Custom on-screen keypad**: Amounts are typed on the app's own keypad; there is no option to use the system keyboard instead (a hardware keyboard works). Its rows shrink from 56 dp to 48 dp on short screens, so keys stay at the 48 dp target.
-- **RTL layouts**: In Hebrew, Arabic and Farsi, Settings, sheets and dialogs are laid out right to left; numbers, the converter and the chart stay left to right so digits and math read the same in every language. Labels mixing a right-to-left language with Latin currency codes or provider names keep the language's reading order (see [engineering/architecture/ui.md](../engineering/architecture/ui.md#right-to-left), *Right-to-left*).
+- **RTL layouts**: In Hebrew, Arabic and Farsi, Settings, sheets and dialogs are laid out right to left; numbers, the converter and the chart stay left to right so digits and math read the same in every language. Labels mixing a right-to-left language with Latin currency codes or provider names keep the language's reading order (see [Right-to-left](../engineering/architecture/ui.md#right-to-left) in the UI architecture).
 
 None of the above is a blocker to core currency-conversion functionality via TalkBack.
 
@@ -88,10 +88,10 @@ Response target: **14 days** for an initial acknowledgement, **30 days** for a s
 
 If you are not satisfied with the response and you are located in a jurisdiction with an enforcement body, you may escalate:
 
-- **Israel**: Commission for Equal Rights of Persons with Disabilities, Ministry of Justice (gov.il/he/departments/the_commission_for_equal_rights_of_persons_with_disabilities).
+- **Israel**: Commission for Equal Rights of Persons with Disabilities, Ministry of Justice ([gov.il](https://www.gov.il/he/departments/the_commission_for_equal_rights_of_persons_with_disabilities)).
 - **EU/EEA**: the enforcement body designated by your member state under the EAA (Art. 14).
-- **United Kingdom**: the Equality and Human Rights Commission (equalityhumanrights.com).
-- **United States**: U.S. Department of Justice, Civil Rights Division (ada.gov).
+- **United Kingdom**: the [Equality and Human Rights Commission](https://www.equalityhumanrights.com/).
+- **United States**: U.S. Department of Justice, Civil Rights Division ([ada.gov](https://www.ada.gov/)).
 
 ## Conformance assessment
 
@@ -99,7 +99,7 @@ Conformance is assessed by the maintainer using a combination of:
 
 1. **Manual review** with TalkBack on a physical Android device across representative screens (home, chart, settings, backup, language picker, currency picker).
 2. **Android Accessibility Scanner** for label / touch-target / contrast smoke checks.
-3. **Static-analysis rules** during CI (lint accessibility rules enabled).
+3. **Automated checks in CI:** Android Lint's accessibility rules, and `ScreenReaderLabelsTest`, which walks the merged semantics tree (the one TalkBack reads), across every window, of the keypad, cart rows, recent pairs, the currency and provider pickers, the cart's extras sheet and the text-selection sheet, and fails on anything tappable there that has no content description, text or field hint. Other screens are covered by the manual and render checks above and below.
 4. **Checks on the screenshot tests' renders**, run by the maintainer: every screen in English and Hebrew, light, dark and pure black, and at 200 % font size, checked for controls TalkBack can't name, text and icon contrast measured on the rendered pixels, and text cut off.
 5. **Community feedback** via the GitHub issue tracker.
 

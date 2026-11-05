@@ -22,13 +22,13 @@ The build's own tools and compilers: Gradle and the Android Gradle plugin, and c
 
 | # | Tool and rule | Excluded for | Marked in |
 |---|---|---|---|
-| 4 | Qodana / IntelliJ `UnstableApiUsage` | the Gradle Managed Device (`ManagedVirtualDevice`) | `baselineprofile/build.gradle.kts` |
-| 5 | Qodana / IntelliJ `UnstableApiUsage` | `testedApks` (the tested app's id for benchmarks) | `baselineprofile/build.gradle.kts` |
-| 6 | Qodana / IntelliJ `UnstableApiUsage` | `generateLocaleConfig` | `app/build.gradle.kts` |
-| 8 | CodeQL `java/useless-null-check` | `QuickConversionsSheet` (a check the Kotlin compiler generates, line 1) | `.github/codeql/exceptions.yml`, applied by `.github/workflows/codeql.yaml` |
-| 9 | Gradle dependency verification, `trusted-artifacts` | libraries' `-sources.jar` and `-javadoc.jar` (downloaded only by IDE syncs) | `gradle/verification-metadata.xml` |
-| 10 | CodeQL `java/field-masks-super-field` | the Compose compiler's `$stable` field, in 2 files (line 1) | `.github/codeql/exceptions.yml`, applied by `.github/workflows/codeql.yaml` |
-| 11 | CodeQL `java/local-variable-is-never-read` | the cast in data objects' generated `equals()`, in 11 files (line 1) | `.github/codeql/exceptions.yml`, applied by `.github/workflows/codeql.yaml` |
+| [4](#4-to-6-incubating-android-gradle-plugin-apis) | Qodana / IntelliJ `UnstableApiUsage` | the Gradle Managed Device (`ManagedVirtualDevice`) | [`baselineprofile/build.gradle.kts`](../../../baselineprofile/build.gradle.kts) |
+| [5](#4-to-6-incubating-android-gradle-plugin-apis) | Qodana / IntelliJ `UnstableApiUsage` | `testedApks` (the tested app's id for benchmarks) | `baselineprofile/build.gradle.kts` |
+| [6](#4-to-6-incubating-android-gradle-plugin-apis) | Qodana / IntelliJ `UnstableApiUsage` | `generateLocaleConfig` | [`app/build.gradle.kts`](../../../app/build.gradle.kts) |
+| [8](#8-codeql-javauseless-null-check-on-quickconversionssheet) | CodeQL `java/useless-null-check` | `QuickConversionsSheet` (a check the Kotlin compiler generates, line 1) | [`.github/codeql/exceptions.yml`](../../../.github/codeql/exceptions.yml), applied by [`.github/workflows/codeql.yaml`](../../../.github/workflows/codeql.yaml) |
+| [9](#9-dependency-verification--sourcesjar-and--javadocjar) | Gradle dependency verification, `trusted-artifacts` | libraries' `-sources.jar` and `-javadoc.jar` (downloaded only by IDE syncs) | [`gradle/verification-metadata.xml`](../../../gradle/verification-metadata.xml) |
+| [10](#10-codeql-javafield-masks-super-field-on-the-compose-compilers-stable) | CodeQL `java/field-masks-super-field` | the Compose compiler's `$stable` field, in 2 files (line 1) | `.github/codeql/exceptions.yml`, applied by `.github/workflows/codeql.yaml` |
+| [11](#11-codeql-javalocal-variable-is-never-read-in-data-objects-equals) | CodeQL `java/local-variable-is-never-read` | the cast in data objects' generated `equals()`, in 11 files (line 1) | `.github/codeql/exceptions.yml`, applied by `.github/workflows/codeql.yaml` |
 
 #### 4 to 6. Incubating Android Gradle Plugin APIs
 
@@ -39,14 +39,14 @@ The build's own tools and compilers: Gradle and the Android Gradle plugin, and c
 
 #### 8. CodeQL: `java/useless-null-check` on `QuickConversionsSheet`
 
-- **What it reports:** "This check is useless. `tmpEnum` cannot be null at this check", at line 1 of `view/main/compose/QuickConversionsSheet.kt`.
-- **Why the finding is wrong:** the file has no such check, and no variable called `tmpEnum`. CodeQL reads Kotlin as the compiler lowers it, and the null check is one the Kotlin/Compose compiler generates there (the only enum in the file is the nullable `PillSide` that picks the currency picker's side); that's why it sits on line 1, where no code is. It first showed up when PR #203 turned on CodeQL for Kotlin.
+- **What it reports:** "This check is useless. `tmpEnum` cannot be null at this check", at line 1 of [`view/main/compose/QuickConversionsSheet.kt`](../../../app/src/main/kotlin/com/eliormachlev/currencix/view/main/compose/QuickConversionsSheet.kt).
+- **Why the finding is wrong:** the file has no such check, and no variable called `tmpEnum`. CodeQL reads Kotlin as the compiler lowers it, and the null check is one the Kotlin/Compose compiler generates there (the only enum in the file is the nullable `PillSide` that picks the currency picker's side); that's why it sits on line 1, where no code is. It first showed up when PR [#203](https://github.com/EliorMachlev/CurrenciX/pull/203) turned on CodeQL for Kotlin.
 - **Why it can't be fixed:** the check isn't in the source, so no edit to the source removes it except restructuring working code until the compiler happens to generate something else, which is a cosmetic workaround.
-- **What is excluded:** that one finding: the rule, that file, line 1, and a message naming `tmpEnum` must all match (`.github/codeql/exceptions.yml`). The Kotlin analysis writes its results, `.github/scripts/codeql-exceptions.py` takes that finding out, and the rest is uploaded. The rule still runs everywhere, that file included: a real useless null check in it, on any other line, is still reported. The step fails when the entry stops matching (a newer Kotlin generating different code), so the exception can't outlive the finding.
+- **What is excluded:** that one finding: the rule, that file, line 1, and a message naming `tmpEnum` must all match ([`.github/codeql/exceptions.yml`](../../../.github/codeql/exceptions.yml)). The Kotlin analysis writes its results, [`.github/scripts/codeql-exceptions.py`](../../../.github/scripts/codeql-exceptions.py) takes that finding out, and the rest is uploaded. The rule still runs everywhere, that file included: a real useless null check in it, on any other line, is still reported. The step fails when the entry stops matching (a newer Kotlin generating different code), so the exception can't outlive the finding.
 
 #### 9. Dependency verification: `-sources.jar` and `-javadoc.jar`
 
-- **What it reports:** an IDE's Gradle sync (Android Studio, and Qodana, which imports the project the same way) fails dependency verification: it downloads each library's `-sources.jar` (and `-javadoc.jar` where one exists), and `gradle/verification-metadata.xml` lists no checksum for them.
+- **What it reports:** an IDE's Gradle sync (Android Studio, and Qodana, which imports the project the same way) fails dependency verification: it downloads each library's `-sources.jar` (and `-javadoc.jar` where one exists), and [`gradle/verification-metadata.xml`](../../../gradle/verification-metadata.xml) lists no checksum for them.
 - **Why it can't be fixed:** the build itself never resolves these files, so recording them takes an IDE sync against an empty cache, and which ones a sync fetches depends on the IDE and its version. Listing them would mean regenerating the file from every developer's IDE and on every IDE update. Not downloading sources (`idea { module { isDownloadSources = false } }`) avoids the failure only by taking library sources away in the IDE.
 - **Why it's safe:** these files are documentation for the IDE. Nothing compiles against them, nothing runs them, and none goes into an APK, the SBOM or a test. Gradle's own documentation gives this exclusion for exactly this case.
 - **What is excluded:** files named `*-sources.jar` and `*-javadoc.jar` are accepted without a checksum (`<trusted-artifacts>` in the file's configuration). Every other file the build downloads (JARs, AARs, POMs, Gradle module files, plugins) is still checked, and a missing or changed checksum still fails the build.
@@ -71,11 +71,11 @@ Code the app depends on but doesn't write: libraries and the phone's framework.
 
 | # | Tool and rule | Excluded for | Marked in |
 |---|---|---|---|
-| 3 | LeakCanary IgnoredReferenceMatcher (debug builds) | `ResourcesImpl.mAppContext` (vendor framework field) | `app/src/debug/kotlin/com/eliormachlev/currencix/leaks/LeakDetection.kt` |
-| 7 | OWASP Dependency-Check `CVE-2018-8909`, `CVE-2023-22737` | `wire-runtime` (Square's Wire Protobuf library) | `config/owasp/suppressions.xml`, passed in by `.github/workflows/owasp-dependency-check.yaml` |
-| 17 | Licensee: a license named by URL only | `bcprov` (Bouncy Castle), its license page | `licensee {}` in `app/build.gradle.kts` (`allowUrl`) |
-| 18 | Licensee: no license declared | `tesseract4android` 4.8.0 (Tesseract4Android) | `licensee {}` in `app/build.gradle.kts` (`allowDependency`) |
-| 19 | Dependabot: `mcp` 1.29.0 (GHSA-rwrf-2pqf-9j8j, GHSA-5h93-6whr-6q8j, GHSA-w4fh-qvv9-3v23) | Semgrep's MCP SDK, in `.github/semgrep/requirements.txt` | Dismissed on GitHub: Dependabot alerts #44, #45 and #46, "vulnerable code is not actually used" |
+| [3](#3-leakcanary-resourcesimplmappcontext) | LeakCanary IgnoredReferenceMatcher (debug builds) | `ResourcesImpl.mAppContext` (vendor framework field) | [`app/src/debug/kotlin/com/eliormachlev/currencix/leaks/LeakDetection.kt`](../../../app/src/debug/kotlin/com/eliormachlev/currencix/leaks/LeakDetection.kt) |
+| [7](#7-owasp-dependency-check-cve-2018-8909-and-cve-2023-22737-on-wire-runtime) | OWASP Dependency-Check `CVE-2018-8909`, `CVE-2023-22737` | `wire-runtime` (Square's Wire Protobuf library) | [`config/owasp/suppressions.xml`](../../../config/owasp/suppressions.xml), passed in by [`.github/workflows/owasp-dependency-check.yaml`](../../../.github/workflows/owasp-dependency-check.yaml) |
+| [17](#17-licensee-bouncy-castles-license-named-by-url) | Licensee: a license named by URL only | `bcprov` (Bouncy Castle), its license page | `licensee {}` in [`app/build.gradle.kts`](../../../app/build.gradle.kts) (`allowUrl`) |
+| [18](#18-licensee-tesseract4android-declares-no-license) | Licensee: no license declared | `tesseract4android` 4.8.0 (Tesseract4Android) | `licensee {}` in `app/build.gradle.kts` (`allowDependency`) |
+| [19](#19-dependabot-mcp-1290-in-semgreps-packages) | Dependabot: `mcp` 1.29.0 (GHSA-rwrf-2pqf-9j8j, GHSA-5h93-6whr-6q8j, GHSA-w4fh-qvv9-3v23) | Semgrep's MCP SDK, in [`.github/semgrep/requirements.txt`](../../../.github/semgrep/requirements.txt) | Dismissed on GitHub: Dependabot alerts [#44](https://github.com/EliorMachlev/CurrenciX/security/dependabot/44), [#45](https://github.com/EliorMachlev/CurrenciX/security/dependabot/45) and [#46](https://github.com/EliorMachlev/CurrenciX/security/dependabot/46), "vulnerable code is not actually used" |
 
 #### 3. LeakCanary: `ResourcesImpl.mAppContext`
 
@@ -88,7 +88,7 @@ Code the app depends on but doesn't write: libraries and the phone's framework.
 - **What it reports:** two vulnerabilities in `wire-runtime-jvm-7.1.0.jar`, which it identifies as Wire Swiss's products: `CVE-2018-8909` (CVSS 7.5, `cpe:2.3:a:wire:wire`) and `CVE-2023-22737` (medium).
 - **Why the finding is wrong:** CVE-2018-8909 is in the Wire secure messenger (Wire Swiss GmbH), and CVE-2023-22737 in `wire-server`, that messenger's backend (a missing permission check on removing bots from a conversation). The app's library is Square's Wire, the Protobuf runtime (`com.squareup.wire`) that reads and writes the saved carts, fees and alerts. Dependency-Check names a jar's product from evidence such as its file name, and both are called "Wire". OSV-Scanner, which matches the same library by its package URL, reports nothing for it.
 - **Why it can't be fixed:** the match comes from the name, so no version of Square's Wire changes it; the only way to make it go away would be removing the library.
-- **What is excluded:** those two CVEs, each in its own entry, only for files under `com.squareup.wire/` named `wire-runtime…` (`config/owasp/suppressions.xml`, handed to the scan with `--suppression`). Any other CVE matched to that jar, and either CVE matched to anything else, is still reported; OSV-Scanner still checks the library on every PR.
+- **What is excluded:** those two CVEs, each in its own entry, only for files under `com.squareup.wire/` named `wire-runtime…` ([`config/owasp/suppressions.xml`](../../../config/owasp/suppressions.xml), handed to the scan with `--suppression`). Any other CVE matched to that jar, and either CVE matched to anything else, is still reported; OSV-Scanner still checks the library on every PR.
 
 #### 17. Licensee: Bouncy Castle's license, named by URL
 
@@ -116,17 +116,17 @@ Code the app depends on but doesn't write: libraries and the phone's framework.
 
 ### Action exceptions
 
-The GitHub Actions workflows in `.github/workflows/` and what their scans report about the repository on GitHub: a step allowed to fail without failing its job (`continue-on-error`), a finding left out by the workflow linters, actionlint and the ShellCheck it runs on each `run:` script (`# shellcheck disable=`, `-ignore`), or by zizmor (`# zizmor: ignore`), and an alert dismissed on GitHub's Security tab.
+The GitHub Actions workflows in [`.github/workflows/`](../../../.github/workflows) and what their scans report about the repository on GitHub: a step allowed to fail without failing its job (`continue-on-error`), a finding left out by the workflow linters, actionlint and the ShellCheck it runs on each `run:` script (`# shellcheck disable=`, `-ignore`), or by zizmor (`# zizmor: ignore`), and an alert dismissed on GitHub's Security tab.
 
 | # | Tool and rule | Excluded for | Marked in |
 |---|---|---|---|
-| 14 | OpenSSF Scorecard `BranchProtectionID` | the review requirements on `master` | Dismissed on GitHub: code scanning alert #379, "won't fix" |
-| 15 | OpenSSF Scorecard `CodeReviewID` | changes merged without a second person's approval | Dismissed on GitHub: code scanning alert #387, "won't fix" |
-| 16 | typos extend-words | "Infor" (InforEuro) and "mis" (mis-issued), in the docs | `_typos.toml`, read by `.github/workflows/docs-checks.yaml` |
+| [14](#14-scorecard-branch-protection-on-master) | OpenSSF Scorecard `BranchProtectionID` | the review requirements on `master` | Dismissed on GitHub: code scanning alert [#379](https://github.com/EliorMachlev/CurrenciX/security/code-scanning/379), "won't fix" |
+| [15](#15-scorecard-code-review) | OpenSSF Scorecard `CodeReviewID` | changes merged without a second person's approval | Dismissed on GitHub: code scanning alert [#387](https://github.com/EliorMachlev/CurrenciX/security/code-scanning/387), "won't fix" |
+| [16](#16-typos-infor-and-mis) | typos extend-words | "Infor" (InforEuro) and "mis" (mis-issued), in the docs | [`_typos.toml`](../../../_typos.toml), read by [`.github/workflows/docs-checks.yaml`](../../../.github/workflows/docs-checks.yaml) |
 
 #### 14. Scorecard: Branch-Protection on `master`
 
-- **What it reports:** "branch protection is not maximal" (score 5 of 10), from `.github/workflows/scorecard.yaml`. When it was dismissed: stale-review dismissal off, one approving review required rather than two, no code-owner review, no approval of the last push.
+- **What it reports:** "branch protection is not maximal" (score 5 of 10), from [`.github/workflows/scorecard.yaml`](../../../.github/workflows/scorecard.yaml). When it was dismissed: stale-review dismissal off, one approving review required rather than two, no code-owner review, no approval of the last push.
 - **Why it can't be fixed:** each missing setting asks for review by someone other than the author, and the project has one maintainer. Requiring two reviewers, code owners, or approval of the last push would leave nobody able to approve, so no change could be merged.
 - **What still guards `master`:** the "Protection" ruleset. Changes arrive only through pull requests; force pushes and deletion are blocked; each PR must be up to date with `master` and pass the required checks (build, tests, lint, detekt, spotless, screenshots, fuzzing, Semgrep, Gitleaks, OSV-Scanner, dependency review, Qodana, CodeQL); and code scanning blocks a merge on CodeQL, Qodana, Semgrep or detekt findings.
 - **What is excluded:** that one alert, dismissed with the reason "Single dev, can't do a real review." Scorecard still runs every week and on every push to `master`, and still scores the check; a new Branch-Protection alert, after the setup changes, is reported again.
@@ -140,10 +140,10 @@ The GitHub Actions workflows in `.github/workflows/` and what their scans report
 
 #### 16. typos: "Infor" and "mis"
 
-- **What it reports:** `Infor` "should be `Info`, `Inform`" (15 times, wherever the docs name InforEuro) and `mis` "should be `miss`, `mist`" (once, "a certificate mis-issued" in `security.md`).
+- **What it reports:** `Infor` "should be `Info`, `Inform`" (15 times, wherever the docs name InforEuro) and `mis` "should be `miss`, `mist`" (once, "a certificate mis-issued" in [`security.md`](security.md)).
 - **Why the finding is wrong:** InforEuro is the European Commission's exchange rate service, and typos reads the first part of the name as a word on its own. "Mis-issued" is the standard term for a certificate a CA issued wrongly; typos splits it at the hyphen.
 - **Why it can't be fixed:** the name is the service's own, and rewording "mis-issued" only so the check stops matching is a cosmetic workaround.
-- **What is excluded:** those two words, added to typos' dictionary in `_typos.toml` (`[default.extend-words]`). Every other word in the docs is still checked, and no file is left out. `NoSuppressionsTest` fails on any other typos dictionary entry or exclusion.
+- **What is excluded:** those two words, added to typos' dictionary in [`_typos.toml`](../../../_typos.toml) (`[default.extend-words]`). Every other word in the docs is still checked, and no file is left out. `NoSuppressionsTest` fails on any other typos dictionary entry or exclusion.
 
 **Not checked by `NoSuppressionsTest`:** 14 and 15 are dismissals on GitHub, not markers in a file, so no test sees them. Check the dismissed alerts on the Security tab against this list.
 
@@ -153,10 +153,10 @@ The app's own code, written as it is on purpose.
 
 | # | Tool and rule | Excluded for | Marked in |
 |---|---|---|---|
-| 1 | Semgrep `java.android.security.exported_activity.exported_activity` | `MainActivity` | `app/src/main/AndroidManifest.xml` |
-| 2 | Semgrep `java.android.security.exported_activity.exported_activity` | `ConvertTextActivity` | `app/src/main/AndroidManifest.xml` |
-| 12 | CodeQL `java/reference-equality-of-boxed-types` | `TimelineChart` (`min == max` on two `Double`s) | `.github/codeql/exceptions.yml`, applied by `.github/workflows/codeql.yaml` |
-| 13 | CodeQL `java/android/missing-certificate-pinning` | `CertificatePinning` (re-pin's request for a provider's current certificates) | `.github/codeql/exceptions.yml`, applied by `.github/workflows/codeql.yaml` |
+| [1](#1-mainactivity-is-exported) | Semgrep `java.android.security.exported_activity.exported_activity` | `MainActivity` | [`app/src/main/AndroidManifest.xml`](../../../app/src/main/AndroidManifest.xml) |
+| [2](#2-converttextactivity-is-exported) | Semgrep `java.android.security.exported_activity.exported_activity` | `ConvertTextActivity` | `app/src/main/AndroidManifest.xml` |
+| [12](#12-codeql-javareference-equality-of-boxed-types-on-timelinechart) | CodeQL `java/reference-equality-of-boxed-types` | `TimelineChart` (`min == max` on two `Double`s) | [`.github/codeql/exceptions.yml`](../../../.github/codeql/exceptions.yml), applied by [`.github/workflows/codeql.yaml`](../../../.github/workflows/codeql.yaml) |
+| [13](#13-codeql-javaandroidmissing-certificate-pinning-on-certificatepinning) | CodeQL `java/android/missing-certificate-pinning` | `CertificatePinning` (re-pin's request for a provider's current certificates) | `.github/codeql/exceptions.yml`, applied by `.github/workflows/codeql.yaml` |
 
 #### 1. `MainActivity` is exported
 
@@ -175,14 +175,14 @@ The app's own code, written as it is on purpose.
 
 #### 12. CodeQL: `java/reference-equality-of-boxed-types` on `TimelineChart`
 
-- **What it reports:** "Suspicious reference comparison of boxed numerical values" at `view/timeline/TimelineChart.kt`, `if (min == null || max == null || min == max) return`.
+- **What it reports:** "Suspicious reference comparison of boxed numerical values" at [`view/timeline/TimelineChart.kt`](../../../app/src/main/kotlin/com/eliormachlev/currencix/view/timeline/TimelineChart.kt), `if (min == null || max == null || min == max) return`.
 - **Why the finding is wrong:** `min` and `max` are `Double?`, smart-cast to `Double` by the null checks before it. Kotlin's `==` compares values, never references, and for statically known `Double`s it is IEEE equality. The rule is written for Java's `==` on `Double` objects, and CodeQL applies it to this Kotlin comparison.
 - **Why it can't be fixed:** the comparison is already correct. Rewriting it only so the rule stops matching is a cosmetic workaround.
 - **What is excluded:** that one finding: the rule, that file, its line and its message. The step fails when the line moves, so the entry is checked whenever the function changes.
 
 #### 13. CodeQL: `java/android/missing-certificate-pinning` on `CertificatePinning`
 
-- **What it reports:** "This network call does not implement certificate pinning", at `util/CertificatePinning.kt`, the request in `authorityPinsOf`.
+- **What it reports:** "This network call does not implement certificate pinning", at [`util/CertificatePinning.kt`](../../../app/src/main/kotlin/com/eliormachlev/currencix/util/CertificatePinning.kt), the request in `authorityPinsOf`.
 - **Why the finding is wrong:** this is the one connection that must not be pinned. **Re-pin to current certificates** (Settings → Security & privacy → Advanced, asked first) is for a provider that moved to a CA its pins don't list: every pinned request to it fails until an app update. Re-pin connects with the phone's own trust, takes the CA keys from the chain the phone verified, and makes them that host's pins. Every other request the app makes goes through the pinned clients ([security.md](security.md#certificate-pinning)).
 - **Why it can't be fixed:** pinning this request would check the new chain against the old pins, which is the failure re-pin exists to recover from; it could never take a new CA. The alternative is removing re-pin, leaving a provider unusable until a release.
 - **What still guards it:** the client (`HttpClientProvider.unpinnedClient`) is used only by `currentPins`. It follows no redirects, so the chain is the asked host's own, sends a `HEAD` and reads nothing but the handshake. It reaches only the main and fallback providers' hosts, and only when the user confirms the prompt, which says to do it on a trusted network. The pins it takes are shown as "pins taken on this phone", and **Use the built-in pins** drops them.
@@ -190,7 +190,7 @@ The app's own code, written as it is on purpose.
 
 ### Decided
 
-1 and 2 decided by the maintainer on 2026-10-06, 3 on 2026-10-12, 4 to 6 on 2026-10-18 (PR #181), 7 to 9 on 2026-10-25 (PR #203); `CVE-2023-22737` in 7, and 10 to 13, on 2026-11-04; 14 and 15, dismissed on GitHub, on 2026-10-23, and recorded here on 2026-11-04; 16 to 18 on 2026-11-04; 19, dismissed on GitHub, on 2026-11-05.
+1 and 2 decided by the maintainer on 2026-10-06, 3 on 2026-10-12, 4 to 6 on 2026-10-18 (PR [#181](https://github.com/EliorMachlev/CurrenciX/pull/181)), 7 to 9 on 2026-10-25 (PR #203); `CVE-2023-22737` in 7, and 10 to 13, on 2026-11-04; 14 and 15, dismissed on GitHub, on 2026-10-23, and recorded here on 2026-11-04; 16 to 18 on 2026-11-04; 19, dismissed on GitHub, on 2026-11-05.
 
 ## Adding an exception
 
@@ -208,6 +208,6 @@ When the tool is fixed upstream, or the code changes so the finding no longer ap
 
 These have no real fix either, but nothing is excluded for them. They show up in every report.
 
-- **Scorecard's Vulnerabilities, five advisories in Semgrep's own packages** (`.github/semgrep/requirements.txt`): four in `mcp` 1.29.0 (fixed in 1.30.0) and one in `opentelemetry-api` 1.37.0 (fixed in 1.45.1). Semgrep 1.183.0 requires `mcp==1.29.0` and `opentelemetry-api~=1.37.0`, so neither fix installs without breaking Semgrep's own requirements. They go when a Semgrep release raises its pins (Dependabot recompiles the file). Three of the `mcp` advisories were also Dependabot alerts #44 to #46, dismissed as exception 19; Scorecard still shows all five. (OSV-Scanner doesn't: it reads only the app's SBOM, which has no Python packages.) Semgrep runs only in CI, on this repository's code; the app doesn't ship it.
-- **zizmor `self-repository`** (low), on `baseline-profile.yaml`'s call to `commit-baseline-profiles.yaml`: zizmor asks for GitHub's `$/` self-repository syntax instead of `./`. GitHub supports it, but actionlint (a required check) doesn't yet, and rejects the file. It goes when an actionlint release accepts `$/`. It's below the level that fails the zizmor job, and stays on the Security tab.
+- **Scorecard's Vulnerabilities, five advisories in Semgrep's own packages** ([`.github/semgrep/requirements.txt`](../../../.github/semgrep/requirements.txt)): four in `mcp` 1.29.0 (fixed in 1.30.0) and one in `opentelemetry-api` 1.37.0 (fixed in 1.45.1). Semgrep 1.183.0 requires `mcp==1.29.0` and `opentelemetry-api~=1.37.0`, so neither fix installs without breaking Semgrep's own requirements. They go when a Semgrep release raises its pins (Dependabot recompiles the file). Three of the `mcp` advisories were also Dependabot alerts [#44 to #46](https://github.com/EliorMachlev/CurrenciX/security/dependabot?q=is%3Adismissed), dismissed as exception 19; Scorecard still shows all five. (OSV-Scanner doesn't: it reads only the app's SBOM, which has no Python packages.) Semgrep runs only in CI, on this repository's code; the app doesn't ship it.
+- **zizmor `self-repository`** (low), on [`baseline-profile.yaml`](../../../.github/workflows/baseline-profile.yaml)'s call to [`commit-baseline-profiles.yaml`](../../../.github/workflows/commit-baseline-profiles.yaml): zizmor asks for GitHub's `$/` self-repository syntax instead of `./`. GitHub supports it, but actionlint (a required check) doesn't yet, and rejects the file. It goes when an actionlint release accepts `$/`. It's below the level that fails the zizmor job, and stays on the Security tab.
 - **Lint `Typos`, twice, in `values-tr/strings_currencies.xml`:** "Gine" in the Turkish names of the Guinean franc and the Papua New Guinean kina. It is the Turkish word for Guinea; lint's word list takes it for a misspelling of "yine".
