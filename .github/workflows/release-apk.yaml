@@ -1,16 +1,16 @@
 name: Release
 
-# The project's release: builds the fdroid release APKs signed with the
+# The project's release: builds the fdroid release APK (one, for every phone) signed with the
 # release key and Android 17's post-quantum hybrid signature (APK Signature
-# Scheme v3.2) and publishes them as a GitHub release.
+# Scheme v3.2) and publishes it as a GitHub release.
 #
 # - Push a tag "v<versionName>" (e.g. v1.23.0) on a commit of master: the
-#   release is published with the APKs, their SBOM (CycloneDX JSON) and
+#   release is published with the APK, its SBOM (CycloneDX JSON) and
 #   checksums, its notes written from the commits since the last
 #   release (.github/scripts/release-notes.py). F-Droid picks up the same tag
 #   (UpdateCheckMode: Tags).
 # - Or start it by hand (Actions → Release → Run workflow): it builds and
-#   uploads the signed APKs as an artifact and shows the notes the release
+#   uploads the signed APK as an artifact and shows the notes the release
 #   would get, without a release; for checking a build before tagging it.
 #
 # Only these two can start it, so the signing keys never reach a pull request.
@@ -129,17 +129,15 @@ jobs:
             echo "HYBRID_PQC_LINEAGE=$GITHUB_WORKSPACE/signing-lineages/pqc-lineage"
           } > secrets.properties
 
-      # signApksHybridFdroidRelease re-signs each APK and verifies it.
-      # -PabiVersionNames names each per-CPU APK's type (1.23.0-arm64);
-      # F-Droid's own builds of the same tag keep the plain name.
-      - name: Build the signed fdroid release APKs
-        run: ./gradlew assembleFdroidRelease -PabiVersionNames
+      # signApksHybridFdroidRelease re-signs the APK and verifies it.
+      - name: Build the signed fdroid release APK
+        run: ./gradlew assembleFdroidRelease
 
       - name: Remove the signing keys
         if: always()
         run: rm -rf "$RUNNER_TEMP/signing" secrets.properties
 
-      # The software bill of materials: every library the APKs ship, with
+      # The software bill of materials: every library the APK ships, with
       # versions, hashes and licences (cyclonedxDirectBom in app/build.gradle.kts).
       - name: Write the SBOM
         env:
@@ -153,7 +151,7 @@ jobs:
         working-directory: app/build/outputs/apk/fdroid/release
         run: sha256sum ./*-release.apk ./*-sbom.cdx.json | sed 's| \./| |' > SHA256SUMS
 
-      - name: Upload the APKs
+      - name: Upload the APK
         id: upload
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
@@ -164,15 +162,15 @@ jobs:
             app/build/outputs/apk/fdroid/release/SHA256SUMS
           if-no-files-found: error
 
-      - name: Link the APKs in the run summary
+      - name: Link the APK in the run summary
         env:
           ARTIFACT_URL: ${{ steps.upload.outputs.artifact-url }}
           VERSION: ${{ steps.version.outputs.name }}
         run: |
           {
-            echo "### Signed release APKs, CurrenciX ${VERSION}"
+            echo "### Signed release APK, CurrenciX ${VERSION}"
             echo
-            echo "[Download the APKs](${ARTIFACT_URL}) (a zip: one per CPU type, the universal one that installs everywhere, and the SBOM)."
+            echo "[Download the APK](${ARTIFACT_URL}) (a zip: the APK, which installs on any phone, its SBOM and SHA256SUMS)."
             echo
             echo "Signed with the release key (v3.0, all Android versions) and the post-quantum hybrid signature (v3.2, Android 17+)."
           } >> "$GITHUB_STEP_SUMMARY"
@@ -188,7 +186,7 @@ jobs:
           } >> "$GITHUB_STEP_SUMMARY"
 
   # Publishing is a job of its own, the only one that may write to the
-  # repository, and it never sees the signing keys: it takes the signed APKs
+  # repository, and it never sees the signing keys: it takes the signed APK
   # the build uploaded.
   publish:
     if: github.ref_type == 'tag'
@@ -212,7 +210,7 @@ jobs:
           fetch-depth: 0
           persist-credentials: false
 
-      - name: Download the signed APKs
+      - name: Download the signed APK
         uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
           name: currencix-${{ needs.build.outputs.version }}-signed
@@ -238,8 +236,6 @@ jobs:
             python3 .github/scripts/release-notes.py "$TAG"
             echo
             echo "---"
-            echo
-            echo "**Which APK?** \`universal\` installs on any phone. The others are smaller, one per CPU type (\`arm64-v8a\` fits most phones)."
             echo
             echo "Signed with the release key (all Android versions) and the post-quantum hybrid signature (Android 17 and later). Certificate SHA-256: \`B0:87:B0:31:48:D7:73:B4:CE:DA:C0:24:79:F5:0B:2F:EB:C5:C8:08:AF:17:2E:16:7B:2E:D0:BB:68:E1:E0:59\`. The libraries it ships, with versions and licences: \`currencix-${VERSION}-sbom.cdx.json\` (CycloneDX). Checksums in \`SHA256SUMS\`; where each file was built: \`gh attestation verify <file> --repo EliorMachlev/CurrenciX\`."
           } > notes.md

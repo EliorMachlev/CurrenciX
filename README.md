@@ -58,7 +58,7 @@ Eight sources, and a fallback for when your main one is down. Details in [provid
 
 ## 📦 Get it
 
-CurrenciX hasn't had its first release yet. Releases will be published on [GitHub Releases](https://github.com/EliorMachlev/CurrenciX/releases): signed APKs (one per CPU type, and a universal one), their `SHA256SUMS`, and an SBOM of every library they ship. Android 17 and later also check a post-quantum signature. An F-Droid build is prepared.
+CurrenciX hasn't had its first release yet. Releases will be published on [GitHub Releases](https://github.com/EliorMachlev/CurrenciX/releases): one signed APK that installs on any phone, its `SHA256SUMS`, and an SBOM of every library they ship. Android 17 and later also check a post-quantum signature. An F-Droid build is prepared.
 
 The upstream **Currencies** app is on [Google Play](https://play.google.com/store/apps/details?id=de.salomax.currencies) and [F-Droid](https://f-droid.org/packages/de.salomax.currencies/) under its own package name. To build CurrenciX (`com.eliormachlev.currencix`) yourself:
 
