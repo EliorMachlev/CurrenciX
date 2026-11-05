@@ -5,11 +5,11 @@
 Tag a commit of `master` `v<versionName>` (`v1.23.0`) and push it. [`release-apk.yaml`](../../../.github/workflows/release-apk.yaml):
 
 1. checks the tag names the version being built and is on `master`;
-2. decodes the keystores from the `release` environment's secrets into the runner's temp folder, builds `assembleFdroidRelease -PabiVersionNames` (signing and verifying every APK), deletes the keys;
-3. writes the SBOM (`:app:cyclonedxDirectBom`, CycloneDX 1.6 of the fdroid release runtime classpath) and `SHA256SUMS`, and uploads the five APKs with them;
+2. decodes the keystores from the `release` environment's secrets into the runner's temp folder, builds `assembleFdroidRelease` (signing and verifying the APK), deletes the keys;
+3. writes the SBOM (`:app:cyclonedxDirectBom`, CycloneDX 1.6 of the fdroid release runtime classpath) and `SHA256SUMS`, and uploads the APK with them;
 4. a second job, the only one allowed to write and one that never sees the keys, attests the files' build provenance and publishes the GitHub release "CurrenciX <version>".
 
-A tag whose version has a `-` (`v1.24.0-beta1`) publishes a GitHub pre-release instead of a release. Run by hand instead (no tag), the workflow builds the signed APKs, uploads them with the SBOM and `SHA256SUMS` as a run artifact, and previews the notes a tag would get; it publishes nothing. Nothing else can start it, so PRs never see the keys, and it builds without Gradle's cache (`cache-disabled`), so nothing a branch's run cached can reach the signed APKs.
+A tag whose version has a `-` (`v1.24.0-beta1`) publishes a GitHub pre-release instead of a release. Run by hand instead (no tag), the workflow builds the signed APK, uploads it with the SBOM and `SHA256SUMS` as a run artifact, and previews the notes a tag would get; it publishes nothing. Nothing else can start it, so PRs never see the keys, and it builds without Gradle's cache (`cache-disabled`), so nothing a branch's run cached can reach the signed APKs.
 
 **Release notes** come from `.github/scripts/release-notes.py <tag>`: the squashed PR titles since the previous `v*` tag (for the first release, since the rebrand, [#89](https://github.com/EliorMachlev/CurrenciX/pull/89)), grouped **New** (`feat`), **Fixes** (`fix`), **Faster** (`perf`), **Translations** (`i18n`) and **Other changes**; `chore`, `ci`, `build`, `deps`, `refactor`, `test`, `docs`, `style` and `revert` are left out. So title PRs for users. The fastlane changelog ([`fastlane/metadata/android/en-US/changelogs/`](../../../fastlane/metadata/android/en-US/changelogs), ≤ 500 characters, one file per version code; see [F-Droid](#f-droid-draft-recipe-for-fdroiddata) for which code it must be named after) is written by hand.
 
@@ -46,31 +46,32 @@ Check with `apksigner verify --verbose --print-certs` (JDK 24+): "v3.2 … true"
 
 `versionCode` follows `versionName`: `1.23.0 → 1×10000 + 23×100 + 0 = 12300`, checked by `checkVersion`. F-Droid's update check reads the `versionName = "…"` and `versionCode = …` lines of [`app/build.gradle.kts`](../../../app/build.gradle.kts) as text, and the release workflow reads the `versionName` one (with `sed`) to check the tag, so keep them literal.
 
-Each APK's code is `versionCode × 10 + digit`: 1 `armeabi-v7a`, 2 `arm64-v8a`, 3 `x86`, 4 `x86_64`, 0 universal and the bundle (123001…123004, 123000). One release's APKs need different codes, and a phone running two types is offered the higher. Codes only go up, so this scheme is permanent once released. Release builds name the type in the version (`1.23.0-arm64`) only with `-PabiVersionNames`, which the release workflow passes; F-Droid builds without it and keeps the plain name. Debug builds always do (`1.23.0-<commit>-arm64`). Settings reads the installed APK's name from the package manager.
+The APK and the app bundle both carry that code as it is (one APK for every CPU type, see [build.md](build.md#one-apk-for-every-phone)). Codes only go up, so the scheme is permanent once released. Debug builds add the commit to the name (`1.23.0-<commit>`); Settings reads the installed APK's name from the package manager.
 
 ## F-Droid (draft recipe for fdroiddata)
 
-One entry per CPU type, each keeping the APK its `output` names:
+One entry per release, building the one APK:
 
 ```yaml
 Builds:
   - versionName: 1.23.0
-    versionCode: 123001
+    versionCode: 12300
     commit: v1.23.0
     subdir: app
     gradle:
       - fdroid
-    output: build/outputs/apk/fdroid/release/*-fdroid-armeabi-v7a-release-unsigned.apk
-  # … the same for 123002 (arm64-v8a), 123003 (x86), 123004 (x86_64)
+    output: build/outputs/apk/fdroid/release/*-fdroid-release-unsigned.apk
+
+# Optional: publish the APK signed here, hybrid signature included, once
+# F-Droid's build of the tag reproduces it byte for byte (see below).
+Binaries: https://github.com/EliorMachlev/CurrenciX/releases/download/v%v/com.eliormachlev.currencix-v%c-fdroid-release.apk
+AllowedAPKSigningKeys: <the release key's SHA-256 above, lowercase, without colons>
 
 AutoUpdateMode: Version
 UpdateCheckMode: Tags
-VercodeOperation:
-  - 10*%c+1
-  - 10*%c+2
-  - 10*%c+3
-  - 10*%c+4
 UpdateCheckData: app/build.gradle.kts|versionCode = (\d+)|.|versionName = "(.*)"
 ```
 
-Every entry carries the plain version name: F-Droid checks the APK's name and code match the entry, and `checkupdates` gives every auto-generated copy the same name, so a per-type suffix would fail on each. F-Droid's app page shows `changelogs/<CurrentVersionCode>.txt`, the release's highest code (123004), else `default.txt`; `changelogs/12300.txt` matches no build and wouldn't show. `checkFastlaneChangelog` (run by `./gradlew build`, not by CI's gate) still asks for `en-US/changelogs/<versionCode>.txt`, the 12300 one, so a release needs that file for the check and 123004.txt (or `default.txt`) for F-Droid.
+F-Droid's app page shows `fastlane/metadata/android/<locale>/changelogs/<versionCode>.txt` (`12300.txt`), the file `checkFastlaneChangelog` (run by `./gradlew build`) requires, else `default.txt`.
+
+**Publishing this project's signature.** With `Binaries:`, F-Droid builds the tag itself, compares it with the GitHub release's APK, and when they match byte for byte apart from the signature it publishes ours instead of signing its own ([Reproducible Builds](https://f-droid.org/docs/Reproducible_Builds/)); without a match it skips that version. The signature is carried over as the whole APK Signing Block, where the v3.2 hybrid signature sits, so F-Droid and GitHub installs would share one key and update from each other. Not yet tried: F-Droid's server reproducing the APK (CI only shows our own two builds agree, [`apk-checks.yaml`](../../../.github/workflows/apk-checks.yaml)), and F-Droid's tools accepting a v3.2 block, which their documentation covers only up to v3. Check both on the first release before relying on it.

@@ -135,7 +135,7 @@ The CRA enters full application on **11 December 2027**, with vulnerability-repo
 
 - The `fdroid` flavor excludes any Play-Store-specific APIs. See [`engineering/build.md`](../engineering/build.md).
 - Deterministic build inputs (pinned JDK, AGP, Kotlin) — see the same doc. [`apk-checks.yaml`](../../../.github/workflows/apk-checks.yaml) builds the unsigned fdroid release twice, from two checkouts without a build cache, and fails if the APKs differ (see [`engineering/ci-cd.md`](../engineering/ci-cd.md#workflows)).
-- Signing certificate fingerprint: the release key's SHA-256 is in [`engineering/release.md`](../engineering/release.md#post-quantum-signing-android-17) and in each GitHub release's notes. F-Droid signs its own builds with its own key.
+- Signing certificate fingerprint: the release key's SHA-256 is in [`engineering/release.md`](../engineering/release.md#post-quantum-signing-android-17) and in each GitHub release's notes. F-Droid signs its own builds with its own key, unless it publishes ours from a reproduced build ([release.md](../engineering/release.md#f-droid-draft-recipe-for-fdroiddata)).
 - No trackers in the fdroid flavor (verifiable via [Exodus Privacy](https://reports.exodus-privacy.eu.org/) or F-Droid's own scanner).
 
 **Expected anti-features metadata** (for whoever submits to fdroiddata):

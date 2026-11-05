@@ -1,7 +1,6 @@
 
 import com.android.build.api.artifact.ArtifactTransformationRequest
 import com.android.build.api.artifact.SingleArtifact
-import com.android.build.api.variant.FilterConfiguration
 import com.android.build.api.variant.HasUnitTestBuilder
 import org.cyclonedx.Version
 import org.cyclonedx.gradle.CyclonedxDirectTask
@@ -80,25 +79,6 @@ kotlin {
     }
 }
 
-// The last digit of each APK's version code: versionCode × 10 + this, so
-// the per-CPU APKs of one release differ (Android and F-Droid need that)
-// and a phone that runs several types (64-bit ARM also runs 32-bit) gets
-// the higher, better fit. The universal APK and the app bundle keep 0.
-val abiVersionDigits = mapOf("armeabi-v7a" to 1, "arm64-v8a" to 2, "x86" to 3, "x86_64" to 4)
-val abiVersionMultiplier = 10
-
-// Each per-CPU APK's version name says which it is ("1.23.0-arm64"), for
-// people: Settings and Android's app info show it. Stores go by the codes.
-val abiVersionLabels = mapOf("armeabi-v7a" to "arm32", "arm64-v8a" to "arm64", "x86" to "x86", "x86_64" to "x64")
-
-// Debug builds always carry those labels; release builds only with
-// -PabiVersionNames (the release workflow, for GitHub's APKs). F-Droid builds
-// each APK from source and checks its name against the recipe, and its
-// auto-update can give every copy of a release only one name, so the release
-// builds it makes keep the plain one ("1.23.0").
-val abiVersionNamesInRelease = providers.gradleProperty("abiVersionNames").isPresent
-
-// Whether this Gradle run builds an app bundle (Play), which takes no APK splits.
 // Test classes left out of every ordinary unit-test run, each run alone with
 // its Gradle property (see the unitTests filter below): the Jazzer fuzz tests
 // (-PfuzzTests), and the tests that call the providers' live APIs
@@ -138,6 +118,8 @@ val robolectricJars =
         into(layout.buildDirectory.dir("robolectric-jars"))
     }
 
+// Whether this Gradle run builds an app bundle (Play), the only build that
+// declares the on-demand receipt reader (:ocr).
 val buildsBundle = gradle.startParameter.taskNames.any { it.substringAfterLast(':').startsWith("bundle") }
 
 android {
@@ -291,23 +273,11 @@ android {
         compose = true
     }
 
-    // One APK per CPU type (each phone needs one: receipt scanning's native
-    // OCR code is about 7 MB per type), plus a universal APK for people who
-    // download by hand. F-Droid builds one recipe entry per type and its app
-    // installs the one that fits; Play builds from the app bundle, which
-    // splits by type itself. Version codes: see abiVersionDigits above.
-    splits {
-        abi {
-            // Not while building the app bundle: AGP can't make both at once
-            // (issuetracker.google.com/402800800), and Play splits the bundle itself.
-            isEnable = !buildsBundle
-            reset()
-            // Written out (not from abiVersionDigits) so lint can read which types are built.
-            include("armeabi-v7a", "arm64-v8a", "x86", "x86_64")
-            isUniversalApk = true
-        }
-    }
-
+    // One APK for every phone: it carries receipt scanning's native code for
+    // all four CPU types (about 7 MB each, compressed below), so a release is
+    // one file, one version code and one F-Droid build, and F-Droid can
+    // publish the APK signed here, hybrid signature included. Play builds
+    // from the app bundle, which it splits by CPU type itself.
     // Native libraries compressed in the APK: about 12 MB smaller to download
     // with all four types; Android unpacks them on install.
     packaging {
@@ -343,20 +313,11 @@ androidComponents {
         if (profileBuildTypes.any { variant.buildType?.startsWith(it) == true }) (variant as? HasUnitTestBuilder)?.enableUnitTest = true
     }
     onVariants { variant ->
-        variant.outputs.forEach { output ->
-            val abi = output.filters.find { it.filterType == FilterConfiguration.FilterType.ABI }?.identifier
-            val base = android.defaultConfig.versionCode ?: return@forEach
-            output.versionCode.set(base * abiVersionMultiplier + (abiVersionDigits[abi] ?: 0))
-            val labelled = variant.buildType == "debug" || abiVersionNamesInRelease
-            val label = abiVersionLabels[abi]?.takeIf { labelled } ?: return@forEach
-            val name = output.versionName.orNull ?: return@forEach
-            output.versionName.set("$name-$label")
-        }
-        // The version on the splash screen: the universal APK's, without an ABI label.
-        val universal = variant.outputs.first { output -> output.filters.none { it.filterType == FilterConfiguration.FilterType.ABI } }
+        // The version on the splash screen: the APK's own.
+        val apk = variant.outputs.single()
         val splashVersion =
             tasks.register<GenerateSplashVersion>("generateSplashVersion${variant.name.replaceFirstChar(Char::uppercaseChar)}") {
-                versionName.set(universal.versionName)
+                versionName.set(apk.versionName)
                 font.set(layout.projectDirectory.file("src/main/res/font/space_grotesk_medium.ttf"))
                 // PaperInkMuted and InkForegroundMuted (view/compose/theme/Color.kt).
                 lightColor.set(0xFF6B675FL)

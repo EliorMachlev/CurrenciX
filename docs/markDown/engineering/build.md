@@ -23,9 +23,9 @@
 
 Flavor- and build-type-specific code goes in `app/src/<flavor>/` behind a hook `main` asks for (see [architecture](architecture/README.md#rules-that-hold-everywhere)).
 
-## APKs per CPU type
+## One APK for every phone
 
-`assemble*` builds one APK per CPU type plus a universal one (`splits.abi`): receipt scanning's native code is ~7 MB per type. Native libraries are stored compressed (`useLegacyPackaging`). At 1.23.0: ~14.5 MB per type, 24 MB universal (40.5 MB before both). `bundle*` builds no splits (AGP can't do both in one run; Play splits bundles itself). Version codes and names per APK: [release.md](release.md#version-codes).
+`assemble*` builds one APK per variant (`assembleDebug` builds both flavors), never one per CPU type. The F-Droid APK carries receipt scanning's native code (`:ocr-engine`) for all four CPU types (`armeabi-v7a`, `arm64-v8a`, `x86`, `x86_64`, about 7 MB each), stored compressed (`useLegacyPackaging`): 24 MB at 1.23.0, against about 14.5 MB for an APK of one type. One APK means one version code, one F-Droid build and one file for F-Droid to reproduce and publish with this project's signature ([release.md](release.md#f-droid-draft-recipe-for-fdroiddata)), which the ~10 MB was judged worth. A Play APK has no native code (its receipt reader, `:ocr`, exists only in the bundle); Play gets the app bundle and splits it by CPU type itself. Version codes: [release.md](release.md#version-codes).
 
 ## Dependency choices
 
