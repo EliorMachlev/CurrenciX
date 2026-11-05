@@ -318,7 +318,6 @@
     <string name="receipt_language_pending">Namn på ditt språk läses bättre när textdata har laddats ned.</string>
     <string name="recent_pair_alert_set">Kursavisering satt</string>
     <string name="receipt_setup_message">Att läsa kvitton kräver en engångsnedladdning. Sedan fungerar det offline i telefonen.</string>
-    <string name="receipt_setup_reader">Textläsaren</string>
     <string name="receipt_language_read_too">Läs även %1$s</string>
     <string name="receipt_languages_title">Kvittospråk</string>
     <string name="receipt_languages_summary">Lägg till ett språk för en resa, behåll det till ett datum eller ta bort det</string>

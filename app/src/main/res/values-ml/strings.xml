@@ -321,7 +321,6 @@
     <string name="receipt_language_pending">ടെക്സ്റ്റ് ഡാറ്റ ഡൗൺലോഡ് പൂർത്തിയാകുമ്പോൾ നിങ്ങളുടെ ഭാഷയിലെ പേരുകൾ കൂടുതൽ നന്നായി വായിക്കും.</string>
     <string name="recent_pair_alert_set">നിരക്ക് അറിയിപ്പ് സജ്ജമാക്കി</string>
     <string name="receipt_setup_message">രസീതുകൾ വായിക്കാൻ ഒരിക്കൽ ഡൗൺലോഡ് ചെയ്യണം. അതിനുശേഷം ഫോണിൽ ഓഫ്‌ലൈനായി പ്രവർത്തിക്കും.</string>
-    <string name="receipt_setup_reader">ടെക്സ്റ്റ് റീഡർ</string>
     <string name="receipt_language_read_too">%1$s-ലും വായിക്കുക</string>
     <string name="receipt_languages_title">രസീത് ഭാഷകൾ</string>
     <string name="receipt_languages_summary">യാത്രയ്ക്കായി ഒരു ഭാഷ ചേർക്കുക, ഒരു തീയതി വരെ സൂക്ഷിക്കുക, അല്ലെങ്കിൽ ഇല്ലാതാക്കുക</string>

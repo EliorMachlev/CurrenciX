@@ -317,7 +317,6 @@
     <string name="receipt_language_pending">Nomoj en via lingvo legiĝos pli bone post kiam la tekstaj datumoj elŝutiĝos.</string>
     <string name="recent_pair_alert_set">Kurz-averto agordita</string>
     <string name="receipt_setup_message">Legi kvitancojn bezonas unufoja elŝuto. Poste ĝi funkcias senkonekte en via telefono.</string>
-    <string name="receipt_setup_reader">La tekstolegilo</string>
     <string name="receipt_language_read_too">Legi ankaŭ %1$s</string>
     <string name="receipt_languages_title">Lingvoj de kvitancoj</string>
     <string name="receipt_languages_summary">Aldoni lingvon por vojaĝo, konservi ĝin ĝis dato aŭ forigi ĝin</string>

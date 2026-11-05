@@ -314,7 +314,6 @@
     <string name="receipt_language_pending">Tên bằng ngôn ngữ của bạn sẽ được đọc tốt hơn khi dữ liệu văn bản tải xong.</string>
     <string name="recent_pair_alert_set">Đã đặt cảnh báo tỷ giá</string>
     <string name="receipt_setup_message">Đọc hóa đơn cần tải xuống một lần. Sau đó nó chạy ngoại tuyến trên điện thoại của bạn.</string>
-    <string name="receipt_setup_reader">Trình đọc văn bản</string>
     <string name="receipt_language_read_too">Đọc cả %1$s</string>
     <string name="receipt_languages_title">Ngôn ngữ hóa đơn</string>
     <string name="receipt_languages_summary">Thêm ngôn ngữ cho chuyến đi, giữ đến một ngày hoặc xóa</string>

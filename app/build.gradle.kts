@@ -118,10 +118,6 @@ val robolectricJars =
         into(layout.buildDirectory.dir("robolectric-jars"))
     }
 
-// Whether this Gradle run builds an app bundle (Play), the only build that
-// declares the on-demand receipt reader (:ocr).
-val buildsBundle = gradle.startParameter.taskNames.any { it.substringAfterLast(':').startsWith("bundle") }
-
 android {
     namespace = "com.eliormachlev.currencix"
     // 37.2: Compose 1.13 needs at least API 37.1 to compile against.
@@ -137,7 +133,8 @@ android {
         // SemVer
         versionName = "1.23.0"
         versionCode = 12300
-        // 64-bit CPU types only (gradle.properties).
+        // 64-bit CPU types only (gradle.properties): the receipt reader's
+        // native code, which also makes stores refuse the app on 32-bit phones.
         ndk { abiFilters += providers.gradleProperty("currencix.abis").get().split(",") }
     }
 
@@ -194,11 +191,6 @@ android {
             buildConfigField("String", "PR_URL", "\"$prUrl\"")
         }
     }
-
-    // Receipt scanning's recognizer, on demand for Play (see :ocr). Bundles
-    // only: AGP can't make per-CPU APKs with a feature module (it links the
-    // feature against one base APK), and only Play installs features anyway.
-    if (buildsBundle) dynamicFeatures += setOf(":ocr")
 
     flavorDimensions.add("version")
     productFlavors {
@@ -458,13 +450,13 @@ dependencies {
     // opt-in via Settings until #147 onboarding wires the hero opt-in.
     val workVersion = "2.12.0"
     implementation("androidx.work:work-runtime-ktx:$workVersion")
-    // Receipt scanning: Tesseract OCR on the device (:ocr-engine), built into
-    // the F-Droid app and installed on demand from :ocr in the Play app
-    // through Play Feature Delivery. No language data ships with either:
-    // each downloads in the background once the user agrees to it
-    // (ocr/TessdataDownloadWorker), and can be deleted again (ocr/OcrLanguages).
-    "fdroidImplementation"(project(":ocr-engine"))
-    "playImplementation"("com.google.android.play:feature-delivery-ktx:2.1.0")
+    // Receipt scanning: Tesseract OCR on the device (:ocr-engine), in both
+    // flavors. Its 64-bit-only native code is also what keeps the app off
+    // 32-bit phones, in Play's compatibility check too (gradle.properties).
+    // No language data ships with it: each downloads in the background once
+    // the user agrees to it (ocr/TessdataDownloadWorker), and can be deleted
+    // again (ocr/OcrLanguages).
+    implementation(project(":ocr-engine"))
     implementation("androidx.exifinterface:exifinterface:1.4.2")
     // charts
     val vicoVersion = "3.3.1"

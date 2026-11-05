@@ -1,8 +1,8 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 // Tesseract, wrapped: the on-device text recognizer receipt scanning uses,
-// with its ~7 MB of native code per CPU type (64-bit only, see gradle.properties). The F-Droid app carries it;
-// the Play app gets it from the on-demand :ocr feature module instead.
+// with its ~7 MB of native code per CPU type (64-bit only, see
+// gradle.properties). Both flavors of the app carry it.
 plugins {
     id("com.android.library")
 }

@@ -23,7 +23,7 @@ dependencyResolutionManagement {
     }
 }
 
-include ':app', ':helpers', ':baselineprofile', ':ocr-engine', ':ocr'
+include ':app', ':helpers', ':baselineprofile', ':ocr-engine'
 
 // Libraries the build's own tools (the Android Gradle plugin, lint, detekt,
 // CycloneDX and the like) bring in at versions with published

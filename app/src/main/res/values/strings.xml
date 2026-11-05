@@ -339,7 +339,6 @@
     <string name="receipt_language_pending">Names in your language read better once its text data finishes downloading.</string>
     <string name="recent_pair_alert_set">Rate alert set</string>
     <string name="receipt_setup_message">Reading receipts needs a one-time download. After that, it works offline on your phone.</string>
-    <string name="receipt_setup_reader">The text reader</string>
     <string name="receipt_language_read_too">Read %1$s too</string>
     <string name="receipt_languages_title">Receipt languages</string>
     <string name="receipt_languages_summary">Add a language for a trip, keep it until a date, or delete it</string>

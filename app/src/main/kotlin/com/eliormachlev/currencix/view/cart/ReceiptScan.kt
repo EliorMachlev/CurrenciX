@@ -17,14 +17,12 @@ import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.model.SavedCart
 import com.eliormachlev.currencix.model.Trip
-import com.eliormachlev.currencix.ocr.OcrInstall
 import com.eliormachlev.currencix.ocr.OcrLanguages
 import com.eliormachlev.currencix.ocr.TessLanguage
 import com.eliormachlev.currencix.ocr.Tessdata
 import com.eliormachlev.currencix.ocr.TessdataDownloadWorker
+import com.eliormachlev.currencix.ocr.awaitReceiptLanguages
 import com.eliormachlev.currencix.ocr.forCurrency
-import com.eliormachlev.currencix.ocr.installReceiptReader
-import com.eliormachlev.currencix.ocr.isRecognizerInstalled
 import com.eliormachlev.currencix.ocr.readReceipt
 import com.eliormachlev.currencix.util.ReceiptLine
 import com.eliormachlev.currencix.util.ReceiptParser
@@ -48,18 +46,13 @@ private const val PHOTO_NAME = "receipt.jpg"
  */
 sealed interface ReceiptSetup {
     /**
-     * What reading needs and isn't here: the text [reader] (the Play app's
-     * module), and [languages] to read in, best first, each a choice left
-     * unticked (the trip's or the cart currency's, the app's own, English);
-     * one kept [until] its trip ends when it's for one. With none on the
-     * phone ([needsLanguage]) reading needs at least one ticked, and all of
-     * them are offered, whatever was said before; otherwise only one not
-     * asked about yet.
+     * With no language on the phone, the [languages] to read in, best first,
+     * each a choice left unticked (the trip's or the cart currency's, the
+     * app's own, English), whatever was said before; one kept [until] its
+     * trip ends when it's for one. Reading needs at least one ticked.
      */
     data class Offer(
-        val reader: Boolean,
         val languages: List<TessLanguage>,
-        val needsLanguage: Boolean,
         val until: Map<TessLanguage, Instant> = emptyMap(),
     ) : ReceiptSetup
 
@@ -69,10 +62,8 @@ sealed interface ReceiptSetup {
         val until: Instant? = null,
     ) : ReceiptSetup
 
-    /** Downloading; [fraction] done when known. */
-    data class Installing(
-        val fraction: Float?,
-    ) : ReceiptSetup
+    /** Waiting for the languages agreed to, which reading has to have. */
+    data object Installing : ReceiptSetup
 }
 
 /** Where a receipt scan stands: reading the photo, or its lines found, for review. */
@@ -82,7 +73,7 @@ class ReceiptScan internal constructor() {
     internal var takePhoto: () -> Unit = {}
     internal var choosePhoto: () -> Unit = {}
 
-    // Downloads the reader, and waits for the languages reading has to have.
+    // Waits for the languages reading has to have.
     internal var startSetup: (Set<TessLanguage>) -> Unit = {}
     internal var cancelSetup: () -> Unit = {}
 
@@ -91,11 +82,10 @@ class ReceiptScan internal constructor() {
     internal var candidates: List<TessLanguage> = emptyList()
     internal var untilFor: (TessLanguage) -> Instant? = { null }
     internal var isInstalled: (TessLanguage) -> Boolean = { true }
-    internal var isRecognizerHere: () -> Boolean = { true }
     internal var answerFor: (TessLanguage) -> Boolean? = { null }
     internal var answer: (TessLanguage, Boolean, Instant?) -> Unit = { _, _, _ -> }
 
-    // What to do once the reader is ready: show the photo choice.
+    // What to do once reading is ready: show the photo choice.
     internal var afterSetup: () -> Unit = {}
 
     /** The download being offered or running; null otherwise. */
@@ -139,41 +129,35 @@ class ReceiptScan internal constructor() {
     }
 
     /**
-     * Starts a scan: [then] (show the photo choice) right away when the
-     * reader is here and there's nothing to ask, otherwise once the user has
+     * Starts a scan: [then] (show the photo choice) right away when there's
+     * a language here and nothing to ask, otherwise once the user has
      * answered (and what they agreed to that reading needs has downloaded).
      */
     fun begin(then: () -> Unit) {
-        val reader = !isRecognizerHere()
         val needsLanguage = TessLanguage.entries.none(isInstalled)
         val ask = candidates.firstOrNull { !isInstalled(it) && answerFor(it) == null }
         afterSetup = then
         setup =
             when {
-                reader || needsLanguage -> offer(reader, needsLanguage, ask)
+                needsLanguage -> offer()
                 ask != null -> ReceiptSetup.LanguageOffer(ask, untilFor(ask))
                 else -> null
             }
         if (setup == null) then()
     }
 
-    // With no language here, every one worth reading in (English included)
-    // is a choice; otherwise only the one not asked about yet.
-    private fun offer(
-        reader: Boolean,
-        needsLanguage: Boolean,
-        ask: TessLanguage?,
-    ): ReceiptSetup.Offer {
-        val languages = if (needsLanguage) (candidates + TessLanguage.ENGLISH).distinct() else listOfNotNull(ask)
+    // With no language here, every one worth reading in (English included) is a choice.
+    private fun offer(): ReceiptSetup.Offer {
+        val languages = (candidates + TessLanguage.ENGLISH).distinct()
         val until = languages.mapNotNull { language -> untilFor(language)?.let { language to it } }.toMap()
-        return ReceiptSetup.Offer(reader = reader, languages = languages, needsLanguage = needsLanguage, until = until)
+        return ReceiptSetup.Offer(languages = languages, until = until)
     }
 
     /** The download, accepted with the [chosen] languages; the others count as said no to. */
     fun acceptSetup(chosen: Set<TessLanguage>) {
         val offer = setup as? ReceiptSetup.Offer ?: return
         offer.languages.forEach { answer(it, it in chosen, offer.until[it]) }
-        startSetup(if (offer.needsLanguage) chosen else emptySet())
+        startSetup(chosen)
     }
 
     /** The offer or the progress, closed: a download goes on, but nothing follows it here. */
@@ -212,8 +196,7 @@ class ReceiptScan internal constructor() {
  * photo picker (neither needs a permission), read on the device
  * ([readReceipt]) and split into items ([ReceiptParser]). No language data
  * ships with the app and none is downloaded by default: the first scan
- * offers the Play app's text reader ([installReceiptReader]) and the
- * languages to read in, none ticked: [cart]'s (its trip's destination's,
+ * offers the languages to read in, none ticked: [cart]'s (its trip's destination's,
  * else its currency's, [forCurrency]), the app's own and English, at least
  * one needed. Later, a language worth reading in that wasn't asked about is
  * a separate yes or no, asked once ([ReceiptSetup]) and remembered
@@ -241,7 +224,6 @@ fun rememberReceiptScan(cart: SavedCart?): ReceiptScan {
     scan.candidates = candidates
     scan.untilFor = { language -> trip?.takeIf { language == suggested }?.endsAt() }
     scan.isInstalled = { Tessdata.isInstalled(context, it) }
-    scan.isRecognizerHere = { isRecognizerInstalled(context) }
     scan.answerFor = answerFor
     scan.answer = { language, allowed, until ->
         if (allowed) OcrLanguages.download(context, language, until) else languages.setAllowed(language.code, allowed = false)
@@ -274,45 +256,25 @@ fun rememberReceiptScan(cart: SavedCart?): ReceiptScan {
         resumeLanguages()
         picker.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
     }
-    ReaderSetup(scan)
+    LanguageSetup(scan)
     return scan
 }
 
-// Wires [scan]'s download of the reader: the store's confirmation dialog
-// when it asks for one, progress into ReceiptSetup.Installing, and on to the
-// photo choice once it's done.
+// Wires [scan]'s wait for the languages agreed to: ReceiptSetup.Installing
+// while they download, then the photo choice, or the failure.
 @Composable
-private fun ReaderSetup(scan: ReceiptScan) {
+private fun LanguageSetup(scan: ReceiptScan) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
-    val confirm = rememberLauncherForActivityResult(ActivityResultContracts.StartIntentSenderForResult()) {}
     val job = remember { arrayOfNulls<Job>(1) }
     scan.cancelSetup = { job[0]?.cancel() }
     scan.startSetup = { awaited ->
-        scan.setup = ReceiptSetup.Installing(null)
+        scan.setup = ReceiptSetup.Installing
         job[0] =
             scope.launch {
-                installReceiptReader(context, awaited).collect { step ->
-                    when (step) {
-                        is OcrInstall.Downloading -> {
-                            scan.setup = ReceiptSetup.Installing(step.fraction)
-                        }
-
-                        is OcrInstall.NeedsConfirmation -> {
-                            step.confirm(confirm)
-                        }
-
-                        OcrInstall.Installed -> {
-                            scan.setup = null
-                            scan.afterSetup()
-                        }
-
-                        OcrInstall.Failed -> {
-                            scan.setup = null
-                            scan.setupFailed = true
-                        }
-                    }
-                }
+                val arrived = awaitReceiptLanguages(context, awaited)
+                scan.setup = null
+                if (arrived) scan.afterSetup() else scan.setupFailed = true
             }
     }
 }

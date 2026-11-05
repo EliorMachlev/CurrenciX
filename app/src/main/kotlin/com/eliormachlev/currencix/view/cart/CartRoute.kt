@@ -133,7 +133,7 @@ private fun ReceiptOverlays(
         }
 
         setup is ReceiptSetup.Installing -> {
-            ReceiptSetupProgressSheet(fraction = setup.fraction, onDismiss = scan::dismissSetup)
+            ReceiptSetupProgressSheet(onDismiss = scan::dismissSetup)
         }
 
         scan.reading -> {

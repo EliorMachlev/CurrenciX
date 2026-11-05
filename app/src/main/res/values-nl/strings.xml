@@ -316,7 +316,6 @@
     <string name="receipt_language_pending">Namen in jouw taal worden beter gelezen zodra de tekstgegevens zijn gedownload.</string>
     <string name="recent_pair_alert_set">Koersmelding ingesteld</string>
     <string name="receipt_setup_message">Voor het lezen van bonnetjes is een eenmalige download nodig. Daarna werkt het offline op je telefoon.</string>
-    <string name="receipt_setup_reader">De tekstlezer</string>
     <string name="receipt_language_read_too">Ook %1$s lezen</string>
     <string name="receipt_languages_title">Talen voor bonnetjes</string>
     <string name="receipt_languages_summary">Voeg een taal toe voor een reis, bewaar hem tot een datum of verwijder hem</string>

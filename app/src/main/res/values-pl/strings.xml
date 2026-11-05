@@ -323,7 +323,6 @@
     <string name="receipt_language_pending">Nazwy w Twoim języku będą odczytywane lepiej po pobraniu danych tekstowych.</string>
     <string name="recent_pair_alert_set">Ustawiono alert kursu</string>
     <string name="receipt_setup_message">Czytanie paragonów wymaga jednorazowego pobrania. Potem działa offline na telefonie.</string>
-    <string name="receipt_setup_reader">Czytnik tekstu</string>
     <string name="receipt_language_read_too">Czytaj też %1$s</string>
     <string name="receipt_languages_title">Języki paragonów</string>
     <string name="receipt_languages_summary">Dodaj język na podróż, zachowaj go do daty lub usuń</string>

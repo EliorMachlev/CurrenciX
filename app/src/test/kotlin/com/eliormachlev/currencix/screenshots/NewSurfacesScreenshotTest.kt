@@ -262,11 +262,7 @@ class NewSurfacesScreenshotTest {
         shots.captureMatrix("receipt_setup_offer_sheet") {
             ReceiptSetupOfferSheet(
                 offer =
-                    ReceiptSetup.Offer(
-                        reader = true,
-                        languages = listOf(TessLanguage.HEBREW, TessLanguage.ENGLISH),
-                        needsLanguage = true,
-                    ),
+                    ReceiptSetup.Offer(languages = listOf(TessLanguage.HEBREW, TessLanguage.ENGLISH)),
                 onDownload = {},
                 onDismiss = {},
             )

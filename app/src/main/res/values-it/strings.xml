@@ -321,7 +321,6 @@
     <string name="receipt_language_pending">I nomi nella tua lingua verranno letti meglio al termine del download dei dati di testo.</string>
     <string name="recent_pair_alert_set">Avviso di cambio impostato</string>
     <string name="receipt_setup_message">Per leggere gli scontrini serve un download una tantum. Poi funziona offline sul telefono.</string>
-    <string name="receipt_setup_reader">Il lettore di testo</string>
     <string name="receipt_language_read_too">Leggi anche in %1$s</string>
     <string name="receipt_languages_title">Lingue degli scontrini</string>
     <string name="receipt_languages_summary">Aggiungi una lingua per un viaggio, tienila fino a una data o eliminala</string>

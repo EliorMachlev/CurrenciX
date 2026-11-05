@@ -11,7 +11,6 @@ on:
   pull_request:
     paths:
       - 'app/**'
-      - 'ocr/**'
       - 'ocr-engine/**'
       - 'helpers/**'
       - 'build.gradle.kts'

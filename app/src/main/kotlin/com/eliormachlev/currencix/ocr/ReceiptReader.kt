@@ -6,21 +6,21 @@ import android.graphics.BitmapFactory
 import android.graphics.Matrix
 import android.net.Uri
 import androidx.exifinterface.media.ExifInterface
+import com.eliormachlev.currencix.ocr.engine.TesseractRecognizer
 import com.eliormachlev.currencix.util.AppDispatchers
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.transformWhile
 import kotlinx.coroutines.withContext
 
 // Tesseract reads printed text well at this size; bigger is slower, not better.
 private const val MAX_IMAGE_SIDE = 2400
 
+// The recognizer (:ocr-engine), in the app for both flavors.
+private val recognizer by lazy { TesseractRecognizer() }
+
 /**
- * The text on a receipt photo ([uri]), read on the device by this build's
- * recognizer ([ocrEngine]) in [languages] ("heb+eng", see
- * [Tessdata.languages]). Empty when the image can't be read, or with no
- * language to read in. Only once [isReceiptReaderReady]. Runs off the main
- * thread: it takes a few seconds.
+ * The text on a receipt photo ([uri]), read on the device by Tesseract in
+ * [languages] ("heb+eng", see [Tessdata.languages]). Empty when the image
+ * can't be read, or with no language to read in. Runs off the main thread:
+ * it takes a few seconds.
  */
 suspend fun readReceipt(
     context: Context,
@@ -32,45 +32,21 @@ suspend fun readReceipt(
         if (languages.isEmpty()) return@withContext ""
         val bitmap = decodeUpright(context, uri) ?: return@withContext ""
         try {
-            ocrEngine.recognizer(context).recognize(bitmap, Tessdata.root(context).absolutePath, languages)
+            recognizer.recognize(bitmap, Tessdata.root(context).absolutePath, languages)
         } finally {
             bitmap.recycle()
         }
     }
 
-/** Whether a receipt can be read now: the recognizer and at least one language's data are on the device. */
-fun isReceiptReaderReady(context: Context): Boolean = isRecognizerInstalled(context) && Tessdata.installed(context).isNotEmpty()
-
-/** Whether this build's recognizer is on the device (always in the F-Droid app; Play's is a module). */
-fun isRecognizerInstalled(context: Context): Boolean = ocrEngine.isInstalled(context)
-
 /**
- * Gets what reading a receipt needs that isn't on the device yet: the
- * recognizer ([OcrEngine.install]), then waits for [languages] (agreed to and
- * already downloading, [OcrLanguages.download]) when reading has to have
- * them, reporting how it goes. Only once the user has agreed to the download.
- * Ends with [OcrInstall.Installed] or [OcrInstall.Failed].
+ * Waits for [languages] (agreed to and already downloading,
+ * [OcrLanguages.download]) when reading has to have them: whether they all
+ * arrived.
  */
-fun installReceiptReader(
+suspend fun awaitReceiptLanguages(
     context: Context,
     languages: Set<TessLanguage>,
-): Flow<OcrInstall> =
-    flow {
-        var outcome: OcrInstall = OcrInstall.Failed
-        ocrEngine
-            .install(context)
-            .transformWhile { step ->
-                emit(step)
-                step !is OcrInstall.Installed && step !is OcrInstall.Failed
-            }.collect { step ->
-                outcome = step
-                emit(step)
-            }
-        if (outcome != OcrInstall.Installed) return@flow
-        val missing = languages.filterNot { Tessdata.isInstalled(context, it) }
-        if (missing.isNotEmpty()) emit(OcrInstall.Downloading(null))
-        emit(if (missing.all { TessdataDownloadWorker.awaitInstalled(context, it) }) OcrInstall.Installed else OcrInstall.Failed)
-    }
+): Boolean = languages.filterNot { Tessdata.isInstalled(context, it) }.all { TessdataDownloadWorker.awaitInstalled(context, it) }
 
 // The photo, scaled down to at most MAX_IMAGE_SIDE and turned the way it was taken.
 private fun decodeUpright(

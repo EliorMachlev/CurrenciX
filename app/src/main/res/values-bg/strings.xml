@@ -317,7 +317,6 @@
     <string name="receipt_language_pending">Имената на вашия език се разчитат по-добре, след като данните за текста се изтеглят.</string>
     <string name="recent_pair_alert_set">Зададено известие за курс</string>
     <string name="receipt_setup_message">Четенето на касови бележки изисква еднократно изтегляне. След това работи офлайн на телефона ви.</string>
-    <string name="receipt_setup_reader">Четецът на текст</string>
     <string name="receipt_language_read_too">Четене и на %1$s</string>
     <string name="receipt_languages_title">Езици за бележки</string>
     <string name="receipt_languages_summary">Добавете език за пътуване, пазете го до дата или го изтрийте</string>

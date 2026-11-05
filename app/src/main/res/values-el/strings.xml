@@ -317,7 +317,6 @@
     <string name="receipt_language_pending">Τα ονόματα στη γλώσσα σας θα διαβάζονται καλύτερα μόλις ολοκληρωθεί η λήψη των δεδομένων κειμένου.</string>
     <string name="recent_pair_alert_set">Ορίστηκε ειδοποίηση ισοτιμίας</string>
     <string name="receipt_setup_message">Η ανάγνωση αποδείξεων χρειάζεται μια λήψη μία φορά. Μετά λειτουργεί εκτός σύνδεσης στο τηλέφωνό σας.</string>
-    <string name="receipt_setup_reader">Ο αναγνώστης κειμένου</string>
     <string name="receipt_language_read_too">Ανάγνωση και σε %1$s</string>
     <string name="receipt_languages_title">Γλώσσες αποδείξεων</string>
     <string name="receipt_languages_summary">Προσθέστε γλώσσα για ταξίδι, κρατήστε την ως μια ημερομηνία ή διαγράψτε την</string>

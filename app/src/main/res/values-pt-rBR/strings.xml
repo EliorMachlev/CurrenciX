@@ -321,7 +321,6 @@
     <string name="receipt_language_pending">Os nomes no seu idioma serão lidos melhor quando o download dos dados de texto terminar.</string>
     <string name="recent_pair_alert_set">Alerta de cotação ativo</string>
     <string name="receipt_setup_message">Ler recibos precisa de um download único. Depois funciona off-line no seu celular.</string>
-    <string name="receipt_setup_reader">O leitor de texto</string>
     <string name="receipt_language_read_too">Ler também em %1$s</string>
     <string name="receipt_languages_title">Idiomas dos recibos</string>
     <string name="receipt_languages_summary">Adicione um idioma para uma viagem, mantenha até uma data ou exclua</string>

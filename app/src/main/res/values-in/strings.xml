@@ -314,7 +314,6 @@
     <string name="receipt_language_pending">Nama dalam bahasa Anda terbaca lebih baik setelah data teksnya selesai diunduh.</string>
     <string name="recent_pair_alert_set">Peringatan kurs dipasang</string>
     <string name="receipt_setup_message">Membaca struk perlu unduhan satu kali. Setelah itu berfungsi offline di ponsel Anda.</string>
-    <string name="receipt_setup_reader">Pembaca teks</string>
     <string name="receipt_language_read_too">Baca %1$s juga</string>
     <string name="receipt_languages_title">Bahasa struk</string>
     <string name="receipt_languages_summary">Tambahkan bahasa untuk perjalanan, simpan hingga tanggal tertentu, atau hapus</string>

@@ -316,7 +316,6 @@
     <string name="receipt_language_pending">Navne på dit sprog læses bedre, når tekstdataene er hentet.</string>
     <string name="recent_pair_alert_set">Kursalarm sat</string>
     <string name="receipt_setup_message">Læsning af kvitteringer kræver en download én gang. Derefter virker det offline på din telefon.</string>
-    <string name="receipt_setup_reader">Tekstlæseren</string>
     <string name="receipt_language_read_too">Læs også %1$s</string>
     <string name="receipt_languages_title">Kvitteringssprog</string>
     <string name="receipt_languages_summary">Tilføj et sprog til en rejse, behold det til en dato, eller slet det</string>

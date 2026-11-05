@@ -56,10 +56,10 @@ fun ReceiptReadingSheet(onDismiss: () -> Unit) {
 }
 
 /**
- * The first scan, with what reading needs not on the device yet: what
- * [offer] lists is downloaded only on [onDownload], each named with its size.
- * Every language is a tick left unticked; while there's none on the phone,
- * Download waits for at least one. [onDownload] gets those ticked.
+ * The first scan, with no language on the device yet: the ones [offer]
+ * lists are downloaded only on [onDownload], each named with its size and
+ * left unticked; Download waits for at least one. [onDownload] gets those
+ * ticked.
  */
 @Composable
 fun ReceiptSetupOfferSheet(
@@ -68,17 +68,16 @@ fun ReceiptSetupOfferSheet(
     onDismiss: () -> Unit,
 ) {
     val chosen = remember(offer) { mutableStateListOf<TessLanguage>() }
-    val missingLanguage = offer.needsLanguage && chosen.isEmpty()
+    val missingLanguage = chosen.isEmpty()
     LedgerPromptSheet(
         title = stringResource(R.string.receipt_scan),
         confirmLabel = stringResource(R.string.receipt_setup_download),
         onConfirm = { onDownload(chosen.toSet()) },
         onDismiss = onDismiss,
-        confirmEnabled = !missingLanguage && (offer.reader || chosen.isNotEmpty()),
+        confirmEnabled = !missingLanguage,
     ) {
         PromptMessage(stringResource(R.string.receipt_setup_message))
         Spacer(Modifier.height(Spacing.Small))
-        if (offer.reader) SetupItem(stringResource(R.string.receipt_setup_reader))
         offer.languages.forEach { language ->
             LanguageChoice(
                 language = language,
@@ -159,35 +158,20 @@ fun ReceiptLanguageOfferSheet(
     }
 }
 
-// One thing the download brings, as a line of the offer.
-@Composable
-private fun SetupItem(text: String) {
-    Text("$BULLET $text", style = MaterialTheme.typography.bodyLarge, modifier = Modifier.padding(vertical = Spacing.Tiny))
-}
-
-private const val BULLET = "•"
-
 // The day a trip's language goes ("14 Nov 2026"), in the phone's time zone.
 private fun formatUntilDay(
     until: Instant,
     locale: Locale,
 ): String = DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM).withLocale(locale).format(until.atZone(ZoneId.systemDefault()))
 
-/** The reader downloading, [fraction] of the way when known; closing it lets it carry on unseen. */
+/** The languages downloading; closing it lets them carry on unseen. */
 @Composable
-fun ReceiptSetupProgressSheet(
-    fraction: Float?,
-    onDismiss: () -> Unit,
-) {
+fun ReceiptSetupProgressSheet(onDismiss: () -> Unit) {
     LedgerBottomSheet(title = stringResource(R.string.receipt_scan), onDismiss = onDismiss) {
         Column(Modifier.fillMaxWidth().padding(horizontal = Spacing.XXLarge, vertical = Spacing.Large)) {
             PromptMessage(stringResource(R.string.receipt_setup_progress))
             Spacer(Modifier.height(Spacing.Medium))
-            if (fraction == null) {
-                LinearProgressIndicator(Modifier.fillMaxWidth())
-            } else {
-                LinearProgressIndicator(progress = { fraction }, modifier = Modifier.fillMaxWidth())
-            }
+            LinearProgressIndicator(Modifier.fillMaxWidth())
         }
     }
 }

@@ -317,7 +317,6 @@
     <string name="receipt_language_pending">টেক্সট ডেটা ডাউনলোড শেষ হলে আপনার ভাষার নাম আরও ভালোভাবে পড়া যাবে।</string>
     <string name="recent_pair_alert_set">হার সতর্কতা সেট করা আছে</string>
     <string name="receipt_setup_message">রসিদ পড়তে একবার ডাউনলোড করতে হবে। এরপর এটি আপনার ফোনে অফলাইনে কাজ করে।</string>
-    <string name="receipt_setup_reader">টেক্সট রিডার</string>
     <string name="receipt_language_read_too">%1$s-ও পড়ুন</string>
     <string name="receipt_languages_title">রসিদের ভাষা</string>
     <string name="receipt_languages_summary">ভ্রমণের জন্য ভাষা যোগ করুন, একটি তারিখ পর্যন্ত রাখুন, বা মুছুন</string>

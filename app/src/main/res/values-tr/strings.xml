@@ -317,7 +317,6 @@
     <string name="receipt_language_pending">Metin verilerinin indirilmesi bitince kendi dilinizdeki adlar daha iyi okunur.</string>
     <string name="recent_pair_alert_set">Kur uyarısı kuruldu</string>
     <string name="receipt_setup_message">Fiş okumak için tek seferlik bir indirme gerekir. Sonrasında telefonunuzda çevrimdışı çalışır.</string>
-    <string name="receipt_setup_reader">Metin okuyucu</string>
     <string name="receipt_language_read_too">%1$s da oku</string>
     <string name="receipt_languages_title">Fiş dilleri</string>
     <string name="receipt_languages_summary">Bir gezi için dil ekleyin, bir tarihe kadar tutun ya da silin</string>

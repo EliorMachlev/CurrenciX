@@ -321,7 +321,6 @@
     <string name="receipt_language_pending">Los nombres en tu idioma se leerán mejor cuando termine la descarga de los datos de texto.</string>
     <string name="recent_pair_alert_set">Alerta de tipo de cambio activa</string>
     <string name="receipt_setup_message">Para leer tiques hace falta una descarga única. Después funciona sin conexión en tu teléfono.</string>
-    <string name="receipt_setup_reader">El lector de texto</string>
     <string name="receipt_language_read_too">Leer también en %1$s</string>
     <string name="receipt_languages_title">Idiomas de tiques</string>
     <string name="receipt_languages_summary">Añade un idioma para un viaje, guárdalo hasta una fecha o bórralo</string>

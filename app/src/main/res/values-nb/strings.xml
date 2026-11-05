@@ -318,7 +318,6 @@
     <string name="receipt_language_pending">Navn på ditt språk leses bedre når tekstdataene er lastet ned.</string>
     <string name="recent_pair_alert_set">Kursvarsel satt</string>
     <string name="receipt_setup_message">Lesing av kvitteringer krever en nedlasting én gang. Etter det virker det uten nett på telefonen.</string>
-    <string name="receipt_setup_reader">Tekstleseren</string>
     <string name="receipt_language_read_too">Les også %1$s</string>
     <string name="receipt_languages_title">Kvitteringsspråk</string>
     <string name="receipt_languages_summary">Legg til et språk for en reise, behold det til en dato, eller slett det</string>

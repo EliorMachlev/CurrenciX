@@ -59,7 +59,7 @@ app/src/main/kotlin/com/eliormachlev/currencix/
 │   ├── preference/ timeline/ cart/ alert/ lock/
 │   ├── convert/               # ConvertTextActivity (text-selection menu)
 │   ├── widget/ tile/          # Glance widget, Quick Settings tile
-├── ocr/                       # Receipt reading (OcrEngine, ReceiptReader, Tesseract language data)
+├── ocr/                       # Receipt reading (ReceiptReader, Tesseract language data)
 ├── worker/                    # Background rate refresh
 ├── alert/                     # Rate alert checks and notifications
 ├── problems/                  # Crash and freeze records

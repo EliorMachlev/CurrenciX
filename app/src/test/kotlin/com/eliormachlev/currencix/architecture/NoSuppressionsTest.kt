@@ -154,9 +154,9 @@ class NoSuppressionsTest {
         // Files with data objects, whose generated equals() casts to a temporary it never reads (#11).
         val DATA_OBJECT_EQUALS =
             listOf(
-                "ocr/OcrEngine",
                 "repository/BackupManager",
                 "repository/CartExporter",
+                "view/cart/ReceiptScan",
                 "view/convert/SelectionConversion",
                 "view/main/ConverterLaunch",
                 "view/navigation/Screen",

@@ -316,7 +316,6 @@
     <string name="receipt_language_pending">Namen in deiner Sprache werden besser erkannt, sobald die Textdaten heruntergeladen sind.</string>
     <string name="recent_pair_alert_set">Kursalarm gesetzt</string>
     <string name="receipt_setup_message">Zum Lesen von Kassenbons ist ein einmaliger Download nötig. Danach läuft es offline auf deinem Telefon.</string>
-    <string name="receipt_setup_reader">Der Texterkenner</string>
     <string name="receipt_language_read_too">Auch %1$s lesen</string>
     <string name="receipt_languages_title">Sprachen für Kassenbons</string>
     <string name="receipt_languages_summary">Sprache für eine Reise hinzufügen, bis zu einem Datum behalten oder löschen</string>

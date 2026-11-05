@@ -317,7 +317,6 @@
     <string name="receipt_language_pending">A saját nyelvű nevek jobban olvashatók lesznek, ha letöltődnek a szövegadatok.</string>
     <string name="recent_pair_alert_set">Árfolyam-értesítés beállítva</string>
     <string name="receipt_setup_message">A blokkok olvasásához egyszeri letöltés kell. Utána offline működik a telefonodon.</string>
-    <string name="receipt_setup_reader">A szövegolvasó</string>
     <string name="receipt_language_read_too">Ezt is olvasd: %1$s</string>
     <string name="receipt_languages_title">Blokkok nyelvei</string>
     <string name="receipt_languages_summary">Adj hozzá nyelvet egy utazáshoz, tartsd meg egy dátumig, vagy töröld</string>

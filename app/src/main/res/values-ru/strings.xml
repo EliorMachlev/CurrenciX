@@ -323,7 +323,6 @@
     <string name="receipt_language_pending">Названия на вашем языке будут распознаваться лучше после загрузки текстовых данных.</string>
     <string name="recent_pair_alert_set">Оповещение о курсе задано</string>
     <string name="receipt_setup_message">Для чтения чеков нужна однократная загрузка. После этого всё работает офлайн на телефоне.</string>
-    <string name="receipt_setup_reader">Распознаватель текста</string>
     <string name="receipt_language_read_too">Читать и %1$s</string>
     <string name="receipt_languages_title">Языки чеков</string>
     <string name="receipt_languages_summary">Добавьте язык для поездки, оставьте до даты или удалите</string>

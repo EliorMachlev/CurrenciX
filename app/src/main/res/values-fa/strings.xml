@@ -318,7 +318,6 @@
     <string name="receipt_language_pending">نام‌ها به زبان شما پس از پایان دانلود داده‌های متن بهتر خوانده می‌شوند.</string>
     <string name="recent_pair_alert_set">هشدار نرخ تنظیم شده</string>
     <string name="receipt_setup_message">خواندن رسیدها به یک بار دانلود نیاز دارد. پس از آن روی گوشی شما بدون اینترنت کار می‌کند.</string>
-    <string name="receipt_setup_reader">خوانندهٔ متن</string>
     <string name="receipt_language_read_too">خواندن %1$s هم</string>
     <string name="receipt_languages_title">زبان‌های رسید</string>
     <string name="receipt_languages_summary">زبانی برای سفر اضافه کنید، تا تاریخی نگه دارید یا حذف کنید</string>

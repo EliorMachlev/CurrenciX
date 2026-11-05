@@ -312,7 +312,6 @@
     <string name="receipt_language_pending">文字資料下載完成後，你所用語言的名稱會辨識得更好。</string>
     <string name="recent_pair_alert_set">已設匯率提醒</string>
     <string name="receipt_setup_message">讀取收據需要一次性下載。之後可在手機上離線使用。</string>
-    <string name="receipt_setup_reader">文字辨識器</string>
     <string name="receipt_language_read_too">同時讀取%1$s</string>
     <string name="receipt_languages_title">收據語言</string>
     <string name="receipt_languages_summary">為旅行新增語言、保留到某個日期或刪除</string>

@@ -320,7 +320,6 @@
     <string name="receipt_language_pending">Nazivi na vašem jeziku čitat će se bolje kad se preuzmu tekstni podaci.</string>
     <string name="recent_pair_alert_set">Postavljeno upozorenje o tečaju</string>
     <string name="receipt_setup_message">Čitanje računa traži jednokratno preuzimanje. Nakon toga radi izvanmrežno na vašem telefonu.</string>
-    <string name="receipt_setup_reader">Čitač teksta</string>
     <string name="receipt_language_read_too">Čitaj i %1$s</string>
     <string name="receipt_languages_title">Jezici računa</string>
     <string name="receipt_languages_summary">Dodajte jezik za putovanje, zadržite ga do datuma ili ga izbrišite</string>

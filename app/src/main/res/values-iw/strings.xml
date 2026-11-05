@@ -320,7 +320,6 @@
     <string name="receipt_language_pending">שמות בשפה שלכם ייקראו טוב יותר כשהורדת נתוני הטקסט תסתיים.</string>
     <string name="recent_pair_alert_set">הוגדרה התראת שער</string>
     <string name="receipt_setup_message">קריאת קבלות דורשת הורדה חד־פעמית. אחר כך היא עובדת בטלפון גם בלי חיבור.</string>
-    <string name="receipt_setup_reader">קורא הטקסט</string>
     <string name="receipt_language_read_too">לקרוא גם ב%1$s</string>
     <string name="receipt_languages_title">שפות קבלות</string>
     <string name="receipt_languages_summary">להוסיף שפה לטיול, לשמור אותה עד תאריך או למחוק אותה</string>

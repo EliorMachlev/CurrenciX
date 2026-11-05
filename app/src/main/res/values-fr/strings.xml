@@ -321,7 +321,6 @@
     <string name="receipt_language_pending">Les noms dans votre langue seront mieux lus une fois ses données de texte téléchargées.</string>
     <string name="recent_pair_alert_set">Alerte de taux active</string>
     <string name="receipt_setup_message">La lecture des tickets demande un téléchargement unique. Ensuite, elle fonctionne hors ligne sur votre téléphone.</string>
-    <string name="receipt_setup_reader">Le lecteur de texte</string>
     <string name="receipt_language_read_too">Lire aussi en %1$s</string>
     <string name="receipt_languages_title">Langues des tickets</string>
     <string name="receipt_languages_summary">Ajouter une langue pour un voyage, la garder jusqu\'à une date ou la supprimer</string>

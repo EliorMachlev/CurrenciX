@@ -317,7 +317,6 @@
     <string name="receipt_language_pending">Sinu keele nimed loetakse paremini, kui tekstiandmed on alla laaditud.</string>
     <string name="recent_pair_alert_set">Kursiteavitus seatud</string>
     <string name="receipt_setup_message">Tšekkide lugemiseks on vaja ühekordset allalaadimist. Pärast seda töötab see telefonis võrguta.</string>
-    <string name="receipt_setup_reader">Tekstilugeja</string>
     <string name="receipt_language_read_too">Loe ka keelt %1$s</string>
     <string name="receipt_languages_title">Tšekkide keeled</string>
     <string name="receipt_languages_summary">Lisa keel reisiks, hoia seda kuupäevani või kustuta</string>

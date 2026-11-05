@@ -329,7 +329,6 @@
     <string name="receipt_language_pending">تُقرأ الأسماء بلغتك بشكل أفضل بعد انتهاء تنزيل بيانات النص.</string>
     <string name="recent_pair_alert_set">تم ضبط تنبيه سعر</string>
     <string name="receipt_setup_message">تحتاج قراءة الإيصالات إلى تنزيل لمرة واحدة. بعد ذلك تعمل دون اتصال على هاتفك.</string>
-    <string name="receipt_setup_reader">قارئ النصوص</string>
     <string name="receipt_language_read_too">قراءة %1$s أيضًا</string>
     <string name="receipt_languages_title">لغات الإيصالات</string>
     <string name="receipt_languages_summary">أضف لغة لرحلة، أو احتفظ بها حتى تاريخ، أو احذفها</string>
