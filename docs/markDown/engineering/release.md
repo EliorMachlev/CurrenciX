@@ -46,7 +46,7 @@ Check with `apksigner verify --verbose --print-certs` (JDK 24+): "v3.2 … true"
 
 `versionCode` follows `versionName`: `1.23.0 → 1×10000 + 23×100 + 0 = 12300`, checked by `checkVersion`. F-Droid's update check reads the `versionName = "…"` and `versionCode = …` lines of [`app/build.gradle.kts`](../../../app/build.gradle.kts) as text, and the release workflow reads the `versionName` one (with `sed`) to check the tag, so keep them literal.
 
-The APK and the app bundle both carry that code as it is (one APK for every CPU type, see [build.md](build.md#one-apk-for-every-phone)). Codes only go up, so the scheme is permanent once released. Debug builds add the commit to the name (`1.23.0-<commit>`); Settings reads the installed APK's name from the package manager.
+The APK and the app bundle both carry that code as it is (one APK for both 64-bit CPU types, see [build.md](build.md#one-apk-for-every-phone-64-bit-only)). Codes only go up, so the scheme is permanent once released. Debug builds add the commit to the name (`1.23.0-<commit>`); Settings reads the installed APK's name from the package manager.
 
 ## F-Droid (draft recipe for fdroiddata)
 

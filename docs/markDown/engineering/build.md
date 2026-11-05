@@ -23,9 +23,9 @@
 
 Flavor- and build-type-specific code goes in `app/src/<flavor>/` behind a hook `main` asks for (see [architecture](architecture/README.md#rules-that-hold-everywhere)).
 
-## One APK for every phone
+## One APK for every phone, 64-bit only
 
-`assemble*` builds one APK per variant (`assembleDebug` builds both flavors), never one per CPU type. The F-Droid APK carries receipt scanning's native code (`:ocr-engine`) for all four CPU types (`armeabi-v7a`, `arm64-v8a`, `x86`, `x86_64`, about 7 MB each), stored compressed (`useLegacyPackaging`): 24 MB at 1.23.0, against about 14.5 MB for an APK of one type. One APK means one version code, one F-Droid build and one file for F-Droid to reproduce and publish with this project's signature ([release.md](release.md#f-droid-draft-recipe-for-fdroiddata)), which the ~10 MB was judged worth. A Play APK has no native code (its receipt reader, `:ocr`, exists only in the bundle); Play gets the app bundle and splits it by CPU type itself. Version codes: [release.md](release.md#version-codes).
+`assemble*` builds one APK per variant (`assembleDebug` builds both flavors), never one per CPU type. The F-Droid APK carries receipt scanning's native code (`:ocr-engine`) for the two 64-bit CPU types, `arm64-v8a` (phones) and `x86_64` (emulators), about 7 MB each, stored compressed (`useLegacyPackaging`). The list is `currencix.abis` in [`gradle.properties`](../../../gradle.properties), read by `:app` and `:ocr` (a bundle's modules must ship the same CPU types). The 32-bit types (`armeabi-v7a`, `x86`) were dropped at 1.23.0, before the first release: a phone that runs only 32-bit apps, such as some low-cost Android Go phones, can't install CurrenciX from any store. One APK means one version code, one F-Droid build and one file for F-Droid to reproduce and publish with this project's signature ([release.md](release.md#f-droid-draft-recipe-for-fdroiddata)), which the ~10 MB was judged worth. A Play APK has no native code (its receipt reader, `:ocr`, exists only in the bundle); Play gets the app bundle and splits it by CPU type itself. Version codes: [release.md](release.md#version-codes).
 
 ## Dependency choices
 

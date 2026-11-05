@@ -137,6 +137,8 @@ android {
         // SemVer
         versionName = "1.23.0"
         versionCode = 12300
+        // 64-bit CPU types only (gradle.properties).
+        ndk { abiFilters += providers.gradleProperty("currencix.abis").get().split(",") }
     }
 
     signingConfigs {
@@ -273,13 +275,13 @@ android {
         compose = true
     }
 
-    // One APK for every phone: it carries receipt scanning's native code for
-    // all four CPU types (about 7 MB each, compressed below), so a release is
+    // One APK for every (64-bit) phone: it carries receipt scanning's native code for
+    // both 64-bit CPU types (about 7 MB each, compressed below), so a release is
     // one file, one version code and one F-Droid build, and F-Droid can
     // publish the APK signed here, hybrid signature included. Play builds
     // from the app bundle, which it splits by CPU type itself.
-    // Native libraries compressed in the APK: about 12 MB smaller to download
-    // with all four types; Android unpacks them on install.
+    // Native libraries compressed in the APK: smaller to download; Android
+    // unpacks them on install.
     packaging {
         jniLibs {
             useLegacyPackaging = true

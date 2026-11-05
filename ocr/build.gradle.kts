@@ -25,6 +25,9 @@ android {
 
     defaultConfig {
         minSdk { version = release(33) }
+        // The same CPU types as :app (gradle.properties): a bundle's modules
+        // must ship native code for the same ones.
+        ndk { abiFilters += providers.gradleProperty("currencix.abis").get().split(",") }
     }
 
     flavorDimensions.add("version")
