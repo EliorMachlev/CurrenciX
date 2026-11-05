@@ -36,7 +36,7 @@ This section documents CurrenciX's posture under specific privacy regimes. It is
 - **Lawful basis** for the on-device processing you initiate: Art. 6(1)(b) — necessary to perform the service you requested (currency conversion). No processing takes place on the controller's infrastructure because the controller operates no infrastructure.
 - **Data subject rights** (Arts. 12–22): access, rectification, erasure, restriction, portability, and objection are exercisable by (a) inspecting or clearing app storage on your device, and (b) contacting the address above for anything not covered by that.
 - **International transfers**: none by the controller. Transfers to the provider you selected occur under **your** action and under **that provider's** terms.
-- **Complaint channel**: your local Data Protection Authority. In the EU, the [EDPB lists them](https://edpb.europa.eu/about-edpb/board/members_en).
+- **Complaint channel**: your local Data Protection Authority. In the EU, the [EDPB lists them](https://www.edpb.europa.eu/about-edpb/our-members_en).
 - **Retention**: on-device data is retained until you clear the app storage or uninstall the app. The controller retains nothing.
 - **Automated decision-making**: none.
 
