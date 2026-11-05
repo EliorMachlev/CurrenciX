@@ -152,7 +152,7 @@
     <string name="credit_lib_tink">Enkripsi AES-GCM untuk cadangan</string>
     <string name="credit_lib_kotlin">Runtime bahasa dan pustaka standar</string>
     <string name="credit_lib_coroutines">Pemrograman asinkron (digunakan oleh pustaka lain)</string>
-    <string name="credit_lib_okio">Primitif I/O (digunakan oleh OkHttp dan Moshi)</string>
+    <string name="credit_lib_okio">Primitif I/O (digunakan oleh OkHttp dan Retrofit)</string>
     <string name="credit_terms_of_service_title">Ketentuan layanan</string>
     <string name="credit_terms_of_service_subtitle">Ketentuan penggunaan, penafian jaminan, pemberitahuan akurasi nilai tukar.</string>
     <string name="credits_section_legal">Hukum</string>

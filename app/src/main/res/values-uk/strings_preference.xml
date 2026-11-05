@@ -155,7 +155,7 @@
     <string name="credit_lib_tink">Шифрування AES-GCM для резервних копій</string>
     <string name="credit_lib_kotlin">Середовище виконання мови та стандартна бібліотека</string>
     <string name="credit_lib_coroutines">Асинхронне програмування (використовується іншими бібліотеками)</string>
-    <string name="credit_lib_okio">Примітиви введення-виведення (використовуються OkHttp і Moshi)</string>
+    <string name="credit_lib_okio">Примітиви введення-виведення (використовуються OkHttp і Retrofit)</string>
     <string name="credit_terms_of_service_title">Умови надання послуг</string>
     <string name="credit_terms_of_service_subtitle">Умови використання, відмова від гарантій, повідомлення про точність курсів.</string>
     <string name="credits_section_legal">Правова інформація</string>

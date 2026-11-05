@@ -154,7 +154,7 @@
     <string name="credit_lib_tink">AES-GCM šifriranje sigurnosnih kopija</string>
     <string name="credit_lib_kotlin">Izvršno okruženje jezika i standardna biblioteka</string>
     <string name="credit_lib_coroutines">Asinkrono programiranje (koriste ga druge biblioteke)</string>
-    <string name="credit_lib_okio">Osnovne U/I operacije (koriste ih OkHttp i Moshi)</string>
+    <string name="credit_lib_okio">Osnovne U/I operacije (koriste ih OkHttp i Retrofit)</string>
     <string name="credit_terms_of_service_title">Uvjeti pružanja usluge</string>
     <string name="credit_terms_of_service_subtitle">Uvjeti korištenja, izjava o odricanju od jamstva, obavijest o točnosti tečajeva.</string>
     <string name="credits_section_legal">Pravne informacije</string>

@@ -150,7 +150,7 @@
     <string name="credit_lib_tink">הצפנת AES-GCM לגיבויים</string>
     <string name="credit_lib_kotlin">סביבת ריצה וספרייה סטנדרטית של השפה</string>
     <string name="credit_lib_coroutines">תכנות אסינכרוני (בשימוש של ספריות אחרות)</string>
-    <string name="credit_lib_okio">רכיבי קלט/פלט בסיסיים (בשימוש של OkHttp ו־Moshi)</string>
+    <string name="credit_lib_okio">רכיבי קלט/פלט בסיסיים (בשימוש של OkHttp ו־Retrofit)</string>
     <string name="credit_terms_of_service_title">תנאי שימוש</string>
     <string name="credit_terms_of_service_subtitle">תנאי שימוש, הסתייגות מאחריות, הודעה על דיוק השערים.</string>
     <string name="credits_section_legal">מידע משפטי</string>

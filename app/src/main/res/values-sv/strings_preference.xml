@@ -154,7 +154,7 @@
     <string name="credit_lib_tink">AES-GCM-kryptering av säkerhetskopior</string>
     <string name="credit_lib_kotlin">Språkets körmiljö och standardbibliotek</string>
     <string name="credit_lib_coroutines">Asynkron programmering (används av andra bibliotek)</string>
-    <string name="credit_lib_okio">I/O-primitiver (används av OkHttp och Moshi)</string>
+    <string name="credit_lib_okio">I/O-primitiver (används av OkHttp och Retrofit)</string>
     <string name="credit_terms_of_service_title">Användarvillkor</string>
     <string name="credit_terms_of_service_subtitle">Användarvillkor, garantifriskrivning, meddelande om kursnoggrannhet.</string>
     <string name="credits_section_legal">Juridik</string>

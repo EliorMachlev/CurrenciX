@@ -154,7 +154,7 @@
     <string name="credit_lib_tink">Mã hóa AES-GCM cho bản sao lưu</string>
     <string name="credit_lib_kotlin">Môi trường chạy và thư viện chuẩn của ngôn ngữ</string>
     <string name="credit_lib_coroutines">Lập trình bất đồng bộ (được các thư viện khác sử dụng)</string>
-    <string name="credit_lib_okio">Các thao tác I/O cơ bản (được OkHttp và Moshi sử dụng)</string>
+    <string name="credit_lib_okio">Các thao tác I/O cơ bản (được OkHttp và Retrofit sử dụng)</string>
     <string name="credit_terms_of_service_title">Điều khoản dịch vụ</string>
     <string name="credit_terms_of_service_subtitle">Điều khoản sử dụng, tuyên bố miễn trừ bảo hành, thông báo về độ chính xác của tỷ giá.</string>
     <string name="credits_section_legal">Pháp lý</string>

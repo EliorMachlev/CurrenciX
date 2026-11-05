@@ -154,7 +154,7 @@
     <string name="credit_lib_tink">AES-GCM-dulkóðun öryggisafrita</string>
     <string name="credit_lib_kotlin">Keyrsluumhverfi og staðalsafn forritunarmálsins</string>
     <string name="credit_lib_coroutines">Ósamstillt forritun (notuð af öðrum söfnum)</string>
-    <string name="credit_lib_okio">I/O-grunneiningar (notaðar af OkHttp og Moshi)</string>
+    <string name="credit_lib_okio">I/O-grunneiningar (notaðar af OkHttp og Retrofit)</string>
     <string name="credit_terms_of_service_title">Þjónustuskilmálar</string>
     <string name="credit_terms_of_service_subtitle">Notkunarskilmálar, fyrirvari um ábyrgð, tilkynning um nákvæmni gengis.</string>
     <string name="credits_section_legal">Lagalegt</string>

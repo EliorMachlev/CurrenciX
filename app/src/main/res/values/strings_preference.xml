@@ -174,7 +174,7 @@
     <string name="credit_lib_tink">AES-GCM encryption for backups</string>
     <string name="credit_lib_kotlin">Language runtime and standard library</string>
     <string name="credit_lib_coroutines">Asynchronous programming (used by other libraries)</string>
-    <string name="credit_lib_okio">I/O primitives (used by OkHttp and Moshi)</string>
+    <string name="credit_lib_okio">I/O primitives (used by OkHttp and Retrofit)</string>
     <string name="rate_title">Rate this app</string>
     <string name="rate_summary">If you\'d like, you can help others to discover Currencies. Click here to rate the app.</string>
     <string name="category_versioninfo">Version info</string>

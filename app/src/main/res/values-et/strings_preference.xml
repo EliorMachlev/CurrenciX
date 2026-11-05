@@ -153,7 +153,7 @@
     <string name="credit_lib_tink">Varukoopiate AES-GCM-krüpteerimine</string>
     <string name="credit_lib_kotlin">Keele käituskeskkond ja standardteek</string>
     <string name="credit_lib_coroutines">Asünkroonne programmeerimine (kasutavad teised teegid)</string>
-    <string name="credit_lib_okio">I/O-primitiivid (kasutavad OkHttp ja Moshi)</string>
+    <string name="credit_lib_okio">I/O-primitiivid (kasutavad OkHttp ja Retrofit)</string>
     <string name="credit_terms_of_service_title">Kasutustingimused</string>
     <string name="credit_terms_of_service_subtitle">Kasutustingimused, garantii lahtiütlus, kursside täpsuse teave.</string>
     <string name="credits_section_legal">Õigusteave</string>

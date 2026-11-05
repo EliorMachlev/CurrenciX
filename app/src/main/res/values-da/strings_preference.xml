@@ -153,7 +153,7 @@
     <string name="credit_lib_tink">AES-GCM-kryptering til sikkerhedskopier</string>
     <string name="credit_lib_kotlin">Sprogets runtime og standardbibliotek</string>
     <string name="credit_lib_coroutines">Asynkron programmering (bruges af andre biblioteker)</string>
-    <string name="credit_lib_okio">I/O-grundfunktioner (bruges af OkHttp og Moshi)</string>
+    <string name="credit_lib_okio">I/O-grundfunktioner (bruges af OkHttp og Retrofit)</string>
     <string name="credit_terms_of_service_title">Servicevilkår</string>
     <string name="credit_terms_of_service_subtitle">Brugsvilkår, garantifraskrivelse, meddelelse om kursnøjagtighed.</string>
     <string name="credits_section_legal">Juridisk</string>

@@ -152,7 +152,7 @@
     <string name="credit_lib_tink">ব্যাকআপের জন্য AES-GCM এনক্রিপশন</string>
     <string name="credit_lib_kotlin">ভাষার রানটাইম ও স্ট্যান্ডার্ড লাইব্রেরি</string>
     <string name="credit_lib_coroutines">অ্যাসিঙ্ক্রোনাস প্রোগ্রামিং (অন্যান্য লাইব্রেরি এটি ব্যবহার করে)</string>
-    <string name="credit_lib_okio">I/O প্রিমিটিভ (OkHttp ও Moshi এটি ব্যবহার করে)</string>
+    <string name="credit_lib_okio">I/O প্রিমিটিভ (OkHttp ও Retrofit এটি ব্যবহার করে)</string>
     <string name="credit_terms_of_service_title">পরিষেবার শর্তাবলী</string>
     <string name="credit_terms_of_service_subtitle">ব্যবহারের শর্তাবলী, ওয়ারেন্টি অস্বীকৃতি, হারের নির্ভুলতা নোটিশ।</string>
     <string name="credits_section_legal">আইনি</string>

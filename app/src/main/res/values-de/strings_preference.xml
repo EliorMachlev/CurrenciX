@@ -152,7 +152,7 @@
     <string name="credit_lib_tink">AES-GCM-Verschlüsselung für Sicherungen</string>
     <string name="credit_lib_kotlin">Laufzeitumgebung und Standardbibliothek der Sprache</string>
     <string name="credit_lib_coroutines">Asynchrone Programmierung (von anderen Bibliotheken genutzt)</string>
-    <string name="credit_lib_okio">I/O-Grundbausteine (von OkHttp und Moshi genutzt)</string>
+    <string name="credit_lib_okio">I/O-Grundbausteine (von OkHttp und Retrofit genutzt)</string>
     <string name="credit_terms_of_service_title">Nutzungsbedingungen</string>
     <string name="credit_terms_of_service_subtitle">Nutzungsbedingungen, Gewährleistungsausschluss, Hinweis zur Kursgenauigkeit.</string>
     <string name="credits_section_legal">Rechtliches</string>

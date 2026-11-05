@@ -154,7 +154,7 @@
     <string name="credit_lib_tink">Chiffrement AES-GCM des sauvegardes</string>
     <string name="credit_lib_kotlin">Environnement d\'exécution et bibliothèque standard du langage</string>
     <string name="credit_lib_coroutines">Programmation asynchrone (utilisée par d\'autres bibliothèques)</string>
-    <string name="credit_lib_okio">Primitives d\'E/S (utilisées par OkHttp et Moshi)</string>
+    <string name="credit_lib_okio">Primitives d\'E/S (utilisées par OkHttp et Retrofit)</string>
     <string name="credit_terms_of_service_title">Conditions d\'utilisation</string>
     <string name="credit_terms_of_service_subtitle">Conditions d\'utilisation, clause de non-garantie, avis sur la précision des taux.</string>
     <string name="credits_section_legal">Mentions légales</string>

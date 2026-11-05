@@ -152,7 +152,7 @@
     <string name="credit_lib_tink">AES-GCM-versleuteling voor back-ups</string>
     <string name="credit_lib_kotlin">Taalruntime en standaardbibliotheek</string>
     <string name="credit_lib_coroutines">Asynchroon programmeren (gebruikt door andere bibliotheken)</string>
-    <string name="credit_lib_okio">I/O-basisfuncties (gebruikt door OkHttp en Moshi)</string>
+    <string name="credit_lib_okio">I/O-basisfuncties (gebruikt door OkHttp en Retrofit)</string>
     <string name="credit_terms_of_service_title">Servicevoorwaarden</string>
     <string name="credit_terms_of_service_subtitle">Gebruiksvoorwaarden, uitsluiting van garantie, opmerking over koersnauwkeurigheid.</string>
     <string name="credits_section_legal">Juridisch</string>

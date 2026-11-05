@@ -154,7 +154,7 @@
     <string name="credit_lib_tink">Xifratge AES-GCM per a les còpies de seguretat</string>
     <string name="credit_lib_kotlin">Entorn d\'execució i biblioteca estàndard del llenguatge</string>
     <string name="credit_lib_coroutines">Programació asíncrona (la fan servir altres biblioteques)</string>
-    <string name="credit_lib_okio">Primitives d\'E/S (les fan servir OkHttp i Moshi)</string>
+    <string name="credit_lib_okio">Primitives d\'E/S (les fan servir OkHttp i Retrofit)</string>
     <string name="credit_terms_of_service_title">Termes del servei</string>
     <string name="credit_terms_of_service_subtitle">Condicions d\'ús, renúncia de garantia, avís sobre l\'exactitud dels tipus.</string>
     <string name="credits_section_legal">Avís legal</string>

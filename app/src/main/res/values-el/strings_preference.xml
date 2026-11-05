@@ -153,7 +153,7 @@
     <string name="credit_lib_tink">Κρυπτογράφηση AES-GCM για αντίγραφα ασφαλείας</string>
     <string name="credit_lib_kotlin">Περιβάλλον εκτέλεσης και τυπική βιβλιοθήκη της γλώσσας</string>
     <string name="credit_lib_coroutines">Ασύγχρονος προγραμματισμός (χρησιμοποιείται από άλλες βιβλιοθήκες)</string>
-    <string name="credit_lib_okio">Βασικές λειτουργίες I/O (χρησιμοποιούνται από τα OkHttp και Moshi)</string>
+    <string name="credit_lib_okio">Βασικές λειτουργίες I/O (χρησιμοποιούνται από τα OkHttp και Retrofit)</string>
     <string name="credit_terms_of_service_title">Όροι υπηρεσίας</string>
     <string name="credit_terms_of_service_subtitle">Όροι χρήσης, αποποίηση εγγύησης, ειδοποίηση ακρίβειας ισοτιμιών.</string>
     <string name="credits_section_legal">Νομικά</string>

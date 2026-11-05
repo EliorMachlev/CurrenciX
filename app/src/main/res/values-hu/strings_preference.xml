@@ -126,7 +126,7 @@
     <string name="credit_lib_tink">AES-GCM-titkosítás a biztonsági mentésekhez</string>
     <string name="credit_lib_kotlin">A nyelv futtatókörnyezete és standard könyvtára</string>
     <string name="credit_lib_coroutines">Aszinkron programozás (más könyvtárak használják)</string>
-    <string name="credit_lib_okio">I/O-primitívek (az OkHttp és a Moshi használja)</string>
+    <string name="credit_lib_okio">I/O-primitívek (az OkHttp és a Retrofit használja)</string>
     <string name="credit_terms_of_service_title">Szolgáltatási feltételek</string>
     <string name="credit_terms_of_service_subtitle">Felhasználási feltételek, garanciakizárás, árfolyampontossági tájékoztatás.</string>
     <string name="credits_section_legal">Jogi információk</string>

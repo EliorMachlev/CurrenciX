@@ -136,7 +136,7 @@
     <string name="credit_lib_tink">Criptografia AES-GCM para backups</string>
     <string name="credit_lib_kotlin">Runtime da linguagem e biblioteca padrão</string>
     <string name="credit_lib_coroutines">Programação assíncrona (usada por outras bibliotecas)</string>
-    <string name="credit_lib_okio">Primitivas de E/S (usadas pelo OkHttp e pelo Moshi)</string>
+    <string name="credit_lib_okio">Primitivas de E/S (usadas pelo OkHttp e pelo Retrofit)</string>
     <string name="credit_terms_of_service_title">Termos de serviço</string>
     <string name="credit_terms_of_service_subtitle">Termos de uso, isenção de garantia, aviso sobre precisão das cotações.</string>
     <string name="credits_section_legal">Informações legais</string>

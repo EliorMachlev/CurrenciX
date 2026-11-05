@@ -153,7 +153,7 @@
     <string name="credit_lib_tink">رمزنگاری AES-GCM برای پشتیبان‌ها</string>
     <string name="credit_lib_kotlin">محیط اجرا و کتابخانهٔ استاندارد زبان</string>
     <string name="credit_lib_coroutines">برنامه‌نویسی ناهمگام (مورد استفادهٔ کتابخانه‌های دیگر)</string>
-    <string name="credit_lib_okio">عناصر پایهٔ ورودی/خروجی (مورد استفادهٔ OkHttp و Moshi)</string>
+    <string name="credit_lib_okio">عناصر پایهٔ ورودی/خروجی (مورد استفادهٔ OkHttp و Retrofit)</string>
     <string name="credit_terms_of_service_title">شرایط استفاده</string>
     <string name="credit_terms_of_service_subtitle">شرایط استفاده، سلب ضمانت، اطلاعیه دقت نرخ‌ها.</string>
     <string name="credits_section_legal">حقوقی</string>

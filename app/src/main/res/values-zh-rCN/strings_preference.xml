@@ -151,7 +151,7 @@
     <string name="credit_lib_tink">为备份提供 AES-GCM 加密</string>
     <string name="credit_lib_kotlin">语言运行时和标准库</string>
     <string name="credit_lib_coroutines">异步编程（供其他库使用）</string>
-    <string name="credit_lib_okio">I/O 基础组件（供 OkHttp 和 Moshi 使用）</string>
+    <string name="credit_lib_okio">I/O 基础组件（供 OkHttp 和 Retrofit 使用）</string>
     <string name="credit_terms_of_service_title">服务条款</string>
     <string name="credit_terms_of_service_subtitle">使用条款、免责声明、汇率准确性说明。</string>
     <string name="credits_section_legal">法律</string>
