@@ -1,7 +1,7 @@
 # Privacy Policy
 
-**Effective:** 2026-10-24
-**Last reviewed:** 2026-10-25
+**Effective:** 2026-11-04
+**Last reviewed:** 2026-11-05
 **Controller:** Elior Machlev (individual maintainer of CurrenciX)
 **Contact:** [GitHub issues](https://github.com/EliorMachlev/CurrenciX/issues)
 

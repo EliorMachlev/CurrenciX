@@ -7,7 +7,7 @@
 ## Engineering
 
 - [Architecture](engineering/architecture/README.md): layers and rules, then [data](engineering/architecture/data.md), [networking](engineering/architecture/networking.md), [UI](engineering/architecture/ui.md) and [features](engineering/architecture/features.md)
-- [Build](engineering/build.md): toolchain, flavors, dependencies, fuzzing, dependency verification, baseline profiles
+- [Build](engineering/build.md): toolchain, flavors, dependencies, tests and coverage, licence checks, fuzzing, dependency verification, baseline profiles
 - [Release](engineering/release.md): tags, signing (post-quantum), version codes, F-Droid
 - [CI / CD](engineering/ci-cd.md): workflows, scanners, Dependabot, permissions
 - [Security](engineering/security.md): supply chain, secrets, backups, network, signing

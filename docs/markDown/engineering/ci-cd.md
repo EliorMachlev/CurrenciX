@@ -40,7 +40,7 @@ Everything is in `.github/workflows/`. Every action is pinned to a full commit S
 - **`spotless`**: ktlint via Spotless.
 - **`fuzz`**: one job per `FuzzTest` target, two minutes each with Jazzer; a crash uploads its input ([build.md](build.md#fuzz-tests)).
 - **`compose-stability`**: fails on a composable that can't skip or a parameter the compiler can't prove stable, which strong skipping compares by identity, so an equal fresh value recomposes every time. Fix the type (immutable, `@Stable` / `@Immutable` when true, or `app/compose-stability.conf`). `Any` keys, `Context` and receivers are identity-compared on purpose; Glance composables compose once per update.
-- **`build`**: `lint`, `test` and `assemble` for each flavor, six jobs. Lint has nothing disabled: a string missing from any locale fails it. Failed tests become error annotations.
+- **`build`**: `lint`, `test` and `assemble` for each flavor, six jobs. Lint has nothing disabled: a string missing from any locale fails it. The fdroid `lint` job also runs Licensee on the release's libraries. Each `test` job runs Robolectric offline on a Gradle-verified Android jar ([build.md](build.md)) and puts a Kover coverage summary on the run. Failed tests become error annotations.
 - **`fdroid-release-build`**: the unsigned fdroid release APK and its SBOM, guarding the F-Droid build path.
 
 **Speed.** Every PR and branch workflow has a `concurrency` group, so a new push cancels the previous run (`master` runs always finish). `setup-gradle` keeps Gradle's home and build cache: `master` writes it, PRs read it. Build cache and parallel execution are on; the configuration cache is off, as on CI it made lint + test + build about 70 s slower.

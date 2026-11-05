@@ -70,9 +70,9 @@ cd CurrenciX
 
 ## 🧱 Built with
 
-[Kotlin](https://kotlinlang.org/) · [Jetpack Compose](https://developer.android.com/compose) with Material 3 · Navigation 3 · DataStore · Retrofit + OkHttp · WorkManager · [Glance](https://developer.android.com/develop/ui/compose/glance) · [Vico](https://github.com/patrykandpatrick/vico) charts · [Tesseract](https://github.com/adaptech-cz/Tesseract4Android) OCR · Bouncy Castle + Tink
+[Kotlin](https://kotlinlang.org/) · [Jetpack Compose](https://developer.android.com/compose) with Material 3 · Navigation 3 · DataStore · Retrofit + OkHttp · kotlinx.serialization · WorkManager · [Glance](https://developer.android.com/develop/ui/compose/glance) · [Vico](https://github.com/patrykandpatrick/vico) charts · [Tesseract](https://github.com/adaptech-cz/Tesseract4Android) OCR · Bouncy Castle + Tink
 
-Checked on every change by Android Lint, detekt, Qodana, Semgrep, CodeQL, Gitleaks and OSV-Scanner, with unit, screenshot and fuzz tests; OWASP Dependency-Check audits the shipped libraries twice a week. See [CI / CD](docs/markDown/engineering/ci-cd.md).
+Checked on every change by Android Lint, detekt, Qodana, Semgrep, CodeQL, Gitleaks, OSV-Scanner and Licensee, with unit, screenshot and fuzz tests; each change to the app is also built twice to check the F-Droid release is reproducible. OWASP Dependency-Check audits the shipped libraries twice a week. See [CI / CD](docs/markDown/engineering/ci-cd.md).
 
 ## 📚 Documentation
 

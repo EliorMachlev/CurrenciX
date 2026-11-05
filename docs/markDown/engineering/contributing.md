@@ -48,7 +48,7 @@ The only exceptions are in [exceptions.md](exceptions.md), each with the reason 
 - [ ] `./gradlew check assembleDebug` passes (includes the Konsist tests)
 - [ ] New behaviour has tests; a bug fix has a test that fails without it (Robolectric for Android and Compose, plain JUnit otherwise)
 - [ ] `detekt` and `spotlessCheck` are clean, and nothing is suppressed beyond [exceptions.md](exceptions.md)
-- [ ] Changed a Compose screen? Look over its screenshots (the Screenshots workflow uploads them per push; locally `./gradlew :app:recordRoborazziFdroidDebug --tests "com.eliormachlev.currencix.screenshots.*"`)
+- [ ] Changed a Compose screen? Look over its screenshots (the Screenshots workflow uploads them per push, and on a branch uploads the ones that differ from master's as `screenshot-changes-<sha>`; locally `./gradlew :app:recordRoborazziFdroidDebug --tests "com.eliormachlev.currencix.screenshots.*"`)
 - [ ] Added a dependency? Check its licence works for F-Droid, and record its checksums ([build.md](build.md#dependency-verification))
 - [ ] Changed the website? `python3 .github/scripts/site-assets.py stamp docs` ([website.md](website.md))
 
