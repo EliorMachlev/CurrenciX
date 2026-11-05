@@ -108,6 +108,36 @@ val fuzzTestClass = "com.eliormachlev.currencix.FuzzTest"
 val liveProviderTestClass = "com.eliormachlev.currencix.repository.ExchangeRatesServiceTest"
 val separateTestRuns = mapOf("fuzzTests" to fuzzTestClass, "liveProviders" to liveProviderTestClass)
 
+// Robolectric, and the Android framework jar it runs the tests on. Robolectric
+// would download that jar from Maven Central while the tests run, outside
+// Gradle's cache and dependency verification, and a rate-limited download
+// (HTTP 429) failed whole test runs. Gradle resolves it instead (cached, and
+// checked against gradle/verification-metadata.xml), and the tests run
+// Robolectric offline against that copy. The jar's version is the one this
+// Robolectric release maps SDK 34 to (every test's @Config(sdk = [34])), so a
+// new Robolectric can need a new one: offline, a wrong one fails each test
+// with "Unable to locate dependency" rather than downloading.
+val robolectricVersion = "4.17"
+val robolectricAndroidAll = "org.robolectric:android-all-instrumented:14-robolectric-10818077-i7"
+// Declared on one configuration, resolved (that jar alone) through another.
+// The roles are set by hand: dependencyScope() and resolvable() are still @Incubating.
+val robolectricAndroidAllScope =
+    configurations.create("robolectricAndroidAll") {
+        isCanBeConsumed = false
+        isCanBeResolved = false
+    }
+val robolectricAndroidAllJars =
+    configurations.create("robolectricAndroidAllJars") {
+        isCanBeConsumed = false
+        isTransitive = false
+        extendsFrom(robolectricAndroidAllScope)
+    }
+val robolectricJars =
+    tasks.register<Sync>("robolectricJars") {
+        from(robolectricAndroidAllJars)
+        into(layout.buildDirectory.dir("robolectric-jars"))
+    }
+
 val buildsBundle = gradle.startParameter.taskNames.any { it.substringAfterLast(':').startsWith("bundle") }
 
 android {
@@ -227,6 +257,14 @@ android {
             // replaying the saved inputs; see docs/markDown/engineering/build.md).
             // -PliveProviders runs the live-API tests alone the same way.
             val separateRun = separateTestRuns.entries.firstOrNull { (property, _) -> providers.gradleProperty(property).isPresent }
+            // Robolectric reads its Android jar from robolectricJars, never the
+            // network. The separate runs (fuzz, live providers) don't use
+            // Robolectric, so they don't fetch the jar either.
+            if (separateRun == null) {
+                val offline = objects.newInstance<RobolectricOffline>()
+                offline.jars.fileProvider(robolectricJars.map { sync -> sync.destinationDir })
+                it.jvmArgumentProviders.add(offline)
+            }
             it.filter {
                 if (separateRun != null) {
                     includeTestsMatching(separateRun.value)
@@ -514,7 +552,8 @@ dependencies {
     val roborazziVersion = "1.77.0"
     testImplementation("io.github.takahirom.roborazzi:roborazzi:$roborazziVersion")
     testImplementation("io.github.takahirom.roborazzi:roborazzi-compose:$roborazziVersion")
-    testImplementation("org.robolectric:robolectric:4.17")
+    testImplementation("org.robolectric:robolectric:$robolectricVersion")
+    add(robolectricAndroidAllScope.name, robolectricAndroidAll)
     testImplementation("androidx.compose.ui:ui-test-junit4")
     testImplementation("androidx.compose.ui:ui-test-manifest")
     // Coroutines and Flows on a virtual clock (runTest), and Flow emissions
@@ -633,6 +672,20 @@ data class HybridSigningKeys(
             )
         }
     }
+}
+
+/**
+ * Runs Robolectric offline on the jars in [jars]. The folder is an input by its
+ * contents and relative paths, so a test run's cache entry doesn't depend on
+ * where the checkout is; its absolute path only reaches the test JVM.
+ */
+abstract class RobolectricOffline : CommandLineArgumentProvider {
+    @get:InputDirectory
+    @get:PathSensitive(PathSensitivity.RELATIVE)
+    abstract val jars: DirectoryProperty
+
+    override fun asArguments(): List<String> =
+        listOf("-Drobolectric.offline=true", "-Drobolectric.dependency.dir=${jars.get().asFile.absolutePath}")
 }
 
 /**
