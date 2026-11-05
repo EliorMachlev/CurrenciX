@@ -13,6 +13,7 @@ import androidx.work.WorkerParameters
 import androidx.work.await
 import androidx.work.workDataOf
 import com.eliormachlev.currencix.util.HttpClientProvider
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
@@ -118,8 +119,14 @@ internal class TessdataDownloadWorker(
             // Queued here as well, and that awaited (a no-op when it's already
             // on its way), so the wait below sees this download: not an empty
             // list while the first enqueue is still being written, nor an
-            // earlier download that was cancelled.
-            enqueue(context, language)?.await()
+            // earlier download that was cancelled. A download WorkManager
+            // can't queue (its database full, say) ends the wait as failed,
+            // shown as such, rather than crashing the scan.
+            runCatching { enqueue(context, language)?.await() }.exceptionOrNull()?.let { failure ->
+                if (failure is CancellationException) throw failure
+                Timber.tag(TAG).w(failure, "Couldn't queue the download of %s", language.code)
+                return false
+            }
             WorkManager
                 .getInstance(context)
                 .getWorkInfosForUniqueWorkFlow(UNIQUE_PREFIX + language.code)
