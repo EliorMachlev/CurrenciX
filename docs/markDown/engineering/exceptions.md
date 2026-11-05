@@ -75,6 +75,7 @@ Code the app depends on but doesn't write: libraries and the phone's framework.
 | 7 | OWASP Dependency-Check `CVE-2018-8909`, `CVE-2023-22737` | `wire-runtime` (Square's Wire Protobuf library) | `config/owasp/suppressions.xml`, passed in by `.github/workflows/owasp-dependency-check.yaml` |
 | 17 | Licensee: a license named by URL only | `bcprov` (Bouncy Castle), its license page | `licensee {}` in `app/build.gradle.kts` (`allowUrl`) |
 | 18 | Licensee: no license declared | `tesseract4android` 4.8.0 (Tesseract4Android) | `licensee {}` in `app/build.gradle.kts` (`allowDependency`) |
+| 19 | Dependabot: `mcp` 1.29.0 (GHSA-rwrf-2pqf-9j8j, GHSA-5h93-6whr-6q8j, GHSA-w4fh-qvv9-3v23) | Semgrep's MCP SDK, in `.github/semgrep/requirements.txt` | Dismissed on GitHub: Dependabot alerts #44, #45 and #46, "vulnerable code is not actually used" |
 
 #### 3. LeakCanary: `ResourcesImpl.mAppContext`
 
@@ -102,6 +103,16 @@ Code the app depends on but doesn't write: libraries and the phone's framework.
 - **Why the finding is wrong:** the project is Apache-2.0 (its repository's license and README); the POM, built by JitPack, just leaves it out. The Tesseract, Leptonica, libjpeg and libpng it bundles have their own licenses, which Licensee never saw either way.
 - **Why it can't be fixed:** the POM is the project's own; replacing the library would remove receipt scanning.
 - **What is excluded:** that library at 4.8.0 only. A new version is checked again, so the exception is reviewed on each update; every other library is checked as usual.
+
+#### 19. Dependabot: `mcp` 1.29.0 in Semgrep's packages
+
+- **What it reports:** three advisories in `mcp` 1.29.0, the Python MCP SDK, fixed in 1.30.0:
+  - alert #44 (GHSA-rwrf-2pqf-9j8j): the client fetches `$ref` URLs chosen by the server while it validates tool results against output schemas;
+  - alert #45 (GHSA-5h93-6whr-6q8j): the HTTP client transports follow cross-origin redirects, carrying custom headers and bodies;
+  - alert #46 (GHSA-w4fh-qvv9-3v23): the server's bearer-token authentication accepts tokens issued for a different resource server.
+- **Why it can't be fixed:** `mcp` comes in only as a requirement of Semgrep, and Semgrep 1.183.0 (its newest release) requires exactly `mcp==1.29.0`. Dependabot can't update it, and installing 1.30.0 past that pin would run Semgrep on a version it doesn't declare support for.
+- **Why it's safe:** the Semgrep workflow runs only `semgrep scan` on this repository's code. That command never starts an MCP client or server, so none of the three affected code paths runs. Semgrep runs only in CI, and the app doesn't ship it.
+- **What is excluded:** those three alerts, dismissed on GitHub. OSV-Scanner and Scorecard still report them (see "Not exceptions" below). When a Semgrep release allows `mcp` 1.30.0 or later, Dependabot recompiles the file; this exception then goes.
 
 ### Action exceptions
 
@@ -179,7 +190,7 @@ The app's own code, written as it is on purpose.
 
 ### Decided
 
-1 and 2 decided by the maintainer on 2026-10-06, 3 on 2026-10-12, 4 to 6 on 2026-10-18 (PR #181), 7 to 9 on 2026-10-25 (PR #203); `CVE-2023-22737` in 7, and 10 to 13, on 2026-11-04; 14 and 15, dismissed on GitHub, on 2026-10-23, and recorded here on 2026-11-04; 16 to 18 on 2026-11-04.
+1 and 2 decided by the maintainer on 2026-10-06, 3 on 2026-10-12, 4 to 6 on 2026-10-18 (PR #181), 7 to 9 on 2026-10-25 (PR #203); `CVE-2023-22737` in 7, and 10 to 13, on 2026-11-04; 14 and 15, dismissed on GitHub, on 2026-10-23, and recorded here on 2026-11-04; 16 to 18 on 2026-11-04; 19, dismissed on GitHub, on 2026-11-05.
 
 ## Adding an exception
 
@@ -187,7 +198,7 @@ The app's own code, written as it is on purpose.
 2. Get the maintainer's decision. An exception is theirs to grant, not the author's.
 3. Exclude the narrowest thing possible: the one finding, by rule id, where it occurs. Never a rule switched off for the project, a file or directory left out of a scan, or a baseline.
 4. Add a row and a section above, in the group where the finding lives (the build, a package, a workflow, or CurrenciX's own code), under the next unused number: what the rule says, why it can't be fixed, what still guards the code.
-5. Add the exact line to `EXCEPTIONS` in `NoSuppressionsTest`. (A finding dismissed on GitHub, like 14 and 15, has no line to add: give its alert number and the reason it was dismissed with instead.) That test fails on any suppression marker not listed there, on a listed one that is no longer in the code or has moved off the thing it was granted for, and on one this file doesn't explain.
+5. Add the exact line to `EXCEPTIONS` in `NoSuppressionsTest`. (A finding dismissed on GitHub, like 14, 15 and 19, has no line to add: give its alert number and the reason it was dismissed with instead.) That test fails on any suppression marker not listed there, on a listed one that is no longer in the code or has moved off the thing it was granted for, and on one this file doesn't explain.
 
 ## Removing an exception
 
@@ -197,6 +208,6 @@ When the tool is fixed upstream, or the code changes so the finding no longer ap
 
 These have no real fix either, but nothing is excluded for them. They show up in every report.
 
-- **OSV-Scanner and Scorecard's Vulnerabilities, five advisories in Semgrep's own packages** (`.github/semgrep/requirements.txt`): four in `mcp` 1.29.0 (fixed in 1.30.0) and one in `opentelemetry-api` 1.37.0 (fixed in 1.45.1). Semgrep 1.183.0 requires `mcp==1.29.0` and `opentelemetry-api~=1.37.0`, so neither fix installs without breaking Semgrep's own requirements. They go when a Semgrep release raises its pins (Dependabot recompiles the file). Semgrep runs only in CI, on this repository's code; the app doesn't ship it.
+- **OSV-Scanner and Scorecard's Vulnerabilities, five advisories in Semgrep's own packages** (`.github/semgrep/requirements.txt`): four in `mcp` 1.29.0 (fixed in 1.30.0) and one in `opentelemetry-api` 1.37.0 (fixed in 1.45.1). Semgrep 1.183.0 requires `mcp==1.29.0` and `opentelemetry-api~=1.37.0`, so neither fix installs without breaking Semgrep's own requirements. They go when a Semgrep release raises its pins (Dependabot recompiles the file). Dependabot's alerts for the `mcp` advisories are dismissed as exception 19; these two scanners still show them. Semgrep runs only in CI, on this repository's code; the app doesn't ship it.
 - **zizmor `self-repository`** (low), on `baseline-profile.yaml`'s call to `commit-baseline-profiles.yaml`: zizmor asks for GitHub's `$/` self-repository syntax instead of `./`. GitHub supports it, but actionlint (a required check) doesn't yet, and rejects the file. It goes when an actionlint release accepts `$/`. It's below the level that fails the zizmor job, and stays on the Security tab.
 - **Lint `Typos`, twice, in `values-tr/strings_currencies.xml`:** "Gine" in the Turkish names of the Guinean franc and the Papua New Guinean kina. It is the Turkish word for Guinea; lint's word list takes it for a misspelling of "yine".
