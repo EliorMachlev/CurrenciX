@@ -239,10 +239,6 @@ android {
         unitTests.isIncludeAndroidResources = true
         unitTests.all {
             it.useJUnitPlatform()
-            // Robolectric reads its Android jar from robolectricJars, never the network.
-            it.jvmArgumentProviders.add(
-                objects.newInstance<RobolectricOffline>().apply { jars.fileProvider(robolectricJars.map { sync -> sync.destinationDir }) },
-            )
             it.testLogging {
                 events("failed")
                 exceptionFormat = org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
@@ -261,6 +257,14 @@ android {
             // replaying the saved inputs; see docs/markDown/engineering/build.md).
             // -PliveProviders runs the live-API tests alone the same way.
             val separateRun = separateTestRuns.entries.firstOrNull { (property, _) -> providers.gradleProperty(property).isPresent }
+            // Robolectric reads its Android jar from robolectricJars, never the
+            // network. The separate runs (fuzz, live providers) don't use
+            // Robolectric, so they don't fetch the jar either.
+            if (separateRun == null) {
+                val offline = objects.newInstance<RobolectricOffline>()
+                offline.jars.fileProvider(robolectricJars.map { sync -> sync.destinationDir })
+                it.jvmArgumentProviders.add(offline)
+            }
             it.filter {
                 if (separateRun != null) {
                     includeTestsMatching(separateRun.value)
