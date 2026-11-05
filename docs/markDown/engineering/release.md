@@ -44,7 +44,7 @@ Check with `apksigner verify --verbose --print-certs` (JDK 24+): "v3.2 … true"
 
 ## Version codes
 
-`versionCode` follows `versionName`: `1.23.0 → 1×10000 + 23×100 + 0 = 12300`, checked by `checkVersion`. F-Droid's update check and the release workflow read the `versionName = "…"` and `versionCode = …` lines of [`app/build.gradle.kts`](../../../app/build.gradle.kts) as text, so keep them literal.
+`versionCode` follows `versionName`: `1.23.0 → 1×10000 + 23×100 + 0 = 12300`, checked by `checkVersion`. F-Droid's update check reads the `versionName = "…"` and `versionCode = …` lines of [`app/build.gradle.kts`](../../../app/build.gradle.kts) as text, and the release workflow reads the `versionName` one (with `sed`) to check the tag, so keep them literal.
 
 Each APK's code is `versionCode × 10 + digit`: 1 `armeabi-v7a`, 2 `arm64-v8a`, 3 `x86`, 4 `x86_64`, 0 universal and the bundle (123001…123004, 123000). One release's APKs need different codes, and a phone running two types is offered the higher. Codes only go up, so this scheme is permanent once released. Release builds name the type in the version (`1.23.0-arm64`) only with `-PabiVersionNames`, which the release workflow passes; F-Droid builds without it and keeps the plain name. Debug builds always do (`1.23.0-<commit>-arm64`). Settings reads the installed APK's name from the package manager.
 
