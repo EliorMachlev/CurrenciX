@@ -665,16 +665,10 @@ data class HybridSigningKeys(
 }
 
 /**
- * Re-signs a release variant's APKs (already signed with the release key by
- * the Android Gradle plugin, which can't make a hybrid signature) with
- * `apksigner`: the release key for Android 16 and earlier, the hybrid
- * classical + ML-DSA pair for Android 17 and later, then verifies each one.
- * Wired as a transform of the APK artifact, so `assemble`, `install` and the
- * output folder all get the hybrid-signed APKs, never the others.
+ * Runs Robolectric offline on the jars in [jars]. The folder is an input by its
+ * contents and relative paths, so a test run's cache entry doesn't depend on
+ * where the checkout is; its absolute path only reaches the test JVM.
  */
-// Runs Robolectric offline on the jars in [jars]. The folder is an input by its
-// contents and relative paths, so a test run's cache entry doesn't depend on
-// where the checkout is; its absolute path only reaches the test JVM.
 abstract class RobolectricOffline : CommandLineArgumentProvider {
     @get:InputDirectory
     @get:PathSensitive(PathSensitivity.RELATIVE)
@@ -684,6 +678,14 @@ abstract class RobolectricOffline : CommandLineArgumentProvider {
         listOf("-Drobolectric.offline=true", "-Drobolectric.dependency.dir=${jars.get().asFile.absolutePath}")
 }
 
+/**
+ * Re-signs a release variant's APKs (already signed with the release key by
+ * the Android Gradle plugin, which can't make a hybrid signature) with
+ * `apksigner`: the release key for Android 16 and earlier, the hybrid
+ * classical + ML-DSA pair for Android 17 and later, then verifies each one.
+ * Wired as a transform of the APK artifact, so `assemble`, `install` and the
+ * output folder all get the hybrid-signed APKs, never the others.
+ */
 abstract class SignApksHybrid : DefaultTask() {
     @get:InputFiles
     @get:PathSensitive(PathSensitivity.RELATIVE)
