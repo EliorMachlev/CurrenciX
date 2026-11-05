@@ -1,71 +1,71 @@
 # CI / CD
 
-Everything is in `.github/workflows/`. Every action is pinned to a full commit SHA with its release in a comment (`# v7.0.1`); every Java job runs JDK 25. Every job's first step is Harden-Runner in audit mode ([security.md](security.md#supply-chain)).
+Everything is in [`.github/workflows/`](../../../.github/workflows). Every action is pinned to a full commit SHA with its release in a comment (`# v7.0.1`); every Java job runs JDK 25. Every job's first step is Harden-Runner in audit mode ([security.md](security.md#supply-chain)).
 
 ## Workflows
 
 | Workflow | Runs on | Does |
 |---|---|---|
-| `build.yaml` | PR, push → `master`, manual | The gate (below) |
-| `release-apk.yaml` | `v*` tag, manual | Signed release APKs, SBOM, checksums, provenance, GitHub release ([release.md](release.md)) |
-| `apk-artifact.yaml` | Push → non-master, manual | fdroid debug APK as an artifact, linked in the run summary |
-| `apk-checks.yaml` | PR touching the app or the build, push → `master`, weekly, manual | The unsigned fdroid release built twice, from two checkouts with no build cache, and compared byte for byte (any difference fails, with `diffoscope`'s account as an artifact); on PRs, `diffuse` compares the universal APK with master's latest in the run summary. Not part of the gate |
-| `screenshots.yaml` | Push, manual | Roborazzi screenshots of every Compose surface (plus 200 % font scale), uploaded as an artifact. On a branch, compared byte for byte with master's latest (`screenshot-diff.py`): the run summary lists what changed, is new or is gone, with a warning, and the changed and new ones are uploaded with master's beside each; a difference never fails it. Times out at 20 min |
-| `baseline-profile.yaml` | Push → non-master touching `baselineprofile/**`, manual | Profiles on an API 34 emulator, one job per flavor; by hand with **commit**, pushes them through `commit-baseline-profiles.yaml` |
-| `benchmarks.yaml` | Push → non-master touching app code, the build or benchmarks, manual | Startup and frame-timing benchmarks; fails on a slowdown |
-| `live-providers.yaml` | PR changing `model/`, `repository/`, `util/` or the app's build file, daily, manual | Calls each provider's live API (`ExchangeRatesServiceTest`, `-PliveProviders`); not a required check, so a provider's outage is reported without blocking merges |
-| `detekt.yaml` | PR, push → `master`, manual | Kotlin static analysis |
-| `qodana.yaml` | PR, push → `master`, weekly, manual | JetBrains Qodana; when its project import fails dependency verification, lists the refused files (`verification-report.py`) |
-| `codeql.yaml` | PR, push → `master`, weekly, manual | CodeQL on the Kotlin and the workflows |
-| `semgrep.yaml` | PR, push → `master`, weekly, manual | SAST patterns |
-| `gitleaks.yaml` | PR, push → `master`, weekly, manual | Secrets in the repository |
-| `osv-scanner.yaml` | PR, push → `master`, weekly, manual | The release SBOM against OSV.dev |
-| `owasp-dependency-check.yaml` | Mondays and Thursdays, manual | Shipped libraries against the NVD |
-| `dependency-submission.yaml` | PR from this repository, push → `master`, manual | Sends GitHub's dependency graph every library the Gradle build resolves (`gradle/actions/dependency-submission`), the build tools' included, which GitHub can't read from Gradle files itself; Dependabot alerts and Dependency Review rely on it |
-| `dependency-review.yaml` | PR | Blocks new dependencies with high-severity CVEs; waits up to 10 min for the PR's submitted graph |
-| `gradle-wrapper.yaml` | PR, push → `master`, manual | Validates `gradle-wrapper.jar`, the one binary in the repo, against Gradle's releases; its own workflow so Scorecard sees it pass |
-| `scorecard.yaml` | Push → `master`, weekly, manual | OpenSSF Scorecard (waits for the wrapper check on a push) |
-| `update-verification-metadata.yaml` | Manual | Records dependency checksums from an empty cache, commits them, restarts the checks |
-| `certificate-pins.yaml` | Weekly, PR changing the pins, manual | Checks every host still serves a pinned key ([security.md](security.md#certificate-pinning)); by hand with *update*, rewrites `BuiltInPins.kt` from the chains served now, commits it and restarts the checks |
-| `code-scanning-report.yaml` | Manual | Saves the open code scanning alerts on `master`, from every tool, as an artifact and a summary table on the run page |
-| `zizmor.yaml` | PR or push → `master` touching workflows, weekly, manual | zizmor (pinned by hash, `.github/zizmor`) audits the workflows for what actionlint doesn't: template injection, credentials a checkout leaves, cache poisoning, broad permissions, impostor actions. Every finding goes to code scanning; medium and above fail the job |
-| `docs-checks.yaml` | PR or push → `master` touching the docs, weekly, manual | lychee: every local link and section anchor in `docs/` and the top-level Markdown must resolve (offline, each run), and external links weekly; typos: spelling, with the two correct words it misreads in `_typos.toml` ([exceptions.md](exceptions.md) #16) |
-| `actionlint.yaml` | PR, push → `master`, on workflows | Workflow syntax |
-| `site.yaml` | PR, push → `master`, on `docs/**`, manual | Website asset versions and CSP hashes ([website.md](website.md)) |
+| [`build.yaml`](../../../.github/workflows/build.yaml) | PR, push → `master`, manual | The gate (below) |
+| [`release-apk.yaml`](../../../.github/workflows/release-apk.yaml) | `v*` tag, manual | Signed release APKs, SBOM, checksums, provenance, GitHub release ([release.md](release.md)) |
+| [`apk-artifact.yaml`](../../../.github/workflows/apk-artifact.yaml) | Push → non-master, manual | fdroid debug APK as an artifact, linked in the run summary |
+| [`apk-checks.yaml`](../../../.github/workflows/apk-checks.yaml) | PR touching the app or the build, push → `master`, weekly, manual | The unsigned fdroid release built twice, from two checkouts with no build cache, and compared byte for byte (any difference fails, with `diffoscope`'s account as an artifact); on PRs, `diffuse` compares the universal APK with master's latest in the run summary. Not part of the gate |
+| [`screenshots.yaml`](../../../.github/workflows/screenshots.yaml) | Push, manual | Roborazzi screenshots of every Compose surface (plus 200 % font scale), uploaded as an artifact. On a branch, compared byte for byte with master's latest ([`screenshot-diff.py`](../../../.github/scripts/screenshot-diff.py)): the run summary lists what changed, is new or is gone, with a warning, and the changed and new ones are uploaded with master's beside each; a difference never fails it. Times out at 20 min |
+| [`baseline-profile.yaml`](../../../.github/workflows/baseline-profile.yaml) | Push → non-master touching `baselineprofile/**`, manual | Profiles on an API 34 emulator, one job per flavor; by hand with **commit**, pushes them through [`commit-baseline-profiles.yaml`](../../../.github/workflows/commit-baseline-profiles.yaml) |
+| [`benchmarks.yaml`](../../../.github/workflows/benchmarks.yaml) | Push → non-master touching app code, the build or benchmarks, manual | Startup and frame-timing benchmarks; fails on a slowdown |
+| [`live-providers.yaml`](../../../.github/workflows/live-providers.yaml) | PR changing [`model/`](../../../app/src/main/kotlin/com/eliormachlev/currencix/model), [`repository/`](../../../app/src/main/kotlin/com/eliormachlev/currencix/repository), [`util/`](../../../app/src/main/kotlin/com/eliormachlev/currencix/util) or the app's build file, daily, manual | Calls each provider's live API (`ExchangeRatesServiceTest`, `-PliveProviders`); not a required check, so a provider's outage is reported without blocking merges |
+| [`detekt.yaml`](../../../.github/workflows/detekt.yaml) | PR, push → `master`, manual | Kotlin static analysis |
+| [`qodana.yaml`](../../../qodana.yaml) | PR, push → `master`, weekly, manual | JetBrains Qodana; when its project import fails dependency verification, lists the refused files ([`verification-report.py`](../../../.github/scripts/verification-report.py)) |
+| [`codeql.yaml`](../../../.github/workflows/codeql.yaml) | PR, push → `master`, weekly, manual | CodeQL on the Kotlin and the workflows |
+| [`semgrep.yaml`](../../../.github/workflows/semgrep.yaml) | PR, push → `master`, weekly, manual | SAST patterns |
+| [`gitleaks.yaml`](../../../.github/workflows/gitleaks.yaml) | PR, push → `master`, weekly, manual | Secrets in the repository |
+| [`osv-scanner.yaml`](../../../.github/workflows/osv-scanner.yaml) | PR, push → `master`, weekly, manual | The release SBOM against OSV.dev |
+| [`owasp-dependency-check.yaml`](../../../.github/workflows/owasp-dependency-check.yaml) | Mondays and Thursdays, manual | Shipped libraries against the NVD |
+| [`dependency-submission.yaml`](../../../.github/workflows/dependency-submission.yaml) | PR from this repository, push → `master`, manual | Sends GitHub's dependency graph every library the Gradle build resolves (`gradle/actions/dependency-submission`), the build tools' included, which GitHub can't read from Gradle files itself; Dependabot alerts and Dependency Review rely on it |
+| [`dependency-review.yaml`](../../../.github/workflows/dependency-review.yaml) | PR | Blocks new dependencies with high-severity CVEs; waits up to 10 min for the PR's submitted graph |
+| [`gradle-wrapper.yaml`](../../../.github/workflows/gradle-wrapper.yaml) | PR, push → `master`, manual | Validates [`gradle-wrapper.jar`](../../../gradle/wrapper/gradle-wrapper.jar), the one binary in the repo, against Gradle's releases; its own workflow so Scorecard sees it pass |
+| [`scorecard.yaml`](../../../.github/workflows/scorecard.yaml) | Push → `master`, weekly, manual | OpenSSF Scorecard (waits for the wrapper check on a push) |
+| [`update-verification-metadata.yaml`](../../../.github/workflows/update-verification-metadata.yaml) | Manual | Records dependency checksums from an empty cache, commits them, restarts the checks |
+| [`certificate-pins.yaml`](../../../.github/workflows/certificate-pins.yaml) | Weekly, PR changing the pins, manual | Checks every host still serves a pinned key ([security.md](security.md#certificate-pinning)); by hand with *update*, rewrites [`BuiltInPins.kt`](../../../app/src/main/kotlin/com/eliormachlev/currencix/util/BuiltInPins.kt) from the chains served now, commits it and restarts the checks |
+| [`code-scanning-report.yaml`](../../../.github/workflows/code-scanning-report.yaml) | Manual | Saves the open code scanning alerts on `master`, from every tool, as an artifact and a summary table on the run page |
+| [`zizmor.yaml`](../../../.github/workflows/zizmor.yaml) | PR or push → `master` touching workflows, weekly, manual | zizmor (pinned by hash, [`.github/zizmor`](../../../.github/zizmor)) audits the workflows for what actionlint doesn't: template injection, credentials a checkout leaves, cache poisoning, broad permissions, impostor actions. Every finding goes to code scanning; medium and above fail the job |
+| [`docs-checks.yaml`](../../../.github/workflows/docs-checks.yaml) | PR or push → `master` touching the docs, weekly, manual | lychee: every local link and section anchor in [`docs/`](../..) and the top-level Markdown must resolve (offline, each run), and external links weekly; typos: spelling, with the two correct words it misreads in [`_typos.toml`](../../../_typos.toml) ([exceptions.md #16](exceptions.md#16-typos-infor-and-mis)) |
+| [`actionlint.yaml`](../../../.github/workflows/actionlint.yaml) | PR, push → `master`, on workflows | Workflow syntax |
+| [`site.yaml`](../../../.github/workflows/site.yaml) | PR, push → `master`, on `docs/**`, manual | Website asset versions and CSP hashes ([website.md](website.md)) |
 
 ## The build gate
 
-`build.yaml`'s jobs run side by side; a PR takes about five minutes.
+[`build.yaml`](../../../.github/workflows/build.yaml)'s jobs run side by side; a PR takes about five minutes.
 
 - **`spotless`**: ktlint via Spotless.
 - **`fuzz`**: one job per `FuzzTest` target, two minutes each with Jazzer; a crash uploads its input ([build.md](build.md#fuzz-tests)).
-- **`compose-stability`**: fails on a composable that can't skip or a parameter the compiler can't prove stable, which strong skipping compares by identity, so an equal fresh value recomposes every time. Fix the type (immutable, `@Stable` / `@Immutable` when true, or `app/compose-stability.conf`). `Any` keys, `Context` and receivers are identity-compared on purpose; Glance composables compose once per update.
-- **`build`**: `lint`, `test` and `assemble` for each flavor, six jobs. Lint has nothing disabled: a string missing from any locale fails it. The fdroid `lint` job also runs Licensee on the release's libraries. Each `test` job runs Robolectric offline on a Gradle-verified Android jar ([build.md](build.md)) and puts a Kover coverage summary on the run. Failed tests become error annotations.
+- **`compose-stability`**: fails on a composable that can't skip or a parameter the compiler can't prove stable, which strong skipping compares by identity, so an equal fresh value recomposes every time. Fix the type (immutable, `@Stable` / `@Immutable` when true, or [`app/compose-stability.conf`](../../../app/compose-stability.conf)). `Any` keys, `Context` and receivers are identity-compared on purpose; Glance composables compose once per update.
+- **`build`**: `lint`, `test` and `assemble` for each flavor, six jobs. Lint has nothing disabled: a string missing from any locale fails it. The fdroid `lint` job also runs Licensee on the release's libraries. Each `test` job runs Robolectric offline on a Gradle-verified Android jar ([build.md](build.md#dependency-choices)) and puts a Kover coverage summary on the run. Failed tests become error annotations.
 - **`fdroid-release-build`**: the unsigned fdroid release APK and its SBOM, guarding the F-Droid build path.
 
 **Speed.** Every PR and branch workflow has a `concurrency` group, so a new push cancels the previous run (`master` runs always finish). `setup-gradle` keeps Gradle's home and build cache: `master` writes it, PRs read it. Build cache and parallel execution are on; the configuration cache is off, as on CI it made lint + test + build about 70 s slower.
 
 ## Profiles and benchmarks
 
-**Baseline Profile** runs one job per flavor (together they nearly hit the 90-minute limit), each on a Gradle Managed Device with KVM, uploading `baseline-profiles-<flavor>`. Commit the files, or run it by hand with **commit**: `commit-baseline-profiles.yaml` pushes them to the branch and starts Screenshots and the debug APK by `workflow_dispatch`, since a push with the workflow's own token starts no push workflows. **commit_run_id** commits an earlier run's profiles.
+**Baseline Profile** runs one job per flavor (together they nearly hit the 90-minute limit), each on a Gradle Managed Device with KVM, uploading `baseline-profiles-<flavor>`. Commit the files, or run it by hand with **commit**: [`commit-baseline-profiles.yaml`](../../../.github/workflows/commit-baseline-profiles.yaml) pushes them to the branch and starts Screenshots and the debug APK by `workflow_dispatch`, since a push with the workflow's own token starts no push workflows. **commit_run_id** commits an earlier run's profiles.
 
-**Benchmarks** runs `InteractionBenchmarks` ten times each (five let a median wander 30 % on unchanged code), then posts the medians in the summary and as annotations (`benchmark-summary.py`) and fails a metric that is both 25 % and 5 ms slower than `baselineprofile/benchmark-baseline.json` (`benchmark-gate.py`). To accept a deliberate slowdown, commit the new medians as the baseline. The software-GPU emulator sometimes can't confirm a launch ("Unable to confirm activity launch completion"): the benchmark step then runs once more, with a warning, and any other failure, or that one twice, fails the run. It doesn't always report frame stats either; with no numbers the check says so and passes.
+**Benchmarks** runs `InteractionBenchmarks` ten times each (five let a median wander 30 % on unchanged code), then posts the medians in the summary and as annotations ([`benchmark-summary.py`](../../../.github/scripts/benchmark-summary.py)) and fails a metric that is both 25 % and 5 ms slower than [`baselineprofile/benchmark-baseline.json`](../../../baselineprofile/benchmark-baseline.json) ([`benchmark-gate.py`](../../../.github/scripts/benchmark-gate.py)). To accept a deliberate slowdown, commit the new medians as the baseline. The software-GPU emulator sometimes can't confirm a launch ("Unable to confirm activity launch completion"): the benchmark step then runs once more, with a warning, and any other failure, or that one twice, fails the run. It doesn't always report frame stats either; with no numbers the check says so and passes.
 
 ## Scanners
 
 | Tool | Configuration |
 |---|---|
-| **detekt** | 2.0.0-alpha.6 (1.23.8, the last stable, is incompatible with Gradle 10). `config/detekt/detekt.yml` encodes the CLAUDE.md code-shape rules; size limits apply to composables too (six or more arguments → a state type and an actions type). No baseline. Type-aware rules run only per variant, so `./gradlew detekt` runs a set of variant tasks covering every source folder once (`detektVariantTasks`). One SARIF per task to the Security tab |
+| **detekt** | 2.0.0-alpha.6 (1.23.8, the last stable, is incompatible with Gradle 10). [`config/detekt/detekt.yml`](../../../config/detekt/detekt.yml) encodes the CLAUDE.md code-shape rules; size limits apply to composables too (six or more arguments → a state type and an actions type). No baseline. Type-aware rules run only per variant, so `./gradlew detekt` runs a set of variant tasks covering every source folder once (`detektVariantTasks`). One SARIF per task to the Security tab |
 | **Qodana** | `qodana-jvm-community:2026.2`, pinned by digest. Production and test sources; inline PR comments; SARIF to the Security tab |
-| **CodeQL** | `actions` (no build) and `java-kotlin`, extracted from a fresh in-process compile of the fdroid debug build (`--no-daemon --no-build-cache --rerun-tasks -Pkotlin.compiler.execution.strategy=in-process`). `security-and-quality` queries; build output and generated code excluded. A PR is analysed at its head commit, not GitHub's test merge, which GitHub can rebuild after the run starts, leaving the merge rule waiting for results on the new one (master requires PRs to be up to date, so the head holds master). Semgrep, Qodana and detekt upload their results the same way (`SARIF_REF`, `SARIF_SHA`). The Kotlin SARIF drops the findings in `.github/codeql/exceptions.yml` before upload ([exceptions.md](exceptions.md) #8). CodeQL trails Kotlin releases slightly; an unknown Kotlin shows as a failed analysis |
-| **Semgrep** | `p/default`, `p/security-audit`, `p/kotlin`, `p/java`, `p/github-actions`. Installed from `.github/semgrep/requirements.txt`, every package pinned by hash (`pip-compile --generate-hashes`), not the unpinned image. Any finding fails. The two `nosemgrep` exceptions pass Semgrep but still show as open in code scanning, which ignores SARIF suppressions, until dismissed there |
+| **CodeQL** | `actions` (no build) and `java-kotlin`, extracted from a fresh in-process compile of the fdroid debug build (`--no-daemon --no-build-cache --rerun-tasks -Pkotlin.compiler.execution.strategy=in-process`). `security-and-quality` queries; build output and generated code excluded. A PR is analysed at its head commit, not GitHub's test merge, which GitHub can rebuild after the run starts, leaving the merge rule waiting for results on the new one (master requires PRs to be up to date, so the head holds master). Semgrep, Qodana and detekt upload their results the same way (`SARIF_REF`, `SARIF_SHA`). The Kotlin SARIF drops the findings in [`.github/codeql/exceptions.yml`](../../../.github/codeql/exceptions.yml) before upload ([exceptions.md #8](exceptions.md#8-codeql-javauseless-null-check-on-quickconversionssheet)). CodeQL trails Kotlin releases slightly; an unknown Kotlin shows as a failed analysis |
+| **Semgrep** | `p/default`, `p/security-audit`, `p/kotlin`, `p/java`, `p/github-actions`. Installed from [`.github/semgrep/requirements.txt`](../../../.github/semgrep/requirements.txt), every package pinned by hash (`pip-compile --generate-hashes`), not the unpinned image. Any finding fails. The two `nosemgrep` exceptions pass Semgrep but still show as open in code scanning, which ignores SARIF suppressions, until dismissed there |
 | **OSV-Scanner** | Writes the release SBOM and checks every library in it by package URL; any known vulnerability fails. No API key |
-| **OWASP Dependency-Check** | CLI from Maven Central, version and SHA-256 pinned in the workflow (update both by hand; Dependabot doesn't track it), not the action's `latest` image. `:app:owaspLibraries` copies each shipped library out of Gradle's cache named by its coordinates, since the tool reads files, not Gradle's graph; aars are opened. `--failOnCVSS 7 --enableRetired`, OSS Index off, NVD data cached between runs: the first load from NVD's yearly JSON feeds (the API keeps no progress, so one error over its hour-plus of pages loses it all), then each run's changes through the API with `NVD_API_KEY`; only a completed load is cached. Twice a week so the cache never goes unread for GitHub's 7-day eviction. `--suppression config/owasp/suppressions.xml` ([exceptions.md](exceptions.md) #7) |
+| **OWASP Dependency-Check** | CLI from Maven Central, version and SHA-256 pinned in the workflow (update both by hand; Dependabot doesn't track it), not the action's `latest` image. `:app:owaspLibraries` copies each shipped library out of Gradle's cache named by its coordinates, since the tool reads files, not Gradle's graph; aars are opened. `--failOnCVSS 7 --enableRetired`, OSS Index off, NVD data cached between runs: the first load from NVD's yearly JSON feeds (the API keeps no progress, so one error over its hour-plus of pages loses it all), then each run's changes through the API with `NVD_API_KEY`; only a completed load is cached. Twice a week so the cache never goes unread for GitHub's 7-day eviction. `--suppression config/owasp/suppressions.xml` ([exceptions.md #7](exceptions.md#7-owasp-dependency-check-cve-2018-8909-and-cve-2023-22737-on-wire-runtime)) |
 | **Scorecard** | Publishes to the public Scorecard API; SARIF to the Security tab |
 
 ## Dependabot
 
-Weekly, Mondays, 7-day cooldown, in `.github/dependabot.yml`:
+Weekly, Mondays, 7-day cooldown, in [`.github/dependabot.yml`](../../../.github/dependabot.yml):
 
 | Ecosystem | Directories | Open PRs |
 |---|---|---|
@@ -73,17 +73,19 @@ Weekly, Mondays, 7-day cooldown, in `.github/dependabot.yml`:
 | `github-actions` | `/` | 5 |
 | `pip` | `/.github/scripts`, `/.github/semgrep`, `/.github/zizmor`, `/.github/docs-checks` (hash-pinned; one grouped PR) | 5 |
 
-Grouped: `androidx.*`; Kotlin; OkHttp; test dependencies; all actions. A Gradle update fails dependency verification until its checksums are recorded: run **Update dependency checksums** on its branch once the update looks right.
+Grouped: `androidx.*`; Kotlin; OkHttp; test dependencies; all actions; all Python packages. Robolectric's `android-all-instrumented` is ignored: it is updated by hand with Robolectric ([build.md](build.md#dependency-choices)). A Gradle update fails dependency verification until its checksums are recorded: run **Update dependency checksums** on its branch once the update looks right.
 
 ## Permissions
 
-Every workflow starts at `contents: read` (`scorecard.yaml`: `read-all`, as Scorecard's template does); jobs get more only where needed:
+Every workflow starts at `contents: read` ([`scorecard.yaml`](../../../.github/workflows/scorecard.yaml): `read-all`, as Scorecard's template does); jobs get more only where needed:
 
 | Workflow | Extra |
 |---|---|
 | detekt, semgrep, zizmor, owasp, osv-scanner | `security-events: write` |
 | qodana | `security-events`, `pull-requests`, `checks: write` |
 | codeql | `security-events: write`, `actions: read`, `packages: read` |
+| screenshots, apk-checks (`size` job) | `actions: read`, to fetch master's latest screenshots or APK |
+| dependency-submission | `contents: write` on its submit job, which the dependency-graph API requires |
 | scorecard | `security-events: write`, `id-token: write`, `actions: read` |
 | release-apk | `contents`, `id-token`, `attestations: write` on the publish job only, which never sees the keys |
 | baseline-profile | `contents`, `actions: write` on its commit job only |

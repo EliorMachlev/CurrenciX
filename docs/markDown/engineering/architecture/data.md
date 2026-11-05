@@ -4,16 +4,16 @@ There's no SQLite. Settings and small state are **Preferences DataStore**; what 
 
 ## Settings: `Pref<T>`
 
-Four preference namespaces (`PersistenceKey`: `rates`, `last_state`, `starred_currencies`, `prefs`), whose names are also the sections of an exported backup. Each setting is one `Pref<T>` declared in its store (`booleanPref(KEY, default = true)`, `keyedPref(key, decode, encode)`), so its key, default and stored shape live in one line:
+Four preference namespaces (`PersistenceKey`: `rates`, `last_state`, `starred_currencies`, `prefs`), whose names are also the sections of an exported backup, all but `rates`, which is a network cache and refetched ([security.md](../security.md#backups)). Each setting is one `Pref<T>` declared in its store (`booleanPref(KEY, default = true)`, `keyedPref(key, decode, encode)`), so its key, default and stored shape live in one line:
 
 - `get()` reads the in-memory snapshot (only where a blocking read is unavoidable, such as startup), `set()` / `update { }` write, `flow` / `liveData` observe. ViewModels turn one into state with `Pref.stateInWhileSubscribed(viewModelScope)`; a composable without a ViewModel uses `rememberDatabase()` and `collectAsStateWithLifecycle()`, which starts from the stored value so the first frame is right.
 - A value stored under a key with another type than declared (a setting whose type changed between builds) reads as unset: the default applies and the next write replaces it, instead of failing to cast (`PrefTest`).
 
 ## Saved data: Protobuf files
 
-The working cart, saved carts, trips, fees and rate alerts are trees of values, so they live in `carts.pb`, `fees.pb` and `alerts.pb` (`SavedDataFile`). The schema is `src/main/proto/currencix/saved.proto`; **Wire** generates the Kotlin at build time (no reflection).
+The working cart, saved carts, trips, fees and rate alerts are trees of values, so they live in `carts.pb`, `fees.pb` and `alerts.pb` (`SavedDataFile`). The schema is [`src/main/proto/currencix/saved.proto`](../../../../app/src/main/proto/currencix/saved.proto); **Wire** generates the Kotlin at build time (no reflection).
 
-- `SavedProtos.kt` maps messages to models. Every read, from these files, a JSON backup or a cart file, goes through the same checks (`SavedValues.kt`: quantities clamped, amounts above zero, unknown currencies or types skipped, missing ids replaced).
+- [`SavedProtos.kt`](../../../../app/src/main/kotlin/com/eliormachlev/currencix/repository/SavedProtos.kt) maps messages to models. Every read, from these files, a JSON backup or a cart file, goes through the same checks ([`SavedValues.kt`](../../../../app/src/main/kotlin/com/eliormachlev/currencix/repository/SavedValues.kt): quantities clamped, amounts above zero, unknown currencies or types skipped, missing ids replaced).
 - Amounts are decimal strings in both formats, so nothing is lost to a float.
 - A file that can't be read starts over empty (`ReplaceFileCorruptionHandler`) rather than failing every read.
 
@@ -31,7 +31,7 @@ Both kinds sit behind `CachedStore<S>` (`PrefStore` is the preferences flavour).
 | `providers` | `ProviderSettings` | Main and fallback provider, API keys (sealed, see [security.md](../security.md)), unreliable providers shown, auto-refresh and interval |
 | `fees` | `FeeStore` | Saved fees and the active exchange / bank fee |
 | `display` | `DisplaySettings` | Theme, wallpaper colors, decimals, date format, keypad, haptics, sounds, smooth motion, preview, onboarding |
-| `privacy` | `PrivacySettings` | App lock, block screenshots, private requests |
+| `privacy` | `PrivacySettings` | App lock, block screenshots, private requests, certificate pinning and re-pinned keys ([security.md](../security.md#certificate-pinning)) |
 | `chart` | `ChartSettings` | What the chart draws |
 | `carts` | `CartStore` | Working cart, saved carts, trips |
 | `alerts` | `RateAlertStore` | Rate alerts waiting to fire |
@@ -45,19 +45,19 @@ Both kinds sit behind `CachedStore<S>` (`PrefStore` is the preferences flavour).
 - **Timelines are files.** Each provider's history per pair is `filesDir/timelines/<providerId>_<BASE>_<SYMBOL>.json` (`TimelineFiles`): saving one pair rewrites one file (atomically, via `.tmp`), the last few stay parsed in memory, and it's under `filesDir` so the system never discards years of history to free space.
 - **Bad data is dropped, not fatal.** A rate or history that won't parse is dropped and fetched again, and counted per store (`DroppedCacheEntries`), so a store that keeps dropping, a write bug, shows in the log.
 
-The app's own JSON (backups, cart files, disk caches) goes through kotlinx.serialization's JSON tree (`repository/json/JsonTree.kt`), with lenient reads for hand-edited or older files; a field given twice in one object makes the file malformed (`DuplicateFieldName.kt`), as the tree would keep only the last. Indented files use four spaces. No `org.json` and no reflection; provider responses are `@Serializable` classes instead ([networking.md](networking.md)).
+The app's own JSON (backups, cart files, disk caches) goes through kotlinx.serialization's JSON tree ([`repository/json/JsonTree.kt`](../../../../app/src/main/kotlin/com/eliormachlev/currencix/repository/json/JsonTree.kt)), with lenient reads for hand-edited or older files; a field given twice in one object makes the file malformed ([`DuplicateFieldName.kt`](../../../../app/src/main/kotlin/com/eliormachlev/currencix/repository/json/DuplicateFieldName.kt)), as the tree would keep only the last. Indented files use four spaces. No `org.json` and no reflection; provider responses are `@Serializable` classes instead ([networking.md](networking.md)).
 
 The one file outside DataStore: a cart's export / import through the Storage Access Framework (`CartExporter`), a one-off transfer, not storage.
 
 ## Rate cache: memory → disk → network
 
-`repository/cache/` is a Store5-style fetcher / source of truth (no Store5 dependency, about 900 lines). `RateCache.get(key)` tries an in-memory LRU, then a disk JSON store (`DiskJsonStore`, atomic writes), then the network; `InFlightDedupe` merges concurrent requests for one key and `RetryPolicy` backs off transient failures. It caches parsed `ExchangeRates` / `Timeline`; OkHttp's 5 MiB HTTP cache below it caches raw bytes.
+[`repository/cache/`](../../../../app/src/main/kotlin/com/eliormachlev/currencix/repository/cache) is a Store5-style fetcher / source of truth (no Store5 dependency, under 900 lines). `RateCache.get(key)` tries an in-memory LRU, then a disk JSON store (`DiskJsonStore`, atomic writes), then the network; `InFlightDedupe` merges concurrent requests for one key and `RetryPolicy` backs off transient failures. It caches parsed `ExchangeRates` / `Timeline`; OkHttp's 5 MiB HTTP cache below it caches raw bytes.
 
 **Not now: Room.** The rate data would move to Room only if rate-history queries, per-pair override hierarchies or cross-provider comparisons become real features; settings, stars and fees would stay in DataStore either way.
 
 ## Refresh state
 
-"A refresh is running" is transient, so it's in memory (`RefreshState.kt`), not DataStore. The UI never shows the raw flag; it picks a view, so a cached refresh shows no shimmer and a pull spinner never blinks shut (`RefreshIndicatorTest`):
+"A refresh is running" is transient, so it's in memory ([`RefreshState.kt`](../../../../app/src/main/kotlin/com/eliormachlev/currencix/repository/RefreshState.kt)), not DataStore. The UI never shows the raw flag; it picks a view, so a cached refresh shows no shimmer and a pull spinner never blinks shut (`RefreshIndicatorTest`):
 
 | View | Behavior | Used by |
 |---|---|---|

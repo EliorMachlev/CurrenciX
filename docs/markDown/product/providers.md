@@ -5,7 +5,7 @@ Picked in **Settings → Exchange rates → Data provider**; a change takes effe
 | Provider | Currencies | Updates | Base | Notes |
 |---|---|---|---|---|
 | [Frankfurter.app](https://frankfurter.dev/) | ~30 | Business days | EUR | European Central Bank data, back to 1999 |
-| [OpenExchangerates](https://openexchangerates.org/) | 160+ | Hourly | USD | Needs a (free) API key |
+| [OpenExchangerates](https://openexchangerates.org/) | 160+ | Hourly | USD | Needs a (free) API key; past dates but no chart |
 | [AllRatesToday](https://allratestoday.com/) | ~160 | About every minute | EUR | Mid-market interbank; needs a key; the free plan is 300 requests ever |
 | [InforEuro](https://commission.europa.eu/funding-tenders/procedures-guidelines-tenders/information-contractors-and-beneficiaries/exchange-rate-inforeuro_en) | ~150 | Monthly | EUR | EU accounting rates; unreliable (inaccurate data) |
 | [Bank of Canada](https://www.bankofcanada.ca/rates/exchange/daily-exchange-rates/) | ~23 | Business days | CAD | |
@@ -25,11 +25,11 @@ Each provider has a `ProviderReliability`: `RELIABLE`, `DOWNTIME` (Norges Bank, 
 
 ## Fallback provider
 
-**Settings → Exchange rates → Fallback provider** is used when the main one fails while online. Unset, it's the first free, reliable provider in picker order that isn't the main one (`defaultFallback`); the picker greys out the main provider. While its rates are on screen, the status pill says so ("Bank of Israel unavailable • Using Frankfurter.app") and names it as the source; every refresh tries the main provider first again.
+**Settings → Exchange rates → Fallback provider** is used when the main one fails while online. Unset, it's the first free, reliable provider in picker order that isn't the main one (`defaultFallback`); the picker greys out the main provider. While its rates are on screen, the status pill says so ("Bank of Israel unavailable • Using Frankfurter.app") and names it as the source; every refresh tries the main provider first again. How the two are asked, and when a slow main provider is passed over: [networking](../engineering/architecture/networking.md#fallback-and-slow-providers).
 
 ## Historical rates
 
-Every provider has some history. The converter's date picker reaches back to 2010 (`HISTORICAL_MIN_YEAR`), the chart's custom range ten years (`TIMELINE_MAX_YEARS`).
+Every provider has past dates' rates; all but Open Exchangerates also have a timeline for the chart (its free plan has no time-series endpoint, so the chart explains that and offers another provider). The converter's date picker reaches back to 2010 (`HISTORICAL_MIN_YEAR`), the chart's custom range ten years (`TIMELINE_MAX_YEARS`); how far each provider's own data goes varies (Frankfurter's ECB data from 1999).
 
 ## Providers that need a key
 

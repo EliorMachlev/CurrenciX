@@ -16,7 +16,7 @@ A handy travel companion, not a tool for real-time financial business.
 [![License: GPL-3.0-or-later](https://img.shields.io/badge/license-GPL--3.0--or--later-blue)](COPYING)
 [![Android 13+](https://img.shields.io/badge/Android-13%2B-3DDC84?logo=android&logoColor=white)](docs/markDown/engineering/build.md)
 
-[Website](https://currencix.machlev.org/) · [Features](https://currencix.machlev.org/features.html) · [Providers](https://currencix.machlev.org/providers.html) · [Privacy](https://currencix.machlev.org/privacy.html) · [Docs](docs/markDown/)
+[Website](https://currencix.machlev.org/) · [Features](https://currencix.machlev.org/features.html) · [Providers](https://currencix.machlev.org/providers.html) · [Privacy](https://currencix.machlev.org/privacy.html) · [Docs](docs/markDown/README.md)
 
 <br>
 
@@ -39,7 +39,7 @@ A handy travel companion, not a tool for real-time financial business.
 | 🛒 **Cart** | A list of prices converted into your currency, with quantities, tip or tax, a budget, a split by person, trips with dates, spending per day and a checklist before you go, and receipt scanning on the device. |
 | 📲 **Everywhere on your phone** | "Convert currency" in any app's text-selection menu, a home-screen widget, a Quick Settings tile and launcher shortcuts. |
 | 🎨 **Looks right** | Material 3 with colors from your wallpaper; light, dark and pure-black themes; two panes on tablets and foldables; 32 languages, right to left where they read that way. |
-| 🔒 **Private** | No ads, no analytics, no account. An optional app lock, screenshot blocking, private requests and backups you can encrypt (Argon2id + AES-256-GCM); API keys sealed in the phone's Keystore; crash reports stay on the phone until you share them. |
+| 🔒 **Private** | No ads, no analytics, no account. An optional app lock, screenshot blocking, private requests, pinned certificates for every rate server, and backups you can encrypt (Argon2id + AES-256-GCM); API keys sealed in the phone's Keystore; crash reports stay on the phone until you share them. |
 
 ## 🏦 Exchange rate providers
 
@@ -76,7 +76,7 @@ Checked on every change by Android Lint, detekt, Qodana, Semgrep, CodeQL, Gitlea
 
 ## 📚 Documentation
 
-[All docs](docs/markDown/README.md): [architecture](docs/markDown/engineering/architecture/README.md), [build](docs/markDown/engineering/build.md), [release](docs/markDown/engineering/release.md), [providers](docs/markDown/product/providers.md), [CI / CD](docs/markDown/engineering/ci-cd.md), [security](docs/markDown/engineering/security.md) and [exceptions](docs/markDown/engineering/exceptions.md).
+[All docs](docs/markDown/README.md): [architecture](docs/markDown/engineering/architecture/README.md), [build](docs/markDown/engineering/build.md), [release](docs/markDown/engineering/release.md), [providers](docs/markDown/product/providers.md), [CI / CD](docs/markDown/engineering/ci-cd.md), [security](docs/markDown/engineering/security.md), [exceptions](docs/markDown/engineering/exceptions.md) and the [website](docs/markDown/engineering/website.md).
 
 ## 🤝 Contributing
 
