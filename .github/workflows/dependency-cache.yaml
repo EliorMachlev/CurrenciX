@@ -133,8 +133,9 @@ jobs:
           rm -f "$RO_CACHE/modules-2/gc.properties"
           du -sh "$RO_CACHE" | tee -a "$GITHUB_STEP_SUMMARY"
 
+      # master's only: a manual run on a branch builds it without saving.
       - name: Save the cache
-        if: github.event_name != 'pull_request'
+        if: github.ref == 'refs/heads/master'
         uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: ${{ env.RO_CACHE }}

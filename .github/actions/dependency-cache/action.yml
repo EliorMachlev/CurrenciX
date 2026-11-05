@@ -28,14 +28,16 @@ runs:
         exit 1
 
     # One key per set of build files: the libraries, their checksums, the
-    # Gradle version and every build script.
+    # Gradle version and every build script (the init script among them),
+    # and the workflow that builds the cache, so changing how it's built
+    # builds it again.
     - name: Name the cache
       id: key
       shell: bash
       run: echo "key=$PREFIX$HASH" >> "$GITHUB_OUTPUT"
       env:
         PREFIX: gradle-ro-deps-v1-
-        HASH: ${{ hashFiles('gradle/libs.versions.toml', 'gradle/verification-metadata.xml', 'gradle/wrapper/gradle-wrapper.properties', 'gradle.properties', 'settings.gradle', '**/*.gradle.kts') }}
+        HASH: ${{ hashFiles('.github/workflows/dependency-cache.yaml', 'gradle/libs.versions.toml', 'gradle/verification-metadata.xml', 'gradle/wrapper/gradle-wrapper.properties', 'gradle.properties', 'settings.gradle', '**/*.gradle.kts') }}
 
     # The exact cache, else master's latest: still most of the libraries.
     # Only master's runs save one, and a branch can't write master's caches.
