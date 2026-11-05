@@ -99,7 +99,7 @@ Conformance is assessed by the maintainer using a combination of:
 
 1. **Manual review** with TalkBack on a physical Android device across representative screens (home, chart, settings, backup, language picker, currency picker).
 2. **Android Accessibility Scanner** for label / touch-target / contrast smoke checks.
-3. **Automated checks in CI:** Android Lint's accessibility rules, and `ScreenReaderLabelsTest`, which walks every screen's merged semantics tree (the one TalkBack reads), sheets included, and fails on anything tappable that has no content description, text or field hint.
+3. **Automated checks in CI:** Android Lint's accessibility rules, and `ScreenReaderLabelsTest`, which walks the merged semantics tree (the one TalkBack reads), across every window, of the keypad, cart rows, recent pairs, the currency and provider pickers, the cart's extras sheet and the text-selection sheet, and fails on anything tappable there that has no content description, text or field hint. Other screens are covered by the manual and render checks above and below.
 4. **Checks on the screenshot tests' renders**, run by the maintainer: every screen in English and Hebrew, light, dark and pure black, and at 200 % font size, checked for controls TalkBack can't name, text and icon contrast measured on the rendered pixels, and text cut off.
 5. **Community feedback** via the GitHub issue tracker.
 
