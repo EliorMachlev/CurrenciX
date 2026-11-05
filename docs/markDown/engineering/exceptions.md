@@ -29,6 +29,7 @@ The build's own tools and compilers: Gradle and the Android Gradle plugin, and c
 | [9](#9-dependency-verification--sourcesjar-and--javadocjar) | Gradle dependency verification, `trusted-artifacts` | libraries' `-sources.jar` and `-javadoc.jar` (downloaded only by IDE syncs) | [`gradle/verification-metadata.xml`](../../../gradle/verification-metadata.xml) |
 | [10](#10-codeql-javafield-masks-super-field-on-the-compose-compilers-stable) | CodeQL `java/field-masks-super-field` | the Compose compiler's `$stable` field, in 2 files (line 1) | `.github/codeql/exceptions.yml`, applied by `.github/workflows/codeql.yaml` |
 | [11](#11-codeql-javalocal-variable-is-never-read-in-data-objects-equals) | CodeQL `java/local-variable-is-never-read` | the cast in data objects' generated `equals()`, in 11 files (line 1) | `.github/codeql/exceptions.yml`, applied by `.github/workflows/codeql.yaml` |
+| [20](#20-androidx-benchmark-the-emulator-error) | AndroidX Benchmark `androidx.benchmark.suppressErrors` | `EMULATOR`: baseline profiles and benchmarks on CI's managed emulator | [`baselineprofile/build.gradle.kts`](../../../baselineprofile/build.gradle.kts) |
 
 #### 4 to 6. Incubating Android Gradle Plugin APIs
 
@@ -64,6 +65,13 @@ The build's own tools and compilers: Gradle and the Android Gradle plugin, and c
 - **Why the finding is wrong:** for a `data object` the Kotlin compiler generates `equals()`, which casts `other` to a temporary (`tmp0_other_with_cast`) and then has no properties to compare, so it never reads it. The variable exists only in the compiled code.
 - **Why it can't be fixed:** the only way to remove the generated `equals()` would be turning the data objects (sealed states, navigation keys, results) into plain objects, which changes their `toString()` and `equals()` for no reason but the finding.
 - **What is excluded:** each finding by rule, file, line 1 and a message naming `tmp0_other_with_cast`. An unread variable written in the source is still reported, in these files too.
+
+#### 20. AndroidX Benchmark: the `EMULATOR` error
+
+- **What the check says:** Macrobenchmark fails a run on an emulator (`EMULATOR`), which "isn't representative of real user devices".
+- **Why it can't be fixed:** the fix is a physical device. CI has none: the baseline profiles are generated, and the benchmarks run, on a Gradle Managed Device (an API 34 emulator, [#4](#4-to-6-incubating-android-gradle-plugin-apis)), and a device farm would be a paid service outside the project's setup. Without the setting, neither job can run at all.
+- **Why the check is wrong here:** the numbers are used to compare a build with and without its profile on the same emulator, and to catch large regressions, never as absolute timings. A baseline profile lists the code a run uses, which is the same on an emulator. The setting turns the error into a warning, which every run still prints ([Macrobenchmark instrumentation arguments](https://developer.android.com/topic/performance/benchmarking/macrobenchmark-instrumentation-args)).
+- **What is excluded:** `EMULATOR` alone, the one argument in that file. Every other benchmark error that applies to a run (such as `DEBUGGABLE` or `LOW-BATTERY`) still fails it.
 
 ### Package exceptions
 
@@ -190,7 +198,7 @@ The app's own code, written as it is on purpose.
 
 ### Decided
 
-1 and 2 decided by the maintainer on 2026-10-06, 3 on 2026-10-12, 4 to 6 on 2026-10-18 (PR [#181](https://github.com/EliorMachlev/CurrenciX/pull/181)), 7 to 9 on 2026-10-25 (PR #203); `CVE-2023-22737` in 7, and 10 to 13, on 2026-11-04; 14 and 15, dismissed on GitHub, on 2026-10-23, and recorded here on 2026-11-04; 16 to 18 on 2026-11-04; 19, dismissed on GitHub, on 2026-11-05.
+1 and 2 decided by the maintainer on 2026-10-06, 3 on 2026-10-12, 4 to 6 on 2026-10-18 (PR [#181](https://github.com/EliorMachlev/CurrenciX/pull/181)), 7 to 9 on 2026-10-25 (PR #203); `CVE-2023-22737` in 7, and 10 to 13, on 2026-11-04; 14 and 15, dismissed on GitHub, on 2026-10-23, and recorded here on 2026-11-04; 16 to 18 on 2026-11-04; 19, dismissed on GitHub, on 2026-11-05; 20 on 2026-11-05.
 
 ## Adding an exception
 
