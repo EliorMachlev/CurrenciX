@@ -1,15 +1,11 @@
 package com.eliormachlev.currencix.view.main.compose
 
-import android.content.Context
-import android.graphics.Paint
-import android.view.View
-import androidx.appcompat.graphics.drawable.DrawerArrowDrawable
-import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
+import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
@@ -18,17 +14,12 @@ import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
-import androidx.compose.ui.graphics.nativeCanvas
-import androidx.compose.ui.graphics.toArgb
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -42,14 +33,11 @@ import com.eliormachlev.currencix.view.compose.theme.Wordmark
 import com.eliormachlev.currencix.view.compose.theme.WordmarkReveal
 
 private val WORDMARK_TITLE_SIZE = 26.sp
-private val DRAWER_ARROW_SIZE = 24.dp
+private val DRAWER_ICON_SIZE = 24.dp
 
-// The morphing hamburger, drawn to match the Material Symbols Rounded "menu"
-// the rest of the icons come from: 1.5 dp bars with round caps, 18 dp wide
-// end to end, with 3.75 dp of space between bars.
-private val DRAWER_BAR_THICKNESS = 1.5.dp
-private val DRAWER_BAR_LENGTH = 18.dp
-private val DRAWER_BAR_GAP = 3.75.dp
+// How far the two drawer icons turn as they cross-fade: the menu a quarter
+// turn away, the arrow in from a quarter turn.
+private const val DRAWER_ICON_TURN = 90f
 
 /** The converter bar's shortcut actions — each also lives in the drawer. */
 @Immutable
@@ -95,7 +83,7 @@ fun ConverterTopBar(
                         .onboardingAnchor(OnboardingAnchor.Hamburger)
                         .semantics { contentDescription = description },
             ) {
-                DrawerArrowIcon(drawerState)
+                DrawerIcon(drawerState)
             }
         },
         actions = {
@@ -117,30 +105,22 @@ fun ConverterTopBar(
 }
 
 /**
- * The hamburger ↔ arrow morph, driven by the drawer's actual position: it
- * tracks a finger dragging the drawer and a fling's real velocity instead of
- * playing its own timed animation. The offset is collected into a float
- * state that only the Canvas's draw block reads, so a drag redraws this icon
- * and recomposes nothing.
+ * The menu ↔ arrow icon, driven by the drawer's actual position: it tracks a
+ * finger dragging the drawer and a fling's real velocity instead of playing
+ * its own timed animation. The two icons cross-fade and turn a quarter turn
+ * as the drawer opens. The offset is collected into a float state that only
+ * the layers read, so a drag redraws this icon and recomposes nothing.
  *
  * The sheet sits at -(its width) when closed and 0 when open, in either
  * direction (the drawer's offset follows the layout direction). The arrow
- * points the way the drawer closes: left in English, right in Hebrew.
- * Rather than hard-code the sheet width, the closed offset is
- * learned as the smallest one seen: the offset never goes below it, and the
- * drawer starts closed, so the first value already is it.
+ * mirrors with the layout, so it points the way the drawer closes: left in
+ * English, right in Hebrew. Rather than hard-code the sheet width, the
+ * closed offset is learned as the smallest one seen: the offset never goes
+ * below it, and the drawer starts closed, so the first value already is it.
  */
 @Composable
-private fun DrawerArrowIcon(drawerState: DrawerState) {
-    val context = LocalContext.current
-    val density = LocalDensity.current
-    val layoutDirection = LocalLayoutDirection.current
-    val drawable =
-        remember(context, density, layoutDirection) {
-            symbolStyleDrawerArrow(context, density).apply {
-                this.layoutDirection = if (layoutDirection == LayoutDirection.Rtl) View.LAYOUT_DIRECTION_RTL else View.LAYOUT_DIRECTION_LTR
-            }
-        }
+private fun DrawerIcon(drawerState: DrawerState) {
+    val turnDirection = if (LocalLayoutDirection.current == LayoutDirection.Rtl) -1f else 1f
     val progress = remember { mutableFloatStateOf(0f) }
     LaunchedEffect(drawerState) {
         var closedOffset = Float.NaN
@@ -158,25 +138,25 @@ private fun DrawerArrowIcon(drawerState: DrawerState) {
                     }
             }
     }
-    val tint = LocalContentColor.current.toArgb()
-    Canvas(Modifier.size(DRAWER_ARROW_SIZE)) {
-        drawable.color = tint
-        drawable.progress = progress.floatValue
-        drawable.setBounds(0, 0, size.width.toInt(), size.height.toInt())
-        drawIntoCanvas { canvas -> drawable.draw(canvas.nativeCanvas) }
+    // The button's own description names the action, so the icons have none.
+    Box(Modifier.size(DRAWER_ICON_SIZE)) {
+        Icon(
+            painter = painterResource(R.drawable.ic_menu),
+            contentDescription = null,
+            modifier =
+                Modifier.graphicsLayer {
+                    alpha = 1f - progress.floatValue
+                    rotationZ = turnDirection * DRAWER_ICON_TURN * progress.floatValue
+                },
+        )
+        Icon(
+            painter = painterResource(R.drawable.ic_arrow_back),
+            contentDescription = null,
+            modifier =
+                Modifier.graphicsLayer {
+                    alpha = progress.floatValue
+                    rotationZ = turnDirection * DRAWER_ICON_TURN * (progress.floatValue - 1f)
+                },
+        )
     }
 }
-
-private fun symbolStyleDrawerArrow(
-    context: Context,
-    density: Density,
-): DrawerArrowDrawable =
-    DrawerArrowDrawable(context).apply {
-        with(density) {
-            barThickness = DRAWER_BAR_THICKNESS.toPx()
-            // Round caps reach half a bar past each end.
-            barLength = (DRAWER_BAR_LENGTH - DRAWER_BAR_THICKNESS).toPx()
-            gapSize = DRAWER_BAR_GAP.toPx()
-        }
-        paint.strokeCap = Paint.Cap.ROUND
-    }

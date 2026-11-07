@@ -273,7 +273,7 @@ private fun TimelineChartContent(
         remember(context) {
             val axis = Color(context.resolveThemeColor(android.R.attr.textColorSecondary))
             ChartColors(
-                line = Color(context.resolveThemeColor(R.attr.colorPrimary)),
+                line = Color(context.resolveThemeColor(android.R.attr.colorPrimary)),
                 baseline = axis,
                 axis = axis,
                 // Text-on-background keeps the scrub line distinct from the green

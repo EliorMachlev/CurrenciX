@@ -13,7 +13,7 @@ import java.math.BigDecimal
 
 @RunWith(MockitoJUnitRunner::class)
 class TextUtilsTest {
-    private val mockContext: Context = mock(Context::class.java)
+    private val mockContext: Context = mock(Context::class.java).withNoAppLocales()
 
     @Before
     fun init() {
