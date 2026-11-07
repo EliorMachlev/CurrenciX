@@ -1,1 +1,7 @@
-- Initial pre-release
+First pre-release of CurrenciX.
+- Converter with a calculator keypad, fees, and quick conversions.
+- Charts with ranges, MIN/MED/AVG/MAX and a scrub line.
+- Cart: quantities, tip and tax, split, budget, trips, receipt scanning on the phone.
+- Rate alerts, widget, Quick Settings tile, "Convert currency" from selected text.
+- Several rate providers with a fallback.
+- Private: no ads, analytics or account; app lock, pinned certificates, encrypted backups.

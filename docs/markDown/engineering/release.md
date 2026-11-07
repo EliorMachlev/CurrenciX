@@ -2,14 +2,14 @@
 
 ## Releasing is pushing a tag
 
-Tag a commit of `master` `v<versionName>` (`v1.23.0`) and push it. [`release-apk.yaml`](../../../.github/workflows/release-apk.yaml):
+Tag a commit of `master` `v<versionName>` (`v0.1`) and push it. [`release-apk.yaml`](../../../.github/workflows/release-apk.yaml):
 
 1. checks the tag names the version being built and is on `master`, and that the certificate pins are at least 90 days from expiry (Android stops checking them after it; run the **Certificate pins** workflow with *update* first, see [security.md](security.md#certificate-pinning));
 2. decodes the keystores from the `release` environment's secrets into the runner's temp folder, builds `assembleFdroidRelease` (signing and verifying the APK), deletes the keys;
 3. writes the SBOM (`:app:cyclonedxDirectBom`, CycloneDX 1.6 of the fdroid release runtime classpath) and `SHA256SUMS`, and uploads the APK with them;
 4. a second job, the only one allowed to write and one that never sees the keys, attests the files' build provenance and publishes the GitHub release "CurrenciX <version>".
 
-A tag whose version has a `-` (`v1.24.0-beta1`) publishes a GitHub pre-release instead of a release. Run by hand instead (no tag), the workflow builds the signed APK, uploads it with the SBOM and `SHA256SUMS` as a run artifact, and previews the notes a tag would get; it publishes nothing. Nothing else can start it, so PRs never see the keys, and it builds without Gradle's cache (`cache-disabled`), so nothing a branch's run cached can reach the signed APKs.
+A tag whose version has a `-` (`v1.24.0-beta1`), or any `0.x` version (everything before 1.0), publishes a GitHub pre-release instead of a release. Run by hand instead (no tag), the workflow builds the signed APK, uploads it with the SBOM and `SHA256SUMS` as a run artifact, and previews the notes a tag would get; it publishes nothing. Nothing else can start it, so PRs never see the keys, and it builds without Gradle's cache (`cache-disabled`), so nothing a branch's run cached can reach the signed APKs.
 
 **Release notes** come from `.github/scripts/release-notes.py <tag>`: the squashed PR titles since the previous `v*` tag (for the first release, since the rebrand, [#89](https://github.com/EliorMachlev/CurrenciX/pull/89)), grouped **New** (`feat`), **Fixes** (`fix`), **Faster** (`perf`), **Translations** (`i18n`) and **Other changes**; `chore`, `ci`, `build`, `deps`, `refactor`, `test`, `docs`, `style` and `revert` are left out. So title PRs for users. The fastlane changelog ([`fastlane/metadata/android/en-US/changelogs/`](../../../fastlane/metadata/android/en-US/changelogs), ≤ 500 characters, one file per version code; see [F-Droid](#f-droid-draft-recipe-for-fdroiddata) for which code it must be named after) is written by hand.
 
@@ -44,9 +44,9 @@ Check with `apksigner verify --verbose --print-certs` (JDK 24+): "v3.2 … true"
 
 ## Version codes
 
-`versionCode` follows `versionName`: `1.23.0 → 1×10000 + 23×100 + 0 = 12300`, checked by `checkVersion`. F-Droid's update check reads the `versionName = "…"` and `versionCode = …` lines of [`app/build.gradle.kts`](../../../app/build.gradle.kts) as text, and the release workflow reads the `versionName` one (with `sed`) to check the tag, so keep them literal.
+`versionCode` follows `versionName`, each part two digits: `0.1 → 0×100 + 1 = 1`, `1.2.3 → 1×10000 + 2×100 + 3 = 10203`, checked by `checkVersion`. The first release is `0.1` (code 1); the `1.22`/`1.23` codes in [`changelogs/`](../../../fastlane/metadata/android/en-US/changelogs) are the upstream app's, under its own application ID. F-Droid's update check reads the `versionName = "…"` and `versionCode = …` lines of [`app/build.gradle.kts`](../../../app/build.gradle.kts) as text, and the release workflow reads the `versionName` one (with `sed`) to check the tag, so keep them literal.
 
-The APK and the app bundle both carry that code as it is (one APK for both 64-bit CPU types, see [build.md](build.md#one-apk-for-every-phone-64-bit-only)). Codes only go up, so the scheme is permanent once released. Debug builds add the commit to the name (`1.23.0-<commit>`); Settings reads the installed APK's name from the package manager.
+The APK and the app bundle both carry that code as it is (one APK for both 64-bit CPU types, see [build.md](build.md#one-apk-for-every-phone-64-bit-only)). Codes only go up, so the scheme is permanent once released. Debug builds add the commit to the name (`0.1-<commit>`); Settings reads the installed APK's name from the package manager.
 
 ## F-Droid (draft recipe for fdroiddata)
 
@@ -54,9 +54,9 @@ One entry per release, building the one APK:
 
 ```yaml
 Builds:
-  - versionName: 1.23.0
-    versionCode: 12300
-    commit: v1.23.0
+  - versionName: '0.1'
+    versionCode: 1
+    commit: v0.1
     subdir: app
     gradle:
       - fdroid
@@ -72,6 +72,6 @@ UpdateCheckMode: Tags
 UpdateCheckData: app/build.gradle.kts|versionCode = (\d+)|.|versionName = "(.*)"
 ```
 
-F-Droid's app page shows `fastlane/metadata/android/<locale>/changelogs/<versionCode>.txt` (`12300.txt`), the file `checkFastlaneChangelog` (run by `./gradlew build`) requires, else `default.txt`.
+F-Droid's app page shows `fastlane/metadata/android/<locale>/changelogs/<versionCode>.txt` (`1.txt`), the file `checkFastlaneChangelog` (run by `./gradlew build`) requires, else `default.txt`.
 
 **Publishing this project's signature.** With `Binaries:`, F-Droid builds the tag itself, compares it with the GitHub release's APK, and when they match byte for byte apart from the signature it publishes ours instead of signing its own ([Reproducible Builds](https://f-droid.org/docs/Reproducible_Builds/)); without a match it skips that version. The signature is carried over as the whole APK Signing Block, where the v3.2 hybrid signature sits, so F-Droid and GitHub installs would share one key and update from each other. Not yet tried: F-Droid's server reproducing the APK (CI only shows our own two builds agree, [`apk-checks.yaml`](../../../.github/workflows/apk-checks.yaml)), and F-Droid's tools accepting a v3.2 block, which their documentation covers only up to v3. Check both on the first release before relying on it.
