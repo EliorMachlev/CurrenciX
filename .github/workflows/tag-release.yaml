@@ -1,0 +1,67 @@
+name: Tag a release
+# Tags the current master "v<versionName>" (read from app/build.gradle.kts)
+# and starts the Release workflow on that tag, which builds, signs and
+# publishes it (release-apk.yaml). For tagging without a local git checkout,
+# from the Actions tab: Tag a release → Run workflow, on master. A tag made
+# with the workflow's own token starts no workflow by itself, so this one
+# starts Release on the tag by hand. It refuses an existing tag and any
+# branch but master; Release still checks the tag names the version and is
+# on master before it publishes.
+on:
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  tag:
+    if: github.ref == 'refs/heads/master'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      # Creating the tag, then starting Release on it.
+      contents: write
+      actions: write
+    steps:
+      - name: Harden the runner
+        uses: step-security/harden-runner@46b06cea07f9e64621fdf066ba77ac6915163d43 # v2.22.3
+        with:
+          egress-policy: audit
+
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Tag master with its version
+        id: tag
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          SHA: ${{ github.sha }}
+        run: |
+          set -o pipefail
+          version=$(sed -n 's/.*versionName = "\(.*\)"/\1/p' app/build.gradle.kts | head -1)
+          if [ -z "$version" ]; then
+            echo "::error::No versionName in app/build.gradle.kts"
+            exit 1
+          fi
+          tag="v$version"
+          if gh api "repos/$REPO/git/ref/tags/$tag" --silent 2>/dev/null; then
+            echo "::error::$tag exists already; bump versionName for a new release"
+            exit 1
+          fi
+          object=$(gh api -X POST "repos/$REPO/git/tags" \
+            -f tag="$tag" -f message="CurrenciX $version" -f object="$SHA" -f type=commit --jq .sha)
+          gh api -X POST "repos/$REPO/git/refs" -f ref="refs/tags/$tag" -f sha="$object" --silent
+          echo "tag=$tag" >> "$GITHUB_OUTPUT"
+          echo "Tagged $SHA as $tag" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Start the release on the tag
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ steps.tag.outputs.tag }}
+        run: gh workflow run release-apk.yaml --ref "$TAG"

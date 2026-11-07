@@ -4,8 +4,9 @@ name: Release
 # release key and Android 17's post-quantum hybrid signature (APK Signature
 # Scheme v3.2) and publishes it as a GitHub release.
 #
-# - Push a tag "v<versionName>" (e.g. v0.1) on a commit of master: the
-#   release is published with the APK, its SBOM (CycloneDX JSON) and
+# - Push a tag "v<versionName>" (e.g. v0.1) on a commit of master, or run
+#   "Tag a release" (tag-release.yaml) on master, which tags it and starts
+#   this run on the tag: the release is published with the APK, its SBOM (CycloneDX JSON) and
 #   checksums, its notes written from the commits since the last
 #   release (.github/scripts/release-notes.py). F-Droid picks up the same tag
 #   (UpdateCheckMode: Tags).
@@ -13,7 +14,7 @@ name: Release
 #   uploads the signed APK as an artifact and shows the notes the release
 #   would get, without a release; for checking a build before tagging it.
 #
-# Only these two can start it, so the signing keys never reach a pull request.
+# Only a tag or a run by hand can start it, so the signing keys never reach a pull request.
 #
 # The signing keys are secrets of the "release" environment (Settings →
 # Environments → release), not of the repository, so only this job can read

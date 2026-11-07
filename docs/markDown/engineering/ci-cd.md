@@ -8,6 +8,7 @@ Everything is in [`.github/workflows/`](../../../.github/workflows). Every actio
 |---|---|---|
 | [`build.yaml`](../../../.github/workflows/build.yaml) | PR, push → `master`, manual | The gate (below) |
 | [`release-apk.yaml`](../../../.github/workflows/release-apk.yaml) | `v*` tag, manual | Signed release APKs, SBOM, checksums, provenance, GitHub release ([release.md](release.md)) |
+| [`tag-release.yaml`](../../../.github/workflows/tag-release.yaml) | Manual, on `master` | Tags `master` `v<versionName>` (an existing tag fails it) and starts `release-apk.yaml` on the tag ([release.md](release.md#releasing-is-pushing-a-tag)) |
 | [`apk-artifact.yaml`](../../../.github/workflows/apk-artifact.yaml) | Push → non-master, manual | fdroid debug APK as an artifact, linked in the run summary |
 | [`apk-checks.yaml`](../../../.github/workflows/apk-checks.yaml) | PR touching the app or the build, push → `master`, weekly, manual | The unsigned fdroid release built twice, from two checkouts with no build cache, and compared byte for byte (any difference fails, with `diffoscope`'s account as an artifact); on PRs, `diffuse` compares the APK with master's latest in the run summary. Not part of the gate |
 | [`screenshots.yaml`](../../../.github/workflows/screenshots.yaml) | Push, manual | Roborazzi screenshots of every Compose surface (plus 200 % font scale), uploaded as an artifact. On a branch, compared byte for byte with master's latest ([`screenshot-diff.py`](../../../.github/scripts/screenshot-diff.py)): the run summary lists what changed, is new or is gone, with a warning, and the changed and new ones are uploaded with master's beside each; a difference never fails it. Times out at 20 min |
@@ -90,7 +91,7 @@ Every workflow starts at `contents: read` ([`scorecard.yaml`](../../../.github/w
 | scorecard | `security-events: write`, `id-token: write`, `actions: read` |
 | release-apk | `contents`, `id-token`, `attestations: write` on the publish job only, which never sees the keys |
 | baseline-profile | `contents`, `actions: write` on its commit job only |
-| commit-baseline-profiles, update-verification-metadata, certificate-pins (*update* only) | `contents`, `actions: write`: push to the branch, then dispatch the checks; no build in the commit workflow |
+| commit-baseline-profiles, update-verification-metadata, certificate-pins (*update* only), tag-release (a tag, not a branch push) | `contents`, `actions: write`: push to the branch, then dispatch the checks; no build in the commit workflow |
 | dependency-review | `pull-requests: write` |
 | code-scanning-report | `security-events: read` only (no checkout) |
 
