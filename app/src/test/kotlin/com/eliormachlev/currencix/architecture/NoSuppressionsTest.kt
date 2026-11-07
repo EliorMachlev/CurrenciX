@@ -133,6 +133,9 @@ class NoSuppressionsTest {
 
         const val OWASP_SUPPRESSIONS = "config/owasp/suppressions.xml"
         const val OWASP_WORKFLOW = ".github/workflows/owasp-dependency-check.yaml"
+        const val SEMGREP_WORKFLOW = ".github/workflows/semgrep.yaml"
+        const val MUTABLE_TAG_RULE = "yaml.github-actions.security.github-actions-mutable-action-tag.github-actions-mutable-action-tag"
+        const val SELF_REPOSITORY = "`$/`"
         const val WIRE_CVE = "CVE-2018-8909"
         const val WIRE_SERVER_CVE = "CVE-2023-22737"
         const val WIRE_RUNTIME = "wire-runtime"
@@ -277,6 +280,14 @@ class NoSuppressionsTest {
                 // Each CVE, for Square's Wire runtime only.
                 listOf(WIRE_CVE, WIRE_SERVER_CVE).map(::wireSuppression) +
                 listOf(
+                    RecordedException(
+                        SEMGREP_WORKFLOW,
+                        "--exclude-rule=$MUTABLE_TAG_RULE \\",
+                        MUTABLE_TAG_RULE,
+                        SELF_REPOSITORY,
+                        // This one rule, nothing else on the line.
+                        Regex(Regex.escape("--exclude-rule=$MUTABLE_TAG_RULE \\") + "\\s*$", RegexOption.MULTILINE),
+                    ),
                     RecordedException(
                         OWASP_WORKFLOW,
                         "--suppression $OWASP_SUPPRESSIONS",
