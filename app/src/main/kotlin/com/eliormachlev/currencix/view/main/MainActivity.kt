@@ -25,6 +25,8 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.lifecycle.viewmodel.initializer
+import androidx.lifecycle.viewmodel.viewModelFactory
 import androidx.window.layout.FoldingFeature
 import androidx.window.layout.WindowInfoTracker
 import com.eliormachlev.currencix.R
@@ -300,9 +302,10 @@ class MainActivity : AppCompatActivity() {
     private fun createConverterHost(playReveal: Boolean): ConverterHost {
         val status = ConverterStatus(this, viewModel, snackbar).also { it.observe(this) }
         val heroCapture = LayerCapture()
+        val preferenceFactory = viewModelFactory { initializer { PreferenceViewModel(application) } }
         return ConverterHost(
             viewModel = viewModel,
-            preferenceModel = ViewModelProvider(this)[PreferenceViewModel::class.java],
+            preferenceModel = ViewModelProvider(this, preferenceFactory)[PreferenceViewModel::class.java],
             status = status,
             share = ConversionShare(this, viewModel, heroCapture, status),
             wordmarkReveal =

@@ -1,6 +1,5 @@
 package com.eliormachlev.currencix.view.timeline
 
-import android.app.Application
 import android.content.Context
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.layout.Arrangement
@@ -61,6 +60,8 @@ import com.eliormachlev.currencix.view.compose.ReadingDirection
 import com.eliormachlev.currencix.view.compose.ScreenScaffold
 import com.eliormachlev.currencix.view.compose.TopBarOverflowMenu
 import com.eliormachlev.currencix.view.compose.TopBarStyle
+import com.eliormachlev.currencix.view.compose.applicationViewModel
+import com.eliormachlev.currencix.view.compose.currentApplication
 import com.eliormachlev.currencix.view.compose.rememberDatabase
 import com.eliormachlev.currencix.view.compose.theme.Spacing
 import com.eliormachlev.currencix.view.main.spinner.CurrencyPickerSheet
@@ -92,8 +93,7 @@ fun TimelineRoute(
     onConvertAt: (pair: CurrencyPair, date: LocalDate) -> Unit = { _, _ -> },
 ) {
     val context = LocalContext.current
-    val application = context.applicationContext as Application
-    val model: TimelineViewModel = viewModel(factory = TimelineViewModel.factory(application, screen.from, screen.to))
+    val model: TimelineViewModel = viewModel(factory = TimelineViewModel.factory(currentApplication(), screen.from, screen.to))
     val db = rememberDatabase()
     val formatter = remember(db) { DateTimeFormatter.ofPattern(stripTimePattern(db.display.dateFormat.get())) }
     val pair by model.getCurrencyPair().observeAsState()
@@ -241,7 +241,7 @@ private fun TimelineSheets(
         }
 
         TimelineSheet.Provider -> {
-            val preferences: PreferenceViewModel = viewModel()
+            val preferences = applicationViewModel { PreferenceViewModel(it) }
             val current by preferences.apiProvider.collectAsStateWithLifecycle()
             ProviderPickerWithKeyPrompt(
                 selected = current,

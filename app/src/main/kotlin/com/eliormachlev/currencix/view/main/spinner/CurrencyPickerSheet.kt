@@ -1,6 +1,5 @@
 package com.eliormachlev.currencix.view.main.spinner
 
-import android.app.Application
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -9,7 +8,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -18,6 +16,8 @@ import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.model.Rate
 import com.eliormachlev.currencix.model.RecentPairs
 import com.eliormachlev.currencix.repository.Database
+import com.eliormachlev.currencix.view.compose.applicationViewModel
+import com.eliormachlev.currencix.view.compose.currentApplication
 import com.eliormachlev.currencix.view.compose.dialogs.LedgerBottomSheet
 import com.eliormachlev.currencix.view.compose.rememberDatabase
 import com.eliormachlev.currencix.viewmodel.main.MainViewModel
@@ -52,13 +52,12 @@ fun CurrencyPickerSheet(
     onDismiss: () -> Unit,
     selectedCurrency: Currency? = null,
 ) {
-    val application = LocalContext.current.applicationContext as Application
     val mainViewModel: MainViewModel =
         viewModel(
             key = PICKER_MAIN_VM_KEY,
-            factory = MainViewModel.factory(application, onlyCache = true),
+            factory = MainViewModel.factory(currentApplication(), onlyCache = true),
         )
-    val prefViewModel: PreferenceViewModel = viewModel(key = PICKER_PREF_VM_KEY)
+    val prefViewModel = applicationViewModel(key = PICKER_PREF_VM_KEY) { PreferenceViewModel(it) }
 
     LedgerBottomSheet(
         title = stringResource(id = R.string.picker_currency_title),
