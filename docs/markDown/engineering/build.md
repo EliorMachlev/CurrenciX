@@ -23,7 +23,7 @@
 
 Flavor- and build-type-specific code goes in `app/src/<flavor>/` behind a hook `main` asks for (see [architecture](architecture/README.md#rules-that-hold-everywhere)).
 
-## One APK for every phone, 64-bit Arm only
+## One APK for every phone, 64-bit only
 
 `assemble*` builds one APK per variant (`assembleDebug` builds both flavors), never one per CPU type. Both flavors carry receipt scanning's native code (`:ocr-engine`) for `arm64-v8a` only (phones, tablets, Arm Chromebooks), about 7.5 MB; the list is `currencix.abis` in [`gradle.properties`](../../../gradle.properties). `x86_64` (Intel and AMD Chromebooks, Windows emulators) isn't supported: the app installs nowhere that runs only x86_64 code. The CI emulators (baseline profiles, benchmarks) are x86_64, so those two workflows pass `-Pcurrencix.abis=arm64-v8a,x86_64` to build the app they install; no release does.
 
