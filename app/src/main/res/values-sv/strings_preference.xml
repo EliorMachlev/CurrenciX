@@ -208,7 +208,4 @@
     <string name="api_all_rates_today_api_key_title">AllRatesToday API-nyckel</string>
     <string name="api_all_rates_today_api_key_message">För att använda den här källan behöver du en egen API-nyckel.\n\nSkapa ett gratiskonto på https://allratestoday.com, kopiera din nyckel (den börjar med art_live_) från din profilsida och ange den här.\n\nGratisplanen ger 300 förfrågningar totalt, en gång. Varje uppdatering och varje diagramperiod använder en.</string>
     <string name="provider_cadence_every_minute">Uppdateras ungefär varje minut</string>
-    <string name="settings_advanced_section">Avancerat</string>
-    <string name="certificate_pinning_title">Certifikatfästning</string>
-    <string name="certificate_pinning_summary">Anslut till kursservrar endast via de certifikatutfärdare som är fästa för dem. Stäng av bara om en server har bytt certifikat och kurserna slutar laddas.</string>
 </resources>

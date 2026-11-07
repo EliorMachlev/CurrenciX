@@ -210,7 +210,4 @@
     <string name="api_all_rates_today_api_key_title">API ключ за AllRatesToday</string>
     <string name="api_all_rates_today_api_key_message">За да използвате този източник, ви трябва собствен API ключ.\n\nСъздайте безплатен акаунт на https://allratestoday.com, копирайте ключа си (започва с art_live_) от страницата на профила и го въведете тук.\n\nБезплатният план позволява общо 300 заявки, еднократно. Всяко обновяване и всеки период на графиката използва по една.</string>
     <string name="provider_cadence_every_minute">Обновява се приблизително всяка минута</string>
-    <string name="settings_advanced_section">Разширени</string>
-    <string name="certificate_pinning_title">Закачане на сертификати</string>
-    <string name="certificate_pinning_summary">Свързване със сървърите за курсове само чрез сертифициращите органи, закачени за тях. Изключете само ако сървър е сменил сертификата си и курсовете не се зареждат.</string>
 </resources>

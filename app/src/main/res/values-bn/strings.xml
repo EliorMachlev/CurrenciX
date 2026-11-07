@@ -360,5 +360,5 @@
     <string name="receipt_language_not_now">এখন নয়</string>
     <string name="receipt_languages_intro">রসিদ আপনার ফোনেই পড়া হয়, এখানে থাকা ভাষাগুলোতে। আপনি রাজি না হওয়া পর্যন্ত কিছুই ডাউনলোড হয় না।</string>
     <string name="receipt_languages_empty">এখনও কিছু নেই। প্রথম রসিদ স্ক্যানে জিজ্ঞেস করা হবে কোনটি ডাউনলোড করবেন।</string>
-    <string name="error_certificate_pinning">সার্ভারের সার্টিফিকেটটি অ্যাপ এর জন্য পিন করা কোনোটি নয়। প্রদানকারী এটি বদলালে অ্যাপটি আপডেট করুন, অথবা সেটিংসে সার্টিফিকেট পিনিং বন্ধ করুন।</string>
+    <string name="error_certificate_pinning">সার্ভারের সার্টিফিকেটটি অ্যাপ এর জন্য পিন করা কোনোটি নয়। প্রদানকারী এটি বদলালে অ্যাপটি আপডেট করুন।</string>
 </resources>

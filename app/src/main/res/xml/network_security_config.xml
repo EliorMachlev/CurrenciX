@@ -9,6 +9,15 @@
   trusts) is refused. Android 17 checks this by default for apps targeting it;
   Android 16 only when asked, as here; earlier versions can't. The app's
   OkHttp client uses the platform's trust manager, which applies it.
+
+  Certificate pinning: each host the app may reach (HttpClientProvider.
+  allowedHosts) is accepted only when its verified chain holds one of the
+  keys pinned for it below: the public keys of the certificate authorities
+  its chain runs through, its intermediates and their root, never the
+  server's own certificate (that changes at every renewal). Each domain-config
+  takes everything else from base-config. Android stops checking a pin-set
+  after its expiration date, so the pins are renewed in every release (see
+  docs/markDown/engineering/security.md#certificate-pinning).
 -->
 <network-security-config>
     <base-config cleartextTrafficPermitted="false">
@@ -17,4 +26,102 @@
             <certificates src="system" />
         </trust-anchors>
     </base-config>
+    <!-- PINS: written by .github/scripts/certificate-pins.py; edit by hand only to add a host. -->
+    <domain-config>
+        <domain includeSubdomains="true">allratestoday.com</domain>
+        <pin-set expiration="2027-11-07">
+            <!-- GTS Root R4 (Google Trust Services LLC) -->
+            <pin digest="SHA-256">mEflZT5enoR1FuXLgYYGqnVEoZvmf9c2bVBpiOjYQ0c=</pin>
+            <!-- WE1 (Google Trust Services) -->
+            <pin digest="SHA-256">kIdp6NNEd8wsugYyyIYFsi1ylMCED3hZbSR8ZFsa/A4=</pin>
+        </pin-set>
+    </domain-config>
+    <domain-config>
+        <domain includeSubdomains="true">api.frankfurter.dev</domain>
+        <pin-set expiration="2027-11-07">
+            <!-- GTS Root R4 (Google Trust Services LLC) -->
+            <pin digest="SHA-256">mEflZT5enoR1FuXLgYYGqnVEoZvmf9c2bVBpiOjYQ0c=</pin>
+            <!-- WE1 (Google Trust Services) -->
+            <pin digest="SHA-256">kIdp6NNEd8wsugYyyIYFsi1ylMCED3hZbSR8ZFsa/A4=</pin>
+        </pin-set>
+    </domain-config>
+    <domain-config>
+        <domain includeSubdomains="true">boi.org.il</domain>
+        <pin-set expiration="2027-11-07">
+            <!-- DigiCert Global G2 TLS RSA SHA256 2020 CA1 (DigiCert Inc) -->
+            <pin digest="SHA-256">Wec45nQiFwKvHtuHxSAMGkt19k+uPSw9JlEkxhvYPHk=</pin>
+            <!-- DigiCert Global Root G2 (DigiCert Inc) -->
+            <pin digest="SHA-256">i7WTqTvh0OioIruIfFR4kMPnBqrS2rdiVPl/s2uC/CY=</pin>
+        </pin-set>
+    </domain-config>
+    <domain-config>
+        <domain includeSubdomains="true">data.norges-bank.no</domain>
+        <pin-set expiration="2027-11-07">
+            <!-- GTS Root R4 (Google Trust Services LLC) -->
+            <pin digest="SHA-256">mEflZT5enoR1FuXLgYYGqnVEoZvmf9c2bVBpiOjYQ0c=</pin>
+            <!-- WE1 (Google Trust Services) -->
+            <pin digest="SHA-256">kIdp6NNEd8wsugYyyIYFsi1ylMCED3hZbSR8ZFsa/A4=</pin>
+        </pin-set>
+    </domain-config>
+    <domain-config>
+        <domain includeSubdomains="true">ec.europa.eu</domain>
+        <pin-set expiration="2027-11-07">
+            <!-- GlobalSign Atlas R46 OV TLS CA 2026 Q3 (GlobalSign nv-sa) -->
+            <pin digest="SHA-256">lNoiizlhI3Ewli3DibA3cBj6ca20tHD06z+V8+VjZU8=</pin>
+            <!-- GlobalSign Root R46 (GlobalSign nv-sa) -->
+            <pin digest="SHA-256">rn+WLLnmp9v3uDP7GPqbcaiRdd+UnCMrap73yz3yu/w=</pin>
+        </pin-set>
+    </domain-config>
+    <domain-config>
+        <domain includeSubdomains="true">edge.boi.gov.il</domain>
+        <pin-set expiration="2027-11-07">
+            <!-- Sectigo Public Server Authentication CA OV R36 (Sectigo Limited) -->
+            <pin digest="SHA-256">KqkYYX5LYAYP7XGemqzbtPPIA8x7BS/BbOIcAXf3j2k=</pin>
+            <!-- Sectigo Public Server Authentication Root R46 (Sectigo Limited) -->
+            <pin digest="SHA-256">Douxi77vs4G+Ib/BogbTFymEYq0QSFXwSgVCaZcI09Q=</pin>
+        </pin-set>
+    </domain-config>
+    <domain-config>
+        <domain includeSubdomains="true">openexchangerates.org</domain>
+        <pin-set expiration="2027-11-07">
+            <!-- Amazon RSA 2048 S25 -->
+            <pin digest="SHA-256">bpALxrV+gOA/h4UBkxB+p10bX3e1Zs9TRoC0NykxRoQ=</pin>
+            <!-- Amazon Root CA 1 -->
+            <pin digest="SHA-256">++MBgDH5WGvL9Bcn5Be30cRcL0f5O+NyoXuWtQdX1aI=</pin>
+            <!-- Starfield Services Root Certificate Authority - G2 (Starfield Technologies, Inc.) -->
+            <pin digest="SHA-256">KwccWaCgrnaw6tsrrSO61FgLacNgG2MMLq8GE6+oP5I=</pin>
+        </pin-set>
+    </domain-config>
+    <domain-config>
+        <domain includeSubdomains="true">raw.githubusercontent.com</domain>
+        <pin-set expiration="2027-11-07">
+            <!-- ISRG Root X1 (Internet Security Research Group) -->
+            <pin digest="SHA-256">C5+lpZ7tcVwmwQIMcRtPbsQtWLABXhQzejna0wHFr8M=</pin>
+            <!-- Root YR (ISRG) -->
+            <pin digest="SHA-256">fk6IOKit1ild5647BH06ujSIq5XbCgqlbYl6ANhhi88=</pin>
+            <!-- YR1 (Let's Encrypt) -->
+            <pin digest="SHA-256">LoMHBotttiDko50Gi13uXW71eIy7LAttI+rYT8wXF4w=</pin>
+        </pin-set>
+    </domain-config>
+    <domain-config>
+        <domain includeSubdomains="true">www.bankofcanada.ca</domain>
+        <pin-set expiration="2027-11-07">
+            <!-- Sectigo Public Server Authentication CA OV E36 (Sectigo Limited) -->
+            <pin digest="SHA-256">C0ruG6pqJqe+UDfJO02OWmh2qaGi8SKyJkfeZdqg0Nc=</pin>
+            <!-- Sectigo Public Server Authentication Root E46 (Sectigo Limited) -->
+            <pin digest="SHA-256">sLVjNUaFYfW7n6EtgBeEpjOlcnBdNPMrZDRF36iwBdE=</pin>
+            <!-- USERTrust ECC Certification Authority (The USERTRUST Network) -->
+            <pin digest="SHA-256">ICGRfpgmOUXIWcQ/HXPLQTkFPEFPoDyjvH7ohhQpjzs=</pin>
+        </pin-set>
+    </domain-config>
+    <domain-config>
+        <domain includeSubdomains="true">www.cbr.ru</domain>
+        <pin-set expiration="2027-11-07">
+            <!-- HARICA DV TLS RSA (Hellenic Academic and Research Institutions CA) -->
+            <pin digest="SHA-256">rk2I2etvSahZka3FPKyvABNS0NJaDCduKDeQ5Vvg/Xs=</pin>
+            <!-- HARICA TLS RSA Root CA 2021 (Hellenic Academic and Research Institutions CA) -->
+            <pin digest="SHA-256">aTyaprJFs7AmFjd1CGPq22wkihblLW9LyQyGu/MtcEI=</pin>
+        </pin-set>
+    </domain-config>
+    <!-- END OF PINS -->
 </network-security-config>

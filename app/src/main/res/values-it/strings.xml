@@ -364,5 +364,5 @@
     <string name="receipt_language_not_now">Non ora</string>
     <string name="receipt_languages_intro">Gli scontrini vengono letti sul telefono, nelle lingue qui. Non viene scaricato nulla finché non accetti.</string>
     <string name="receipt_languages_empty">Ancora nessuna. La prima scansione di uno scontrino chiede quali scaricare.</string>
-    <string name="error_certificate_pinning">Il certificato del server non è tra quelli che l\'app ha fissato per lui. Se il fornitore l\'ha cambiato, aggiorna l\'app o disattiva il pinning dei certificati in Impostazioni.</string>
+    <string name="error_certificate_pinning">Il certificato del server non è tra quelli che l\'app ha fissato per lui. Se il fornitore l\'ha cambiato, aggiorna l\'app.</string>
 </resources>

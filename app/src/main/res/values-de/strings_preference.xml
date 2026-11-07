@@ -206,7 +206,4 @@
     <string name="api_all_rates_today_api_key_title">AllRatesToday API-Schlüssel</string>
     <string name="api_all_rates_today_api_key_message">Um diese Quelle zu nutzen, brauchst du einen eigenen API-Schlüssel.\n\nErstelle ein kostenloses Konto auf https://allratestoday.com, kopiere deinen Schlüssel (er beginnt mit art_live_) von deiner Profilseite und gib ihn hier ein.\n\nDer kostenlose Tarif erlaubt insgesamt 300 Anfragen, einmalig. Jede Aktualisierung und jeder Diagrammzeitraum verbraucht eine.</string>
     <string name="provider_cadence_every_minute">Etwa jede Minute aktualisiert</string>
-    <string name="settings_advanced_section">Erweitert</string>
-    <string name="certificate_pinning_title">Zertifikat-Pinning</string>
-    <string name="certificate_pinning_summary">Mit Kursservern nur über die für sie gepinnten Zertifizierungsstellen verbinden. Nur ausschalten, wenn ein Server sein Zertifikat gewechselt hat und keine Kurse mehr lädt.</string>
 </resources>

@@ -207,7 +207,4 @@
     <string name="api_all_rates_today_api_key_title">AllRatesToday API-võti</string>
     <string name="api_all_rates_today_api_key_message">Selle allika kasutamiseks vajad oma API-võtit.\n\nLoo tasuta konto aadressil https://allratestoday.com, kopeeri oma võti (algab art_live_) profiililehelt ja sisesta see siia.\n\nTasuta pakett lubab kokku 300 päringut, ühekordselt. Iga värskendus ja iga graafiku vahemik kasutab ühe.</string>
     <string name="provider_cadence_every_minute">Uuendatakse umbes iga minut</string>
-    <string name="settings_advanced_section">Täpsemad</string>
-    <string name="certificate_pinning_title">Sertifikaatide kinnitamine</string>
-    <string name="certificate_pinning_summary">Ühendu kursiserveritega ainult nende jaoks kinnitatud sertifitseerimisasutuste kaudu. Lülita välja ainult siis, kui server on sertifikaati vahetanud ja kursid ei laadi.</string>
 </resources>

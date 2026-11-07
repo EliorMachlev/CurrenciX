@@ -364,5 +364,5 @@
     <string name="receipt_language_not_now">Ahora no</string>
     <string name="receipt_languages_intro">Los tiques se leen en tu teléfono, en los idiomas de aquí. No se descarga nada hasta que aceptes.</string>
     <string name="receipt_languages_empty">Ninguno aún. Tu primer escaneo de tique te pregunta cuáles descargar.</string>
-    <string name="error_certificate_pinning">El certificado del servidor no es ninguno de los que la app tiene fijados para él. Si el proveedor lo cambió, actualiza la app o desactiva la fijación de certificados en Ajustes.</string>
+    <string name="error_certificate_pinning">El certificado del servidor no es ninguno de los que la app tiene fijados para él. Si el proveedor lo cambió, actualiza la app.</string>
 </resources>

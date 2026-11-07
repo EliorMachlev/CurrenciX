@@ -209,7 +209,4 @@
     <string name="api_all_rates_today_api_key_title">AllRatesToday API-kulcs</string>
     <string name="api_all_rates_today_api_key_message">A forrás használatához saját API-kulcs kell.\n\nHozz létre ingyenes fiókot a https://allratestoday.com oldalon, másold ki a kulcsodat (art_live_ kezdetű) a profiloldaladról, és add meg itt.\n\nAz ingyenes csomag összesen 300 kérést enged, egyszeri keretként. Minden frissítés és minden grafikonidőszak egyet használ el.</string>
     <string name="provider_cadence_every_minute">Nagyjából percenként frissül</string>
-    <string name="settings_advanced_section">Speciális</string>
-    <string name="certificate_pinning_title">Tanúsítványrögzítés</string>
-    <string name="certificate_pinning_summary">Az árfolyamszerverekhez csak a nekik rögzített hitelesítésszolgáltatókon keresztül csatlakozzon. Csak akkor kapcsolja ki, ha egy szerver tanúsítványt váltott, és nem töltődnek be az árfolyamok.</string>
 </resources>

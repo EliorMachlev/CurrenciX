@@ -4,7 +4,7 @@
 
 Tag a commit of `master` `v<versionName>` (`v1.23.0`) and push it. [`release-apk.yaml`](../../../.github/workflows/release-apk.yaml):
 
-1. checks the tag names the version being built and is on `master`;
+1. checks the tag names the version being built and is on `master`, and that the certificate pins are at least 90 days from expiry (Android stops checking them after it; run the **Certificate pins** workflow with *update* first, see [security.md](security.md#certificate-pinning));
 2. decodes the keystores from the `release` environment's secrets into the runner's temp folder, builds `assembleFdroidRelease` (signing and verifying the APK), deletes the keys;
 3. writes the SBOM (`:app:cyclonedxDirectBom`, CycloneDX 1.6 of the fdroid release runtime classpath) and `SHA256SUMS`, and uploads the APK with them;
 4. a second job, the only one allowed to write and one that never sees the keys, attests the files' build provenance and publishes the GitHub release "CurrenciX <version>".

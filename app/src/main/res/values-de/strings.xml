@@ -359,5 +359,5 @@
     <string name="receipt_language_not_now">Nicht jetzt</string>
     <string name="receipt_languages_intro">Belege werden auf deinem Telefon gelesen, in den Sprachen hier. Nichts wird heruntergeladen, bevor du zustimmst.</string>
     <string name="receipt_languages_empty">Noch keine. Dein erster Beleg-Scan fragt, welche heruntergeladen werden.</string>
-    <string name="error_certificate_pinning">Das Zertifikat des Servers gehört zu keinem der Pins, die die App für ihn hat. Falls der Anbieter es gewechselt hat, die App aktualisieren oder das Zertifikat-Pinning in den Einstellungen ausschalten.</string>
+    <string name="error_certificate_pinning">Das Zertifikat des Servers gehört zu keinem der Pins, die die App für ihn hat. Falls der Anbieter es gewechselt hat, die App aktualisieren.</string>
 </resources>

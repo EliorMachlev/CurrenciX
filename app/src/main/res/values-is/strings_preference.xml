@@ -208,7 +208,4 @@
     <string name="api_all_rates_today_api_key_title">API-lykill AllRatesToday</string>
     <string name="api_all_rates_today_api_key_message">Til að nota þessa heimild þarftu eigin API-lykil.\n\nStofnaðu ókeypis aðgang á https://allratestoday.com, afritaðu lykilinn þinn (hann byrjar á art_live_) af prófílsíðunni og sláðu hann inn hér.\n\nÓkeypis áskriftin leyfir 300 beiðnir samtals, í eitt skipti. Hver uppfærsla og hvert tímabil á grafi notar eina.</string>
     <string name="provider_cadence_every_minute">Uppfært um það bil á mínútu fresti</string>
-    <string name="settings_advanced_section">Ítarlegt</string>
-    <string name="certificate_pinning_title">Festing skilríkja</string>
-    <string name="certificate_pinning_summary">Tengjast gengisþjónum aðeins í gegnum vottunaraðila sem eru festir fyrir þá. Slökktu aðeins á þessu ef þjónn skipti um skilríki og gengi hætta að hlaðast.</string>
 </resources>

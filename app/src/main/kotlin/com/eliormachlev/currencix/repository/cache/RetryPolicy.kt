@@ -1,6 +1,7 @@
 package com.eliormachlev.currencix.repository.cache
 
 import com.eliormachlev.currencix.util.ApiHttpError
+import com.eliormachlev.currencix.util.isPinFailure
 import kotlinx.coroutines.delay
 import timber.log.Timber
 import java.io.IOException
@@ -67,7 +68,8 @@ internal class RetryPolicy(
 
     private fun shouldRetry(result: Result<*>): Boolean {
         val error = result.exceptionOrNull() ?: return false
-        // A certificate that doesn't match its pins comes back the same on every try.
+        // A certificate that doesn't match its pins, or its host name, comes back the same on every try.
+        if (error.isPinFailure()) return false
         return when (error) {
             is SocketTimeoutException -> true
             is ApiHttpError -> error.statusCode in HTTP_5XX_MIN..HTTP_5XX_MAX

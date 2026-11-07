@@ -1,44 +1,21 @@
 package com.eliormachlev.currencix.util
 
-import okhttp3.CertificatePinner
+import java.security.cert.CertificateException
 
-// OkHttp's pattern for a host and every subdomain of it.
-private const val SUBDOMAINS = "**."
+// What Android's trust manager says when a host's verified chain holds none of
+// the keys pinned for it in res/xml/network_security_config.xml
+// (NetworkSecurityTrustManager.checkPins). The handshake fails with an
+// SSLHandshakeException carrying it as a cause.
+private const val PIN_FAILURE = "Pin verification failed"
 
-/**
- * Settings → Security & privacy → Certificate pinning, as the HTTP client
- * reads it (kept in step with PrivacySettings by CurrenciesApplication). On,
- * a host's connection is accepted only when its verified chain holds one of
- * the keys built into the app for it ([BUILT_IN_PINS]); pins change only
- * with an app update. Off, any certificate the phone trusts is accepted, as
- * without pins.
- */
-object CertificatePinning {
-    private val pinned = pinnerFor(enabled = true)
-
-    @Volatile
-    var pinner: CertificatePinner = pinned
-        private set
-
-    /** Follows the setting; the HTTP clients pick up a new [pinner] at their next request. */
-    fun update(enabled: Boolean) {
-        pinner = if (enabled) pinned else CertificatePinner.DEFAULT
-    }
-}
+// How far down the causes to look: the handshake wraps it once or twice.
+private const val MAX_CAUSES = 8
 
 /**
- * The pins in force: none when [enabled] is off, else the built-in ones.
- * Each host's pins hold for its subdomains too (`**.host`), as the allowed
- * hosts do (AllowedHostsInterceptor), so a redirect to one doesn't go
- * unpinned.
+ * Whether this is a refused pin: a host serving a chain through none of its
+ * pinned certificate authorities. A provider that changed CAs, or someone in
+ * between. It fails the same way on every try, until an app update brings
+ * new pins.
  */
-internal fun pinnerFor(enabled: Boolean): CertificatePinner {
-    if (!enabled) return CertificatePinner.DEFAULT
-    return CertificatePinner
-        .Builder()
-        .apply {
-            BUILT_IN_PINS.forEach { (host, pins) ->
-                pins.forEach { pin -> add("$SUBDOMAINS$host", pin) }
-            }
-        }.build()
-}
+internal fun Throwable.isPinFailure(): Boolean =
+    generateSequence(this) { it.cause }.take(MAX_CAUSES).any { it is CertificateException && it.message == PIN_FAILURE }

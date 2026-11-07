@@ -359,5 +359,5 @@
     <string name="receipt_language_not_now">Ikke nu</string>
     <string name="receipt_languages_intro">Kvitteringer læses på din telefon, på sprogene her. Intet downloades, før du siger ja.</string>
     <string name="receipt_languages_empty">Ingen endnu. Din første kvitteringsscanning spørger, hvilke der skal downloades.</string>
-    <string name="error_certificate_pinning">Serverens certifikat er ikke et af dem, appen har fastlåst for den. Hvis udbyderen har skiftet det, så opdater appen, eller slå certifikatfastlåsning fra under Indstillinger.</string>
+    <string name="error_certificate_pinning">Serverens certifikat er ikke et af dem, appen har fastlåst for den. Hvis udbyderen har skiftet det, så opdater appen.</string>
 </resources>

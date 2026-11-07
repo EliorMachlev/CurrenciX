@@ -208,7 +208,4 @@
     <string name="api_all_rates_today_api_key_title">Clave de API de AllRatesToday</string>
     <string name="api_all_rates_today_api_key_message">Para usar esta fuente necesitas tu propia clave de API.\n\nCrea una cuenta gratuita en https://allratestoday.com, copia tu clave (empieza por art_live_) desde la página de tu perfil e introdúcela aquí.\n\nEl plan gratuito permite 300 solicitudes en total, para siempre. Cada actualización y cada intervalo del gráfico gasta una.</string>
     <string name="provider_cadence_every_minute">Se actualiza aproximadamente cada minuto</string>
-    <string name="settings_advanced_section">Avanzado</string>
-    <string name="certificate_pinning_title">Fijación de certificados</string>
-    <string name="certificate_pinning_summary">Conectar con los servidores de tipos de cambio solo a través de las autoridades de certificación fijadas para cada uno. Desactívalo solo si un servidor cambió su certificado y los tipos dejan de cargarse.</string>
 </resources>

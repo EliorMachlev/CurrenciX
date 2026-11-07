@@ -208,7 +208,4 @@
     <string name="api_all_rates_today_api_key_title">Kunci API AllRatesToday</string>
     <string name="api_all_rates_today_api_key_message">Untuk menggunakan sumber ini, Anda memerlukan kunci API sendiri.\n\nBuat akun gratis di https://allratestoday.com, lalu salin kunci Anda (diawali art_live_) dari halaman profil dan masukkan di sini.\n\nPaket gratis mengizinkan total 300 permintaan, selamanya. Setiap pembaruan dan setiap rentang grafik memakai satu.</string>
     <string name="provider_cadence_every_minute">Diperbarui kira-kira setiap menit</string>
-    <string name="settings_advanced_section">Lanjutan</string>
-    <string name="certificate_pinning_title">Penyematan sertifikat</string>
-    <string name="certificate_pinning_summary">Hubungkan ke server kurs hanya melalui otoritas sertifikat yang disematkan untuknya. Matikan hanya jika server mengganti sertifikatnya dan kurs berhenti dimuat.</string>
 </resources>

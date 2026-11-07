@@ -207,7 +207,4 @@
     <string name="api_all_rates_today_api_key_title">کلید API برای AllRatesToday</string>
     <string name="api_all_rates_today_api_key_message">برای استفاده از این منبع به کلید API خودتان نیاز دارید.\n\nدر https://allratestoday.com یک حساب رایگان بسازید، سپس کلید خود را (که با art_live_ شروع می‌شود) از صفحه نمایه کپی کرده و اینجا وارد کنید.\n\nطرح رایگان در مجموع ۳۰۰ درخواست، برای همیشه، مجاز می‌داند. هر تازه‌سازی و هر بازه نمودار یکی مصرف می‌کند.</string>
     <string name="provider_cadence_every_minute">تقریبا هر دقیقه به‌روز می‌شود</string>
-    <string name="settings_advanced_section">پیشرفته</string>
-    <string name="certificate_pinning_title">سنجاق کردن گواهی</string>
-    <string name="certificate_pinning_summary">اتصال به سرورهای نرخ فقط از طریق مراجع صدور گواهی که برایشان سنجاق شده‌اند. فقط وقتی خاموش کنید که سروری گواهی‌اش را عوض کرده و نرخ‌ها بارگیری نمی‌شوند.</string>
 </resources>

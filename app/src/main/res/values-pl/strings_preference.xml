@@ -209,7 +209,4 @@
     <string name="api_all_rates_today_api_key_title">Klucz API AllRatesToday</string>
     <string name="api_all_rates_today_api_key_message">Aby korzystać z tego źródła, potrzebujesz własnego klucza API.\n\nZałóż darmowe konto na https://allratestoday.com, skopiuj swój klucz (zaczyna się od art_live_) ze strony profilu i wpisz go tutaj.\n\nDarmowy plan pozwala łącznie na 300 zapytań, jednorazowo. Każde odświeżenie i każdy zakres wykresu zużywa jedno.</string>
     <string name="provider_cadence_every_minute">Aktualizowane mniej więcej co minutę</string>
-    <string name="settings_advanced_section">Zaawansowane</string>
-    <string name="certificate_pinning_title">Przypinanie certyfikatów</string>
-    <string name="certificate_pinning_summary">Łącz się z serwerami kursów tylko przez urzędy certyfikacji przypięte dla nich. Wyłącz tylko wtedy, gdy serwer zmienił certyfikat i kursy przestały się wczytywać.</string>
 </resources>

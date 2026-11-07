@@ -364,5 +364,5 @@
     <string name="receipt_language_not_now">Ara no</string>
     <string name="receipt_languages_intro">Els tiquets es llegeixen al telèfon, en les llengües d\'aquí. No es baixa res fins que hi estiguis d\'acord.</string>
     <string name="receipt_languages_empty">Encara cap. El primer escaneig d\'un tiquet et pregunta quines baixar.</string>
-    <string name="error_certificate_pinning">El certificat del servidor no és cap dels que l\'aplicació té fixats per a ell. Si el proveïdor l\'ha canviat, actualitza l\'aplicació o desactiva la fixació de certificats a Configuració.</string>
+    <string name="error_certificate_pinning">El certificat del servidor no és cap dels que l\'aplicació té fixats per a ell. Si el proveïdor l\'ha canviat, actualitza l\'aplicació.</string>
 </resources>

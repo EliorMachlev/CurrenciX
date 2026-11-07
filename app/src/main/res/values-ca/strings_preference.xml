@@ -208,7 +208,4 @@
     <string name="api_all_rates_today_api_key_title">Clau d’API d’AllRatesToday</string>
     <string name="api_all_rates_today_api_key_message">Per fer servir aquesta font necessites la teva pròpia clau d’API.\n\nCrea un compte gratuït a https://allratestoday.com, copia la clau (comença per art_live_) de la pàgina del perfil i introdueix-la aquí.\n\nEl pla gratuït permet 300 sol·licituds en total, per sempre. Cada actualització i cada interval del gràfic en gasta una.</string>
     <string name="provider_cadence_every_minute">S’actualitza aproximadament cada minut</string>
-    <string name="settings_advanced_section">Avançat</string>
-    <string name="certificate_pinning_title">Fixació de certificats</string>
-    <string name="certificate_pinning_summary">Connecta amb els servidors de tipus de canvi només a través de les autoritats de certificació fixades per a cadascun. Desactiva-ho només si un servidor ha canviat de certificat i els tipus no es carreguen.</string>
 </resources>
