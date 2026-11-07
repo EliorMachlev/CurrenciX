@@ -34,7 +34,7 @@ Android backup is off (`allowBackup="false"`, `fullBackupContent="false"`, and [
 
 ## Privacy switches
 
-Settings → Security & privacy, all off by default (`PrivacySettings`; certificate pinning, on by default, is under [Network](#network)):
+Settings → Security & privacy, all off by default (`PrivacySettings`; certificate pinning is always on, with no switch: see [Network](#network)):
 
 - **App lock** (`AppLock`, `LockGate`): a lock screen at start and after more than a minute away (the grace lets the camera and file pickers come and go), passed with `BIOMETRIC_STRONG or DEVICE_CREDENTIAL`. The prompt carries a Keystore key (`UnlockKey`: HMAC-SHA256, usable once each time the person authenticates, with strong biometrics or the screen lock) and the app opens only when that key then signs, which the phone's secure hardware allows only after a real unlock: code injected on a rooted phone can fake the prompt's success, not the key. A key spoiled by newly enrolled biometrics is made again; a phone whose Keystore can't make one can't turn the lock on. Screens underneath can't be seen, touched or read by TalkBack, and Recents shows no picture. Turning it on asks for the prompt first, so nobody locks themselves out; without a phone screen lock it's disabled. The text-selection sheet, widget and tile stay outside it.
 - **Block screenshots:** `FLAG_SECURE` on the converter's and text-selection sheet's windows, blanking screenshots, recordings, casting and Recents.
