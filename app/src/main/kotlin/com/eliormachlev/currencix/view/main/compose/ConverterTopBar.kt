@@ -1,9 +1,5 @@
 package com.eliormachlev.currencix.view.main.compose
 
-import android.content.Context
-import android.graphics.Paint
-import android.view.View
-import androidx.appcompat.graphics.drawable.DrawerArrowDrawable
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.DrawerState
@@ -18,20 +14,24 @@ import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
-import androidx.compose.ui.graphics.nativeCanvas
-import androidx.compose.ui.graphics.toArgb
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.StrokeJoin
+import androidx.compose.ui.graphics.drawscope.DrawScope
+import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.drawscope.rotate
+import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.util.lerp
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.util.rememberHapticOnClick
 import com.eliormachlev.currencix.view.compose.TopBarAction
@@ -40,6 +40,10 @@ import com.eliormachlev.currencix.view.compose.onboarding.onboardingAnchor
 import com.eliormachlev.currencix.view.compose.screenTopBarColors
 import com.eliormachlev.currencix.view.compose.theme.Wordmark
 import com.eliormachlev.currencix.view.compose.theme.WordmarkReveal
+import kotlin.math.PI
+import kotlin.math.cos
+import kotlin.math.roundToInt
+import kotlin.math.sin
 
 private val WORDMARK_TITLE_SIZE = 26.sp
 private val DRAWER_ARROW_SIZE = 24.dp
@@ -50,6 +54,18 @@ private val DRAWER_ARROW_SIZE = 24.dp
 private val DRAWER_BAR_THICKNESS = 1.5.dp
 private val DRAWER_BAR_LENGTH = 18.dp
 private val DRAWER_BAR_GAP = 3.75.dp
+
+// The arrow's head and shaft, and the angle its head's two bars make with the shaft.
+private val DRAWER_ARROW_HEAD_LENGTH = 8.dp
+private val DRAWER_ARROW_SHAFT_LENGTH = 16.dp
+private const val ARROW_HEAD_ANGLE = PI / 4
+private const val HALF_TURN = 180f
+
+// The bars' stack is placed on a grid of this many pixels, and the middle
+// bar's centre is this many bar thicknesses below the top of the stack.
+private const val BAR_COUNT = 3
+private const val PIXEL_GRID = 4
+private const val MIDDLE_BAR_CENTRE = 1.5f
 
 /** The converter bar's shortcut actions — each also lives in the drawer. */
 @Immutable
@@ -132,15 +148,7 @@ fun ConverterTopBar(
  */
 @Composable
 private fun DrawerArrowIcon(drawerState: DrawerState) {
-    val context = LocalContext.current
-    val density = LocalDensity.current
-    val layoutDirection = LocalLayoutDirection.current
-    val drawable =
-        remember(context, density, layoutDirection) {
-            symbolStyleDrawerArrow(context, density).apply {
-                this.layoutDirection = if (layoutDirection == LayoutDirection.Rtl) View.LAYOUT_DIRECTION_RTL else View.LAYOUT_DIRECTION_LTR
-            }
-        }
+    val isRtl = LocalLayoutDirection.current == LayoutDirection.Rtl
     val progress = remember { mutableFloatStateOf(0f) }
     LaunchedEffect(drawerState) {
         var closedOffset = Float.NaN
@@ -158,25 +166,53 @@ private fun DrawerArrowIcon(drawerState: DrawerState) {
                     }
             }
     }
-    val tint = LocalContentColor.current.toArgb()
+    val tint = LocalContentColor.current
     Canvas(Modifier.size(DRAWER_ARROW_SIZE)) {
-        drawable.color = tint
-        drawable.progress = progress.floatValue
-        drawable.setBounds(0, 0, size.width.toInt(), size.height.toInt())
-        drawIntoCanvas { canvas -> drawable.draw(canvas.nativeCanvas) }
+        drawDrawerArrow(progress.floatValue, isRtl, tint)
     }
 }
 
-private fun symbolStyleDrawerArrow(
-    context: Context,
-    density: Density,
-): DrawerArrowDrawable =
-    DrawerArrowDrawable(context).apply {
-        with(density) {
-            barThickness = DRAWER_BAR_THICKNESS.toPx()
-            // Round caps reach half a bar past each end.
-            barLength = (DRAWER_BAR_LENGTH - DRAWER_BAR_THICKNESS).toPx()
-            gapSize = DRAWER_BAR_GAP.toPx()
+/**
+ * The hamburger at [progress] 0 and the arrow at 1: three round-capped bars
+ * that shorten, tilt and turn half a circle into an arrow pointing left (right
+ * when [isRtl]). The same geometry as AppCompat's DrawerArrowDrawable, which
+ * this replaces: the middle bar keeps its middle, the other two meet it at 45°.
+ */
+private fun DrawScope.drawDrawerArrow(
+    progress: Float,
+    isRtl: Boolean,
+    color: Color,
+) {
+    val thickness = DRAWER_BAR_THICKNESS.toPx()
+    // Round caps reach half a bar past each end.
+    val barLength = (DRAWER_BAR_LENGTH - DRAWER_BAR_THICKNESS).toPx()
+    val gap = DRAWER_BAR_GAP.toPx()
+    val maxCut = (thickness / 2 * cos(ARROW_HEAD_ANGLE)).toFloat()
+    val arrowSize = lerp(barLength, DRAWER_ARROW_HEAD_LENGTH.toPx(), progress)
+    val middleBarCut = lerp(barLength, DRAWER_ARROW_SHAFT_LENGTH.toPx(), progress)
+    val cut = lerp(0f, maxCut, progress).roundToInt().toFloat()
+    val arrowWidth = (arrowSize * cos(ARROW_HEAD_ANGLE)).roundToInt().toFloat()
+    val arrowHeight = (arrowSize * sin(ARROW_HEAD_ANGLE)).roundToInt().toFloat()
+    val topBottomOffset = lerp(gap + thickness, -maxCut, progress)
+    val arrowEdge = -middleBarCut / 2
+    val spin = lerp(if (isRtl) 0f else -HALF_TURN, if (isRtl) HALF_TURN else 0f, progress) * if (isRtl) -1f else 1f
+
+    val bars =
+        Path().apply {
+            moveTo(arrowEdge + cut, 0f)
+            relativeLineTo(middleBarCut - cut * 2, 0f)
+            moveTo(arrowEdge, topBottomOffset)
+            relativeLineTo(arrowWidth, arrowHeight)
+            moveTo(arrowEdge, -topBottomOffset)
+            relativeLineTo(arrowWidth, -arrowHeight)
         }
-        paint.strokeCap = Paint.Cap.ROUND
+    // The bars are drawn around their own middle, which sits a whole number of
+    // pixels below the top of the box so the lines stay crisp.
+    val remaining = (size.height - thickness * BAR_COUNT - gap * 2).toInt()
+    val middleY = (remaining / PIXEL_GRID) * 2f + thickness * MIDDLE_BAR_CENTRE + gap
+    translate(left = size.width / 2, top = middleY) {
+        rotate(degrees = spin, pivot = Offset.Zero) {
+            drawPath(bars, color, style = Stroke(width = thickness, cap = StrokeCap.Round, join = StrokeJoin.Miter))
+        }
     }
+}
