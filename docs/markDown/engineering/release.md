@@ -2,7 +2,7 @@
 
 ## Releasing is pushing a tag
 
-Tag a commit of `master` `v<versionName>` (`v0.1`) and push it. [`release-apk.yaml`](../../../.github/workflows/release-apk.yaml):
+Tag a commit of `master` `v<versionName>` (`v0.1`) and push it, or, with no git at hand, run **Tag a release** ([`tag-release.yaml`](../../../.github/workflows/tag-release.yaml)) on `master` from the Actions tab: it tags the current `master` with its `versionName` (refusing a tag that exists) and starts the release on the tag, since a tag made with the workflow's own token starts no workflow by itself. [`release-apk.yaml`](../../../.github/workflows/release-apk.yaml):
 
 1. checks the tag names the version being built and is on `master`, and that the certificate pins are at least 90 days from expiry (Android stops checking them after it; run the **Certificate pins** workflow with *update* first, see [security.md](security.md#certificate-pinning));
 2. decodes the keystores from the `release` environment's secrets into the runner's temp folder, builds `assembleFdroidRelease` (signing and verifying the APK), deletes the keys;
