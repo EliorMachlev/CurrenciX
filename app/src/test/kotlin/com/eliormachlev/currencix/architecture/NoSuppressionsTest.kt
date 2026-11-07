@@ -79,6 +79,15 @@ class NoSuppressionsTest {
         assertEquals("A baseline swallows findings; fix them instead:\n" + baselines.joinToString("\n"), emptyList<String>(), baselines)
     }
 
+    @Test
+    fun `jactionlint reads no config file and applies no ignores`() {
+        // A config file can turn a rule off, and an ignore comment or baseline can hide a
+        // finding; the run line keeps both out.
+        val run = File(root, JACTIONLINT_WORKFLOW).readLines().single { "jactionlint\" --" in it }
+        val missing = JACTIONLINT_GUARDS.filterNot { it in run.split(' ') }
+        assertEquals("$JACTIONLINT_WORKFLOW must run jactionlint with these flags", emptyList<String>(), missing)
+    }
+
     private fun scannedTree(): Sequence<File> = root.walkTopDown().onEnter { it.name !in SKIPPED_DIRECTORIES }
 
     // Every line in the repository that carries a suppression marker.
@@ -136,6 +145,8 @@ class NoSuppressionsTest {
         const val SEMGREP_WORKFLOW = ".github/workflows/semgrep.yaml"
         const val MUTABLE_TAG_RULE = "yaml.github-actions.security.github-actions-mutable-action-tag.github-actions-mutable-action-tag"
         const val SELF_REPOSITORY = "`$/`"
+        const val JACTIONLINT_WORKFLOW = ".github/workflows/jactionlint.yaml"
+        val JACTIONLINT_GUARDS = listOf("--no-ignores", "--config-file=/dev/null")
         const val WIRE_CVE = "CVE-2018-8909"
         const val WIRE_SERVER_CVE = "CVE-2023-22737"
         const val WIRE_RUNTIME = "wire-runtime"

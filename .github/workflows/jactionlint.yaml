@@ -62,6 +62,8 @@ jobs:
       # The profile named, so a config file can't change it unseen; a warning
       # or a note fails the job too, as an error does; findings annotate the PR.
       # --no-ignores: no ignore comment, config-file ignore or baseline hides a
-      # finding, so nothing can be silenced without editing this line.
+      # finding; --config-file=/dev/null: no config file turns a rule off.
+      # Nothing can be silenced without editing this line (NoSuppressionsTest
+      # checks both flags are here).
       - name: Lint the workflows
-        run: '"$RUNNER_TEMP/jactionlint" --profile default --strict-exit --no-ignores --format github'
+        run: '"$RUNNER_TEMP/jactionlint" --profile default --strict-exit --no-ignores --config-file=/dev/null --format github'
