@@ -366,5 +366,5 @@
     <string name="receipt_language_not_now">Teď ne</string>
     <string name="receipt_languages_intro">Účtenky se čtou ve vašem telefonu, v jazycích uvedených zde. Nic se nestáhne, dokud nesouhlasíte.</string>
     <string name="receipt_languages_empty">Zatím žádné. První skenování účtenky se zeptá, co stáhnout.</string>
-    <string name="error_certificate_pinning">Certifikát serveru není žádný z těch, které má aplikace pro tento server připnuté. Pokud ho poskytovatel změnil, aktualizujte aplikaci, nebo připínání certifikátů vypněte v Nastavení.</string>
+    <string name="error_certificate_pinning">Certifikát serveru není žádný z těch, které má aplikace pro tento server připnuté. Pokud ho poskytovatel změnil, aktualizujte aplikaci.</string>
 </resources>

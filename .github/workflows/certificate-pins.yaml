@@ -1,6 +1,6 @@
 name: Certificate pins
 # The app accepts a rate provider's (or the OCR download host's) connection
-# only when its chain holds a key pinned in BuiltInPins.kt
+# only when its chain holds a key pinned in network_security_config.xml
 # (docs/markDown/engineering/security.md#certificate-pinning). Weekly, and on
 # a PR that changes the pins, this checks every host still serves one, so a
 # CA change shows up here before it reaches users. Run by hand with "update"
@@ -11,7 +11,7 @@ on:
     - cron: '17 6 * * 3'
   pull_request:
     paths:
-      - app/src/main/kotlin/com/eliormachlev/currencix/util/BuiltInPins.kt
+      - app/src/main/res/xml/network_security_config.xml
       - .github/scripts/certificate-pins.py
       - .github/workflows/certificate-pins.yaml
   workflow_dispatch:
@@ -32,7 +32,7 @@ permissions:
   contents: read
 
 env:
-  PINS: app/src/main/kotlin/com/eliormachlev/currencix/util/BuiltInPins.kt
+  PINS: app/src/main/res/xml/network_security_config.xml
   SCRIPT: .github/scripts/certificate-pins.py
 
 jobs:
@@ -50,22 +50,22 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: Check every host serves a pinned key
+      - name: Check every host serves a pinned key, and the pins are far from expiry
         run: python3 "$SCRIPT" check "$PINS"
 
       # What update would write, to compare or take by hand.
       - name: Write the pins served now
         if: always()
         run: |
-          cp "$PINS" "$RUNNER_TEMP/BuiltInPins.kt"
-          python3 "$SCRIPT" update "$RUNNER_TEMP/BuiltInPins.kt"
+          cp "$PINS" "$RUNNER_TEMP/network_security_config.xml"
+          python3 "$SCRIPT" update "$RUNNER_TEMP/network_security_config.xml"
 
       - name: Upload them
         if: always()
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: certificate-pins
-          path: ${{ runner.temp }}/BuiltInPins.kt
+          path: ${{ runner.temp }}/network_security_config.xml
           retention-days: 7
 
   update:

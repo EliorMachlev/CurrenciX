@@ -357,5 +357,5 @@
     <string name="receipt_language_not_now">Để sau</string>
     <string name="receipt_languages_intro">Hóa đơn được đọc trên điện thoại của bạn, bằng các ngôn ngữ ở đây. Không tải gì cho đến khi bạn đồng ý.</string>
     <string name="receipt_languages_empty">Chưa có. Lần quét hóa đơn đầu tiên sẽ hỏi bạn tải ngôn ngữ nào.</string>
-    <string name="error_certificate_pinning">Chứng chỉ của máy chủ không thuộc các chứng chỉ ứng dụng đã ghim cho nó. Nếu nhà cung cấp đã đổi, hãy cập nhật ứng dụng hoặc tắt ghim chứng chỉ trong Cài đặt.</string>
+    <string name="error_certificate_pinning">Chứng chỉ của máy chủ không thuộc các chứng chỉ ứng dụng đã ghim cho nó. Nếu nhà cung cấp đã đổi, hãy cập nhật ứng dụng.</string>
 </resources>

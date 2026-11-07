@@ -359,5 +359,5 @@
     <string name="receipt_language_not_now">Niet nu</string>
     <string name="receipt_languages_intro">Bonnetjes worden op je telefoon gelezen, in de talen hier. Er wordt niets gedownload tot je akkoord gaat.</string>
     <string name="receipt_languages_empty">Nog geen. Je eerste bonnetjesscan vraagt welke je wilt downloaden.</string>
-    <string name="error_certificate_pinning">Het certificaat van de server is niet een van de certificaten die de app ervoor heeft vastgepind. Als de aanbieder het heeft gewisseld, werk de app dan bij of zet certificaat-pinning uit in Instellingen.</string>
+    <string name="error_certificate_pinning">Het certificaat van de server is niet een van de certificaten die de app ervoor heeft vastgepind. Als de aanbieder het heeft gewisseld, werk de app dan bij.</string>
 </resources>

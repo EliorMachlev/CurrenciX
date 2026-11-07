@@ -208,7 +208,4 @@
     <string name="api_all_rates_today_api_key_title">Khóa API AllRatesToday</string>
     <string name="api_all_rates_today_api_key_message">Để dùng nguồn này, bạn cần khóa API riêng.\n\nTạo tài khoản miễn phí tại https://allratestoday.com, sau đó sao chép khóa của bạn (bắt đầu bằng art_live_) từ trang hồ sơ và nhập vào đây.\n\nGói miễn phí cho phép tổng cộng 300 yêu cầu, chỉ một lần. Mỗi lần làm mới và mỗi khoảng biểu đồ dùng một yêu cầu.</string>
     <string name="provider_cadence_every_minute">Cập nhật khoảng mỗi phút</string>
-    <string name="settings_advanced_section">Nâng cao</string>
-    <string name="certificate_pinning_title">Ghim chứng chỉ</string>
-    <string name="certificate_pinning_summary">Chỉ kết nối đến máy chủ tỷ giá qua các tổ chức cấp chứng chỉ đã ghim cho chúng. Chỉ tắt nếu một máy chủ đã đổi chứng chỉ và tỷ giá không tải được nữa.</string>
 </resources>

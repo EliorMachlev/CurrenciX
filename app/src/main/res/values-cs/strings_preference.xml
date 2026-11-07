@@ -209,7 +209,4 @@
     <string name="api_all_rates_today_api_key_title">API klíč AllRatesToday</string>
     <string name="api_all_rates_today_api_key_message">Pro použití tohoto zdroje potřebujete vlastní API klíč.\n\nZaložte si bezplatný účet na https://allratestoday.com, zkopírujte klíč (začíná art_live_) ze stránky profilu a zadejte ho sem.\n\nBezplatný tarif umožňuje celkem 300 požadavků, jednorázově. Každá aktualizace a každé období grafu spotřebuje jeden.</string>
     <string name="provider_cadence_every_minute">Aktualizace přibližně každou minutu</string>
-    <string name="settings_advanced_section">Pokročilé</string>
-    <string name="certificate_pinning_title">Připínání certifikátů</string>
-    <string name="certificate_pinning_summary">Připojovat se k serverům kurzů jen přes certifikační autority, které jsou pro ně připnuté. Vypněte jen tehdy, když server změnil certifikát a kurzy se přestaly načítat.</string>
 </resources>

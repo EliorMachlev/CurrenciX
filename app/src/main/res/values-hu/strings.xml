@@ -360,5 +360,5 @@
     <string name="receipt_language_not_now">Most nem</string>
     <string name="receipt_languages_intro">A nyugtákat a telefonja olvassa, az itt lévő nyelveken. Semmi sem töltődik le, amíg bele nem egyezik.</string>
     <string name="receipt_languages_empty">Még nincs. Az első nyugtaszkennelés megkérdezi, mit töltsön le.</string>
-    <string name="error_certificate_pinning">A szerver tanúsítványa nem tartozik azok közé, amelyeket az alkalmazás rögzített hozzá. Ha a szolgáltató lecserélte, frissítse az alkalmazást, vagy kapcsolja ki a tanúsítványrögzítést a Beállításokban.</string>
+    <string name="error_certificate_pinning">A szerver tanúsítványa nem tartozik azok közé, amelyeket az alkalmazás rögzített hozzá. Ha a szolgáltató lecserélte, frissítse az alkalmazást.</string>
 </resources>

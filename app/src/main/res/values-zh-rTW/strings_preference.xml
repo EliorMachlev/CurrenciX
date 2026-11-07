@@ -205,7 +205,4 @@
     <string name="api_all_rates_today_api_key_title">AllRatesToday API 金鑰</string>
     <string name="api_all_rates_today_api_key_message">使用此來源需要你自己的 API 金鑰。\n\n在 https://allratestoday.com 建立免費帳戶，然後從個人資料頁複製你的金鑰（以 art_live_ 開頭）並在此輸入。\n\n免費方案總共只允許 300 次請求，用完即止。每次重新整理和每個圖表區間各用一次。</string>
     <string name="provider_cadence_every_minute">約每分鐘更新一次</string>
-    <string name="settings_advanced_section">進階</string>
-    <string name="certificate_pinning_title">憑證綁定</string>
-    <string name="certificate_pinning_summary">只透過為匯率伺服器綁定的憑證授權單位連線。只有在伺服器更換憑證且匯率無法載入時才關閉。</string>
 </resources>

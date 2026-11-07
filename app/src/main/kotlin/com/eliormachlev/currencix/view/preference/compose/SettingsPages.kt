@@ -78,7 +78,7 @@ private fun sectionsOf(topic: SettingsTopic?): List<PageSection> =
         SettingsTopic.PROVIDERS -> listOf { ProvidersSection(it) }
         SettingsTopic.APPEARANCE -> listOf({ DisplaySection(it) }, { TouchSection(it) })
         SettingsTopic.CHART -> listOf { ChartSection() }
-        SettingsTopic.SECURITY -> listOf({ AccessSection(it) }, { NetworkPrivacySection(it) }, { CertificatePinningSection(it) })
+        SettingsTopic.SECURITY -> listOf({ AccessSection(it) }, { NetworkPrivacySection(it) })
         SettingsTopic.ABOUT -> listOf({ VersionSection() }, { ProjectSection(it) }, { LegalSection() })
         SettingsTopic.CREDITS -> emptyList()
     }
@@ -452,22 +452,6 @@ private fun NetworkPrivacySection(page: SettingsPageContext) {
             iconRes = R.drawable.ic_visibility_off,
             checked = enabled,
             onCheckedChange = page.viewModel::setPrivateRequestsEnabled,
-        )
-    }
-}
-
-// Certificate pinning: on, each rate server is accepted only through the
-// certificate authorities built into the app for it (util/CertificatePinning).
-@Composable
-private fun CertificatePinningSection(page: SettingsPageContext) {
-    val pinning by page.viewModel.isCertificatePinningEnabled.collectAsStateWithLifecycle()
-    PreferenceSection(text = stringResource(R.string.settings_advanced_section)) {
-        SwitchRow(
-            title = stringResource(R.string.certificate_pinning_title),
-            summary = stringResource(R.string.certificate_pinning_summary),
-            iconRes = R.drawable.ic_lock,
-            checked = pinning,
-            onCheckedChange = page.viewModel::setCertificatePinningEnabled,
         )
     }
 }

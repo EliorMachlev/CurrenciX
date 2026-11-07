@@ -1,24 +1,32 @@
 #!/usr/bin/env python3
 """
-Keeps the app's built-in certificate pins (app/src/main/kotlin/.../util/
-BuiltInPins.kt) in line with what each host serves. For every host listed
-there it connects (openssl s_client, verifying against the runner's trust
-store), takes the CA certificates of the chain (the intermediates the server
-sends and the root they lead to; never the server's own certificate, which
-changes at every renewal) and pins their public keys, in OkHttp's
-"sha256/<base64 SPKI hash>" form.
+Keeps the app's certificate pins, the <pin-set>s in app/src/main/res/xml/
+network_security_config.xml, in line with what each host serves. For every
+host listed there it connects (openssl s_client, verifying against the
+runner's trust store), takes the CA certificates of the chain (the
+intermediates the server sends and the root they lead to; never the server's
+own certificate, which changes at every renewal) and pins their public keys
+(the base64 SHA-256 of each SubjectPublicKeyInfo, as <pin digest="SHA-256">
+takes it).
 
-    python3 .github/scripts/certificate-pins.py check  <BuiltInPins.kt>
-    python3 .github/scripts/certificate-pins.py update <BuiltInPins.kt>
+    python3 .github/scripts/certificate-pins.py check  <network_security_config.xml>
+    python3 .github/scripts/certificate-pins.py update <network_security_config.xml>
+    python3 .github/scripts/certificate-pins.py expiry <network_security_config.xml>
 
 check fails when a host's chain shares no key with its pins (the app would
-refuse that host), and only notes a chain that changed but still matches.
-update rewrites the pins from the chains served now. A new host is added to
-the file by hand with no pins (`"host" to setOf(),`) and filled by update.
-Run on a network without TLS interception: pins taken behind a proxy that
-re-signs traffic would be the proxy's.
+refuse that host) or when the pins expire within EXPIRY_WARNING_DAYS (after
+expiry Android stops checking them), and only notes a chain that changed but
+still matches. expiry checks only the date, without connecting (the release
+workflow runs it). update rewrites the pins from the chains served now and sets
+their expiry EXPIRY_DAYS ahead. Only the part between the two PINS markers
+is written; the rest of the file is kept as it is. A new host is added by
+hand between the markers with no pins, as
+`<domain-config><domain includeSubdomains="true">host</domain></domain-config>`,
+and filled by update. Run on a network without TLS interception: pins taken
+behind a proxy that re-signs traffic would be the proxy's.
 """
 import base64
+import datetime
 import hashlib
 import pathlib
 import re
@@ -29,22 +37,18 @@ import tempfile
 PORT = 443
 TIMEOUT_SECONDS = 30
 MAX_LABEL = 100
+# A year of pins per update, and the weekly check asks for the next update
+# with three months to go, so a release carrying it reaches users in time.
+EXPIRY_DAYS = 365
+EXPIRY_WARNING_DAYS = 90
 TRUST_STORE = pathlib.Path("/etc/ssl/certs")
 PEM = re.compile(r"-----BEGIN CERTIFICATE-----.+?-----END CERTIFICATE-----", re.DOTALL)
-CONSTANT = re.compile(r'^private const val ([A-Z0-9_]+) = "(sha256/[A-Za-z0-9+/=]+)"', re.MULTILINE)
-HOST_ENTRY = re.compile(r'^\s*"(?P<host>[a-z0-9.-]+)" to', re.MULTILINE)
-PINS_START = "    mapOf(\n"
-HEADER_COMMENT = """package com.eliormachlev.currencix.util
-
-// The public keys of the certificate authorities each host's certificate
-// chain runs through: its intermediates and their root, never the server's
-// own certificate (that changes at every renewal). A connection is accepted
-// when its verified chain holds one of them (OkHttp's CertificatePinner).
-// Written by .github/scripts/certificate-pins.py ("Update certificate pins"
-// workflow, which also checks them weekly): add a new host by hand with no
-// pins, then run the workflow to fill it in.
-"""
-DECLARATION = "internal val BUILT_IN_PINS: Map<String, Set<String>> =\n"
+START = "<!-- PINS: written by .github/scripts/certificate-pins.py; edit by hand only to add a host. -->"
+END = "<!-- END OF PINS -->"
+HOST = re.compile(r'<domain includeSubdomains="true">([a-z0-9.-]+)</domain>')
+PIN = re.compile(r'<pin digest="SHA-256">([A-Za-z0-9+/=]+)</pin>')
+EXPIRATION = re.compile(r'<pin-set expiration="(\d{4}-\d{2}-\d{2})">')
+INDENT = "    "
 
 
 def openssl(*args: str, data: bytes | None = None) -> bytes:
@@ -74,6 +78,8 @@ def subject(pem: str) -> str:
     name = fields.get("commonName") or fields.get("organizationalUnitName", "?")
     organization = fields.get("organizationName")
     label = f"{name} ({organization})" if organization and organization not in name else name
+    # "--" may not appear inside an XML comment.
+    label = label.replace("--", "-")
     return label if len(label) <= MAX_LABEL else label[: MAX_LABEL - 1] + "…"
 
 
@@ -101,7 +107,7 @@ def issuing_root(pem: str) -> str | None:
 def spki_pin(pem: str) -> str:
     public_key = openssl("x509", "-noout", "-pubkey", data=pem.encode())
     der = openssl("pkey", "-pubin", "-outform", "DER", data=public_key)
-    return "sha256/" + base64.b64encode(hashlib.sha256(der).digest()).decode()
+    return base64.b64encode(hashlib.sha256(der).digest()).decode()
 
 
 def ca_pins(host: str) -> dict[str, str]:
@@ -120,68 +126,90 @@ def ca_pins(host: str) -> dict[str, str]:
     return {spki_pin(pem): subject(pem) for pem in authorities}
 
 
-def hosts_in(path: pathlib.Path) -> list[str]:
-    hosts = HOST_ENTRY.findall(path.read_text())
+def pins_section(text: str, path: pathlib.Path) -> tuple[int, int]:
+    # Where the written part starts and ends: just after START, at the line holding END.
+    start, end = text.find(START), text.find(END)
+    if start < 0 or end < start:
+        sys.exit(f"{path}: no {START!r} … {END!r} section")
+    return start + len(START), text.rfind("\n", 0, end) + 1
+
+
+def domain_configs(section: str) -> list[str]:
+    return re.findall(r"<domain-config>.*?</domain-config>", section, re.DOTALL)
+
+
+def hosts_in(section: str, path: pathlib.Path) -> list[str]:
+    hosts = [host for config in domain_configs(section) for host in HOST.findall(config)]
     if not hosts:
-        sys.exit(f"{path}: no hosts")
+        sys.exit(f"{path}: no hosts between the PINS markers")
     return hosts
 
 
-def pins_in(path: pathlib.Path, host: str) -> set[str]:
-    # The pins named between this host's entry and the next one, through their constants.
-    text = path.read_text()
-    constants = dict(CONSTANT.findall(text))
-    entries = list(HOST_ENTRY.finditer(text))
-    index = next(i for i, entry in enumerate(entries) if entry["host"] == host)
-    end = entries[index + 1].start() if index + 1 < len(entries) else len(text)
-    block = text[entries[index].end():end]
-    return {constants[name] for name in re.findall(r"\b([A-Z][A-Z0-9_]+),", block) if name in constants}
+def pins_of(section: str, host: str) -> set[str]:
+    config = next(c for c in domain_configs(section) if host in HOST.findall(c))
+    return set(PIN.findall(config))
 
 
-def constant_name(label: str) -> str:
-    # "GTS Root R4 (Google Trust Services LLC)" -> GTS_ROOT_R4
-    return re.sub(r"[^A-Z0-9]+", "_", label.split(" (")[0].upper()).strip("_")
-
-
-def kotlin(pins: dict[str, dict[str, str]]) -> str:
-    # One constant per CA key, named after the CA, then each host's set of them:
-    # a CA several hosts use (GTS, Let's Encrypt) is written once.
-    names: dict[str, str] = {}
-    for pin, label in sorted({pin: label for host in pins.values() for pin, label in host.items()}.items(), key=lambda i: i[1]):
-        name = constant_name(label)
-        while name in names.values():
-            name += "_2"
-        names[pin] = name
-    constants = "".join(f'// {label}\nprivate const val {names[pin]} = "{pin}"\n\n' for pin, label in
-                        sorted({p: l for h in pins.values() for p, l in h.items()}.items(), key=lambda i: names[i[0]]))
-    entries = []
+def xml(pins: dict[str, dict[str, str]], expiration: datetime.date) -> str:
+    # One <domain-config> per host, its subdomains included, as the allowed hosts are
+    # (AllowedHostsInterceptor), so a redirect to one doesn't go unpinned.
+    blocks = []
     for host in sorted(pins):
-        lines = "".join(f"                {names[pin]},\n" for pin in sorted(pins[host], key=lambda p: names[p]))
-        entries.append(f'        "{host}" to\n            setOf(\n{lines}            ),\n')
-    return HEADER_COMMENT + "\n" + constants + DECLARATION + PINS_START + "".join(entries) + "    )\n"
+        lines = [
+            f"{INDENT}<domain-config>",
+            f'{INDENT * 2}<domain includeSubdomains="true">{host}</domain>',
+            f'{INDENT * 2}<pin-set expiration="{expiration.isoformat()}">',
+        ]
+        for pin, label in sorted(pins[host].items(), key=lambda item: item[1]):
+            lines.append(f"{INDENT * 3}<!-- {label} -->")
+            lines.append(f'{INDENT * 3}<pin digest="SHA-256">{pin}</pin>')
+        lines += [f"{INDENT * 2}</pin-set>", f"{INDENT}</domain-config>"]
+        blocks.append("\n".join(lines) + "\n")
+    return "\n" + "".join(blocks)
+
+
+def expires_soon(section: str, file: str, today: datetime.date) -> bool:
+    # Every pin set carries the same date; the earliest decides.
+    expirations = {datetime.date.fromisoformat(date) for date in EXPIRATION.findall(section)}
+    soon = not expirations or min(expirations) - today < datetime.timedelta(days=EXPIRY_WARNING_DAYS)
+    if soon:
+        print(f"::error file={file}::the pins expire on {min(expirations, default='(no date)')}; after that Android doesn't check them")
+    else:
+        print(f"The pins hold until {min(expirations)}")
+    return soon
 
 
 def main(mode: str, file: str) -> None:
     path = pathlib.Path(file)
-    current = {host: ca_pins(host) for host in hosts_in(path)}
+    text = path.read_text()
+    start, end = pins_section(text, path)
+    section = text[start:end]
+    today = datetime.date.today()
+    if mode == "expiry":
+        if expires_soon(section, file, today):
+            sys.exit("Run the Certificate pins workflow with update before releasing")
+        return
+    current = {host: ca_pins(host) for host in hosts_in(section, path)}
     if mode == "update":
-        path.write_text(kotlin(current))
-        print(f"Pinned {sum(map(len, current.values()))} keys for {len(current)} hosts")
+        expiration = today + datetime.timedelta(days=EXPIRY_DAYS)
+        path.write_text(text[:start] + xml(current, expiration) + text[end:])
+        print(f"Pinned {sum(map(len, current.values()))} keys for {len(current)} hosts, until {expiration}")
         return
     broken = []
     for host, served in current.items():
-        pinned = pins_in(path, host)
+        pinned = pins_of(section, host)
         if not pinned & served.keys():
             broken.append(host)
             print(f"::error file={file}::{host}: none of its pins is in the chain it serves now ({', '.join(served.values())})")
         elif pinned != served.keys():
             print(f"::notice file={file}::{host}: its chain changed but still holds a pinned key; update the pins to follow it")
-    if broken:
-        sys.exit("The app would refuse these hosts: run the Update certificate pins workflow with update, and release")
+    expiring = expires_soon(section, file, today)
+    if broken or expiring:
+        sys.exit("Run the Certificate pins workflow with update, and release the app with the new pins")
     print(f"All {len(current)} hosts serve a pinned key")
 
 
 if __name__ == "__main__":
-    if len(sys.argv) != 3 or sys.argv[1] not in ("check", "update"):
+    if len(sys.argv) != 3 or sys.argv[1] not in ("check", "update", "expiry"):
         sys.exit(__doc__)
     main(sys.argv[1], sys.argv[2])

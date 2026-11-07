@@ -357,5 +357,5 @@
     <string name="receipt_language_not_now">Nanti saja</string>
     <string name="receipt_languages_intro">Struk dibaca di ponsel Anda, dalam bahasa-bahasa di sini. Tidak ada yang diunduh sebelum Anda setuju.</string>
     <string name="receipt_languages_empty">Belum ada. Pindaian struk pertama Anda menanyakan mana yang diunduh.</string>
-    <string name="error_certificate_pinning">Sertifikat server bukan salah satu yang disematkan aplikasi untuknya. Jika penyedia menggantinya, perbarui aplikasi, atau matikan penyematan sertifikat di Setelan.</string>
+    <string name="error_certificate_pinning">Sertifikat server bukan salah satu yang disematkan aplikasi untuknya. Jika penyedia menggantinya, perbarui aplikasi.</string>
 </resources>

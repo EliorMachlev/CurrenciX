@@ -52,8 +52,6 @@ class PreferenceViewModel(
     val isBlockScreenshotsEnabled: StateFlow<Boolean> =
         db.privacy.blockScreenshots.stateInWhileSubscribed(viewModelScope)
 
-    val isCertificatePinningEnabled: StateFlow<Boolean> =
-        db.privacy.certificatePinning.stateInWhileSubscribed(viewModelScope)
     val isDynamicColorEnabled: StateFlow<Boolean> =
         db.display.dynamicColor.stateInWhileSubscribed(viewModelScope)
     val decimalPlaces: StateFlow<Int> =
@@ -144,8 +142,6 @@ class PreferenceViewModel(
     fun setPrivateRequestsEnabled(enabled: Boolean) = db.privacy.privateRequests.set(enabled)
 
     fun setBlockScreenshotsEnabled(enabled: Boolean) = db.privacy.blockScreenshots.set(enabled)
-
-    fun setCertificatePinningEnabled(enabled: Boolean) = db.privacy.certificatePinning.set(enabled)
 
     fun setFallbackProvider(provider: ApiProvider) = db.providers.fallbackProvider.set(provider)
 

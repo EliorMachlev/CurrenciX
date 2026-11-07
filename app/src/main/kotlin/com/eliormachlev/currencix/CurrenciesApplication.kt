@@ -14,7 +14,6 @@ import com.eliormachlev.currencix.repository.persistence.prefStore
 import com.eliormachlev.currencix.repository.persistence.warmUpSavedData
 import com.eliormachlev.currencix.strict.installStrictMode
 import com.eliormachlev.currencix.util.AppDispatchers
-import com.eliormachlev.currencix.util.CertificatePinning
 import com.eliormachlev.currencix.util.FileLoggingTree
 import com.eliormachlev.currencix.util.HttpClientProvider
 import com.eliormachlev.currencix.util.PrivateRequests
@@ -61,16 +60,14 @@ class CurrenciesApplication : Application() {
         appScope.publishWidgetPreviews(this)
     }
 
-    // Security & privacy: requests go out private, and pinned, from the first
-    // one as the settings say, and follow them after; the app lock starts
-    // following the app coming and going.
+    // Security & privacy: requests go out private from the first one as the
+    // setting says, and follow it after; settings this version no longer has
+    // are cleared; the app lock starts following the app coming and going.
     private fun keepPrivacyInStep() {
         val privacy = Database(this).privacy
         PrivateRequests.enabled = privacy.privateRequests.get()
         appScope.launch { privacy.privateRequests.flow.collect { PrivateRequests.enabled = it } }
-        CertificatePinning.update(privacy.certificatePinning.get())
-        appScope.launch { privacy.certificatePinning.flow.collect(CertificatePinning::update) }
-        privacy.removeTakenPins()
+        privacy.removeRetiredSettings()
         AppLock.install(this, privacy)
     }
 

@@ -1,6 +1,7 @@
 package com.eliormachlev.currencix.repository
 
 import android.content.Context
+import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.stringSetPreferencesKey
 import com.eliormachlev.currencix.repository.persistence.PersistenceKey
 import com.eliormachlev.currencix.repository.persistence.Pref
@@ -11,11 +12,12 @@ import com.eliormachlev.currencix.repository.persistence.prefStore
 private const val KEY_APP_LOCK = "_appLock"
 private const val KEY_PRIVATE_REQUESTS = "_privateRequests"
 private const val KEY_BLOCK_SCREENSHOTS = "_blockScreenshots"
-private const val KEY_CERTIFICATE_PINNING = "_certificatePinning"
 
-// Where versions up to 1.23 kept the pins Re-pin took on the phone. Re-pin is
-// gone (pins come only with the app), so what is left there is removed.
-private val REMOVED_CERTIFICATE_PINS = stringSetPreferencesKey("_certificatePins")
+// Settings that earlier versions kept and this one no longer has, so what is
+// left of them is removed: the Certificate pinning switch (pinning is always
+// on, in res/xml/network_security_config.xml) and the pins Re-pin took on the
+// phone (pins come only with the app).
+private val RETIRED_KEYS = listOf(booleanPreferencesKey("_certificatePinning"), stringSetPreferencesKey("_certificatePins"))
 
 /** Settings → Security & privacy: the app lock, screenshots, and requests that don't tell this phone apart. */
 class PrivacySettings(
@@ -32,9 +34,6 @@ class PrivacySettings(
     /** Send every request the same way for every user (see util/PrivateRequests). */
     val privateRequests: Pref<Boolean> = store.booleanPref(KEY_PRIVATE_REQUESTS, default = false)
 
-    /** Accept a rate server only through the certificate authorities pinned for it (see util/CertificatePinning). */
-    val certificatePinning: Pref<Boolean> = store.booleanPref(KEY_CERTIFICATE_PINNING, default = true)
-
-    /** Removes the pins an earlier version's Re-pin left on the phone; does nothing once they're gone. */
-    fun removeTakenPins() = store.edit { remove(REMOVED_CERTIFICATE_PINS) }
+    /** Removes the settings an earlier version left that this one no longer has; does nothing once they're gone. */
+    fun removeRetiredSettings() = store.edit { RETIRED_KEYS.forEach { remove(it) } }
 }

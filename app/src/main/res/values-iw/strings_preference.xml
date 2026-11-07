@@ -209,7 +209,4 @@
     <string name="api_all_rates_today_api_key_title">מפתח API של AllRatesToday</string>
     <string name="api_all_rates_today_api_key_message">כדי להשתמש במקור הזה צריך מפתח API משלך.\n\nפתחו חשבון חינמי ב־https://allratestoday.com, העתיקו את המפתח (מתחיל ב־art_live_) מדף הפרופיל והזינו אותו כאן.\n\nהתוכנית החינמית מאפשרת 300 בקשות בסך הכול, לתמיד. כל רענון וכל טווח בגרף משתמשים בבקשה אחת.</string>
     <string name="provider_cadence_every_minute">מתעדכן בערך כל דקה</string>
-    <string name="settings_advanced_section">מתקדם</string>
-    <string name="certificate_pinning_title">הצמדת אישורים</string>
-    <string name="certificate_pinning_summary">התחברות לשרתי השערים רק דרך רשויות האישורים שהוצמדו להם. יש לכבות רק אם שרת החליף את האישור שלו והשערים הפסיקו להיטען.</string>
 </resources>

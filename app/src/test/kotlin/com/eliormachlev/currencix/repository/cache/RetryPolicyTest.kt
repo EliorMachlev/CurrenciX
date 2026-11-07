@@ -6,6 +6,8 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import java.net.SocketTimeoutException
+import java.security.cert.CertificateException
+import javax.net.ssl.SSLHandshakeException
 import javax.net.ssl.SSLPeerUnverifiedException
 import kotlin.random.Random
 
@@ -53,7 +55,7 @@ class RetryPolicyTest {
         }
 
     @Test
-    fun `a certificate that doesn't match its pins isn't retried`() =
+    fun `a certificate that doesn't match its host name isn't retried`() =
         runBlocking {
             var attempts = 0
             val policy = RetryPolicy(maxAttempts = MAX_ATTEMPTS, baseDelayMs = 1L, jitterMs = 0L)
@@ -61,11 +63,27 @@ class RetryPolicyTest {
             val result: Result<String> =
                 policy.execute {
                     attempts++
-                    Result.failure(SSLPeerUnverifiedException("Certificate pinning failure!"))
+                    Result.failure(SSLPeerUnverifiedException("Hostname api.example.com not verified"))
                 }
 
             assertEquals(1, attempts)
             assertTrue(result.exceptionOrNull() is SSLPeerUnverifiedException)
+        }
+
+    @Test
+    fun `a refused pin isn't retried`() =
+        runBlocking {
+            var attempts = 0
+            val policy = RetryPolicy(maxAttempts = MAX_ATTEMPTS, baseDelayMs = 1L, jitterMs = 0L)
+
+            val result: Result<String> =
+                policy.execute {
+                    attempts++
+                    Result.failure(refusedPin())
+                }
+
+            assertEquals(1, attempts)
+            assertTrue(result.exceptionOrNull() is SSLHandshakeException)
         }
 
     @Test
@@ -87,4 +105,8 @@ class RetryPolicyTest {
             assertEquals(MAX_ATTEMPTS, attempts)
             assertEquals("ok", result.getOrNull())
         }
+
+    // What Android's trust manager throws for a chain through none of the pinned keys.
+    private fun refusedPin() =
+        SSLHandshakeException("handshake failed").apply { initCause(CertificateException("Pin verification failed")) }
 }
