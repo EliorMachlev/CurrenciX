@@ -86,7 +86,7 @@ class ArchitectureTest {
     fun `view models are built by a factory, not by reflection`() {
         scope
             .files
-            .assertFalse { file -> REFLECTIVE_VIEW_MODEL.containsMatchIn(file.text) }
+            .assertTrue { file -> defaultFactoryCalls(file.text).isEmpty() }
     }
 
     private companion object {
@@ -96,11 +96,5 @@ class ArchitectureTest {
         // Konsist matches parents by simple name; both count as satisfying the
         // invariant because AndroidViewModel itself extends ViewModel.
         val VIEWMODEL_PARENT_NAMES = listOf("ViewModel", "AndroidViewModel")
-
-        // viewModel() with no factory and no initializer, ViewModelProvider with
-        // only an owner, or viewModels() with no factory: each falls back to the
-        // default factory.
-        val REFLECTIVE_VIEW_MODEL =
-            Regex("""\bviewModel\((key = [^,()]*)?\)(?!\s*\{)|\bViewModelProvider\(\s*[\w.]+\s*\)|\bviewModels\(\)(?!\s*\{)""")
     }
 }
