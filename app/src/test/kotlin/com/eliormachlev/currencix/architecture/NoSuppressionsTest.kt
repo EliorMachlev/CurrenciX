@@ -80,20 +80,25 @@ class NoSuppressionsTest {
     }
 
     @Test
-    fun `jactionlint runs only as the recorded command`() {
+    fun `jactionlint appears only on its recorded lines`() {
         // A config file can turn a rule off, and an ignore flag, comment or baseline can hide a
-        // finding. The one command that runs it is pinned whole, which keeps --no-ignores and
-        // --config-file=/dev/null on it and catches an ignore however its flag is spelled
-        // (-i x, -ix, -i=x, --ignore=x). Any other invocation anywhere in the tree, a command
-        // split over continuation lines included, fails here too.
-        val runs =
+        // finding. Rather than parse every way a shell line can run it (a path, PATH, a YAML
+        // folded or continued command, an action), every line outside a comment that names
+        // jactionlint must be one recorded here. The run line among them is pinned whole, which
+        // keeps --no-ignores and --config-file=/dev/null on it and rules out an ignore however its
+        // flag is spelled (-i x, -ix, -i=x, --ignore=x).
+        val mentions =
             scannedTree()
                 .filter { it.isFile && it.isScanned() }
                 .flatMap { file ->
                     val path = file.relativeTo(root).path
-                    file.readLines().filter { JACTIONLINT_INVOCATION.containsMatchIn(it) }.map { "$path: ${it.trim()}" }
+                    file
+                        .readLines()
+                        .map { it.trim() }
+                        .filter { JACTIONLINT_WORD.containsMatchIn(it) && !it.startsWith("#") && !it.startsWith("//") }
+                        .map { "$path: $it" }
                 }.toList()
-        assertEquals("jactionlint must run only as the recorded command", listOf("$JACTIONLINT_WORKFLOW: $JACTIONLINT_RUN"), runs)
+        assertEquals("jactionlint may be named only on its recorded lines", JACTIONLINT_LINES.map { "$JACTIONLINT_WORKFLOW: $it" }, mentions)
     }
 
     private fun scannedTree(): Sequence<File> = root.walkTopDown().onEnter { it.name !in SKIPPED_DIRECTORIES }
@@ -157,9 +162,20 @@ class NoSuppressionsTest {
         const val JACTIONLINT_RUN =
             "run: '\"\$RUNNER_TEMP/jactionlint\" --profile default --strict-exit --no-ignores --config-file=/dev/null --format github'"
 
-        // A line that runs jactionlint: by path, as a bare command taking a flag or a line
-        // continuation, or as an action.
-        val JACTIONLINT_INVOCATION = Regex("""/jactionlint["']?(\s|$)|(^|[\s;&|(])jactionlint\s+[-\\]|uses:\s*\S*jactionlint""")
+        // jactionlint as a word: not JACTIONLINT_VERSION, not the jactionlint_<version> archive.
+        val JACTIONLINT_WORD = Regex("""\bjactionlint\b""")
+
+        // Every line outside a comment that may name it, in file order: the workflow's name and
+        // job, its install step (the release URL and extracting the binary), and the one run line.
+        val JACTIONLINT_LINES =
+            listOf(
+                "name: jactionlint",
+                "jactionlint:",
+                "- name: Install jactionlint",
+                "\"https://github.com/jdx/jactionlint/releases/download/v\${JACTIONLINT_VERSION}/\$archive\"",
+                "tar -xzf \"\$RUNNER_TEMP/\$archive\" -C \"\$RUNNER_TEMP\" jactionlint",
+                JACTIONLINT_RUN,
+            )
         const val WIRE_CVE = "CVE-2018-8909"
         const val WIRE_SERVER_CVE = "CVE-2023-22737"
         const val WIRE_RUNTIME = "wire-runtime"
