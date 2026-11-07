@@ -19,6 +19,13 @@ on:
         required: true
         type: string
 
+# One commit at a time per branch, never cancelled halfway through a push.
+# Its own group, not the caller's: a called workflow sharing the Baseline
+# Profile run's group would wait for that run, which waits for it.
+concurrency:
+  group: commit-baseline-profiles-${{ github.ref }}
+  cancel-in-progress: false
+
 permissions:
   contents: read
 
@@ -27,6 +34,7 @@ jobs:
   # artifact the profile run uploaded.
   commit:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     permissions:
       contents: write
       # read: download the profiles; write: start the checks on the commit.

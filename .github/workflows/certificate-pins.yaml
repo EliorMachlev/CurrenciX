@@ -21,6 +21,13 @@ on:
         type: boolean
         default: false
 
+# A newer push to the same PR supersedes a run still going; a scheduled or
+# manual run (which may commit new pins) always finishes. Updates queue in a
+# group of their own, so a later check can't replace a pending update.
+concurrency:
+  group: ${{ github.workflow }}-${{ inputs.update && 'update' || 'check' }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
 permissions:
   contents: read
 
@@ -32,6 +39,7 @@ jobs:
   check:
     if: ${{ !inputs.update }}
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - name: Harden the runner
         uses: step-security/harden-runner@46b06cea07f9e64621fdf066ba77ac6915163d43 # v2.22.3
@@ -63,6 +71,7 @@ jobs:
   update:
     if: ${{ inputs.update }}
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     permissions:
       contents: write
       actions: write

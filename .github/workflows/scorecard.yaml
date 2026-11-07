@@ -7,7 +7,14 @@ on:
     - cron: '0 6 * * 1'
   workflow_dispatch:
 
-permissions: read-all
+# A newer push supersedes a run still going: only the latest result is published.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+# Each job lists what it needs; nothing more for the workflow.
+permissions:
+  contents: read
 
 jobs:
   # Scorecard's Binary-Artifacts accepts the committed Gradle wrapper jar only
@@ -45,6 +52,7 @@ jobs:
   analysis:
     needs: wrapper-validated
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     permissions:
       security-events: write
       id-token: write

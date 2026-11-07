@@ -12,6 +12,7 @@ permissions:
 jobs:
   report:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     permissions:
       security-events: read
     steps:
@@ -26,6 +27,7 @@ jobs:
           REPO: ${{ github.repository }}
           BRANCH: ${{ github.event.repository.default_branch }}
         run: |
+          set -o pipefail
           gh api --paginate \
             "repos/$REPO/code-scanning/alerts?state=open&ref=refs/heads/$BRANCH&per_page=100" \
             --jq '.[]' | jq -s . > code-scanning-alerts.json

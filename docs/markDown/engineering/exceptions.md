@@ -124,13 +124,14 @@ Code the app depends on but doesn't write: libraries and the phone's framework.
 
 ### Action exceptions
 
-The GitHub Actions workflows in [`.github/workflows/`](../../../.github/workflows) and what their scans report about the repository on GitHub: a step allowed to fail without failing its job (`continue-on-error`), a finding left out by the workflow linters, actionlint and the ShellCheck it runs on each `run:` script (`# shellcheck disable=`, `-ignore`), or by zizmor (`# zizmor: ignore`), and an alert dismissed on GitHub's Security tab.
+The GitHub Actions workflows in [`.github/workflows/`](../../../.github/workflows) and what their scans report about the repository on GitHub: a step allowed to fail without failing its job (`continue-on-error`), a finding left out by the workflow linters, jactionlint and the ShellCheck it runs on each `run:` script (`# shellcheck disable=`, `-ignore`), or by zizmor (`# zizmor: ignore`), and an alert dismissed on GitHub's Security tab.
 
 | # | Tool and rule | Excluded for | Marked in |
 |---|---|---|---|
 | [14](#14-scorecard-branch-protection-on-master) | OpenSSF Scorecard `BranchProtectionID` | the review requirements on `master` | Dismissed on GitHub: code scanning alert [#379](https://github.com/EliorMachlev/CurrenciX/security/code-scanning/379), "won't fix" |
 | [15](#15-scorecard-code-review) | OpenSSF Scorecard `CodeReviewID` | changes merged without a second person's approval | Dismissed on GitHub: code scanning alert [#387](https://github.com/EliorMachlev/CurrenciX/security/code-scanning/387), "won't fix" |
 | [16](#16-typos-infor-and-mis) | typos extend-words | "Infor" (InforEuro) and "mis" (mis-issued), in the docs | [`_typos.toml`](../../../_typos.toml), read by [`.github/workflows/docs-checks.yaml`](../../../.github/workflows/docs-checks.yaml) |
+| [21](#21-semgrep-mutable-action-tag-on-) | Semgrep `github-actions-mutable-action-tag` | the whole rule, for the `$/` references to this repository's own actions and workflows; jactionlint's and zizmor's `unpinned-uses` check pinning instead | `--exclude-rule` in [`.github/workflows/semgrep.yaml`](../../../.github/workflows/semgrep.yaml) |
 
 #### 14. Scorecard: Branch-Protection on `master`
 
@@ -152,6 +153,14 @@ The GitHub Actions workflows in [`.github/workflows/`](../../../.github/workflow
 - **Why the finding is wrong:** InforEuro is the European Commission's exchange rate service, and typos reads the first part of the name as a word on its own. "Mis-issued" is the standard term for a certificate a CA issued wrongly; typos splits it at the hyphen.
 - **Why it can't be fixed:** the name is the service's own, and rewording "mis-issued" only so the check stops matching is a cosmetic workaround.
 - **What is excluded:** those two words, added to typos' dictionary in [`_typos.toml`](../../../_typos.toml) (`[default.extend-words]`). Every other word in the docs is still checked, and no file is left out. `NoSuppressionsTest` fails on any other typos dictionary entry or exclusion.
+
+#### 21. Semgrep: mutable-action-tag on `$/`
+
+- **What it reports:** "GitHub Actions step uses a mutable tag or branch reference", on each of the 15 steps that use the local [`dependency-cache`](../../../.github/actions/dependency-cache/action.yml) action as `uses: $/.github/actions/dependency-cache`.
+- **Why the finding is wrong:** `$/` is GitHub's self-repository syntax ([changelog](https://github.blog/changelog/2026-07-30-reference-same-repository-actions-with-self-repository-syntax)): this repository at the commit the workflow runs from, so nothing can repoint it. The rule ([`github-actions-mutable-action-tag.yaml`](https://github.com/semgrep/semgrep-rules/blob/develop/yaml/github-actions/security/github-actions-mutable-action-tag.yaml)) exempts only `./` and `docker://`. Semgrep fetches its rules from the registry on every run, so the newest version is already the one running; it has no `$/` support yet.
+- **Why it can't be fixed here:** writing `./` instead satisfies Semgrep but brings back zizmor's `self-repository` finding on the same 16 lines, which asks for `$/`; no form satisfies both. Semgrep's `nosemgrep` comments would mark each line instead of the one rule.
+- **What still checks pinning:** jactionlint's `unpinned-uses` (default profile, an error) and zizmor's `unpinned-uses` (an error): both fail on any action, reusable workflow or image not pinned to a full commit SHA or digest, and both understand `$/`. They run on every change to the workflows.
+- **What is excluded:** that one rule (`--exclude-rule=yaml.github-actions.security.github-actions-mutable-action-tag.github-actions-mutable-action-tag`), everywhere; every other rule of `p/github-actions` and of the other rulesets still runs. It can go once the rule exempts `$/` too, with a `pattern-not-regex: '^\$/'` next to its `^\./` one.
 
 **Not checked by `NoSuppressionsTest`:** 14 and 15 are dismissals on GitHub, not markers in a file, so no test sees them. Check the dismissed alerts on the Security tab against this list.
 
@@ -198,7 +207,7 @@ The app's own code, written as it is on purpose.
 
 ### Decided
 
-1 and 2 decided by the maintainer on 2026-10-06, 3 on 2026-10-12, 4 to 6 on 2026-10-18 (PR [#181](https://github.com/EliorMachlev/CurrenciX/pull/181)), 7 to 9 on 2026-10-25 (PR #203); `CVE-2023-22737` in 7, and 10 to 13, on 2026-11-04; 14 and 15, dismissed on GitHub, on 2026-10-23, and recorded here on 2026-11-04; 16 to 18 on 2026-11-04; 19, dismissed on GitHub, on 2026-11-05; 20 on 2026-11-05.
+1 and 2 decided by the maintainer on 2026-10-06, 3 on 2026-10-12, 4 to 6 on 2026-10-18 (PR [#181](https://github.com/EliorMachlev/CurrenciX/pull/181)), 7 to 9 on 2026-10-25 (PR #203); `CVE-2023-22737` in 7, and 10 to 13, on 2026-11-04; 14 and 15, dismissed on GitHub, on 2026-10-23, and recorded here on 2026-11-04; 16 to 18 on 2026-11-04; 19, dismissed on GitHub, on 2026-11-05; 20 on 2026-11-05; 21 on 2026-11-07.
 
 ## Adding an exception
 
@@ -217,5 +226,4 @@ When the tool is fixed upstream, or the code changes so the finding no longer ap
 These have no real fix either, but nothing is excluded for them. They show up in every report.
 
 - **Scorecard's Vulnerabilities, five advisories in Semgrep's own packages** ([`.github/semgrep/requirements.txt`](../../../.github/semgrep/requirements.txt)): four in `mcp` 1.29.0 (fixed in 1.30.0) and one in `opentelemetry-api` 1.37.0 (fixed in 1.45.1). Semgrep 1.183.0 requires `mcp==1.29.0` and `opentelemetry-api~=1.37.0`, so neither fix installs without breaking Semgrep's own requirements. They go when a Semgrep release raises its pins (Dependabot recompiles the file). Three of the `mcp` advisories were also Dependabot alerts [#44 to #46](https://github.com/EliorMachlev/CurrenciX/security/dependabot?q=is%3Adismissed), dismissed as exception 19; Scorecard still shows all five. (OSV-Scanner doesn't: it reads only the app's SBOM, which has no Python packages.) Semgrep runs only in CI, on this repository's code; the app doesn't ship it.
-- **zizmor `self-repository`** (low), 16 times: on [`baseline-profile.yaml`](../../../.github/workflows/baseline-profile.yaml)'s call to [`commit-baseline-profiles.yaml`](../../../.github/workflows/commit-baseline-profiles.yaml), and on each of the 15 steps that use the local [`dependency-cache`](../../../.github/actions/dependency-cache/action.yml) action: zizmor asks for GitHub's `$/` self-repository syntax instead of `./`. GitHub supports it, but actionlint (a required check) doesn't yet, and rejects the file. It goes when an actionlint release accepts `$/`. It's below the level that fails the zizmor job, and stays on the Security tab; a PR that adds another such step gets a red, not required, `zizmor` code-scanning check for its new notes.
 - **Lint `Typos`, twice, in `values-tr/strings_currencies.xml`:** "Gine" in the Turkish names of the Guinean franc and the Papua New Guinean kina. It is the Turkish word for Guinea; lint's word list takes it for a misspelling of "yine".

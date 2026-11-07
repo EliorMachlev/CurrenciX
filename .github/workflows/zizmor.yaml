@@ -1,5 +1,5 @@
 name: Zizmor
-# Audits the workflows for security problems actionlint doesn't look for:
+# Audits the workflows for security problems jactionlint doesn't look for:
 # template injection, over-broad permissions, credentials a checkout leaves
 # behind, cache poisoning of release builds, unpinned or impostor actions.
 # Every finding is uploaded to code scanning; one of medium severity or above
@@ -37,6 +37,7 @@ env:
 jobs:
   zizmor:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     permissions:
       contents: read
       security-events: write

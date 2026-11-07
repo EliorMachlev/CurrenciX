@@ -27,6 +27,7 @@ env:
 jobs:
   semgrep:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     permissions:
       contents: read
       security-events: write
@@ -49,9 +50,11 @@ jobs:
       - name: Install Semgrep
         run: python -m pip install --quiet --require-hashes -r .github/semgrep/requirements.txt
       # Every finding is printed here and uploaded to code scanning below, and
-      # any finding fails the job (--error). No rule is switched off and no
-      # path is left out; the two findings excluded where they occur are
-      # recorded in docs/markDown/engineering/exceptions.md.
+      # any finding fails the job (--error). No path is left out; one rule is
+      # switched off (mutable-action-tag, which doesn't know GitHub's `$/`;
+      # jactionlint's and zizmor's unpinned-uses check the same) and two
+      # findings are excluded where they occur, all recorded in
+      # docs/markDown/engineering/exceptions.md (#21 for the rule).
       - name: Run Semgrep
         run: |
           semgrep scan \
@@ -60,6 +63,7 @@ jobs:
             --config=p/kotlin \
             --config=p/java \
             --config=p/github-actions \
+            --exclude-rule=yaml.github-actions.security.github-actions-mutable-action-tag.github-actions-mutable-action-tag \
             --error \
             --sarif-output=semgrep.sarif
       - name: Upload SARIF to code scanning

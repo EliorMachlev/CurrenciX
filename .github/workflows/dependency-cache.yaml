@@ -78,7 +78,7 @@ jobs:
 
       - name: Check for this build's cache
         id: cache
-        uses: ./.github/actions/dependency-cache
+        uses: $/.github/actions/dependency-cache
         with:
           lookup-only: 'true'
 
@@ -127,6 +127,7 @@ jobs:
       # its lock files and cleanup marker.
       - name: Lay out the read-only cache
         run: |
+          set -o pipefail
           mkdir -p "$RO_CACHE"
           cp -a "$GRADLE_USER_HOME/caches/modules-2" "$RO_CACHE/"
           find "$RO_CACHE" -name '*.lock' -delete

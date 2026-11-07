@@ -79,6 +79,32 @@ class NoSuppressionsTest {
         assertEquals("A baseline swallows findings; fix them instead:\n" + baselines.joinToString("\n"), emptyList<String>(), baselines)
     }
 
+    @Test
+    fun `jactionlint appears only on its recorded lines`() {
+        // A config file can turn a rule off, and an ignore flag, comment or baseline can hide a
+        // finding. Rather than parse every way a shell line can run it (a path, PATH, a YAML
+        // folded or continued command, an action), every line outside a comment that names
+        // jactionlint must be one recorded here. The run line among them is pinned whole, which
+        // keeps --no-ignores and --config-file=/dev/null on it and rules out an ignore however its
+        // flag is spelled (-i x, -ix, -i=x, --ignore=x).
+        val mentions =
+            scannedTree()
+                .filter { it.isFile && it.isScanned() }
+                .flatMap { file ->
+                    val path = file.relativeTo(root).path
+                    file
+                        .readLines()
+                        .map { it.trim() }
+                        .filter { JACTIONLINT_WORD.containsMatchIn(it) && !it.startsWith("#") && !it.startsWith("//") }
+                        .map { "$path: $it" }
+                }.toList()
+        assertEquals(
+            "jactionlint may be named only on its recorded lines",
+            JACTIONLINT_LINES.map { "$JACTIONLINT_WORKFLOW: $it" },
+            mentions,
+        )
+    }
+
     private fun scannedTree(): Sequence<File> = root.walkTopDown().onEnter { it.name !in SKIPPED_DIRECTORIES }
 
     // Every line in the repository that carries a suppression marker.
@@ -133,6 +159,27 @@ class NoSuppressionsTest {
 
         const val OWASP_SUPPRESSIONS = "config/owasp/suppressions.xml"
         const val OWASP_WORKFLOW = ".github/workflows/owasp-dependency-check.yaml"
+        const val SEMGREP_WORKFLOW = ".github/workflows/semgrep.yaml"
+        const val MUTABLE_TAG_RULE = "yaml.github-actions.security.github-actions-mutable-action-tag.github-actions-mutable-action-tag"
+        const val SELF_REPOSITORY = "`$/`"
+        const val JACTIONLINT_WORKFLOW = ".github/workflows/jactionlint.yaml"
+        const val JACTIONLINT_RUN =
+            "run: '\"\$RUNNER_TEMP/jactionlint\" --profile default --strict-exit --no-ignores --config-file=/dev/null --format github'"
+
+        // jactionlint as a word: not JACTIONLINT_VERSION, not the jactionlint_<version> archive.
+        val JACTIONLINT_WORD = Regex("""\bjactionlint\b""")
+
+        // Every line outside a comment that may name it, in file order: the workflow's name and
+        // job, its install step (the release URL and extracting the binary), and the one run line.
+        val JACTIONLINT_LINES =
+            listOf(
+                "name: jactionlint",
+                "jactionlint:",
+                "- name: Install jactionlint",
+                "\"https://github.com/jdx/jactionlint/releases/download/v\${JACTIONLINT_VERSION}/\$archive\"",
+                "tar -xzf \"\$RUNNER_TEMP/\$archive\" -C \"\$RUNNER_TEMP\" jactionlint",
+                JACTIONLINT_RUN,
+            )
         const val WIRE_CVE = "CVE-2018-8909"
         const val WIRE_SERVER_CVE = "CVE-2023-22737"
         const val WIRE_RUNTIME = "wire-runtime"
@@ -278,6 +325,14 @@ class NoSuppressionsTest {
                 listOf(WIRE_CVE, WIRE_SERVER_CVE).map(::wireSuppression) +
                 listOf(
                     RecordedException(
+                        SEMGREP_WORKFLOW,
+                        "--exclude-rule=$MUTABLE_TAG_RULE \\",
+                        MUTABLE_TAG_RULE,
+                        SELF_REPOSITORY,
+                        // This one rule, nothing else on the line.
+                        Regex(Regex.escape("--exclude-rule=$MUTABLE_TAG_RULE \\") + "\\s*$", RegexOption.MULTILINE),
+                    ),
+                    RecordedException(
                         OWASP_WORKFLOW,
                         "--suppression $OWASP_SUPPRESSIONS",
                         WIRE_CVE,
@@ -387,9 +442,11 @@ class NoSuppressionsTest {
                 Regex("""\bextend-(words|identifiers|exclude|ignore-re|ignore-identifiers-re)\b"""),
                 // Licensee: a license or library allowed beyond the SPDX identifiers
                 Regex("""\b(allowUrl|allowDependency|ignoreDependencies)\("""),
-                // Workflow linters: ShellCheck (run by actionlint on each run: script), actionlint, zizmor
+                // Workflow linters: ShellCheck (run by jactionlint on each run: script), jactionlint
+                // (an -i / --ignore / -ignore flag, or its # jactionlint / # actionlint ignore= comment), zizmor
                 Regex("""shellcheck\s+disable="""),
-                Regex("""actionlint\b.*\s-ignore\b"""),
+                Regex("""actionlint\b.*\s(?!-init-config\b)(-[A-Za-z]*i|--ignore\b)"""),
+                Regex("""#\s*j?actionlint\s+ignore="""),
                 Regex("""zizmor:\s*ignore"""),
                 // Gradle dependency verification: files accepted without a checksum
                 Regex("""<(trust|ignored-key|trusted-key)\s"""),
