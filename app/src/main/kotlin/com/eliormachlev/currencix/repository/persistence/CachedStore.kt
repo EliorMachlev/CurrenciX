@@ -1,8 +1,6 @@
 package com.eliormachlev.currencix.repository.persistence
 
 import androidx.datastore.core.DataStore
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.asLiveData
 import com.eliormachlev.currencix.util.AppDispatchers
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
@@ -105,8 +103,6 @@ open class CachedStore<S> internal constructor(
     val flow: Flow<S> get() = cache.asStateFlow().map { it ?: snapshot() }
 
     fun <T> mappedFlow(mapper: (S) -> T): Flow<T> = flow.map(mapper).distinctUntilChanged()
-
-    fun <T> mappedLiveData(mapper: (S) -> T): LiveData<T> = mappedFlow(mapper).asLiveData()
 
     // Applies [transform] to the cache and counts it as pending until it
     // reaches disk.

@@ -43,7 +43,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
@@ -393,7 +392,7 @@ internal fun MainDisplay(
     modifier: Modifier = Modifier,
     captureController: LayerCapture? = null,
 ) {
-    val rates by viewModel.getExchangeRates().observeAsState()
+    val rates by viewModel.getExchangeRates().collectAsStateWithLifecycle()
     val state = observeHeroState(viewModel, FooterState(rates, dateFormatPattern, banner))
     var pickerSide by remember { mutableStateOf<PillSide?>(null) }
     val pairActions =
@@ -433,16 +432,16 @@ private fun observeHeroState(
     footer: FooterState,
 ): HeroState {
     val context = LocalContext.current
-    val baseCurrency by viewModel.getBaseCurrency().observeAsState()
-    val destCurrency by viewModel.getDestinationCurrency().observeAsState()
-    val baseFormatted by viewModel.getCurrentBaseValueFormatted().observeAsState()
-    val resultFairFormatted by viewModel.getResultFormatted().observeAsState()
-    val resultWithFeesFormatted by viewModel.getResultWithFeesFormatted().observeAsState()
+    val baseCurrency by viewModel.getBaseCurrency().collectAsStateWithLifecycle()
+    val destCurrency by viewModel.getDestinationCurrency().collectAsStateWithLifecycle()
+    val baseFormatted by viewModel.getCurrentBaseValueFormatted().collectAsStateWithLifecycle()
+    val resultFairFormatted by viewModel.getResultFormatted().collectAsStateWithLifecycle()
+    val resultWithFeesFormatted by viewModel.getResultWithFeesFormatted().collectAsStateWithLifecycle()
     val isUpdating by viewModel.isRefreshShimmerVisible().collectAsStateWithLifecycle()
-    val feeStack by viewModel.getFeeStack().observeAsState()
-    val activeFees by viewModel.getActiveFees().observeAsState()
-    val mathText by viewModel.getCalculationInputFormatted().observeAsState()
-    val resultWithFeesNumber by viewModel.getResultWithFeesAsNumber().observeAsState()
+    val feeStack by viewModel.getFeeStack().collectAsStateWithLifecycle()
+    val activeFees by viewModel.getActiveFees().collectAsStateWithLifecycle()
+    val mathText by viewModel.getCalculationInputFormatted().collectAsStateWithLifecycle()
+    val resultWithFeesNumber by viewModel.getResultWithFeesAsNumber().collectAsStateWithLifecycle()
 
     val base = rememberAmount(context, baseFormatted, baseCurrency)
     return HeroState(
@@ -489,12 +488,14 @@ internal fun ConverterCurrencyPicker(
     viewModel: MainViewModel,
     onDismiss: () -> Unit,
 ) {
-    val rates by viewModel.getExchangeRates().observeAsState()
-    val baseCurrency by viewModel.getBaseCurrency().observeAsState()
-    val destCurrency by viewModel.getDestinationCurrency().observeAsState()
+    val rates by viewModel.getExchangeRates().collectAsStateWithLifecycle()
+    val baseCurrency by viewModel.getBaseCurrency().collectAsStateWithLifecycle()
+    val destCurrency by viewModel.getDestinationCurrency().collectAsStateWithLifecycle()
     val picksFrom = side == PillSide.FROM
     val other = if (picksFrom) destCurrency else baseCurrency
-    val otherSum = if (picksFrom) viewModel.getResultAsNumber().value else viewModel.getCurrentBaseValueAsNumber().value
+    val result by viewModel.getResultAsNumber().collectAsStateWithLifecycle()
+    val typed by viewModel.getCurrentBaseValueAsNumber().collectAsStateWithLifecycle()
+    val otherSum = if (picksFrom) result else typed
     CurrencyPickerSheet(
         currentRate = other?.let { c -> rates?.rateFor(c)?.let { Rate(c, it.value) } },
         currentSum = otherSum ?: BigDecimal.ONE,

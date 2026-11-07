@@ -11,7 +11,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -71,7 +70,6 @@ import com.eliormachlev.currencix.view.navigation.Screen
 import com.eliormachlev.currencix.view.navigation.SettingsTopic
 import com.eliormachlev.currencix.view.navigation.paneRole
 import com.eliormachlev.currencix.view.preference.compose.ProviderPickerWithKeyPrompt
-import com.eliormachlev.currencix.viewmodel.main.KeyAvailability
 import com.eliormachlev.currencix.viewmodel.main.MainViewModel
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.collections.immutable.toImmutableSet
@@ -249,8 +247,8 @@ private fun TimelineFollowsPair(
     viewModel: MainViewModel,
     navigator: AppNavigator,
 ) {
-    val base = viewModel.getBaseCurrency().observeAsState().value
-    val dest = viewModel.getDestinationCurrency().observeAsState().value
+    val base = viewModel.getBaseCurrency().collectAsStateWithLifecycle().value
+    val dest = viewModel.getDestinationCurrency().collectAsStateWithLifecycle().value
     LaunchedEffect(base, dest) {
         val shown = navigator.current as? Screen.Timeline ?: return@LaunchedEffect
         if (base == null || dest == null || base == dest) return@LaunchedEffect
@@ -355,8 +353,7 @@ private fun ConverterDisplay(
     val context = LocalContext.current
     val banner by host.status.banner
     val database = rememberDatabase()
-    val pattern by database.display.dateFormat.liveData
-        .observeAsState(DEFAULT_DATE_PATTERN)
+    val pattern by database.display.dateFormat.collectAsStateWithLifecycle()
     val fees by database.fees.fees.collectAsStateWithLifecycle()
     // "Compare cards" only with two or more cards to compare.
     val canCompare = fees.count { it is Fee.GlobalBank && it.isActive } >= 2
@@ -406,9 +403,9 @@ private fun CompareCardsHost(
     val fees by db.fees.fees.collectAsStateWithLifecycle()
     val activeExchange by db.fees.activeExchangeId.collectAsStateWithLifecycle()
     val activeCard by db.fees.activeBankId.collectAsStateWithLifecycle()
-    val base by viewModel.getBaseCurrency().observeAsState()
-    val dest by viewModel.getDestinationCurrency().observeAsState()
-    val amount by viewModel.getResultAsNumber().observeAsState()
+    val base by viewModel.getBaseCurrency().collectAsStateWithLifecycle()
+    val dest by viewModel.getDestinationCurrency().collectAsStateWithLifecycle()
+    val amount by viewModel.getResultAsNumber().collectAsStateWithLifecycle()
     val costs = remember(fees, base, dest, activeExchange, amount) { compareCards(fees, base, dest, activeExchange, amount) }
     CompareCardsSheet(
         costs = costs,
@@ -430,8 +427,8 @@ private fun rememberRecordedPair(
     viewModel: MainViewModel,
     database: Database,
 ): CurrencyPair? {
-    val base = viewModel.getBaseCurrency().observeAsState().value
-    val dest = viewModel.getDestinationCurrency().observeAsState().value
+    val base = viewModel.getBaseCurrency().collectAsStateWithLifecycle().value
+    val dest = viewModel.getDestinationCurrency().collectAsStateWithLifecycle().value
     val current = if (base != null && dest != null && base != dest) CurrencyPair(base, dest) else null
     LaunchedEffect(current) {
         current ?: return@LaunchedEffect
@@ -485,7 +482,7 @@ private fun PairAlertSheet(
     pair: CurrencyPair,
     onDismiss: () -> Unit,
 ) {
-    val rates by viewModel.getExchangeRates().observeAsState()
+    val rates by viewModel.getExchangeRates().collectAsStateWithLifecycle()
     val current = rates?.convert(BigDecimal.ONE, pair.from, pair.to)
     val setAlert = rememberSetRateAlert()
     if (current == null) {
@@ -550,7 +547,7 @@ private fun rememberRemoveWithUndo(database: Database): (CurrencyPair) -> Unit {
 private fun ConverterKeypad(viewModel: MainViewModel) {
     val isExpanded by viewModel.isExpandedKeypadEnabled.collectAsStateWithLifecycle()
     val input = viewModel.input
-    val keys by input.keys.observeAsState(KeyAvailability())
+    val keys by input.keys.collectAsStateWithLifecycle()
     MainKeypad(
         isExpandedKeypad = isExpanded,
         keys = keys,

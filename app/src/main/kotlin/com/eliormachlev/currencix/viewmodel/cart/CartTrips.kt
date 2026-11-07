@@ -1,7 +1,5 @@
 package com.eliormachlev.currencix.viewmodel.cart
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MediatorLiveData
 import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.model.ExchangeRates
 import com.eliormachlev.currencix.model.SavedCart
@@ -10,6 +8,10 @@ import com.eliormachlev.currencix.model.convert
 import com.eliormachlev.currencix.repository.Database
 import com.eliormachlev.currencix.repository.withPlan
 import com.eliormachlev.currencix.util.newId
+import com.eliormachlev.currencix.viewmodel.util.stateInWhileSubscribed
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
 import java.math.BigDecimal
 import java.math.MathContext
 import java.time.LocalDate
@@ -68,27 +70,19 @@ internal fun summarizeTrips(
 class CartTrips internal constructor(
     private val db: Database,
     private val ratesCache: CartRatesCache,
+    private val scope: CoroutineScope,
 ) {
-    private val summariesLive: LiveData<List<TripSummary>> by lazy {
-        MediatorLiveData<List<TripSummary>>().apply {
-            val recompute = {
-                value =
-                    summarizeTrips(
-                        trips = db.carts.trips.get(),
-                        carts = db.carts.savedCarts.get(),
-                        rates = ratesCache.lastRates,
-                        feeStack = ratesCache::feeStackFor,
-                    )
-            }
-            addSource(db.carts.trips.liveData) { recompute() }
-            addSource(db.carts.savedCarts.liveData) { recompute() }
-            addSource(ratesCache.rates) { recompute() }
-            addSource(ratesCache.fees) { recompute() }
-        }
+    // Redone when the trips, the saved carts, the rates or the fees change
+    // (the fee stack also reads the active exchange and card). Empty until
+    // first observed.
+    private val summaries: StateFlow<List<TripSummary>> by lazy {
+        combine(db.carts.trips.flow, db.carts.savedCarts.flow, ratesCache.rates, ratesCache.fees) { trips, carts, rates, _ ->
+            summarizeTrips(trips = trips, carts = carts, rates = rates, feeStack = ratesCache::feeStackFor)
+        }.stateInWhileSubscribed(scope, emptyList())
     }
 
     /** The trips with their spending, in the order made. */
-    fun getSummaries(): LiveData<List<TripSummary>> = summariesLive
+    fun getSummaries(): StateFlow<List<TripSummary>> = summaries
 
     /** Saves a new trip or the edits to one; returns its id. */
     fun save(

@@ -2,10 +2,7 @@ package com.eliormachlev.currencix.viewmodel.cart
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MediatorLiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.map
+import androidx.lifecycle.viewModelScope
 import com.eliormachlev.currencix.model.CartExtras
 import com.eliormachlev.currencix.model.CartItem
 import com.eliormachlev.currencix.model.Currency
@@ -15,7 +12,14 @@ import com.eliormachlev.currencix.model.Person
 import com.eliormachlev.currencix.model.SavedCart
 import com.eliormachlev.currencix.repository.Database
 import com.eliormachlev.currencix.util.newId
+import com.eliormachlev.currencix.viewmodel.util.stateInWhileSubscribed
 import kotlinx.collections.immutable.ImmutableList
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.map
 import java.math.BigDecimal
 import java.math.MathContext
 import java.time.LocalDate
@@ -24,119 +28,100 @@ class CartViewModel(
     app: Application,
 ) : AndroidViewModel(app) {
     private val db = Database(app)
-    private val ratesCache = CartRatesCache(db)
+    private val ratesCache = CartRatesCache(db, viewModelScope)
 
     // The session cart. Backed by the saved carts file (CartStore), so it
     // survives process death but can be cleared explicitly.
-    private val current: MutableLiveData<SavedCart> = MutableLiveData(loadCurrentOrEmpty())
+    private val current = MutableStateFlow(loadCurrentOrEmpty())
 
-    override fun onCleared() {
-        ratesCache.clear()
-    }
+    private val currentCart: StateFlow<SavedCart> = current.asStateFlow()
 
-    fun getCurrentCart(): LiveData<SavedCart> = current
+    fun getCurrentCart(): StateFlow<SavedCart> = currentCart
 
     /** Display-safe name of the working cart. Empty string when unnamed / unset. */
-    fun currentCartName(): String = current.value?.name.orEmpty()
+    fun currentCartName(): String = current.value.name
 
     /** Whether the working cart has a persisted counterpart to overwrite. */
-    fun currentCartHasId(): Boolean = current.value?.id?.isNotEmpty() == true
+    fun currentCartHasId(): Boolean = current.value.id.isNotEmpty()
 
     /** Items on the working cart. Empty list when the cart is unset. */
-    fun currentCartItems(): List<CartItem> = current.value?.items.orEmpty()
+    fun currentCartItems(): List<CartItem> = current.value.items
 
-    fun getSavedCarts(): LiveData<List<SavedCart>> = db.carts.savedCarts.liveData
+    fun getSavedCarts(): Flow<List<SavedCart>> = db.carts.savedCarts.flow
 
     /**
-     * Synchronous snapshot for one-shot menu flows (Load / Manage) — the
-     * LiveData accessor is a fresh instance per call and never gets observed
-     * from those flows, so its `.value` is always null.
+     * Synchronous snapshot for one-shot menu flows (Load / Manage), and the
+     * first value for [getSavedCarts]' observers.
      */
     fun getSavedCartsSnapshot(): List<SavedCart> = db.carts.savedCarts.get()
 
-    fun getFees(): LiveData<ImmutableList<Fee>> = ratesCache.fees
+    fun getFees(): StateFlow<ImmutableList<Fee>> = ratesCache.fees
 
-    fun getExchangeRates(): LiveData<ExchangeRates?> = ratesCache.rates
+    fun getExchangeRates(): StateFlow<ExchangeRates?> = ratesCache.rates
 
     /**
      * Same source of truth as the main screen so the cart's slide-up keypad
      * shows the same layout the user picked.
      */
-    val isExpandedKeypadEnabled: LiveData<Boolean> = db.display.expandedKeypad.liveData
+    val isExpandedKeypadEnabled: StateFlow<Boolean> = db.display.expandedKeypad.stateInWhileSubscribed(viewModelScope)
 
     /** Shared with the main screen — same preference gates haptics everywhere. */
-    val isHapticFeedbackEnabled: LiveData<Boolean> = db.display.hapticFeedback.liveData
+    val isHapticFeedbackEnabled: StateFlow<Boolean> = db.display.hapticFeedback.stateInWhileSubscribed(viewModelScope)
 
     /** The totals card shows only the total; remembered across carts and launches. */
-    val isTotalsCollapsed: LiveData<Boolean> = db.display.cartTotalsCollapsed.liveData
+    val isTotalsCollapsed: StateFlow<Boolean> = db.display.cartTotalsCollapsed.stateInWhileSubscribed(viewModelScope)
 
     fun setTotalsCollapsed(collapsed: Boolean) = db.display.cartTotalsCollapsed.set(collapsed)
 
     /** The user's date format, for the rates' date on the totals card. */
-    val dateFormat: LiveData<String> = db.display.dateFormat.liveData
+    val dateFormat: StateFlow<String> = db.display.dateFormat.stateInWhileSubscribed(viewModelScope)
 
-    // Memoize the derived LiveData instances. Returning a fresh instance from
-    // each getter left synchronous `.value` reads at null (the caller's instance
-    // has no active observer, so its MediatorLiveData never advances) — which
-    // silently zeroed the fee-extra rows even though the observed instance had
-    // the right value.
-    private val baseCurrencyLive: LiveData<Currency> by lazy { current.map { resolveCurrency(it.currency) } }
-    private val destinationCurrencyLive: LiveData<Currency> by lazy {
-        current.map { resolveCurrency(it.destinationCurrency ?: it.currency) }
+    // Each derived stream is built once, on first use: a screen asks for them
+    // while it composes. Each starts from its value for the current cart, so
+    // a synchronous `.value` read and the first frame are already right.
+    private val baseCurrencyState: StateFlow<Currency> by lazy { fromCart { resolveCurrency(it.currency) } }
+    private val destinationCurrencyState: StateFlow<Currency> by lazy {
+        fromCart { resolveCurrency(it.destinationCurrency ?: it.currency) }
     }
-    private val subtotalLive: LiveData<BigDecimal> by lazy { current.map { subtotalOf(it) } }
-    private val extrasLive: LiveData<CartExtras> by lazy { current.map { it.extras } }
-    private val tipLive: LiveData<BigDecimal> by lazy { current.map { tipOf(it) } }
-    private val convertedSubtotalLive: LiveData<BigDecimal> by lazy {
-        MediatorLiveData<BigDecimal>().apply {
-            val recompute = {
-                value = convertedSubtotalOf(current.value, ratesCache.rates.value)
-            }
-            addSource(current) { recompute() }
-            addSource(ratesCache.rates) { recompute() }
-        }
+    private val subtotalState: StateFlow<BigDecimal> by lazy { fromCart(::subtotalOf) }
+    private val extrasState: StateFlow<CartExtras> by lazy { fromCart { it.extras } }
+    private val tipState: StateFlow<BigDecimal> by lazy { fromCart(::tipOf) }
+    private val convertedSubtotalState: StateFlow<BigDecimal> by lazy { fromCartAnd(ratesCache.rates, ::convertedSubtotalOf) }
+    private val rowConversionState: StateFlow<RowConversion?> by lazy {
+        fromCartAnd(ratesCache.rates) { cart, rates -> RowConversion.of(cart, rates) }
     }
-    private val rowConversionLive: LiveData<RowConversion?> by lazy {
-        MediatorLiveData<RowConversion?>().apply {
-            val recompute = { value = RowConversion.of(current.value, ratesCache.rates.value) }
-            addSource(current) { recompute() }
-            addSource(ratesCache.rates) { recompute() }
-        }
-    }
-    private val shoppingModeLive: LiveData<Boolean> by lazy { current.map { it.shoppingMode } }
-    private val peopleLive: LiveData<List<Person>> by lazy { current.map { it.extras.people } }
-    private val personSharesLive: LiveData<List<Pair<Person, BigDecimal>>> by lazy {
-        MediatorLiveData<List<Pair<Person, BigDecimal>>>().apply {
-            val recompute = { value = personSharesOf(current.value, totalLive.value ?: BigDecimal.ZERO) }
-            addSource(current) { recompute() }
-            addSource(totalLive) { recompute() }
-        }
-    }
-    private val basketTotalLive: LiveData<BigDecimal> by lazy {
-        MediatorLiveData<BigDecimal>().apply {
-            val recompute = { value = basketShareOf(current.value, totalLive.value ?: BigDecimal.ZERO) }
-            addSource(current) { recompute() }
-            addSource(totalLive) { recompute() }
-        }
-    }
-    private val totalLive: LiveData<BigDecimal> by lazy {
-        MediatorLiveData<BigDecimal>().apply {
-            val recompute = {
-                value = totalOf(current.value, ratesCache.rates.value, currentFeeStack())
-            }
-            addSource(current) { recompute() }
-            addSource(ratesCache.rates) { recompute() }
-            addSource(ratesCache.fees) { recompute() }
-        }
+    private val shoppingModeState: StateFlow<Boolean> by lazy { fromCart { it.shoppingMode } }
+    private val peopleState: StateFlow<List<Person>> by lazy { fromCart { it.extras.people } }
+    private val personSharesState: StateFlow<List<Pair<Person, BigDecimal>>> by lazy { fromCartAnd(totalState, ::personSharesOf) }
+    private val basketTotalState: StateFlow<BigDecimal> by lazy { fromCartAnd(totalState, ::basketShareOf) }
+
+    // Redone when the cart, the rates or the fees change (the fee stack also
+    // reads the active exchange and card, as it is computed).
+    private val totalState: StateFlow<BigDecimal> by lazy {
+        val total = { cart: SavedCart, rates: ExchangeRates? -> totalOf(cart, rates, currentFeeStack()) }
+        combine(current, ratesCache.rates, ratesCache.fees) { cart, rates, _ -> total(cart, rates) }
+            .stateInWhileSubscribed(viewModelScope, total(current.value, ratesCache.rates.value))
     }
 
-    fun getBaseCurrency(): LiveData<Currency> = baseCurrencyLive
+    // [transform] of the working cart, following it.
+    private fun <T> fromCart(transform: (SavedCart) -> T): StateFlow<T> =
+        current.map { transform(it) }.stateInWhileSubscribed(viewModelScope, transform(current.value))
+
+    // [transform] of the working cart and [other], following both.
+    private fun <O, T> fromCartAnd(
+        other: StateFlow<O>,
+        transform: (SavedCart, O) -> T,
+    ): StateFlow<T> =
+        combine(current, other) { cart, value -> transform(cart, value) }
+            .stateInWhileSubscribed(viewModelScope, transform(current.value, other.value))
+
+    fun getBaseCurrency(): StateFlow<Currency> = baseCurrencyState
 
     /** Tip / tax, split and budget (see [CartExtras]). */
-    fun getExtras(): LiveData<CartExtras> = extrasLive
+    fun getExtras(): StateFlow<CartExtras> = extrasState
 
     /** The tip / tax on top of the items, in the base currency. */
-    fun getTip(): LiveData<BigDecimal> = tipLive
+    fun getTip(): StateFlow<BigDecimal> = tipState
 
     /** Sets the extras; items for someone no longer in the cart go back to being shared. */
     fun setExtras(extras: CartExtras) {
@@ -149,16 +134,16 @@ class CartViewModel(
     }
 
     /** The cart's people, when it splits by person; empty otherwise. */
-    fun getPeople(): LiveData<List<Person>> = peopleLive
+    fun getPeople(): StateFlow<List<Person>> = peopleState
 
     /** What each person pays of the total, when the cart splits by person; empty otherwise. */
-    fun getPersonShares(): LiveData<List<Pair<Person, BigDecimal>>> = personSharesLive
+    fun getPersonShares(): StateFlow<List<Pair<Person, BigDecimal>>> = personSharesState
 
     /** Destination for the running total. Falls back to base when unset. */
-    fun getDestinationCurrency(): LiveData<Currency> = destinationCurrencyLive
+    fun getDestinationCurrency(): StateFlow<Currency> = destinationCurrencyState
 
     /** Subtotal from summing every item's evaluated expression in the base currency. */
-    fun getSubtotal(): LiveData<BigDecimal> = subtotalLive
+    fun getSubtotal(): StateFlow<BigDecimal> = subtotalState
 
     /**
      * Fee-free destination subtotal — subtotal after currency conversion but
@@ -166,10 +151,10 @@ class CartViewModel(
      * row so the delta reads in destination units (where the fee is actually
      * charged).
      */
-    fun getConvertedSubtotal(): LiveData<BigDecimal> = convertedSubtotalLive
+    fun getConvertedSubtotal(): StateFlow<BigDecimal> = convertedSubtotalState
 
     /** Each row's price in the destination currency (see [RowConversion]). */
-    fun getRowConversion(): LiveData<RowConversion?> = rowConversionLive
+    fun getRowConversion(): StateFlow<RowConversion?> = rowConversionState
 
     /**
      * Total in the destination currency: subtotal → converted at cached
@@ -177,13 +162,13 @@ class CartViewModel(
      * the post-conversion amount, so the fee lands here rather than on the
      * base-side subtotal.
      */
-    fun getTotal(): LiveData<BigDecimal> = totalLive
+    fun getTotal(): StateFlow<BigDecimal> = totalState
 
     /** Edits to the working cart's rows: add, edit, delete, pin, reorder. */
     val rows = CartRowEdits(::mutate)
 
     /** The trips saved carts are grouped into, with their spending. */
-    val trips = CartTrips(db, ratesCache)
+    val trips = CartTrips(db, ratesCache, viewModelScope)
 
     /** Turns shopping-list mode on or off; ticks stay for the next time it's on. */
     fun setShoppingMode(enabled: Boolean) {
@@ -191,14 +176,14 @@ class CartViewModel(
     }
 
     /** Whether the current cart is in shopping-list mode. */
-    fun isShoppingMode(): LiveData<Boolean> = shoppingModeLive
+    fun isShoppingMode(): StateFlow<Boolean> = shoppingModeState
 
     /**
      * What the ticked items come to, in the destination currency, as a share
      * of the total (tip and fees included in proportion). Zero with nothing
      * ticked.
      */
-    fun getBasketTotal(): LiveData<BigDecimal> = basketTotalLive
+    fun getBasketTotal(): StateFlow<BigDecimal> = basketTotalState
 
     fun setBaseCurrency(currency: Currency) {
         mutate { it.copy(currency = currency.iso4217Alpha()) }
@@ -227,7 +212,7 @@ class CartViewModel(
         mainBase: Currency? = null,
         mainDest: Currency? = null,
     ) {
-        val cur = current.value ?: return
+        val cur = current.value
         val (base, dest) = resolveSeedPair(mainBase, mainDest)
         val next =
             cur.copy(
@@ -251,7 +236,7 @@ class CartViewModel(
         mainDest: Currency?,
     ) {
         if (mainBase == null && mainDest == null) return
-        val cur = current.value ?: return
+        val cur = current.value
         if (cur.items.isNotEmpty()) return
         val (base, dest) = resolveSeedPair(mainBase, mainDest)
         val next = cur.copy(currency = base.iso4217Alpha(), destinationCurrency = dest.iso4217Alpha())
@@ -266,7 +251,7 @@ class CartViewModel(
      * seeded cart (there's nothing on disk to restore).
      */
     fun discardChanges() {
-        val cur = current.value ?: return
+        val cur = current.value
         val restored = if (cur.id.isNotEmpty()) findSaved(cur.id) ?: emptyCart() else emptyCart()
         setCurrent(restored)
     }
@@ -279,7 +264,7 @@ class CartViewModel(
         name: String,
         id: String? = null,
     ) {
-        val cart = current.value ?: return
+        val cart = current.value
         val saved =
             cart.copy(
                 id = id ?: newId(),
@@ -298,7 +283,7 @@ class CartViewModel(
      * route to "Save as" as a fallback.
      */
     fun saveCurrent(): Boolean {
-        val cart = current.value ?: return false
+        val cart = current.value
         if (cart.id.isEmpty()) return false
         val saved = cart.copy(createdAt = System.currentTimeMillis())
         db.carts.saveCart(saved)
@@ -323,7 +308,7 @@ class CartViewModel(
      * back to.
      */
     fun hasUnsavedChanges(): Boolean {
-        val cur = current.value ?: return false
+        val cur = current.value
         if (cur.id.isEmpty()) return cur.items.isNotEmpty()
         val saved = findSaved(cur.id) ?: return true
         return cur.items != saved.items ||
@@ -340,8 +325,8 @@ class CartViewModel(
         val existing = findSaved(id) ?: return
         db.carts.saveCart(existing.copy(name = name))
         // Keep the current cart's displayed name in sync if it's the same one.
-        if (current.value?.id == id) {
-            setCurrent((current.value ?: return).copy(name = name))
+        if (current.value.id == id) {
+            setCurrent(current.value.copy(name = name))
         }
     }
 
@@ -365,14 +350,13 @@ class CartViewModel(
      * even for an empty cart (same shape as the main screen).
      */
     fun currentFeeStack(): BigDecimal {
-        val cart = current.value ?: return BigDecimal.ONE
-        val (base, dest) = cart.resolvedPair()
+        val (base, dest) = current.value.resolvedPair()
         return ratesCache.feeStackFor(base, dest)
     }
 
     /** Snapshot used by the "Share" flow — computed against the latest fees & rates. */
     fun snapshotForShare(): CartSnapshot? {
-        val cart = current.value ?: return null
+        val cart = current.value
         if (cart.items.isEmpty()) return null
         // Freeze fees + rates up front so a mid-flow refresh can't mix
         // recomputed fees with the pre-refresh rate table.
@@ -405,10 +389,10 @@ class CartViewModel(
     }
 
     private fun mutate(transform: (SavedCart) -> SavedCart) {
-        val prev = current.value ?: emptyCart()
+        val prev = current.value
         val next = transform(prev)
         // Identity short-circuit: callers that decide the mutation is a no-op
-        // return the same instance (`return@mutate cart`) to skip the LiveData
+        // return the same instance (`return@mutate cart`) to skip the
         // emission and disk write.
         if (next === prev) return
         current.value = next
@@ -455,9 +439,9 @@ class CartViewModel(
         mainBase: Currency?,
         mainDest: Currency?,
     ): Pair<Currency, Currency> {
-        // Read the persisted picks synchronously — the LiveData accessors
-        // return null until observed, which is why an unobserved lookup here
-        // used to fall back to USD even when the user was on a different pair.
+        // Read the persisted picks synchronously — an unobserved stream's
+        // value can lag behind the store, which is why an unobserved lookup
+        // here used to fall back to USD even when the user was on a different pair.
         val base = mainBase ?: db.lastState.lastBaseCurrency.get() ?: Currency.USD
         val proposedDest = mainDest ?: db.lastState.lastDestinationCurrency.get()
         val dest = proposedDest?.takeIf { it != base } ?: distinctFrom(base)

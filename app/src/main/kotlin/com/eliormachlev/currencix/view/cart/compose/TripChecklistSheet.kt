@@ -13,7 +13,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -59,7 +58,7 @@ fun TripChecklistSheet(
 ) {
     val context = LocalContext.current
     val db = rememberDatabase()
-    val rates by remember(db) { db.rates.getExchangeRates() }.observeAsState()
+    val rates by remember(db) { db.rates.getExchangeRates() }.collectAsStateWithLifecycle(initialValue = null)
     val fees by db.fees.fees.collectAsStateWithLifecycle()
     val downloading by remember(context) { TessdataDownloadWorker.downloading(context) }.collectAsStateWithLifecycle(emptySet())
     val today = remember { LocalDate.now() }

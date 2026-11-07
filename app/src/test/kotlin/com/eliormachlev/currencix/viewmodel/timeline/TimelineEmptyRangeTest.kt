@@ -2,7 +2,7 @@ package com.eliormachlev.currencix.viewmodel.timeline
 
 import android.app.Application
 import android.os.Looper
-import androidx.lifecycle.LiveData
+import androidx.lifecycle.viewModelScope
 import androidx.test.core.app.ApplicationProvider
 import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.model.Rate
@@ -10,6 +10,8 @@ import com.eliormachlev.currencix.model.Timeline
 import com.eliormachlev.currencix.repository.Database
 import com.eliormachlev.currencix.util.AppDispatchers
 import kotlinx.coroutines.asCoroutineDispatcher
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Before
@@ -47,9 +49,9 @@ class TimelineEmptyRangeTest {
         // the calling thread, at once, so the assertions see them.
         val atOnce = Executor { it.run() }.asCoroutineDispatcher()
         val model = TimelineViewModel(app, Currency.USD, Currency.EUR, AppDispatchers(io = atOnce, default = atOnce) { atOnce })
-        val past = model.getRatePast().observed()
-        val current = model.getRateCurrent().observed()
-        val diff = model.getRatesDifferencePercent().observed()
+        val past = model.getRatePast().observed(model)
+        val current = model.getRateCurrent().observed(model)
+        val diff = model.getRatesDifferencePercent().observed(model)
         idle()
 
         val emptyStart = today.minusYears(3)
@@ -62,7 +64,9 @@ class TimelineEmptyRangeTest {
         assertNull(diff.value)
     }
 
-    private fun <T> LiveData<T>.observed(): LiveData<T> = also { it.observeForever {} }
+    // Collected for as long as [model] lives, as a screen showing it would.
+    private fun <T> StateFlow<T>.observed(model: TimelineViewModel): StateFlow<T> =
+        also { flow -> model.viewModelScope.launch { flow.collect {} } }
 
     private fun idle() = shadowOf(Looper.getMainLooper()).idle()
 

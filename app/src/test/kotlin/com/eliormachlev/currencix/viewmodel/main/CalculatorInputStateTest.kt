@@ -1,6 +1,5 @@
 package com.eliormachlev.currencix.viewmodel.main
 
-import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.eliormachlev.currencix.util.OPERATOR_DIVIDE
 import com.eliormachlev.currencix.util.OPERATOR_MINUS
 import com.eliormachlev.currencix.util.OPERATOR_MULTIPLY
@@ -11,18 +10,14 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
-import org.junit.Rule
 import org.junit.Test
 
 class CalculatorInputStateTest {
-    @get:Rule
-    val instantTaskRule = InstantTaskExecutorRule()
-
     private fun state() = CalculatorInputState()
 
     private val CalculatorInputState.base: String? get() = baseValueText.value
     private val CalculatorInputState.calc: String? get() = calculationValueText.value
-    private val CalculatorInputState.available: KeyAvailability get() = keys.value!!
+    private val CalculatorInputState.available: KeyAvailability get() = keys.value
     private val CalculatorInputState.closeParen: Boolean get() = available.closeParen
 
     @Test

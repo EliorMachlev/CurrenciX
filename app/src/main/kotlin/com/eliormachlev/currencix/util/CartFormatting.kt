@@ -21,7 +21,7 @@ fun BigDecimal.toCartFeePercentDisplay(): String = feePercentDelta(CART_EXPORT_D
 /**
  * Locale-aware amount + currency marker in the shape the cart's footer rows
  * show ("1,234.56 $"). Null value collapses to zero — cart callers routinely
- * pass a still-loading LiveData value.
+ * pass a value that hasn't arrived yet.
  */
 fun Context.formatCartAmount(
     value: BigDecimal?,

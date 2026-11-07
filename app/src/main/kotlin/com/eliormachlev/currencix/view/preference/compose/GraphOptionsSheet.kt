@@ -30,7 +30,7 @@ import com.eliormachlev.currencix.view.compose.switchState
  * ([com.eliormachlev.currencix.view.preference.compose.ProviderPickerSheet]).
  *
  * Reads current values with [Pref.get] so the sheet lights up with the
- * persisted state on the first frame; no LiveData/Flow subscription needed
+ * persisted state on the first frame; no flow subscription needed
  * because the chart consumers already observe these keys.
  */
 @Composable

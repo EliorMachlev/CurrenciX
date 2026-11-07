@@ -59,8 +59,8 @@ class CartFileIo(
             viewModel
                 .getCurrentCart()
                 .value
-                ?.name
-                ?.ifBlank { null } ?: "cart"
+                .name
+                .ifBlank { null } ?: "cart"
         exportLauncher.launch("$name-${filenameTimestampNow()}$EXPORT_FILE_EXT")
     }
 
@@ -69,7 +69,7 @@ class CartFileIo(
     }
 
     private fun doExport(uri: Uri) {
-        val cart = viewModel.getCurrentCart().value ?: return
+        val cart = viewModel.getCurrentCart().value
         // Copy so the exported file always has a real name, even if the
         // user hasn't gone through Save-as yet.
         val toExport =
@@ -96,7 +96,7 @@ class CartFileIo(
                 // An import replaces the working cart wholesale; Undo puts it back.
                 val previous = viewModel.getCurrentCart().value
                 viewModel.setCurrent(res.cart)
-                snackbarWithUndo(activity.getString(R.string.cart_import_ok)) { previous?.let(viewModel::setCurrent) }
+                snackbarWithUndo(activity.getString(R.string.cart_import_ok)) { viewModel.setCurrent(previous) }
             }
 
             is CartFileResult.Failure -> {

@@ -20,7 +20,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -36,6 +35,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.model.CartExtras
 import com.eliormachlev.currencix.model.Currency
@@ -54,7 +54,6 @@ import com.eliormachlev.currencix.view.compose.Ltr
 import com.eliormachlev.currencix.view.compose.PairRowActions
 import com.eliormachlev.currencix.view.compose.countTo
 import com.eliormachlev.currencix.view.compose.theme.Spacing
-import com.eliormachlev.currencix.view.main.DEFAULT_DATE_PATTERN
 import com.eliormachlev.currencix.view.main.formatRatesTimestamp
 import com.eliormachlev.currencix.view.main.spinner.CurrencyPickerSheet
 import com.eliormachlev.currencix.view.navigation.PillSide
@@ -119,9 +118,9 @@ fun CartFooter(
     onOpenFees: () -> Unit,
     onEditExtras: () -> Unit,
 ) {
-    val rates by viewModel.getExchangeRates().observeAsState()
+    val rates by viewModel.getExchangeRates().collectAsStateWithLifecycle()
     val totals = observeTotals(viewModel, rates)
-    val collapsed by viewModel.isTotalsCollapsed.observeAsState(initial = false)
+    val collapsed by viewModel.isTotalsCollapsed.collectAsStateWithLifecycle()
     var pickerSide by remember { mutableStateOf<PillSide?>(null) }
     val pairActions =
         remember(viewModel, onOpenFees) {
@@ -155,22 +154,22 @@ private fun observeTotals(
     viewModel: CartViewModel,
     rates: ExchangeRates?,
 ): CartTotals {
-    val baseCurrency by viewModel.getBaseCurrency().observeAsState()
-    val destCurrency by viewModel.getDestinationCurrency().observeAsState()
-    val subtotal by viewModel.getSubtotal().observeAsState()
-    val convertedSubtotal by viewModel.getConvertedSubtotal().observeAsState()
-    val total by viewModel.getTotal().observeAsState()
-    val extras by viewModel.getExtras().observeAsState()
-    val tip by viewModel.getTip().observeAsState()
+    val baseCurrency by viewModel.getBaseCurrency().collectAsStateWithLifecycle()
+    val destCurrency by viewModel.getDestinationCurrency().collectAsStateWithLifecycle()
+    val subtotal by viewModel.getSubtotal().collectAsStateWithLifecycle()
+    val convertedSubtotal by viewModel.getConvertedSubtotal().collectAsStateWithLifecycle()
+    val total by viewModel.getTotal().collectAsStateWithLifecycle()
+    val extras by viewModel.getExtras().collectAsStateWithLifecycle()
+    val tip by viewModel.getTip().collectAsStateWithLifecycle()
     // Fees and rates aren't rendered directly, but currentFeeStack() reads
     // from both — observing them here keeps the fee-annotation rows in sync
     // when either source emits.
-    val fees by viewModel.getFees().observeAsState()
+    val fees by viewModel.getFees().collectAsStateWithLifecycle()
     val feeStack = remember(fees, rates, baseCurrency, destCurrency) { viewModel.currentFeeStack() }
-    val shoppingMode by viewModel.isShoppingMode().observeAsState(initial = false)
-    val basket by viewModel.getBasketTotal().observeAsState()
-    val shares by viewModel.getPersonShares().observeAsState(emptyList())
-    val datePattern by viewModel.dateFormat.observeAsState(initial = DEFAULT_DATE_PATTERN)
+    val shoppingMode by viewModel.isShoppingMode().collectAsStateWithLifecycle()
+    val basket by viewModel.getBasketTotal().collectAsStateWithLifecycle()
+    val shares by viewModel.getPersonShares().collectAsStateWithLifecycle()
+    val datePattern by viewModel.dateFormat.collectAsStateWithLifecycle()
     val oldRatesDate =
         remember(rates, datePattern) {
             rates?.takeIf { ratesAreOld(it.date) }?.let { formatRatesTimestamp(datePattern, it.date, it.time) }
@@ -182,7 +181,7 @@ private fun observeTotals(
         convertedSubtotal = convertedSubtotal,
         total = total,
         feeStack = feeStack,
-        extras = extras ?: CartExtras(),
+        extras = extras,
         tip = tip,
         basket = basket.takeIf { shoppingMode },
         oldRatesDate = oldRatesDate,

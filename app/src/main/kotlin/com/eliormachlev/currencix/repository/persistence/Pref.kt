@@ -6,15 +6,13 @@ import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.core.stringSetPreferencesKey
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.asLiveData
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
 /**
  * One setting or saved value, read and written as the app's type [T]: the
- * current value ([get]), a new one ([set]), and changes as a [flow] or
- * [liveData]. All of them go through the same read and write, so a value's
+ * current value ([get]), a new one ([set]), and changes as a [flow]. All
+ * of them go through the same read and write, so a value's
  * default, its stored shape and where it's stored live in one declaration.
  *
  * Settings stores declare one per setting with the factories below
@@ -47,9 +45,6 @@ class Pref<T> internal constructor(
 
     /** The value, then each change to it. */
     val flow: Flow<T> by lazy(changes)
-
-    /** [flow] for View-system and LiveData observers. */
-    val liveData: LiveData<T> by lazy { flow.asLiveData() }
 }
 
 /** A value read out of the store's whole state by [read], and put back into it by [write]. */
