@@ -3,7 +3,6 @@ package com.eliormachlev.currencix.util
 import android.content.Context
 import android.text.Spanned
 import android.view.View
-import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.text.HtmlCompat
 import androidx.core.text.layoutDirection
 import com.eliormachlev.currencix.R
@@ -118,8 +117,8 @@ fun String.normalizeForSearch(): String = stripDiacritics().lowercase()
  * - system=af & app=system-default -> en (as there's no af localization it falls back to en)
  */
 fun getLocale(context: Context): Locale {
-    val fromDelegate = AppCompatDelegate.getApplicationLocales()[0]
-    if (fromDelegate != null) return fromDelegate
+    val fromSettings = context.appLocales().get(0)
+    if (fromSettings != null) return fromSettings
     val language = context.getString(R.string.locale_language)
     val country = context.getString(R.string.locale_country)
     return Locale

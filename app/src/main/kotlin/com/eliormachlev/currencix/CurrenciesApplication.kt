@@ -1,7 +1,6 @@
 package com.eliormachlev.currencix
 
 import android.app.Application
-import androidx.appcompat.app.AppCompatDelegate
 import com.eliormachlev.currencix.crash.installDebugCrashReporter
 import com.eliormachlev.currencix.jank.installJankStats
 import com.eliormachlev.currencix.leaks.configureLeakDetection
@@ -18,6 +17,7 @@ import com.eliormachlev.currencix.util.FileLoggingTree
 import com.eliormachlev.currencix.util.HttpClientProvider
 import com.eliormachlev.currencix.util.PrivateRequests
 import com.eliormachlev.currencix.util.plantConsoleLogging
+import com.eliormachlev.currencix.util.setAppNightMode
 import com.eliormachlev.currencix.view.lock.AppLock
 import com.eliormachlev.currencix.view.widget.publishWidgetPreviews
 import com.eliormachlev.currencix.worker.RateRefreshScheduler
@@ -104,7 +104,7 @@ class CurrenciesApplication : Application() {
     // initial disk load is bounded (~1 KB file) and blocking here is
     // preferable to a recreate() flash mid-startup.
     private fun applyNightMode() {
-        AppCompatDelegate.setDefaultNightMode(
+        setAppNightMode(
             Database(this)
                 .display.theme
                 .get()

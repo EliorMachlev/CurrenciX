@@ -1,8 +1,7 @@
 package com.eliormachlev.currencix.viewmodel.preference
 
 import android.app.Application
-import androidx.appcompat.app.AppCompatDelegate
-import androidx.core.os.LocaleListCompat
+import android.os.LocaleList
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.eliormachlev.currencix.model.ApiProvider
@@ -12,6 +11,9 @@ import com.eliormachlev.currencix.model.RefreshInterval
 import com.eliormachlev.currencix.repository.Database
 import com.eliormachlev.currencix.repository.ExchangeRatesRepository
 import com.eliormachlev.currencix.util.androidLanguageCode
+import com.eliormachlev.currencix.util.appLocales
+import com.eliormachlev.currencix.util.setAppLocales
+import com.eliormachlev.currencix.util.setAppNightMode
 import com.eliormachlev.currencix.viewmodel.util.stateInWhileSubscribed
 import kotlinx.coroutines.flow.StateFlow
 
@@ -84,7 +86,7 @@ class PreferenceViewModel(
 
     /**
      * Returns true when the caller must recreate the Activity to make the
-     * change visible. `setDefaultNightMode` auto-recreates when the
+     * change visible. `setApplicationNightMode` recreates the Activity when the
      * night mode changes, but a pure-black-only flip (Dark ↔ OLED, or
      * System ↔ System-OLED while system is dark) keeps the same night mode,
      * so `MainActivity.setTheme` doesn't rerun on its own.
@@ -92,25 +94,25 @@ class PreferenceViewModel(
     fun setTheme(theme: AppTheme): Boolean {
         val old = db.display.theme.get()
         db.display.theme.set(theme)
-        AppCompatDelegate.setDefaultNightMode(theme.nightMode)
+        app.setAppNightMode(theme.nightMode)
         return old.nightMode == theme.nightMode &&
             old.isPureBlack != theme.isPureBlack &&
             theme.isDarkActive(app.resources.configuration)
     }
 
     fun setLanguage(language: Language) {
-        val appLocale: LocaleListCompat =
+        val appLocale: LocaleList =
             if (language == Language.SYSTEM) {
-                LocaleListCompat.getEmptyLocaleList()
+                LocaleList.getEmptyLocaleList()
             } else {
-                LocaleListCompat.forLanguageTags(
+                LocaleList.forLanguageTags(
                     // pt_BR -> pt-BR, and modern BCP-47 -> Android's legacy
                     // form so what we hand Android matches what it hands back
                     // via getLanguage() later (avoids picker/lookup drift).
                     androidLanguageCode(language.iso).replace('_', '-'),
                 )
             }
-        AppCompatDelegate.setApplicationLocales(appLocale)
+        app.setAppLocales(appLocale)
     }
 
     /** The app language picked in Settings, or [Language.SYSTEM] when it follows the phone's. */
@@ -118,7 +120,7 @@ class PreferenceViewModel(
 
     // The app locale as "de_DE", or "de" when no country is set; null when unset.
     private fun appLocaleCode(): String? {
-        val appLocale = AppCompatDelegate.getApplicationLocales()[0] ?: return null
+        val appLocale = app.appLocales().get(0) ?: return null
         val parts = listOf(appLocale.language, appLocale.country).filter { it.isNotEmpty() }
         return parts.joinToString("_").ifEmpty { null }
     }
