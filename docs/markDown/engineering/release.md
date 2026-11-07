@@ -62,10 +62,14 @@ Builds:
       - fdroid
     output: build/outputs/apk/fdroid/release/*-fdroid-release-unsigned.apk
     # 0.1's APK is named by its versionCode; later ones by versionName (Binaries below).
+    # 0.1's entry only: AutoUpdateMode copies the last entry into the next one,
+    # so delete this line from the entry it writes for the next release.
     binary: https://github.com/EliorMachlev/CurrenciX/releases/download/v0.1/com.eliormachlev.currencix-v1-fdroid-release.apk
 
 # Optional: publish the APK signed here, hybrid signature included, once
-# F-Droid's build of the tag reproduces it byte for byte (see below).
+# F-Droid's build of the tag reproduces it byte for byte (see below). To have
+# F-Droid sign it instead, leave out Binaries and AllowedAPKSigningKeys, and the
+# 0.1 entry's binary: line, which asks for the same match.
 Binaries: https://github.com/EliorMachlev/CurrenciX/releases/download/v%v/com.eliormachlev.currencix-v%v-fdroid-release.apk
 AllowedAPKSigningKeys: <the release key's SHA-256 above, lowercase, without colons>
 
