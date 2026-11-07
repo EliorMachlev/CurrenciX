@@ -44,14 +44,18 @@ jobs:
           SHA: ${{ github.sha }}
         run: |
           set -o pipefail
-          version=$(sed -n 's/.*versionName = "\(.*\)"/\1/p' app/build.gradle.kts | head -1)
+          version=$(sed -n 's/^[[:space:]]*versionName = "\([^"]*\)".*/\1/p' app/build.gradle.kts | head -1)
           if [ -z "$version" ]; then
             echo "::error::No versionName in app/build.gradle.kts"
             exit 1
           fi
           tag="v$version"
-          if gh api "repos/$REPO/git/ref/tags/$tag" --silent 2>/dev/null; then
+          # Only a 404 means the tag is free; any other failure stops here.
+          if out=$(gh api "repos/$REPO/git/ref/tags/$tag" 2>&1); then
             echo "::error::$tag exists already; bump versionName for a new release"
+            exit 1
+          elif ! grep -q "HTTP 404" <<<"$out"; then
+            echo "::error::Couldn't check whether $tag exists: $out"
             exit 1
           fi
           object=$(gh api -X POST "repos/$REPO/git/tags" \

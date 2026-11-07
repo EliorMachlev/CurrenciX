@@ -91,7 +91,8 @@ Every workflow starts at `contents: read` ([`scorecard.yaml`](../../../.github/w
 | scorecard | `security-events: write`, `id-token: write`, `actions: read` |
 | release-apk | `contents`, `id-token`, `attestations: write` on the publish job only, which never sees the keys |
 | baseline-profile | `contents`, `actions: write` on its commit job only |
-| commit-baseline-profiles, update-verification-metadata, certificate-pins (*update* only), tag-release (a tag, not a branch push) | `contents`, `actions: write`: push to the branch, then dispatch the checks; no build in the commit workflow |
+| commit-baseline-profiles, update-verification-metadata, certificate-pins (*update* only) | `contents`, `actions: write`: push to the branch, then dispatch the checks; no build in the commit workflow |
+| tag-release | `contents`, `actions: write`: create the tag through the API, then dispatch Release (`release-apk.yaml`) on it |
 | dependency-review | `pull-requests: write` |
 | code-scanning-report | `security-events: read` only (no checkout) |
 

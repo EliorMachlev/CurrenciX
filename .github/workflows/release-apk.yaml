@@ -67,7 +67,7 @@ jobs:
       - name: Read the version
         id: version
         run: |
-          name=$(sed -n 's/.*versionName = "\(.*\)"/\1/p' app/build.gradle.kts | head -1)
+          name=$(sed -n 's/^[[:space:]]*versionName = "\([^"]*\)".*/\1/p' app/build.gradle.kts | head -1)
           echo "name=$name" >> "$GITHUB_OUTPUT"
 
       # A release only from a tag that names the version being built, on a
