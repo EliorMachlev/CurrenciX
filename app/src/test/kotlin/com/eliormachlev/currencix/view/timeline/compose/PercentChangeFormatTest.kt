@@ -2,6 +2,7 @@ package com.eliormachlev.currencix.view.timeline.compose
 
 import android.content.Context
 import com.eliormachlev.currencix.R
+import com.eliormachlev.currencix.util.withNoAppLocales
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
@@ -13,7 +14,7 @@ import java.math.BigDecimal
 
 @RunWith(MockitoJUnitRunner::class)
 class PercentChangeFormatTest {
-    private val context: Context = mock(Context::class.java)
+    private val context: Context = mock(Context::class.java).withNoAppLocales()
 
     @Before
     fun init() {
