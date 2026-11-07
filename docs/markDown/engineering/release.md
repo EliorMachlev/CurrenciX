@@ -61,6 +61,8 @@ Builds:
     gradle:
       - fdroid
     output: build/outputs/apk/fdroid/release/*-fdroid-release-unsigned.apk
+    # 0.1's APK is named by its versionCode; later ones by versionName (Binaries below).
+    binary: https://github.com/EliorMachlev/CurrenciX/releases/download/v0.1/com.eliormachlev.currencix-v1-fdroid-release.apk
 
 # Optional: publish the APK signed here, hybrid signature included, once
 # F-Droid's build of the tag reproduces it byte for byte (see below).
