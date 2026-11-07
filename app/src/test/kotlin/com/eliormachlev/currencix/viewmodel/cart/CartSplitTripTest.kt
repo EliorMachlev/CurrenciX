@@ -134,13 +134,15 @@ class CartSplitTripTest {
     fun `pinning a trip's spending skips a trip edited or deleted since it was read`() {
         val read = Trip("t1", "Japan", Currency.ILS, end = LocalDate.of(2026, 11, 1))
         val pin = SpentPin(BigDecimal("36.72"), 7)
+        fun storedPin() = db.carts.trips.get().single().spentPin
+
         db.carts.saveTrip(read.copy(name = "Japan 2"))
         db.carts.pinTripSpent(read, pin)
-        assertNull(db.carts.trips.get().single().spentPin)
+        assertNull(storedPin())
 
         db.carts.saveTrip(read)
         db.carts.pinTripSpent(read, pin)
-        assertEquals(pin, db.carts.trips.get().single().spentPin)
+        assertEquals(pin, storedPin())
 
         db.carts.deleteTrip("t1")
         db.carts.pinTripSpent(read, pin)
