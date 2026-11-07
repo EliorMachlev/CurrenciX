@@ -34,7 +34,7 @@ Android backup is off (`allowBackup="false"`, `fullBackupContent="false"`, and [
 
 ## Privacy switches
 
-Settings → Security & privacy, all off by default (`PrivacySettings`; certificate pinning is always on, with no switch: see [Network](#network)):
+Settings → Security & privacy, all off by default (`PrivacySettings`; certificate pinning has no switch: it holds until the pins' expiry date, see [Network](#network)):
 
 - **App lock** (`AppLock`, `LockGate`): a lock screen at start and after more than a minute away (the grace lets the camera and file pickers come and go), passed with `BIOMETRIC_STRONG or DEVICE_CREDENTIAL`. The prompt carries a Keystore key (`UnlockKey`: HMAC-SHA256, usable once each time the person authenticates, with strong biometrics or the screen lock) and the app opens only when that key then signs, which the phone's secure hardware allows only after a real unlock: code injected on a rooted phone can fake the prompt's success, not the key. A key spoiled by newly enrolled biometrics is made again; a phone whose Keystore can't make one can't turn the lock on. Screens underneath can't be seen, touched or read by TalkBack, and Recents shows no picture. Turning it on asks for the prompt first, so nobody locks themselves out; without a phone screen lock it's disabled. The text-selection sheet, widget and tile stay outside it.
 - **Block screenshots:** `FLAG_SECURE` on the converter's and text-selection sheet's windows, blanking screenshots, recordings, casting and Recents.
@@ -45,7 +45,7 @@ Settings → Security & privacy, all off by default (`PrivacySettings`; certific
 - **HTTPS only:** [`network_security_config.xml`](../../../app/src/main/res/xml/network_security_config.xml) refuses cleartext everywhere.
 - **Certificate Transparency** is on in the same config: a certificate mis-issued for a provider's host by any trusted CA, but missing from the public logs, is refused. Android 17 does this by default; Android 16 when asked, as here.
 - **Only known hosts:** `AllowedHostsInterceptor` refuses any host that isn't a provider's (`ApiProvider.allHosts`) or the OCR language host, at every redirect hop, so a bug or redirect can't send a request or a key elsewhere (`AllowedHostsTest`).
-- **Certificate pinning** (always on): see [below](#certificate-pinning).
+- **Certificate pinning** (no switch; until the pins' expiry date, renewed in every release): see [below](#certificate-pinning).
 - **Forward secrecy:** TLS 1.3, or 1.2 with ECDHE and an AEAD cipher (`FORWARD_SECRET_TLS`, `ForwardSecrecyTest`), so a leaked server key can't decrypt recorded traffic. Every provider supports it, so OkHttp's RSA and 3DES fallbacks aren't needed.
 - **Encrypted Client Hello (Android 17+):** the client resolves through the platform's `DnsResolver` (`AndroidDns`), which fetches a host's ECH keys, so the handshake hides the host name where the host publishes keys; others connect as before (ECH isn't enforced, which would make them fail). The IP stays visible.
 - **OCR language data** is the one extra host (`raw.githubusercontent.com`, tessdata_fast at its fixed 4.1.0 tag), fetched only after the user agrees to that language by name and size. Each file is streamed to a temporary file and kept only if its SHA-256 matches the one compiled into the app; a mismatch is discarded. In the Play app the recognizer comes from Play Feature Delivery: code is only ever installed by Play. Photos are read on the phone, never uploaded, and deleted once read.

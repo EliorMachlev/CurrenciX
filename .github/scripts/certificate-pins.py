@@ -169,7 +169,12 @@ def xml(pins: dict[str, dict[str, str]], expiration: datetime.date) -> str:
 
 
 def expires_soon(section: str, file: str, today: datetime.date) -> bool:
-    # Every pin set carries the same date; the earliest decides.
+    # Every pin set must carry a date (one without never expires, so a CA change would
+    # lock old installs out for good); the earliest decides.
+    undated = section.count("<pin-set") - len(EXPIRATION.findall(section))
+    if undated:
+        print(f"::error file={file}::{undated} pin set(s) have no expiration date")
+        return True
     expirations = {datetime.date.fromisoformat(date) for date in EXPIRATION.findall(section)}
     soon = not expirations or min(expirations) - today < datetime.timedelta(days=EXPIRY_WARNING_DAYS)
     if soon:
