@@ -210,13 +210,4 @@
     <string name="settings_advanced_section">پیشرفته</string>
     <string name="certificate_pinning_title">سنجاق کردن گواهی</string>
     <string name="certificate_pinning_summary">اتصال به سرورهای نرخ فقط از طریق مراجع صدور گواهی که برایشان سنجاق شده‌اند. فقط وقتی خاموش کنید که سروری گواهی‌اش را عوض کرده و نرخ‌ها بارگیری نمی‌شوند.</string>
-    <string name="repin_title">سنجاق دوباره به گواهی‌های فعلی</string>
-    <string name="repin_summary_builtin">سنجاق‌های داخل برنامه استفاده می‌شوند</string>
-    <string name="repin_summary_own">سنجاق‌های گرفته‌شده در این گوشی برای %1$d از %2$d سرور استفاده می‌شوند</string>
-    <string name="repin_summary_running">در حال بررسی سرورها…</string>
-    <string name="repin_prompt_title">گواهی‌ها دوباره سنجاق شوند؟</string>
-    <string name="repin_prompt_message">برنامه اکنون به ارائه‌دهندهٔ داده و ارائه‌دهندهٔ پشتیبان شما وصل می‌شود و از آن پس فقط مراجع صدور گواهی‌ای را می‌پذیرد که هر کدام استفاده می‌کند. ارائه‌دهندگان دیگر سنجاق‌های داخل برنامه را نگه می‌دارند. این کار را در شبکه‌ای که به آن اعتماد دارید انجام دهید، مثل Wi-Fi خانه.</string>
-    <string name="repin_confirm">سنجاق دوباره</string>
-    <string name="restore_pins_title">استفاده از سنجاق‌های داخلی</string>
-    <string name="restore_pins_summary">فراموش کردن سنجاق‌های گرفته‌شده در این گوشی</string>
 </resources>

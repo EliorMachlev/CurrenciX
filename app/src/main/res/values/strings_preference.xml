@@ -217,13 +217,4 @@
     <string name="settings_advanced_section">Advanced</string>
     <string name="certificate_pinning_title">Certificate pinning</string>
     <string name="certificate_pinning_summary">Connect to rate servers only through the certificate authorities pinned for them. Turn off only if a server changed its certificate and rates stop loading.</string>
-    <string name="repin_title">Re-pin to current certificates</string>
-    <string name="repin_summary_builtin">Using the pins built into the app</string>
-    <string name="repin_summary_own">Using pins taken on this phone for %1$d of %2$d servers</string>
-    <string name="repin_summary_running">Checking the servers…</string>
-    <string name="repin_prompt_title">Re-pin certificates?</string>
-    <string name="repin_prompt_message">The app connects now to your data provider and your fallback provider, and from then on accepts only the certificate authorities each one uses. Other providers keep the pins built into the app. Do this on a network you trust, such as your home Wi-Fi.</string>
-    <string name="repin_confirm">Re-pin</string>
-    <string name="restore_pins_title">Use the built-in pins</string>
-    <string name="restore_pins_summary">Forget the pins taken on this phone</string>
 </resources>

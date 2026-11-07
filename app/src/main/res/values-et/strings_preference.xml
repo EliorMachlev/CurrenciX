@@ -210,13 +210,4 @@
     <string name="settings_advanced_section">Täpsemad</string>
     <string name="certificate_pinning_title">Sertifikaatide kinnitamine</string>
     <string name="certificate_pinning_summary">Ühendu kursiserveritega ainult nende jaoks kinnitatud sertifitseerimisasutuste kaudu. Lülita välja ainult siis, kui server on sertifikaati vahetanud ja kursid ei laadi.</string>
-    <string name="repin_title">Kinnita uuesti praegustele sertifikaatidele</string>
-    <string name="repin_summary_builtin">Kasutusel on rakendusse sisseehitatud kinnitused</string>
-    <string name="repin_summary_own">Kasutusel on selles telefonis võetud kinnitused %1$d serverile %2$d-st</string>
-    <string name="repin_summary_running">Servereid kontrollitakse…</string>
-    <string name="repin_prompt_title">Kas kinnitada sertifikaadid uuesti?</string>
-    <string name="repin_prompt_message">Rakendus loob nüüd ühenduse sinu andmepakkuja ja varupakkujaga ning aktsepteerib edaspidi ainult neid sertifitseerimisasutusi, mida kumbki kasutab. Teised pakkujad jäävad rakendusse sisseehitatud kinnituste juurde. Tee seda võrgus, mida usaldad, näiteks kodusel Wi-Fi-l.</string>
-    <string name="repin_confirm">Kinnita uuesti</string>
-    <string name="restore_pins_title">Kasuta sisseehitatud kinnitusi</string>
-    <string name="restore_pins_summary">Unusta selles telefonis võetud kinnitused</string>
 </resources>

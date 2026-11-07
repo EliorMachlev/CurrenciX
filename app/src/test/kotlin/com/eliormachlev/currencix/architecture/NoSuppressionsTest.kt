@@ -351,12 +351,6 @@ class NoSuppressionsTest {
                     522,
                     "reference comparison of boxed numerical values",
                 ) +
-                codeqlException(
-                    "java/android/missing-certificate-pinning",
-                    "util/CertificatePinning",
-                    100,
-                    "does not implement certificate pinning",
-                ) +
                 listOf(
                     RecordedException(
                         CODEQL_WORKFLOW,

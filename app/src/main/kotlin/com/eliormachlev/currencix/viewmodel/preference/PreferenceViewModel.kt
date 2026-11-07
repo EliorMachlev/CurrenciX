@@ -12,12 +12,8 @@ import com.eliormachlev.currencix.model.RefreshInterval
 import com.eliormachlev.currencix.repository.Database
 import com.eliormachlev.currencix.repository.ExchangeRatesRepository
 import com.eliormachlev.currencix.util.androidLanguageCode
-import com.eliormachlev.currencix.util.currentPins
 import com.eliormachlev.currencix.viewmodel.util.stateInWhileSubscribed
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.launch
 
 class PreferenceViewModel(
     private val app: Application,
@@ -58,15 +54,6 @@ class PreferenceViewModel(
 
     val isCertificatePinningEnabled: StateFlow<Boolean> =
         db.privacy.certificatePinning.stateInWhileSubscribed(viewModelScope)
-
-    /** The pins taken on this phone (Re-pin), by host. */
-    val certificatePins: StateFlow<Map<String, Set<String>>> =
-        db.privacy.certificatePins.stateInWhileSubscribed(viewModelScope)
-
-    private val repinning = MutableStateFlow(false)
-
-    /** Whether Re-pin is connecting to the servers now. */
-    val isRepinning: StateFlow<Boolean> = repinning.asStateFlow()
     val isDynamicColorEnabled: StateFlow<Boolean> =
         db.display.dynamicColor.stateInWhileSubscribed(viewModelScope)
     val decimalPlaces: StateFlow<Int> =
@@ -159,32 +146,6 @@ class PreferenceViewModel(
     fun setBlockScreenshotsEnabled(enabled: Boolean) = db.privacy.blockScreenshots.set(enabled)
 
     fun setCertificatePinningEnabled(enabled: Boolean) = db.privacy.certificatePinning.set(enabled)
-
-    /**
-     * Re-pin: takes the pins of the main and fallback providers' servers as
-     * they serve them now, in place of the built-in ones. Only those two are
-     * contacted; every other server, and one that doesn't answer, keeps the
-     * pins it had.
-     */
-    fun repinCertificates() {
-        if (!repinning.compareAndSet(expect = false, update = true)) return
-        viewModelScope.launch {
-            try {
-                val taken = currentPins(selectedProviderHosts())
-                db.privacy.certificatePins.update { it + taken }
-            } finally {
-                repinning.value = false
-            }
-        }
-    }
-
-    // The servers of the providers in use: the main one and the fallback.
-    private fun selectedProviderHosts(): Set<String> =
-        listOf(db.providers.apiProvider.get(), db.providers.fallbackProvider.get())
-            .flatMapTo(mutableSetOf()) { it.hosts }
-
-    /** Back to the pins built into the app, for every server. */
-    fun restoreBuiltInPins() = db.privacy.certificatePins.set(emptyMap())
 
     fun setFallbackProvider(provider: ApiProvider) = db.providers.fallbackProvider.set(provider)
 

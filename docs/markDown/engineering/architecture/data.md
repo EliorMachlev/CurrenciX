@@ -31,7 +31,7 @@ Both kinds sit behind `CachedStore<S>` (`PrefStore` is the preferences flavour).
 | `providers` | `ProviderSettings` | Main and fallback provider, API keys (sealed, see [security.md](../security.md)), unreliable providers shown, auto-refresh and interval |
 | `fees` | `FeeStore` | Saved fees and the active exchange / bank fee |
 | `display` | `DisplaySettings` | Theme, wallpaper colors, decimals, date format, keypad, haptics, sounds, smooth motion, preview, onboarding |
-| `privacy` | `PrivacySettings` | App lock, block screenshots, private requests, certificate pinning and re-pinned keys ([security.md](../security.md#certificate-pinning)) |
+| `privacy` | `PrivacySettings` | App lock, block screenshots, private requests, and certificate pinning ([security.md](../security.md#certificate-pinning)) |
 | `chart` | `ChartSettings` | What the chart draws |
 | `carts` | `CartStore` | Working cart, saved carts, trips |
 | `alerts` | `RateAlertStore` | Rate alerts waiting to fire |

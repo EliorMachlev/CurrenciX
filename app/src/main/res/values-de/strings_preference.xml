@@ -209,13 +209,4 @@
     <string name="settings_advanced_section">Erweitert</string>
     <string name="certificate_pinning_title">Zertifikat-Pinning</string>
     <string name="certificate_pinning_summary">Mit Kursservern nur über die für sie gepinnten Zertifizierungsstellen verbinden. Nur ausschalten, wenn ein Server sein Zertifikat gewechselt hat und keine Kurse mehr lädt.</string>
-    <string name="repin_title">Auf aktuelle Zertifikate neu pinnen</string>
-    <string name="repin_summary_builtin">Die in die App eingebauten Pins werden verwendet</string>
-    <string name="repin_summary_own">Auf diesem Telefon übernommene Pins für %1$d von %2$d Servern werden verwendet</string>
-    <string name="repin_summary_running">Server werden geprüft…</string>
-    <string name="repin_prompt_title">Zertifikate neu pinnen?</string>
-    <string name="repin_prompt_message">Die App verbindet sich jetzt mit deinem Datenanbieter und deinem Ersatzanbieter und akzeptiert danach nur noch die Zertifizierungsstellen, die jeder davon verwendet. Andere Anbieter behalten die in die App eingebauten Pins. Mach das in einem Netzwerk, dem du vertraust, etwa deinem WLAN zu Hause.</string>
-    <string name="repin_confirm">Neu pinnen</string>
-    <string name="restore_pins_title">Eingebaute Pins verwenden</string>
-    <string name="restore_pins_summary">Auf diesem Telefon übernommene Pins vergessen</string>
 </resources>

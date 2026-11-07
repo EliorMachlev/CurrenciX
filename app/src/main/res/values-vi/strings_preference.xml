@@ -211,13 +211,4 @@
     <string name="settings_advanced_section">Nâng cao</string>
     <string name="certificate_pinning_title">Ghim chứng chỉ</string>
     <string name="certificate_pinning_summary">Chỉ kết nối đến máy chủ tỷ giá qua các tổ chức cấp chứng chỉ đã ghim cho chúng. Chỉ tắt nếu một máy chủ đã đổi chứng chỉ và tỷ giá không tải được nữa.</string>
-    <string name="repin_title">Ghim lại theo chứng chỉ hiện tại</string>
-    <string name="repin_summary_builtin">Đang dùng các ghim có sẵn trong ứng dụng</string>
-    <string name="repin_summary_own">Đang dùng ghim lấy trên điện thoại này cho %1$d trên %2$d máy chủ</string>
-    <string name="repin_summary_running">Đang kiểm tra máy chủ…</string>
-    <string name="repin_prompt_title">Ghim lại chứng chỉ?</string>
-    <string name="repin_prompt_message">Ứng dụng sẽ kết nối đến nhà cung cấp dữ liệu và nhà cung cấp dự phòng của bạn ngay bây giờ, và từ đó chỉ chấp nhận các tổ chức cấp chứng chỉ mà mỗi bên dùng. Các nhà cung cấp khác giữ các ghim có sẵn trong ứng dụng. Hãy làm việc này trên mạng bạn tin tưởng, như Wi-Fi ở nhà.</string>
-    <string name="repin_confirm">Ghim lại</string>
-    <string name="restore_pins_title">Dùng các ghim có sẵn</string>
-    <string name="restore_pins_summary">Quên các ghim lấy trên điện thoại này</string>
 </resources>

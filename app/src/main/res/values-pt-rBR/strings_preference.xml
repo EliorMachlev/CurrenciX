@@ -214,13 +214,4 @@
     <string name="settings_advanced_section">Avançado</string>
     <string name="certificate_pinning_title">Fixação de certificados</string>
     <string name="certificate_pinning_summary">Conectar aos servidores de cotações apenas pelas autoridades certificadoras fixadas para cada um. Desative somente se um servidor trocou o certificado e as cotações pararam de carregar.</string>
-    <string name="repin_title">Fixar de novo nos certificados atuais</string>
-    <string name="repin_summary_builtin">Usando as fixações integradas ao app</string>
-    <string name="repin_summary_own">Usando fixações tiradas neste celular para %1$d de %2$d servidores</string>
-    <string name="repin_summary_running">Verificando os servidores…</string>
-    <string name="repin_prompt_title">Fixar os certificados de novo?</string>
-    <string name="repin_prompt_message">O app vai se conectar agora ao seu provedor de dados e ao seu provedor reserva e, a partir daí, aceitar só as autoridades certificadoras que cada um usa. Os outros provedores mantêm as fixações integradas ao app. Faça isso numa rede de confiança, como o Wi-Fi de casa.</string>
-    <string name="repin_confirm">Fixar de novo</string>
-    <string name="restore_pins_title">Usar as fixações integradas</string>
-    <string name="restore_pins_summary">Esquecer as fixações tiradas neste celular</string>
 </resources>

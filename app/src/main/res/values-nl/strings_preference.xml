@@ -209,13 +209,4 @@
     <string name="settings_advanced_section">Geavanceerd</string>
     <string name="certificate_pinning_title">Certificaat-pinning</string>
     <string name="certificate_pinning_summary">Alleen met koersservers verbinden via de certificaatautoriteiten die voor hen zijn vastgepind. Zet dit alleen uit als een server van certificaat is gewisseld en de koersen niet meer laden.</string>
-    <string name="repin_title">Opnieuw vastpinnen op de huidige certificaten</string>
-    <string name="repin_summary_builtin">De in de app ingebouwde pins worden gebruikt</string>
-    <string name="repin_summary_own">Op deze telefoon genomen pins worden gebruikt voor %1$d van %2$d servers</string>
-    <string name="repin_summary_running">Servers worden gecontroleerd…</string>
-    <string name="repin_prompt_title">Certificaten opnieuw vastpinnen?</string>
-    <string name="repin_prompt_message">De app maakt nu verbinding met je gegevensaanbieder en je reserveaanbieder en accepteert daarna alleen de certificaatautoriteiten die elk ervan gebruikt. Andere aanbieders houden de in de app ingebouwde pins. Doe dit op een netwerk dat je vertrouwt, zoals je wifi thuis.</string>
-    <string name="repin_confirm">Opnieuw vastpinnen</string>
-    <string name="restore_pins_title">Ingebouwde pins gebruiken</string>
-    <string name="restore_pins_summary">Op deze telefoon genomen pins vergeten</string>
 </resources>

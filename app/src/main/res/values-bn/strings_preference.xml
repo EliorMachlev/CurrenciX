@@ -211,13 +211,4 @@
     <string name="settings_advanced_section">উন্নত</string>
     <string name="certificate_pinning_title">সার্টিফিকেট পিনিং</string>
     <string name="certificate_pinning_summary">রেট সার্ভারগুলোর সাথে শুধু তাদের জন্য পিন করা সার্টিফিকেট কর্তৃপক্ষের মাধ্যমে সংযোগ করুন। কোনো সার্ভার সার্টিফিকেট বদলালে এবং রেট লোড না হলে তবেই বন্ধ করুন।</string>
-    <string name="repin_title">বর্তমান সার্টিফিকেটে আবার পিন করুন</string>
-    <string name="repin_summary_builtin">অ্যাপে থাকা পিন ব্যবহার হচ্ছে</string>
-    <string name="repin_summary_own">%2$d টির মধ্যে %1$d টি সার্ভারের জন্য এই ফোনে নেওয়া পিন ব্যবহার হচ্ছে</string>
-    <string name="repin_summary_running">সার্ভারগুলো যাচাই হচ্ছে…</string>
-    <string name="repin_prompt_title">সার্টিফিকেট আবার পিন করবেন?</string>
-    <string name="repin_prompt_message">অ্যাপটি এখন আপনার ডেটা প্রদানকারী ও ফলব্যাক প্রদানকারীর সাথে সংযোগ করবে এবং এরপর থেকে প্রত্যেকটি যে সার্টিফিকেট কর্তৃপক্ষ ব্যবহার করে শুধু সেগুলোই গ্রহণ করবে। অন্যান্য প্রদানকারী অ্যাপে থাকা পিনই রাখবে। এটি এমন নেটওয়ার্কে করুন যাকে আপনি বিশ্বাস করেন, যেমন বাড়ির Wi-Fi।</string>
-    <string name="repin_confirm">আবার পিন করুন</string>
-    <string name="restore_pins_title">অ্যাপের পিন ব্যবহার করুন</string>
-    <string name="restore_pins_summary">এই ফোনে নেওয়া পিন ভুলে যান</string>
 </resources>

@@ -211,13 +211,4 @@
     <string name="settings_advanced_section">Lanjutan</string>
     <string name="certificate_pinning_title">Penyematan sertifikat</string>
     <string name="certificate_pinning_summary">Hubungkan ke server kurs hanya melalui otoritas sertifikat yang disematkan untuknya. Matikan hanya jika server mengganti sertifikatnya dan kurs berhenti dimuat.</string>
-    <string name="repin_title">Sematkan ulang ke sertifikat saat ini</string>
-    <string name="repin_summary_builtin">Menggunakan sematan bawaan aplikasi</string>
-    <string name="repin_summary_own">Menggunakan sematan yang diambil di ponsel ini untuk %1$d dari %2$d server</string>
-    <string name="repin_summary_running">Memeriksa server…</string>
-    <string name="repin_prompt_title">Sematkan ulang sertifikat?</string>
-    <string name="repin_prompt_message">Aplikasi akan terhubung ke penyedia data dan penyedia cadangan Anda sekarang, dan setelahnya hanya menerima otoritas sertifikat yang digunakan masing-masing. Penyedia lain tetap memakai sematan bawaan aplikasi. Lakukan di jaringan yang Anda percayai, seperti Wi-Fi rumah.</string>
-    <string name="repin_confirm">Sematkan ulang</string>
-    <string name="restore_pins_title">Gunakan sematan bawaan</string>
-    <string name="restore_pins_summary">Lupakan sematan yang diambil di ponsel ini</string>
 </resources>

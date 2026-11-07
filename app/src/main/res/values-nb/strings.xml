@@ -361,5 +361,5 @@
     <string name="receipt_language_not_now">Ikke nå</string>
     <string name="receipt_languages_intro">Kvitteringer leses på telefonen din, på språkene her. Ingenting lastes ned før du sier ja.</string>
     <string name="receipt_languages_empty">Ingen ennå. Den første kvitteringsskanningen spør hvilke som skal lastes ned.</string>
-    <string name="error_certificate_pinning">Serverens sertifikat er ikke ett av dem appen har låst for den. Hvis leverandøren har byttet det, lås på nytt i Innstillinger, eller slå av sertifikatlåsing.</string>
+    <string name="error_certificate_pinning">Serverens sertifikat er ikke ett av dem appen har låst for den. Hvis leverandøren har byttet det, oppdater appen, eller slå av sertifikatlåsing i Innstillinger.</string>
 </resources>

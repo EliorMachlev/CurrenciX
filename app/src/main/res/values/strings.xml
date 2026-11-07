@@ -382,5 +382,5 @@
     <string name="receipt_language_not_now">Not now</string>
     <string name="receipt_languages_intro">Receipts are read on your phone, in the languages here. Nothing is downloaded until you agree.</string>
     <string name="receipt_languages_empty">None yet. Your first receipt scan asks which to download.</string>
-    <string name="error_certificate_pinning">The server\'s certificate isn\'t one the app has pinned for it. If the provider changed it, re-pin in Settings, or turn certificate pinning off.</string>
+    <string name="error_certificate_pinning">The server\'s certificate isn\'t one the app has pinned for it. If the provider changed it, update the app, or turn certificate pinning off in Settings.</string>
 </resources>

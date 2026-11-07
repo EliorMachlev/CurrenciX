@@ -211,13 +211,4 @@
     <string name="settings_advanced_section">Avanzado</string>
     <string name="certificate_pinning_title">Fijación de certificados</string>
     <string name="certificate_pinning_summary">Conectar con los servidores de tipos de cambio solo a través de las autoridades de certificación fijadas para cada uno. Desactívalo solo si un servidor cambió su certificado y los tipos dejan de cargarse.</string>
-    <string name="repin_title">Volver a fijar a los certificados actuales</string>
-    <string name="repin_summary_builtin">Se usan las fijaciones integradas en la app</string>
-    <string name="repin_summary_own">Se usan fijaciones tomadas en este teléfono para %1$d de %2$d servidores</string>
-    <string name="repin_summary_running">Comprobando los servidores…</string>
-    <string name="repin_prompt_title">¿Volver a fijar los certificados?</string>
-    <string name="repin_prompt_message">La app se conectará ahora a tu proveedor de datos y a tu proveedor alternativo, y desde entonces solo aceptará las autoridades de certificación que use cada uno. Los demás proveedores conservan las fijaciones integradas en la app. Hazlo en una red de confianza, como el Wi-Fi de tu casa.</string>
-    <string name="repin_confirm">Volver a fijar</string>
-    <string name="restore_pins_title">Usar las fijaciones integradas</string>
-    <string name="restore_pins_summary">Olvidar las fijaciones tomadas en este teléfono</string>
 </resources>
