@@ -22,9 +22,10 @@ on:
         default: false
 
 # A newer push to the same PR supersedes a run still going; a scheduled or
-# manual run (which may commit new pins) always finishes.
+# manual run (which may commit new pins) always finishes. Updates queue in a
+# group of their own, so a later check can't replace a pending update.
 concurrency:
-  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  group: ${{ github.workflow }}-${{ inputs.update && 'update' || 'check' }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 permissions:

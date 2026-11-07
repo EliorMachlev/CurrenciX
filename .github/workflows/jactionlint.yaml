@@ -61,5 +61,7 @@ jobs:
       # which no workflow has).
       # The profile named, so a config file can't change it unseen; a warning
       # or a note fails the job too, as an error does; findings annotate the PR.
+      # --no-ignores: no ignore comment, config-file ignore or baseline hides a
+      # finding, so nothing can be silenced without editing this line.
       - name: Lint the workflows
-        run: '"$RUNNER_TEMP/jactionlint" --profile default --strict-exit --format github'
+        run: '"$RUNNER_TEMP/jactionlint" --profile default --strict-exit --no-ignores --format github'
