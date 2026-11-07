@@ -1,0 +1,55 @@
+name: Restore the dependency cache
+description: >-
+  Restores the read-only Gradle dependency cache that dependency-cache.yaml
+  builds on master into GRADLE_RO_DEP_CACHE, which the calling workflow sets
+  (a variable Gradle reads), so a job downloads only what the cache lacks
+  instead of everything its own setup-gradle cache lacks. Maven Central
+  rate-limits GitHub's runners (HTTP 429 and 403), which failed whole jobs
+  over a single jar.
+inputs:
+  lookup-only:
+    description: Only check whether this build's cache exists (dependency-cache.yaml), restoring nothing.
+    default: 'false'
+outputs:
+  key:
+    description: The cache key for this commit's build files.
+    value: ${{ steps.key.outputs.key }}
+  cache-hit:
+    description: Whether the cache for exactly these build files exists.
+    value: ${{ steps.restore.outputs.cache-hit }}
+runs:
+  using: composite
+  steps:
+    - name: Check GRADLE_RO_DEP_CACHE is set
+      if: env.GRADLE_RO_DEP_CACHE == ''
+      shell: bash
+      run: |
+        echo "::error::set GRADLE_RO_DEP_CACHE in the workflow's env"
+        exit 1
+
+    # One key per set of build files: the libraries, their checksums, the
+    # Gradle version and every build script (the init script among them),
+    # and the workflow that builds the cache, so changing how it's built
+    # builds it again.
+    - name: Name the cache
+      id: key
+      shell: bash
+      run: echo "key=$PREFIX$HASH" >> "$GITHUB_OUTPUT"
+      env:
+        PREFIX: gradle-ro-deps-v1-
+        HASH: ${{ hashFiles('.github/workflows/dependency-cache.yaml', 'gradle/libs.versions.toml', 'gradle/verification-metadata.xml', 'gradle/wrapper/gradle-wrapper.properties', 'gradle.properties', 'settings.gradle', '**/*.gradle.kts') }}
+
+    # The exact cache, else master's latest: still most of the libraries.
+    # Only master's runs save one, and a branch can't write master's caches.
+    # Gradle checks every file it takes from it against
+    # gradle/verification-metadata.xml, as it does a download; with no cache
+    # at all, it warns that the read-only cache is missing and downloads.
+    - name: Restore the read-only dependency cache
+      id: restore
+      uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+      with:
+        path: ${{ env.GRADLE_RO_DEP_CACHE }}
+        key: ${{ steps.key.outputs.key }}
+        restore-keys: gradle-ro-deps-v1-
+        lookup-only: ${{ inputs.lookup-only }}
+
