@@ -98,7 +98,11 @@ class NoSuppressionsTest {
                         .filter { JACTIONLINT_WORD.containsMatchIn(it) && !it.startsWith("#") && !it.startsWith("//") }
                         .map { "$path: $it" }
                 }.toList()
-        assertEquals("jactionlint may be named only on its recorded lines", JACTIONLINT_LINES.map { "$JACTIONLINT_WORKFLOW: $it" }, mentions)
+        assertEquals(
+            "jactionlint may be named only on its recorded lines",
+            JACTIONLINT_LINES.map { "$JACTIONLINT_WORKFLOW: $it" },
+            mentions,
+        )
     }
 
     private fun scannedTree(): Sequence<File> = root.walkTopDown().onEnter { it.name !in SKIPPED_DIRECTORIES }
