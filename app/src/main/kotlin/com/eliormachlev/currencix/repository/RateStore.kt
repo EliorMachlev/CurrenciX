@@ -4,7 +4,6 @@ import android.content.Context
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
-import androidx.lifecycle.LiveData
 import com.eliormachlev.currencix.model.ApiProvider
 import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.model.ExchangeRates
@@ -22,6 +21,7 @@ import com.eliormachlev.currencix.util.KEY_RATES_FALLBACK_FROM
 import com.eliormachlev.currencix.util.KEY_RATES_PROVIDER
 import com.eliormachlev.currencix.util.KEY_RATES_TIME
 import com.eliormachlev.currencix.util.NO_PROVIDER_ID
+import kotlinx.coroutines.flow.Flow
 import java.time.LocalDate
 import java.time.LocalTime
 
@@ -62,7 +62,8 @@ class RateStore(
         WidgetRefreshBus.signal()
     }
 
-    fun getExchangeRates(): LiveData<ExchangeRates?> = ratesStore.mappedLiveData(parsedRates::invoke)
+    /** The cached rates, then each new set. */
+    fun getExchangeRates(): Flow<ExchangeRates?> = ratesStore.mappedFlow(parsedRates::invoke)
 
     fun getExchangeRatesBlocking(): ExchangeRates? = parsedRates(ratesStore.snapshot())
 

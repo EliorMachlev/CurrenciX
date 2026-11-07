@@ -1,7 +1,12 @@
 package com.eliormachlev.currencix.util
 
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
+import java.time.Duration
 import java.time.Instant
 import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.ZoneOffset
 import java.time.format.DateTimeParseException
 
@@ -35,4 +40,14 @@ fun String.toLocalDateOrNull(): LocalDate? =
         LocalDate.parse(this)
     } catch (_: DateTimeParseException) {
         null
+    }
+
+/** Today's date, again each time midnight passes (in the phone's time zone). */
+fun todayEachDay(): Flow<LocalDate> =
+    flow {
+        while (true) {
+            val now = LocalDateTime.now()
+            emit(now.toLocalDate())
+            delay(Duration.between(now, now.toLocalDate().plusDays(1).atStartOfDay()).toMillis() + 1)
+        }
     }

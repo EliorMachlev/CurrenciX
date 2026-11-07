@@ -18,7 +18,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -34,7 +33,6 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.map
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.window.layout.FoldingFeature
 import com.eliormachlev.currencix.R
@@ -74,6 +72,7 @@ import com.eliormachlev.currencix.view.timeline.compose.TimelineScreen
 import com.eliormachlev.currencix.viewmodel.preference.PreferenceViewModel
 import com.eliormachlev.currencix.viewmodel.timeline.TimelineViewModel
 import kotlinx.collections.immutable.toImmutableList
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import java.math.BigDecimal
 import java.time.LocalDate
@@ -96,7 +95,7 @@ fun TimelineRoute(
     val model: TimelineViewModel = viewModel(factory = TimelineViewModel.factory(currentApplication(), screen.from, screen.to))
     val db = rememberDatabase()
     val formatter = remember(db) { DateTimeFormatter.ofPattern(stripTimePattern(db.display.dateFormat.get())) }
-    val pair by model.getCurrencyPair().observeAsState()
+    val pair by model.getCurrencyPair().collectAsStateWithLifecycle()
     var sheet by rememberSaveable { mutableStateOf<TimelineSheet?>(null) }
     val chartCapture = remember { LayerCapture() }
     val scope = rememberCoroutineScope()
@@ -163,8 +162,8 @@ private fun TimelineBarActions(
     onAlert: (BigDecimal) -> Unit,
     onShare: () -> Unit,
 ) {
-    val error by model.getError().observeAsState()
-    val rateCurrent by remember(model) { model.getRateCurrent() }.observeAsState()
+    val error by model.getError().collectAsStateWithLifecycle(initialValue = null)
+    val rateCurrent by model.getRateCurrent().collectAsStateWithLifecycle()
     val today = rateCurrent?.rate?.value
     val alertLabel = stringResource(R.string.alert_sheet_title)
     val shareLabel = stringResource(R.string.timeline_share)
@@ -188,7 +187,7 @@ private fun TimelineAlertSheet(
     rate: BigDecimal,
     onClose: () -> Unit,
 ) {
-    val pair by model.getCurrencyPair().observeAsState()
+    val pair by model.getCurrencyPair().collectAsStateWithLifecycle()
     val (from, to) = pair ?: return
     val setAlert = rememberSetRateAlert()
     RateAlertSheet(
@@ -282,8 +281,8 @@ private fun TimelineChartContent(
                 scrubLine = Color(context.resolveThemeColor(android.R.attr.textColorPrimary)),
             )
         }
-    // Both created once per screen: a fresh LiveData per recomposition would
-    // make the chart drop and re-add its observers every time.
+    // Both created once per screen: a fresh flow per recomposition would
+    // make the chart restart its collections every time.
     val series =
         remember(model) {
             ChartSeries(
@@ -298,12 +297,12 @@ private fun TimelineChartContent(
     val prefs =
         remember(db) {
             ChartPrefs(
-                showGrid = db.chart.grid.liveData,
-                showXAxis = db.chart.xAxisLabel.liveData,
-                showYAxis = db.chart.yAxisLabel.liveData,
-                highlightExtremes = db.chart.highlightExtremes.liveData,
-                highlightPeriodChange = db.chart.highlightPeriodChange.liveData,
-                dateFormat = db.display.dateFormat.liveData,
+                showGrid = db.chart.grid,
+                showXAxis = db.chart.xAxisLabel,
+                showYAxis = db.chart.yAxisLabel,
+                highlightExtremes = db.chart.highlightExtremes,
+                highlightPeriodChange = db.chart.highlightPeriodChange,
+                dateFormat = db.display.dateFormat,
             )
         }
     TimelineChart(series = series, prefs = prefs, colors = colors, onScrub = onScrub)
@@ -333,8 +332,8 @@ private fun TouchableChart(
 @Composable
 private fun rememberTouchedDay(model: TimelineViewModel): TouchedDay {
     val touched = remember { TouchedDay() }
-    val pair by model.getCurrencyPair().observeAsState()
-    val period by model.getPeriod().observeAsState()
+    val pair by model.getCurrencyPair().collectAsStateWithLifecycle()
+    val period by model.getPeriod().collectAsStateWithLifecycle()
     LaunchedEffect(pair, period) { touched.day = null }
     return touched
 }
@@ -354,8 +353,8 @@ private fun ChartDayActions(
     modifier: Modifier = Modifier,
 ) {
     val context = LocalContext.current
-    val pair by model.getCurrencyPair().observeAsState()
-    val rates by remember(model) { model.getRates() }.observeAsState()
+    val pair by model.getCurrencyPair().collectAsStateWithLifecycle()
+    val rates by model.getRates().collectAsStateWithLifecycle()
     // In the language's direction: the hint and the chips start on the right in Hebrew.
     ReadingDirection {
         Row(
@@ -422,8 +421,8 @@ private fun TimelinePairRow(
     db: Database,
     pair: Pair<Currency, Currency>,
 ) {
-    val inFlight by model.isRefreshInFlight().observeAsState(false)
-    val error by model.getError().observeAsState()
+    val inFlight by model.isRefreshInFlight().collectAsStateWithLifecycle()
+    val error by model.getError().collectAsStateWithLifecycle(initialValue = null)
     var picking by remember { mutableStateOf<PillSide?>(null) }
     val actions =
         remember(model) {
@@ -454,7 +453,7 @@ private fun TimelineCurrencyPicker(
     pair: Pair<Currency, Currency>,
     onDismiss: () -> Unit,
 ) {
-    val rates by remember(db) { db.rates.getExchangeRates() }.observeAsState()
+    val rates by remember(db) { db.rates.getExchangeRates() }.collectAsStateWithLifecycle(initialValue = null)
     val (from, to) = pair
     val other = if (side == PillSide.FROM) to else from
     CurrencyPickerSheet(

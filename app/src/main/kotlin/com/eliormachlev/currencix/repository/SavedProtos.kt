@@ -70,11 +70,15 @@ internal fun Trip.toProto(): TripProto =
         destination = destination?.iso4217Alpha(),
         start_day = start?.toEpochDay(),
         end_day = end?.toEpochDay(),
+        pinned_spent = spentPin?.amount?.toPlainString(),
+        pinned_basis = spentPin?.basis,
     )
 
 /** The trip, or null when its currency isn't one the app knows. */
 internal fun TripProto.toModel(): Trip? =
-    tripOf(id, name, currency, budget)?.withPlan(destination, start_day?.let(LocalDate::ofEpochDay), end_day?.let(LocalDate::ofEpochDay))
+    tripOf(id, name, currency, budget)
+        ?.withPlan(destination, start_day?.let(LocalDate::ofEpochDay), end_day?.let(LocalDate::ofEpochDay))
+        ?.withPin(pinned_spent, pinned_basis)
 
 internal fun Fee.toProto(): FeeProto {
     val stored = toStored()

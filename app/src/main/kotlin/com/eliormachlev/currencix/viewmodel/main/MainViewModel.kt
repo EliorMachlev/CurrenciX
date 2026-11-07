@@ -4,12 +4,7 @@ import android.app.Application
 import android.text.SpannableStringBuilder
 import androidx.core.text.bold
 import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MediatorLiveData
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.asLiveData
-import androidx.lifecycle.map
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
@@ -18,20 +13,28 @@ import com.eliormachlev.currencix.model.CurrencyPair
 import com.eliormachlev.currencix.model.ExchangeRates
 import com.eliormachlev.currencix.model.Fee
 import com.eliormachlev.currencix.model.FeeCalculator
+import com.eliormachlev.currencix.model.Rate
 import com.eliormachlev.currencix.model.rateFor
 import com.eliormachlev.currencix.repository.Database
 import com.eliormachlev.currencix.repository.ExchangeRatesRepository
 import com.eliormachlev.currencix.repository.RefreshState
-import com.eliormachlev.currencix.util.combineWith
 import com.eliormachlev.currencix.util.evaluateCalculatorExpression
 import com.eliormachlev.currencix.util.getDecimalSeparator
 import com.eliormachlev.currencix.util.isCurrencySymbolOnRight
 import com.eliormachlev.currencix.util.toHumanReadableNumber
+import com.eliormachlev.currencix.viewmodel.util.stateInEagerly
 import com.eliormachlev.currencix.viewmodel.util.stateInWhileSubscribed
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.combineTransform
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import java.math.BigDecimal
 import java.math.MathContext
@@ -54,22 +57,12 @@ class MainViewModel(
     private val repository: ExchangeRatesRepository = ExchangeRatesRepository(app)
     private val db = Database(app)
 
-    // repository data
-    private var dbLiveItems: LiveData<ExchangeRates?>
-    private var exchangeRates: LiveData<ExchangeRates?>
-
-    // Leaves migrated to `StateFlow` in #149; the `.asLiveData()` bridges below
-    // are for the `MediatorLiveData` compositions that still consume them
-    // (those compositions are deferred out of this migration per the plan's
-    // Molecule-deferral guidance).
     private val starredLiveItems: StateFlow<ImmutableList<Currency>> =
         db.stars.starredCurrencies.flow
             .stateInWhileSubscribed(viewModelScope, db.stars.starredCurrencies.get())
-    private val starredLiveItemsLive: LiveData<ImmutableList<Currency>> = starredLiveItems.asLiveData()
     private val onlyShowStarred: StateFlow<Boolean> =
         db.stars.filterStarred.flow
             .stateInWhileSubscribed(viewModelScope, db.stars.filterStarred.get())
-    private val onlyShowStarredLive: LiveData<Boolean> = onlyShowStarred.asLiveData()
 
     // ui
     // Refresh indicators — debounced for display; see RefreshState.
@@ -81,217 +74,129 @@ class MainViewModel(
         db.display.expandedKeypad.stateInWhileSubscribed(viewModelScope)
     private val decimalPlaces: StateFlow<Int> =
         db.display.decimalPlaces.stateInWhileSubscribed(viewModelScope)
-    private val decimalPlacesLive: LiveData<Int> = decimalPlaces.asLiveData()
 
     /** What the keypad has typed. The keypad drives it directly; the amounts below follow it. */
     internal val input = CalculatorInputState()
-    private val currentBaseValueText: LiveData<String?> = input.baseValueText
-    private val currentCalculationValueText: LiveData<String?> = input.calculationValueText
 
-    // currency selection
-    private val currentBaseCurrency: LiveData<Currency?>
-    private val currentDestinationCurrency: LiveData<Currency?>
-
-    // Fees leaves migrated to `StateFlow`; `.asLiveData()` bridges feed the
-    // `pairFeeMediator` MediatorLiveData below (deferred per the plan).
     private val fees: StateFlow<ImmutableList<Fee>> =
         db.fees.fees.flow
             .stateInWhileSubscribed(viewModelScope, db.fees.fees.get())
-    private val feesLive: LiveData<ImmutableList<Fee>> = fees.asLiveData()
     private val activeExchangeId: StateFlow<String?> =
         db.fees.activeExchangeId.flow
             .stateInWhileSubscribed(viewModelScope, db.fees.activeExchangeId.get())
-    private val activeExchangeIdLive: LiveData<String?> = activeExchangeId.asLiveData()
     private val activeBankId: StateFlow<String?> =
         db.fees.activeBankId.flow
             .stateInWhileSubscribed(viewModelScope, db.fees.activeBankId.get())
-    private val activeBankIdLive: LiveData<String?> = activeBankId.asLiveData()
-
-    // Background timeline prefetcher: fires whenever the selected base/target
-    // resolves (including cold-start defaults) so the graph screen paints
-    // instantly when the user opens it. MediatorLiveData needs at least one
-    // active observer to receive updates from its sources; the value itself is
-    // never read, so a no-op keep-alive observer is enough.
-    private val timelinePrefetch = MediatorLiveData<Unit>()
-    private val timelinePrefetchKeepAlive = Observer<Unit> { /* no-op */ }
 
     /*
      * repository data =============================================================================
      */
 
+    // The rates, sorted by the currencies' names. Null until the first set
+    // arrives; after that the last set stays, even if the store is emptied.
+    // Collected for the ViewModel's whole life, like everything the selected
+    // pair and the conversion are built from: the timeline prefetch below
+    // follows the pair, and the share text and the picker read these values
+    // synchronously.
+    private val exchangeRates: StateFlow<ExchangeRates?> =
+        ratesSource(onlyCache)
+            .filterNotNull()
+            .map(::sortedByName)
+            .stateInEagerly(viewModelScope, null)
+
+    // currency selection
+    // update currently selected currencies when rates are updated:
+    // sometimes the selected rates aren't available anymore, so reset them
+    private val currentBaseCurrency: StateFlow<Currency?> =
+        combine(db.lastState.lastBaseCurrency.flow, exchangeRates) { base, rates ->
+            // last used is present in the current currency set
+            rates?.rateFor(base)?.currency
+                // not present, so just return the first of the set
+                ?: rates?.rates?.firstOrNull()?.currency
+        }.stateInEagerly(viewModelScope, null)
+
+    // Cross-observes the resolved base so a stale-prefs collision (both sides
+    // pointing at the same currency on first read after an
+    // install/migration/import) is corrected to a distinct fallback on the
+    // destination side. The grey-out picker prevents users from ever creating
+    // this state; this is the belt-and-braces safety net for state loaded
+    // from disk. Nothing until the rates arrive.
+    private val currentDestinationCurrency: StateFlow<Currency?> =
+        combineTransform(db.lastState.lastDestinationCurrency.flow, exchangeRates, currentBaseCurrency) { destination, rates, base ->
+            val available = rates?.rates ?: return@combineTransform
+            emit(destinationFrom(available, destination, base))
+        }.stateInEagerly(viewModelScope, null)
+
     init {
+        // Background timeline prefetcher: fires whenever the selected
+        // base/target resolves (including cold-start defaults) so the graph
+        // screen paints instantly when the user opens it — otherwise the very
+        // first graph tap still pays the full network fetch. The repository
+        // dedupes per-pair, so redundant calls collapse into one fetch.
+        combine(currentBaseCurrency, currentDestinationCurrency) { base, destination -> prefetchTimeline(base, destination) }
+            .launchIn(viewModelScope)
+    }
+
+    // The rates to show: the cached set, after asking the network for a new
+    // one when the cache is out of date.
+    private fun ratesSource(onlyCache: Boolean): Flow<ExchangeRates?> {
         // only update if data is old: https://github.com/Formicka/exchangerate.host
         // "Rates are updated around midnight UTC every working day."
         val currentDate = LocalDate.now(ZoneId.of("UTC"))
         val cachedDate = db.rates.getDate()
         val historicalDate = db.lastState.historicalDate.get()
-
-        dbLiveItems =
+        val useCache =
             when {
                 // force-use cache
-                onlyCache -> {
-                    db.rates.getExchangeRates()
-                }
+                onlyCache -> true
 
                 // first run: fetch data
-                cachedDate == null -> {
-                    repository.getExchangeRates()
-                }
+                cachedDate == null -> false
 
                 // Historical rates in use: serve from cache when the cached date
                 // already matches the requested historical date; otherwise re-fetch.
-                historicalDate != null -> {
-                    if (historicalDate == cachedDate) {
-                        db.rates.getExchangeRates()
-                    } else {
-                        repository.getExchangeRates()
-                    }
-                }
+                historicalDate != null -> historicalDate == cachedDate
 
-                // fetch if stored date is before the current date
-                cachedDate.isBefore(currentDate) -> {
-                    repository.getExchangeRates()
-                }
-
-                // else just use the cached value
-                else -> {
-                    db.rates.getExchangeRates()
-                }
+                // fetch if stored date is before the current date, else just use the cached value
+                else -> !cachedDate.isBefore(currentDate)
             }
-
-        exchangeRates =
-            object : MediatorLiveData<ExchangeRates?>() {
-                var liveItems: ExchangeRates? = null
-
-                init {
-                    addSource(dbLiveItems) {
-                        liveItems = it
-                        calc()
-                    }
-                    addSource(starredLiveItemsLive) { calc() }
-                    addSource(onlyShowStarredLive) { calc() }
-                }
-
-                private fun calc() {
-                    liveItems?.let { rates ->
-                        this.value =
-                            rates
-                                // usa a copy with ...
-                                .copy(
-                                    rates =
-                                        rates.rates
-                                            // ... the correct sort order of the rates
-                                            ?.sortedWith(
-                                                // sort by full name (locale-aware)
-                                                compareBy(Collator.getInstance()) { rate ->
-                                                    rate.currency.fullName(app)
-                                                },
-                                            ),
-                                )
-                    }
-                }
-            }
-
-        // update currently selected currencies when rates are updated:
-        // sometimes the selected rates aren't available anymore, so reset them
-        val baseCurrency = db.lastState.lastBaseCurrency.liveData
-        val destinationCurrency = db.lastState.lastDestinationCurrency.liveData
-        currentBaseCurrency =
-            object : MediatorLiveData<Currency?>() {
-                var base: Currency? = null
-                var rates: ExchangeRates? = null
-
-                init {
-                    addSource(baseCurrency) {
-                        base = it
-                        update()
-                    }
-                    addSource(exchangeRates) {
-                        rates = it
-                        update()
-                    }
-                }
-
-                private fun update() {
-                    this.value =
-                        // last used is present in the current currency set
-                        rates?.rateFor(base)?.currency
-                            // not present, so just return the first of the set
-                            ?: rates?.rates?.firstOrNull()?.currency
-                }
-            }
-        currentDestinationCurrency =
-            object : MediatorLiveData<Currency?>() {
-                var destination: Currency? = null
-                var rates: ExchangeRates? = null
-                var base: Currency? = null
-
-                init {
-                    addSource(destinationCurrency) {
-                        destination = it
-                        update()
-                    }
-                    addSource(exchangeRates) {
-                        rates = it
-                        update()
-                    }
-                    // Cross-observe the resolved base so a stale-prefs
-                    // collision (both sides pointing at the same currency on
-                    // first read after an install/migration/import) is
-                    // corrected to a distinct fallback on the destination
-                    // side. The grey-out picker prevents users from ever
-                    // creating this state; this is the belt-and-braces
-                    // safety net for state loaded from disk.
-                    addSource(currentBaseCurrency) {
-                        base = it
-                        update()
-                    }
-                }
-
-                private fun update() {
-                    val available = rates?.rates ?: return
-                    val stored = available.find { it.currency == destination }?.currency
-                    val fallback = available.firstOrNull()?.currency
-                    val picked = stored ?: fallback
-                    this.value =
-                        if (picked != null && picked == base) {
-                            available.firstOrNull { it.currency != base }?.currency ?: picked
-                        } else {
-                            picked
-                        }
-                }
-            }
-
-        // Also prefetch on cold start, once both base/target resolve from prefs
-        // or defaults — otherwise the very first graph tap still pays the full
-        // network fetch. The repository dedupes per-pair, so the redundant
-        // callbacks (base fires, then target fires) collapse into one fetch.
-        timelinePrefetch.addSource(currentBaseCurrency) {
-            prefetchTimeline(it, currentDestinationCurrency.value)
-        }
-        timelinePrefetch.addSource(currentDestinationCurrency) {
-            prefetchTimeline(currentBaseCurrency.value, it)
-        }
-        timelinePrefetch.observeForever(timelinePrefetchKeepAlive)
+        return if (useCache) db.rates.getExchangeRates() else repository.getExchangeRates()
     }
 
-    override fun onCleared() {
-        timelinePrefetch.removeObserver(timelinePrefetchKeepAlive)
+    // A copy of [rates] with the rates in the order shown: by the currencies'
+    // full names (locale-aware).
+    private fun sortedByName(rates: ExchangeRates): ExchangeRates =
+        rates.copy(rates = rates.rates?.sortedWith(compareBy(Collator.getInstance()) { rate -> rate.currency.fullName(app) }))
+
+    // The [destination] last used if [available] has it, else the first
+    // there; never the same as [base] while another is there.
+    private fun destinationFrom(
+        available: List<Rate>,
+        destination: Currency?,
+        base: Currency?,
+    ): Currency? {
+        val stored = available.find { it.currency == destination }?.currency
+        val fallback = available.firstOrNull()?.currency
+        val picked = stored ?: fallback
+        return if (picked != null && picked == base) {
+            available.firstOrNull { it.currency != base }?.currency ?: picked
+        } else {
+            picked
+        }
     }
 
     /**
      * all the current rates and/or an error message, if present
      */
-    internal fun getExchangeRates(): LiveData<ExchangeRates?> = exchangeRates
+    internal fun getExchangeRates(): StateFlow<ExchangeRates?> = exchangeRates
 
     /**
      * Update the data, past the cache's freshness window: the server is asked
      * whether the cached answer still holds (a few bytes if it does).
      */
     internal fun forceUpdateExchangeRate() {
-        if (!RefreshState.inFlight.value) {
-            dbLiveItems = repository.getExchangeRates(fresh = true)
-        }
+        // The rates already follow the store the refresh writes into.
+        if (!RefreshState.inFlight.value) repository.refreshExchangeRates(fresh = true)
     }
 
     /**
@@ -338,11 +243,11 @@ class MainViewModel(
     }
 
     /**
-     * the error message, if present. Repository-owned LiveData — not migrated
-     * in the #149 leaf pass since the source of truth lives outside [Database]
-     * and only XML/Fragment code observes it.
+     * Each refresh's outcome: null when it succeeded, else the error message
+     * (the latest is replayed to a new collector). A [SharedFlow], so a
+     * failure repeating the last one's message still arrives.
      */
-    internal fun getError(): LiveData<String?> = repository.getError()
+    internal fun getError(): SharedFlow<String?> = repository.getError()
 
     /**
      * Pull-to-refresh spinner state: up as soon as a rate refresh starts,
@@ -368,45 +273,27 @@ class MainViewModel(
     /**
      * the total base value
      */
-    private val currentBaseValue =
-        object : MediatorLiveData<String?>() {
-            var baseValueText: String? = null
-            var calculationValueText: String? = null
-
-            init {
-                addSource(currentBaseValueText) {
-                    baseValueText = it
-                    update()
-                }
-                addSource(currentCalculationValueText) {
-                    calculationValueText = it
-                    update()
-                }
+    private val currentBaseValue: StateFlow<String?> =
+        combine(input.baseValueText, input.calculationValueText) { baseValueText, calculationValueText ->
+            if (isInCalculationMode()) {
+                calculationValueText?.evaluateCalculatorExpression()
+            } else {
+                baseValueText
             }
+        }.stateInEagerly(viewModelScope, null)
 
-            fun update() {
-                this.value =
-                    if (isInCalculationMode()) {
-                        calculationValueText?.evaluateCalculatorExpression()
-                    } else {
-                        baseValueText
-                    }
-            }
-        }
+    // Read synchronously (the share text, the currency picker), so kept
+    // current; null until the base value is known.
+    private val currentBaseValueAsNumber: StateFlow<BigDecimal?> =
+        currentBaseValue.map(::toAmount).stateInEagerly(viewModelScope, null)
 
     /**
      * the total base value, as BigDecimal (internal is string)
      */
-    internal fun getCurrentBaseValueAsNumber(): LiveData<BigDecimal> =
-        currentBaseValue.map {
-            it?.toBigDecimalOrNull() ?: BigDecimal.ZERO
-        }
+    internal fun getCurrentBaseValueAsNumber(): StateFlow<BigDecimal?> = currentBaseValueAsNumber
 
-    /**
-     * the nicely formatted, total base value including the currency symbol at the right position.
-     */
-    internal fun getCurrentBaseValueFormatted(): LiveData<SpannableStringBuilder> =
-        currentBaseValue.combineWith(currentBaseCurrency) { value, currency ->
+    private val currentBaseValueFormattedState: StateFlow<SpannableStringBuilder?> by lazy {
+        combine(currentBaseValue, currentBaseCurrency) { value, currency ->
             val number = (
                 value?.toHumanReadableNumber(
                     app,
@@ -415,7 +302,13 @@ class MainViewModel(
                 ) ?: "0"
             )
             buildBoldNumberWithSymbol(number, currency?.symbol())
-        }
+        }.stateInWhileSubscribed(viewModelScope, null)
+    }
+
+    /**
+     * the nicely formatted, total base value including the currency symbol at the right position.
+     */
+    internal fun getCurrentBaseValueFormatted(): StateFlow<SpannableStringBuilder?> = currentBaseValueFormattedState
 
     // Bold [number] plus the currency [symbol] on the side dictated by the
     // active locale. Extracted so the base-value and result displays can't
@@ -436,118 +329,77 @@ class MainViewModel(
 
     // ===============================
 
+    private val calculationInputFormattedState: StateFlow<String?> by lazy {
+        input.calculationValueText
+            .map { it?.replace(".", getDecimalSeparator(app)) }
+            .stateInWhileSubscribed(viewModelScope, null)
+    }
+
     /**
      * the nicely formatted calculation string: e.g. 4 + 2.2 - 4 / 2
      */
-    internal fun getCalculationInputFormatted(): LiveData<String?> =
-        currentCalculationValueText.map {
-            it?.replace(".", getDecimalSeparator(app))
-        }
+    internal fun getCalculationInputFormatted(): StateFlow<String?> = calculationInputFormattedState
 
     // ===============================
 
     // Fan-in helper: combines fees + current pair + single-select picks into
     // one derived value. Both feeStack and activeFees use it since they only
     // differ in the final calculator call.
-    private fun <T> pairFeeMediator(compute: (List<Fee>?, Currency?, Currency?, String?, String?) -> T): MediatorLiveData<T> =
-        object : MediatorLiveData<T>() {
-            var feeList: List<Fee>? = null
-            var base: Currency? = null
-            var dest: Currency? = null
-            var exchangeId: String? = null
-            var bankId: String? = null
-
-            init {
-                addSource(feesLive) {
-                    feeList = it
-                    update()
-                }
-                addSource(currentBaseCurrency) {
-                    base = it
-                    update()
-                }
-                addSource(currentDestinationCurrency) {
-                    dest = it
-                    update()
-                }
-                addSource(activeExchangeIdLive) {
-                    exchangeId = it
-                    update()
-                }
-                addSource(activeBankIdLive) {
-                    bankId = it
-                    update()
-                }
-            }
-
-            private fun update() {
-                val next = compute(feeList, base, dest, exchangeId, bankId)
-                if (next != value) value = next
-            }
-        }
+    private fun <T> pairFeeFlow(compute: (List<Fee>, Currency?, Currency?, String?, String?) -> T): Flow<T> =
+        combine(
+            fees,
+            currentBaseCurrency,
+            currentDestinationCurrency,
+            activeExchangeId,
+            activeBankId,
+        ) { list, base, dest, exchangeId, bankId -> compute(list, base, dest, exchangeId, bankId) }
 
     /**
      * Multiplicative fee stack for the current pair. Exposed so the UI can
      * render inline fee annotations and derive the "true cost" companion row.
+     * Kept current: the fee-adjusted result is built on it.
      */
-    private val feeStack: MediatorLiveData<BigDecimal> =
-        pairFeeMediator { list, base, dest, exchangeId, bankId ->
-            FeeCalculator.feeStack(list.orEmpty(), base, dest, exchangeId, bankId)
-        }
+    private val feeStack: StateFlow<BigDecimal?> =
+        pairFeeFlow { list, base, dest, exchangeId, bankId ->
+            FeeCalculator.feeStack(list, base, dest, exchangeId, bankId)
+        }.stateInEagerly(viewModelScope, null)
 
     /**
      * The active fees participating in [feeStack] for the current pair —
      * specific-pair matches plus the currently-picked single global
      * exchange / bank-or-card entries. Exposed as [ImmutableList] so Compose
      * stability inference can skip recomposition of consumers when the
-     * derived list has equal content across emissions (#161).
+     * derived list has equal content across emissions (#161). Kept current:
+     * the share text reads it.
      */
-    private val activeFees: MediatorLiveData<ImmutableList<Fee>> =
-        pairFeeMediator { list, base, dest, exchangeId, bankId ->
-            FeeCalculator.activeFees(list.orEmpty(), base, dest, exchangeId, bankId).toImmutableList()
-        }
+    private val activeFees: StateFlow<ImmutableList<Fee>?> =
+        pairFeeFlow { list, base, dest, exchangeId, bankId ->
+            FeeCalculator.activeFees(list, base, dest, exchangeId, bankId).toImmutableList()
+        }.stateInEagerly(viewModelScope, null)
 
     /**
      * the total destination value — fees don't touch the displayed result;
-     * they surface as "true cost" on the input side instead.
+     * they surface as "true cost" on the input side instead. Null until both
+     * currencies have a rate; after that the last result stays while one is
+     * missing.
      */
-    private val result =
-        object : MediatorLiveData<String>() {
-            var rates: ExchangeRates? = null
-            var baseValue: String? = null
-            var baseCurrency: Currency? = null
-            var destinationCurrency: Currency? = null
-
-            init {
-                addSource(exchangeRates) {
-                    rates = it
-                    calculateResult()
-                }
-                addSource(currentBaseValue) {
-                    baseValue = it
-                    calculateResult()
-                }
-                addSource(currentBaseCurrency) {
-                    baseCurrency = it
-                    calculateResult()
-                }
-                addSource(currentDestinationCurrency) {
-                    destinationCurrency = it
-                    calculateResult()
-                }
-            }
-
-            private fun calculateResult() {
-                val amount: BigDecimal = baseValue?.toBigDecimal() ?: BigDecimal.ZERO
-                val baseRate = rates?.rateFor(baseCurrency) ?: return
-                val destinationRate = rates?.rateFor(destinationCurrency) ?: return
-                val fair =
-                    amount
-                        .divide(baseRate.value, MathContext.DECIMAL128)
-                        .multiply(destinationRate.value)
-                this.value = fair.toPlainString()
-            }
-        }
+    private val result: StateFlow<String?> =
+        combineTransform(
+            exchangeRates,
+            currentBaseValue,
+            currentBaseCurrency,
+            currentDestinationCurrency,
+        ) { rates, baseValue, base, destination ->
+            val amount: BigDecimal = baseValue?.toBigDecimal() ?: BigDecimal.ZERO
+            val known = rates ?: return@combineTransform
+            val baseRate = known.rateFor(base) ?: return@combineTransform
+            val destinationRate = known.rateFor(destination) ?: return@combineTransform
+            val fair =
+                amount
+                    .divide(baseRate.value, MathContext.DECIMAL128)
+                    .multiply(destinationRate.value)
+            emit(fair.toPlainString())
+        }.stateInEagerly(viewModelScope, null)
 
     /**
      * Fee stack for an arbitrary pair — used by ad-hoc UIs
@@ -569,86 +421,75 @@ class MainViewModel(
     /**
      * Multiplicative fee stack for the current pair.
      */
-    internal fun getFeeStack(): LiveData<BigDecimal> = feeStack
+    internal fun getFeeStack(): StateFlow<BigDecimal?> = feeStack
 
     /**
      * Active fees participating for the current pair.
      */
-    internal fun getActiveFees(): LiveData<ImmutableList<Fee>> = activeFees
+    internal fun getActiveFees(): StateFlow<ImmutableList<Fee>?> = activeFees
+
+    // Null (no result yet) stays null; read synchronously (the share text,
+    // the currency picker), so kept current.
+    private val resultAsNumber: StateFlow<BigDecimal?> =
+        result.map { it?.let(::toAmount) }.stateInEagerly(viewModelScope, null)
 
     /**
      * the total destination value, as BigDecimal (internal is string)
      */
-    internal fun getResultAsNumber(): LiveData<BigDecimal> =
-        result.map {
-            it?.toBigDecimalOrNull() ?: BigDecimal.ZERO
-        }
+    internal fun getResultAsNumber(): StateFlow<BigDecimal?> = resultAsNumber
 
     // `result * feeStack` — the fee-adjusted destination value. When no fee
     // applies, equals `result`. Used by the True Cost panel so users see the
     // final out-of-pocket cost expressed in the destination currency
     // (e.g. paying `$200` after fees ≈ `604.3 ILS`, not the fee-free `302.3`).
-    private val resultWithFees: LiveData<String?> =
-        result.combineWith<String, BigDecimal, String?>(feeStack) { r, s ->
-            val amount = r?.toBigDecimalOrNull() ?: return@combineWith null
+    private val resultWithFees: StateFlow<String?> =
+        combine(result, feeStack) { r, s ->
+            val amount = r?.toBigDecimalOrNull() ?: return@combine null
             val stack = s ?: BigDecimal.ONE
             amount.multiply(stack, MathContext.DECIMAL128).toPlainString()
-        }
+        }.stateInEagerly(viewModelScope, null)
+
+    // Null only until the pipeline has run once; zero while there's no
+    // result. Kept current: the share text reads it.
+    private val resultWithFeesAsNumber: StateFlow<BigDecimal?> =
+        resultWithFees.map(::toAmount).stateInEagerly(viewModelScope, null)
 
     /**
      * the fee-adjusted destination value, as BigDecimal — result × feeStack.
      */
-    internal fun getResultWithFeesAsNumber(): LiveData<BigDecimal> =
-        resultWithFees.map {
-            it?.toBigDecimalOrNull() ?: BigDecimal.ZERO
-        }
+    internal fun getResultWithFeesAsNumber(): StateFlow<BigDecimal?> = resultWithFeesAsNumber
+
+    private val resultFormattedState: StateFlow<SpannableStringBuilder?> by lazy { formattedDestinationAmount(result) }
 
     /**
      * the nicely formatted, total destination value including the currency symbol at the right position.
      */
-    internal fun getResultFormatted(): LiveData<SpannableStringBuilder> = formattedDestinationAmount(result)
+    internal fun getResultFormatted(): StateFlow<SpannableStringBuilder?> = resultFormattedState
+
+    private val resultWithFeesFormattedState: StateFlow<SpannableStringBuilder?> by lazy {
+        formattedDestinationAmount(resultWithFees)
+    }
 
     /**
      * the nicely formatted, fee-adjusted destination value (True Cost).
      */
-    internal fun getResultWithFeesFormatted(): LiveData<SpannableStringBuilder> = formattedDestinationAmount(resultWithFees)
+    internal fun getResultWithFeesFormatted(): StateFlow<SpannableStringBuilder?> = resultWithFeesFormattedState
 
     // Formats a destination-currency numeric string ("302.3") into the hero's
     // bold-number-plus-currency-symbol SpannableStringBuilder, tracking the
     // active destination currency and decimal-places preference. Shared by
     // the fair-conversion and true-cost pipelines so they format identically.
-    private fun formattedDestinationAmount(source: LiveData<out String?>): LiveData<SpannableStringBuilder> =
-        object : MediatorLiveData<SpannableStringBuilder>() {
-            var resultText: String? = null
-            var currency: Currency? = null
-            var places: Int = 2
-
-            init {
-                addSource(source) {
-                    resultText = it
-                    update()
-                }
-                addSource(currentDestinationCurrency) {
-                    currency = it
-                    update()
-                }
-                addSource(decimalPlacesLive) {
-                    places = it
-                    update()
-                }
-            }
-
-            fun update() {
-                val number = (
-                    resultText?.toHumanReadableNumber(
-                        app,
-                        trim = true,
-                        decimalPlaces = places,
-                    ) ?: "0"
-                )
-                this.value = buildBoldNumberWithSymbol(number, currency?.symbol())
-            }
-        }
+    private fun formattedDestinationAmount(source: Flow<String?>): StateFlow<SpannableStringBuilder?> =
+        combine(source, currentDestinationCurrency, decimalPlaces) { resultText, currency, places ->
+            val number = (
+                resultText?.toHumanReadableNumber(
+                    app,
+                    trim = true,
+                    decimalPlaces = places,
+                ) ?: "0"
+            )
+            buildBoldNumberWithSymbol(number, currency?.symbol())
+        }.stateInWhileSubscribed(viewModelScope, null)
 
     /**
      * the current decimal-places preference, for output-side rounding.
@@ -698,12 +539,12 @@ class MainViewModel(
         target: Currency?,
     ) {
         if (base == null || target == null) return
-        repository.getTimeline(base, target)
+        repository.requestTimeline(base, target)
     }
 
-    internal fun getBaseCurrency(): LiveData<Currency?> = currentBaseCurrency
+    internal fun getBaseCurrency(): StateFlow<Currency?> = currentBaseCurrency
 
-    internal fun getDestinationCurrency(): LiveData<Currency?> = currentDestinationCurrency
+    internal fun getDestinationCurrency(): StateFlow<Currency?> = currentDestinationCurrency
 
     /*
      * historical rates
@@ -722,7 +563,7 @@ class MainViewModel(
 
     internal fun getHistoricalDate(): LocalDate? = db.lastState.historicalDate.get()
 
-    internal fun getHistoricalLiveDate(): LiveData<LocalDate?> = db.lastState.historicalDate.liveData
+    internal fun getHistoricalLiveDate(): Flow<LocalDate?> = db.lastState.historicalDate.flow
 
     /*
      * helpers =====================================================================================
@@ -730,3 +571,6 @@ class MainViewModel(
 
     private fun isInCalculationMode(): Boolean = input.isInCalculationMode()
 }
+
+// An amount the pipeline holds as text, as a number: zero when there is none.
+private fun toAmount(text: String?): BigDecimal = text?.toBigDecimalOrNull() ?: BigDecimal.ZERO

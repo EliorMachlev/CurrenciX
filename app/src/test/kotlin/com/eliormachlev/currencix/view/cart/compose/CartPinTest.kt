@@ -7,7 +7,6 @@ import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onAllNodesWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
-import androidx.lifecycle.MutableLiveData
 import androidx.test.core.app.ApplicationProvider
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.model.CartItem
@@ -15,6 +14,7 @@ import com.eliormachlev.currencix.util.registerActivityRule
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
+import kotlinx.coroutines.flow.MutableStateFlow
 import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
@@ -37,7 +37,7 @@ class CartPinTest {
     @Test
     fun `pinning a row moves it to the top right away`() {
         val items =
-            MutableLiveData<ImmutableList<CartItem>>(
+            MutableStateFlow<ImmutableList<CartItem>>(
                 persistentListOf(
                     CartItem(id = "1", name = "Apples", expression = "1"),
                     CartItem(id = "2", name = "Bread", expression = "2"),
@@ -48,7 +48,7 @@ class CartPinTest {
                 sources = cartSources(items),
                 actions =
                     cartItemActions(onTogglePin = { id ->
-                        items.value = items.value!!.map { if (it.id == id) it.copy(pinned = !it.pinned) else it }.toImmutableList()
+                        items.value = items.value.map { if (it.id == id) it.copy(pinned = !it.pinned) else it }.toImmutableList()
                     }),
                 reorder = NO_REORDER,
                 onAddItem = {},

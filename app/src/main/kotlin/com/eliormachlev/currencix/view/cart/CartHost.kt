@@ -4,9 +4,6 @@ import androidx.activity.ComponentActivity
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.MediatorLiveData
-import androidx.lifecycle.Observer
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.model.CartItem
 import com.eliormachlev.currencix.model.Currency
@@ -17,8 +14,10 @@ import com.eliormachlev.currencix.view.compose.AppSnackbar
 import com.eliormachlev.currencix.view.compose.showOrToast
 import com.eliormachlev.currencix.viewmodel.cart.CartViewModel
 import kotlinx.collections.immutable.ImmutableList
-import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 
 /**
  * The cart screen's non-UI half: the coordinators behind its menu (share,
@@ -45,10 +44,14 @@ class CartHost(
     /** Which sheet / dialog is up. Separate fields so they can stack (a delete confirm above the load list). */
     val overlays = CartOverlayState()
 
-    // LiveData bridged into Compose; fields so the list's observeAsState
-    // survives cart re-emissions.
-    val itemsLive = MediatorLiveData<ImmutableList<CartItem>>().apply { value = persistentListOf() }
-    val currencyLive = MediatorLiveData<String>().apply { value = "" }
+    // The working cart's rows and currency as the list shows them, kept by
+    // [followCart]; fields so the list's collection survives cart
+    // re-emissions.
+    private val startCart = viewModel.getCurrentCart().value
+    private val itemsState = MutableStateFlow(startCart.items.toImmutableList())
+    val items: StateFlow<ImmutableList<CartItem>> = itemsState.asStateFlow()
+    private val currencyState = MutableStateFlow(startCart.currency)
+    val currency: StateFlow<String> = currencyState.asStateFlow()
 
     private val toast: (String) -> Unit = { message -> snackbar.showOrToast(activity, message) }
 
@@ -101,28 +104,32 @@ class CartHost(
             onNext = ::nextPrice,
         )
 
-    private val cartObserver =
-        Observer<SavedCart> { cart ->
-            currencyLive.value = cart.currency
-            itemsLive.value = cart.items.toImmutableList()
-            // A cart load can retire the item the keypad was bound to; drop
-            // that binding so the keypad doesn't linger over a missing row.
-            val currentIds = cart.items.mapTo(mutableSetOf()) { it.id }
-            pendingNames.retainAll(currentIds)
-            keypad.activeItemId.value?.let { if (it !in currentIds) keypad.closeKeypad() }
-        }
+    /**
+     * Follows the working cart into [items] and [currency] until cancelled
+     * (the screen collects it while started).
+     */
+    suspend fun followCart() {
+        viewModel.getCurrentCart().collect { onCart(it) }
+    }
 
-    fun observe(owner: LifecycleOwner) = viewModel.getCurrentCart().observe(owner, cartObserver)
+    private fun onCart(cart: SavedCart) {
+        currencyState.value = cart.currency
+        itemsState.value = cart.items.toImmutableList()
+        // A cart load can retire the item the keypad was bound to; drop
+        // that binding so the keypad doesn't linger over a missing row.
+        val currentIds = cart.items.mapTo(mutableSetOf()) { it.id }
+        pendingNames.retainAll(currentIds)
+        keypad.activeItemId.value?.let { if (it !in currentIds) keypad.closeKeypad() }
+    }
 
     fun dispose() {
-        viewModel.getCurrentCart().removeObserver(cartObserver)
         fileIo.unregister()
     }
 
     /** Empties the cart (re-seeded with the converter's pair); Undo restores it as it was. */
     fun clearCart() {
         flushPendingCommits()
-        val previous = viewModel.getCurrentCart().value ?: return
+        val previous = viewModel.getCurrentCart().value
         if (previous.items.isEmpty()) return
         keypad.closeKeypad()
         viewModel.clearCart(mainBase, mainDest)
@@ -141,7 +148,7 @@ class CartHost(
      */
     fun nextPrice() {
         val currentId = keypad.activeItemId.value ?: return
-        val shown = itemsLive.value.orEmpty().sortedByDescending { it.pinned }
+        val shown = itemsState.value.sortedByDescending { it.pinned }
         val next = shown.getOrNull(shown.indexOfFirst { it.id == currentId } + 1)
         if (next != null) {
             keypad.openKeypadFor(next.id, next.expression)
@@ -154,12 +161,7 @@ class CartHost(
     fun deleteItem(id: String) {
         if (keypad.activeItemId.value == id) keypad.closeKeypad()
         pendingNames.remove(id)
-        val items =
-            viewModel
-                .getCurrentCart()
-                .value
-                ?.items
-                .orEmpty()
+        val items = viewModel.getCurrentCart().value.items
         val index = items.indexOfFirst { it.id == id }
         viewModel.rows.remove(id)
         if (index < 0) return
@@ -180,12 +182,20 @@ class CartHost(
         pendingNames.drain().forEach { (id, name) -> commitName(id, name) }
     }
 
+    // The row as the view model holds it now: [itemsState] follows the cart a
+    // moment later, so a second commit in a row must not read it.
+    private fun currentRow(id: String): CartItem? =
+        viewModel
+            .getCurrentCart()
+            .value.items
+            .firstOrNull { it.id == id }
+
     fun commitName(
         id: String,
         name: String,
     ) {
         pendingNames.remove(id)
-        val current = itemsLive.value?.firstOrNull { it.id == id } ?: return
+        val current = currentRow(id) ?: return
         if (current.name == name) return
         viewModel.rows.update(id, name, current.expression)
     }
@@ -194,7 +204,7 @@ class CartHost(
         id: String,
         expression: String,
     ) {
-        val current = itemsLive.value?.firstOrNull { it.id == id } ?: return
+        val current = currentRow(id) ?: return
         val effectiveName = pendingNames[id] ?: current.name
         if (current.name == effectiveName && current.expression == expression) return
         pendingNames.remove(id)

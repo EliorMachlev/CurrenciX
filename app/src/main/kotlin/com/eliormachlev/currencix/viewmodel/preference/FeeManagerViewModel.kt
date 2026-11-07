@@ -15,11 +15,11 @@ import kotlinx.coroutines.flow.StateFlow
  * subscribe via StateFlow without wiring the DB directly and can survive
  * rotation without re-reading through the DB constructor each recomposition.
  *
- * Migrated off LiveData in #149: exposes `StateFlow<T>` fields seeded from
- * blocking snapshot reads via the shared [stateInWhileSubscribed] helper so
- * Compose can consume them with `collectAsStateWithLifecycle` and imperative
- * callers (e.g. adopting the first-created global fee as the active one) can
- * read the initial value synchronously via `.value`.
+ * Exposes `StateFlow<T>` fields seeded from blocking snapshot reads via the
+ * shared [stateInWhileSubscribed] helper so Compose can consume them with
+ * `collectAsStateWithLifecycle` and imperative callers (e.g. adopting the
+ * first-created global fee as the active one) can read the initial value
+ * synchronously via `.value`.
  */
 class FeeManagerViewModel(
     app: Application,

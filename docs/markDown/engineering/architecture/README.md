@@ -1,6 +1,6 @@
 # Architecture
 
-CurrenciX is **MVVM** with a repository layer, in Kotlin: Compose screens in one Activity, ViewModels exposing `LiveData`, and DataStore for everything stored.
+CurrenciX is **MVVM** with a repository layer, in Kotlin: Compose screens in one Activity, ViewModels exposing `StateFlow`, and DataStore for everything stored.
 
 | Topic | What's in it |
 |---|---|
@@ -16,7 +16,7 @@ CurrenciX is **MVVM** with a repository layer, in Kotlin: Compose screens in one
 ┌──────────────────────────────────────┐
 │ View: MainActivity · Compose screens │
 └──────────────┬───────────────────────┘
-               │ observes LiveData
+               │ collects StateFlow
 ┌──────────────▼───────────────────────┐
 │ ViewModel: Main · Timeline ·         │
 │ Preference · Cart                    │
@@ -63,7 +63,7 @@ app/src/main/kotlin/com/eliormachlev/currencix/
 ├── worker/                    # Background rate refresh
 ├── alert/                     # Rate alert checks and notifications
 ├── problems/                  # Crash and freeze records
-└── util/                      # HTTP client, dates, math, text, LiveData helpers
+└── util/                      # HTTP client, dates, math, text, network status
 
 helpers/   # CurrencyFetcher: generates the localized currency-name resources
 ocr-engine/         # Tesseract, the receipt reader in both flavors
@@ -72,6 +72,6 @@ ocr-engine/         # Tesseract, the receipt reader in both flavors
 ## Rules that hold everywhere
 
 - **Dispatchers in one place.** `AppDispatchers` holds IO, Default and Main. Classes the app constructs take one (default `AppDispatchers.production`) so tests can pass their own; nothing else names `Dispatchers.IO` / `Default`, which detekt's `InjectDispatcher` enforces.
-- **LiveData for the UI.** ViewModels expose `LiveData`; screens observe with `observeAsState`. Settings arrive as `Pref.liveData` / `Pref.flow`, so a write reaches every observer without a re-read. Derived streams are built once (`by lazy`), never per call, since a screen asks for them on every recomposition. Heavy readouts (the chart's statistics) run on Default, latest request wins.
+- **StateFlow for the UI.** ViewModels expose `StateFlow`; screens collect with `collectAsStateWithLifecycle`, so nothing is collected while the app is in the background. Settings arrive as `Pref.flow`, so a write reaches every collector without a re-read. A derived stream is `stateIn(viewModelScope, WhileSubscribed(5s), …)` (`stateInWhileSubscribed`), so its upstream stops shortly after the screen does; one read synchronously through `.value` (the share text, the currency picker), or one the ViewModel acts on itself, is collected for the ViewModel's life (`stateInEagerly`). Derived streams are built once (`by lazy` or a property), never per call, since a screen asks for them on every recomposition. Something to act on once, not a state (each refresh's error), is a `SharedFlow`, not a `StateFlow`, which would drop a repeat of the same value. Heavy readouts (the chart's statistics) run on Default, latest request wins (`mapLatest`).
 - **Flavors and build types never branch in `main`.** Where a variant decides whether something exists, `main` asks a same-named file in each source set for a nullable hook (`httpInspector`, `httpLogger`, `debugPreferenceRows`, `rateApp`, `releaseNotesUrl()`, `plantConsoleLogging()`). `main` never reads `FLAVOR`, and reads `BuildConfig.DEBUG` only for the debug build's red × in the top-bar mark. `fdroid` has no Play Services and is a reproducible-build target; `play` may use Play APIs (see [build.md](../build.md)).
 - **No dialogs, no toasts, no Fragments.** Every prompt is a sheet, every message the one snackbar, every screen a Compose destination (see [ui.md](ui.md)).

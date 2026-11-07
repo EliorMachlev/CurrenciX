@@ -9,7 +9,6 @@ import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.semantics.getOrNull
 import androidx.compose.ui.test.hasClickAction
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
-import androidx.lifecycle.MutableLiveData
 import com.eliormachlev.currencix.model.ApiProvider
 import com.eliormachlev.currencix.model.CartExtras
 import com.eliormachlev.currencix.model.CartItem
@@ -34,6 +33,7 @@ import com.eliormachlev.currencix.view.main.spinner.pickerActions
 import com.eliormachlev.currencix.view.preference.compose.ProviderPickerSheet
 import com.eliormachlev.currencix.viewmodel.main.KeyAvailability
 import kotlinx.collections.immutable.persistentListOf
+import kotlinx.coroutines.flow.MutableStateFlow
 import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
@@ -89,7 +89,7 @@ class ScreenReaderLabelsTest {
             CartItemsList(
                 sources =
                     cartSources(
-                        MutableLiveData(persistentListOf(CartItem("1", "Coffee", "4.50", pinned = true), CartItem("2", "", ""))),
+                        MutableStateFlow(persistentListOf(CartItem("1", "Coffee", "4.50", pinned = true), CartItem("2", "", ""))),
                     ),
                 actions = cartItemActions(),
                 reorder = NO_REORDER,

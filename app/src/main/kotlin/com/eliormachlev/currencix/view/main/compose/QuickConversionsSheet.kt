@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -125,10 +124,10 @@ private fun rememberQuickConversionsTable(
     status: ConverterStatus,
 ): QuickConversionsTable {
     val ctx = LocalContext.current
-    val from by viewModel.getBaseCurrency().observeAsState()
-    val to by viewModel.getDestinationCurrency().observeAsState()
-    val rates by viewModel.getExchangeRates().observeAsState()
-    val typed by viewModel.getCurrentBaseValueAsNumber().observeAsState()
+    val from by viewModel.getBaseCurrency().collectAsStateWithLifecycle()
+    val to by viewModel.getDestinationCurrency().collectAsStateWithLifecycle()
+    val rates by viewModel.getExchangeRates().collectAsStateWithLifecycle()
+    val typed by viewModel.getCurrentBaseValueAsNumber().collectAsStateWithLifecycle()
     // Observed for recomposition; feeStackFor() itself isn't snapshot-observed.
     val fees by viewModel.getFees().collectAsStateWithLifecycle()
     val decimalPlaces by viewModel.getDecimalPlaces().collectAsStateWithLifecycle()

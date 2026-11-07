@@ -24,7 +24,6 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -42,6 +41,7 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.util.rememberHapticOnClick
 import com.eliormachlev.currencix.view.cart.CartKeypadController
@@ -49,7 +49,6 @@ import com.eliormachlev.currencix.view.compose.UiTestTags
 import com.eliormachlev.currencix.view.compose.theme.Motion
 import com.eliormachlev.currencix.view.compose.theme.Spacing
 import com.eliormachlev.currencix.view.main.compose.MainKeypad
-import com.eliormachlev.currencix.viewmodel.main.KeyAvailability
 
 @Composable
 private fun GripStrip(modifier: Modifier = Modifier) {
@@ -98,8 +97,8 @@ fun CartKeypadOverlay(
     modifier: Modifier = Modifier,
 ) {
     val visible = keypad.keypadVisible.value
-    val isExpandedKeypad by keypad.isExpandedKeypad.observeAsState(false)
-    val keys by keypad.keypadKeys.observeAsState(KeyAvailability())
+    val isExpandedKeypad by keypad.isExpandedKeypad.collectAsStateWithLifecycle()
+    val keys by keypad.keypadKeys.collectAsStateWithLifecycle()
 
     val density = LocalDensity.current
     val thresholdPx = with(density) { DRAG_DISMISS_THRESHOLD.toPx() }

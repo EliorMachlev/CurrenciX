@@ -4,13 +4,13 @@ import android.app.Activity
 import android.content.Context
 import android.view.inputmethod.InputMethodManager
 import androidx.compose.runtime.mutableStateOf
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Observer
 import com.eliormachlev.currencix.util.CALC_TOKEN_REGEX
 import com.eliormachlev.currencix.util.OPERATOR_REGEX
 import com.eliormachlev.currencix.viewmodel.main.CalculatorInputState
 import com.eliormachlev.currencix.viewmodel.main.KeyAvailability
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 
 /**
  * State holder for the cart's floating calculator keypad. All animation,
@@ -30,32 +30,33 @@ import com.eliormachlev.currencix.viewmodel.main.KeyAvailability
  */
 class CartKeypadController(
     activity: Activity,
-    val isExpandedKeypad: LiveData<Boolean>,
+    val isExpandedKeypad: StateFlow<Boolean>,
     private val onExpressionCommit: (id: String, expression: String) -> Unit,
     /** The keypad's Next key: moves on to the next row's price. */
     val onNext: () -> Unit,
 ) {
     private val ctx: Context = activity
 
-    val activeItemId = MutableLiveData<String?>(null)
-    val liveExpression = MutableLiveData("")
+    private val activeId = MutableStateFlow<String?>(null)
+    val activeItemId: StateFlow<String?> = activeId.asStateFlow()
+
+    private val expression = MutableStateFlow("")
+    val liveExpression: StateFlow<String> = expression.asStateFlow()
 
     // Consumed by CartKeypadOverlay's AnimatedVisibility for the slide.
     val keypadVisible = mutableStateOf(false)
 
     // Piped into the MainKeypad composable: which keys would do something.
-    private val keysLive = MutableLiveData(KeyAvailability())
-    val keypadKeys: LiveData<KeyAvailability> get() = keysLive
+    private val keys = MutableStateFlow(KeyAvailability())
+    val keypadKeys: StateFlow<KeyAvailability> = keys.asStateFlow()
 
     private var activeCalculatorState: CalculatorInputState? = null
-    private var activeStateObserver: Observer<String?>? = null
-    private var activeKeysObserver: Observer<KeyAvailability>? = null
 
     /**
      * Show the keypad for the row identified by [itemId], seeding a fresh
-     * [CalculatorInputState] with [seedExpression] and mirroring every state
-     * change into [liveExpression] — the composable row observes that
-     * LiveData for its inline display.
+     * [CalculatorInputState] with [seedExpression]; every key press then
+     * shows the row's expression in [liveExpression] — the composable row
+     * observes that for its inline display.
      */
     fun openKeypadFor(
         itemId: String,
@@ -64,22 +65,15 @@ class CartKeypadController(
         hideSystemIme()
         detachActiveField()
         val state = CalculatorInputState().apply { seedExpression(seedExpression) }
-        liveExpression.value = state.toExpressionString().ifEmpty { seedExpression }
-        val observer = Observer<String?> { liveExpression.value = state.toExpressionString() }
-        state.baseValueText.observeForever(observer)
-        state.calculationValueText.observeForever(observer)
-        val keysObserver = Observer<KeyAvailability> { keys -> keysLive.value = keys }
-        state.keys.observeForever(keysObserver)
         activeCalculatorState = state
-        activeItemId.value = itemId
-        activeStateObserver = observer
-        activeKeysObserver = keysObserver
+        mirror(state)
+        activeId.value = itemId
         keypadVisible.value = true
     }
 
     /** Hide the keypad and unbind whichever row was being edited. */
     fun closeKeypad() {
-        if (activeItemId.value == null && !keypadVisible.value) return
+        if (activeId.value == null && !keypadVisible.value) return
         detachActiveField()
         keypadVisible.value = false
     }
@@ -87,7 +81,7 @@ class CartKeypadController(
     fun dismissKeyboards() {
         if (keypadVisible.value) {
             closeKeypad()
-        } else if (activeItemId.value != null) {
+        } else if (activeId.value != null) {
             detachActiveField()
         }
         hideSystemIme()
@@ -95,8 +89,8 @@ class CartKeypadController(
 
     /** Commit whichever expression is currently buffered on the active row. */
     fun flushActiveExpression() {
-        val id = activeItemId.value ?: return
-        onExpressionCommit(id, liveExpression.value.orEmpty())
+        val id = activeId.value ?: return
+        onExpressionCommit(id, expression.value)
     }
 
     /**
@@ -106,41 +100,39 @@ class CartKeypadController(
      */
     val keypadCallbacks =
         com.eliormachlev.currencix.view.main.compose.MainKeypadCallbacks(
-            onDigit = { d -> activeCalculatorState?.addNumber(d) },
-            onDecimal = { activeCalculatorState?.addDecimal() },
-            onOperator = { op -> activeCalculatorState?.addOperator(op.display) },
-            onPercent = { activeCalculatorState?.addPercent() },
-            onOpenParen = { activeCalculatorState?.addOpenParen() },
-            onCloseParen = { activeCalculatorState?.addCloseParen() },
-            onDelete = { activeCalculatorState?.delete() },
-            onClear = { activeCalculatorState?.clear() },
-            onEquals = { activeCalculatorState?.evaluate() },
+            onDigit = { d -> edit { addNumber(d) } },
+            onDecimal = { edit { addDecimal() } },
+            onOperator = { op -> edit { addOperator(op.display) } },
+            onPercent = { edit { addPercent() } },
+            onOpenParen = { edit { addOpenParen() } },
+            onCloseParen = { edit { addCloseParen() } },
+            onDelete = { edit { delete() } },
+            onClear = { edit { clear() } },
+            onEquals = { edit { evaluate() } },
         )
 
+    // Applies [change] to the row being edited, if any, and shows the result.
+    private fun edit(change: CalculatorInputState.() -> Unit) {
+        val state = activeCalculatorState ?: return
+        state.change()
+        mirror(state)
+    }
+
+    // The row's expression and the keys that would do something, as [state] now has them.
+    private fun mirror(state: CalculatorInputState) {
+        expression.value = state.toExpressionString()
+        keys.value = state.keys.value
+    }
+
     private fun detachActiveField() {
-        val state = activeCalculatorState
-        val observer = activeStateObserver
-        if (state != null && observer != null) {
-            state.baseValueText.removeObserver(observer)
-            state.calculationValueText.removeObserver(observer)
-        }
-        val keysObserver = activeKeysObserver
-        if (state != null && keysObserver != null) {
-            state.keys.removeObserver(keysObserver)
-        }
-        keysLive.value = KeyAvailability()
+        keys.value = KeyAvailability()
         // Commit the current keypad expression to the VM so the row's
         // persisted value matches what the user just typed.
-        val id = activeItemId.value
-        if (id != null) {
-            val expression = liveExpression.value.orEmpty()
-            onExpressionCommit(id, expression)
-        }
+        val id = activeId.value
+        if (id != null) onExpressionCommit(id, expression.value)
         activeCalculatorState = null
-        activeItemId.value = null
-        activeStateObserver = null
-        activeKeysObserver = null
-        liveExpression.value = ""
+        activeId.value = null
+        expression.value = ""
     }
 
     private fun hideSystemIme() {

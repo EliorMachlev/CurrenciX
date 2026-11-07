@@ -12,7 +12,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -33,10 +32,12 @@ import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.LiveData
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.eliormachlev.currencix.R
+import com.eliormachlev.currencix.repository.persistence.Pref
 import com.eliormachlev.currencix.util.stripTimePattern
 import com.eliormachlev.currencix.view.compose.Ltr
+import com.eliormachlev.currencix.view.compose.collectAsStateWithLifecycle
 import com.eliormachlev.currencix.view.compose.theme.Motion
 import com.eliormachlev.currencix.view.compose.theme.Spacing
 import com.patrykandpatrick.vico.compose.cartesian.CartesianChartHost
@@ -67,6 +68,8 @@ import com.patrykandpatrick.vico.compose.common.component.ShapeComponent
 import com.patrykandpatrick.vico.compose.common.component.rememberShapeComponent
 import com.patrykandpatrick.vico.compose.common.component.rememberTextComponent
 import kotlinx.collections.immutable.ImmutableList
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.StateFlow
 import java.text.NumberFormat
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -75,28 +78,28 @@ import kotlin.math.abs
 private typealias ChartPoints = List<Pair<LocalDate, Float>>
 
 /**
- * The series to draw and the reference values drawn over it, observed.
+ * The series to draw and the reference values drawn over it, collected.
  * Stable: its fields never change, and the values inside them reach the
- * chart by being observed.
+ * chart by being collected.
  */
 @Stable
 class ChartSeries(
-    val entries: LiveData<ImmutableList<Pair<LocalDate, Float>>?>,
+    val entries: Flow<ImmutableList<Pair<LocalDate, Float>>?>,
     // The range's extremes, independent of the scrub position, so the min /
     // max lines stay pinned to the period's low and high while a finger drags.
-    val highlightMin: LiveData<Double?>,
-    val highlightMax: LiveData<Double?>,
+    val highlightMin: StateFlow<Double?>,
+    val highlightMax: StateFlow<Double?>,
 )
 
-/** The chart's display preferences (Settings → Graph options), observed. Stable, like [ChartSeries]. */
+/** The chart's display preferences (Settings → Graph options), collected. Stable, like [ChartSeries]. */
 @Stable
 class ChartPrefs(
-    val showGrid: LiveData<Boolean>,
-    val showXAxis: LiveData<Boolean>,
-    val showYAxis: LiveData<Boolean>,
-    val highlightExtremes: LiveData<Boolean>,
-    val highlightPeriodChange: LiveData<Boolean>,
-    val dateFormat: LiveData<String>,
+    val showGrid: Pref<Boolean>,
+    val showXAxis: Pref<Boolean>,
+    val showYAxis: Pref<Boolean>,
+    val highlightExtremes: Pref<Boolean>,
+    val highlightPeriodChange: Pref<Boolean>,
+    val dateFormat: Pref<String>,
 )
 
 @Immutable
@@ -114,12 +117,12 @@ fun TimelineChart(
     colors: ChartColors,
     onScrub: (LocalDate?) -> Unit,
 ) {
-    val entries by series.entries.observeAsState()
-    val highlightMin by series.highlightMin.observeAsState()
-    val highlightMax by series.highlightMax.observeAsState()
-    val highlightExtremes by prefs.highlightExtremes.observeAsState(initial = true)
-    val highlightPeriodChange by prefs.highlightPeriodChange.observeAsState(initial = true)
-    val dateFormat by prefs.dateFormat.observeAsState(initial = DEFAULT_DATE_FORMAT)
+    val entries by series.entries.collectAsStateWithLifecycle(initialValue = null)
+    val highlightMin by series.highlightMin.collectAsStateWithLifecycle()
+    val highlightMax by series.highlightMax.collectAsStateWithLifecycle()
+    val highlightExtremes by prefs.highlightExtremes.collectAsStateWithLifecycle()
+    val highlightPeriodChange by prefs.highlightPeriodChange.collectAsStateWithLifecycle()
+    val dateFormat by prefs.dateFormat.collectAsStateWithLifecycle()
 
     // At most two points a pair of pixels (thinForWidth): five years' days
     // drawn and scrubbed as a few hundred, every peak and trough kept.
@@ -422,9 +425,9 @@ private fun rememberAxes(
     dateFormat: String,
     periodChanges: PeriodChanges,
 ): ChartAxes {
-    val showGrid by prefs.showGrid.observeAsState(initial = true)
-    val showXAxis by prefs.showXAxis.observeAsState(initial = true)
-    val showYAxis by prefs.showYAxis.observeAsState(initial = true)
+    val showGrid by prefs.showGrid.collectAsStateWithLifecycle()
+    val showXAxis by prefs.showXAxis.collectAsStateWithLifecycle()
+    val showYAxis by prefs.showYAxis.collectAsStateWithLifecycle()
     val labelStyle = TextStyle(color = axisColor, fontSize = AXIS_LABEL_FONT_SIZE_SP.sp)
     val yAxisItemPlacer = remember { VerticalAxis.ItemPlacer.count(count = { Y_AXIS_TARGET_LABEL_COUNT }) }
     val start =
@@ -477,8 +480,6 @@ private fun dateAxisItemPlacer(
     val aligned = HorizontalAxis.ItemPlacer.aligned(spacing = { spacing })
     return if (skipX.isEmpty()) aligned else SuppressGuidelineItemPlacer(aligned, skipX)
 }
-
-internal const val DEFAULT_DATE_FORMAT = "dd/MM/yy"
 
 private fun stripYear(pattern: String): String = pattern.replace("/yy", "").replace("yy/", "")
 

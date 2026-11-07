@@ -13,6 +13,8 @@ internal const val TRIP_KEY_BUDGET = "budget"
 internal const val TRIP_KEY_DESTINATION = "destination"
 internal const val TRIP_KEY_START = "start"
 internal const val TRIP_KEY_END = "end"
+internal const val TRIP_KEY_PINNED_SPENT = "pinnedSpent"
+internal const val TRIP_KEY_PINNED_BASIS = "pinnedBasis"
 
 internal fun serializeTrip(trip: Trip): Map<String, Any> =
     buildJsonObject {
@@ -25,6 +27,10 @@ internal fun serializeTrip(trip: Trip): Map<String, Any> =
         // ISO dates ("2026-11-14").
         trip.start?.let { put(TRIP_KEY_START, it.toString()) }
         trip.end?.let { put(TRIP_KEY_END, it.toString()) }
+        trip.spentPin?.let {
+            put(TRIP_KEY_PINNED_SPENT, it.amount.toPlainString())
+            put(TRIP_KEY_PINNED_BASIS, it.basis)
+        }
     }
 
 // A trip in a currency the app doesn't know is skipped; a bad budget reads as none.
@@ -38,4 +44,7 @@ internal fun parseTrip(obj: JsonObject): Trip? =
         destinationCode = obj.optStringOrNull(TRIP_KEY_DESTINATION),
         start = obj.optStringOrNull(TRIP_KEY_START)?.toLocalDateOrNull(),
         end = obj.optStringOrNull(TRIP_KEY_END)?.toLocalDateOrNull(),
+    )?.withPin(
+        amount = obj.optStringOrNull(TRIP_KEY_PINNED_SPENT),
+        basis = if (obj.has(TRIP_KEY_PINNED_BASIS)) obj.optInt(TRIP_KEY_PINNED_BASIS) else null,
     )

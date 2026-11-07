@@ -9,18 +9,21 @@ import com.eliormachlev.currencix.model.ExchangeRates
 import com.eliormachlev.currencix.model.Person
 import com.eliormachlev.currencix.model.Rate
 import com.eliormachlev.currencix.model.SavedCart
+import com.eliormachlev.currencix.model.SpentPin
 import com.eliormachlev.currencix.model.Trip
 import com.eliormachlev.currencix.repository.Database
 import com.eliormachlev.currencix.repository.throughJson
 import com.eliormachlev.currencix.repository.throughProto
 import org.junit.After
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 import java.math.BigDecimal
+import java.time.LocalDate
 
 // Split by person and trips. Robolectric for the stores.
 @RunWith(RobolectricTestRunner::class)
@@ -126,5 +129,64 @@ class CartSplitTripTest {
                 .tripId,
         )
         assertEquals(emptyList<Trip>(), db.carts.trips.get())
+    }
+
+    @Test
+    fun `pinning a trip's spending skips a trip edited or deleted since it was read`() {
+        val read = Trip("t1", "Japan", Currency.ILS, end = LocalDate.of(2026, 11, 1))
+        val pin = SpentPin(BigDecimal("36.72"), 7)
+
+        fun storedPin() =
+            db.carts.trips
+                .get()
+                .single()
+                .spentPin
+
+        db.carts.saveTrip(read.copy(name = "Japan 2"))
+        db.carts.pinTripSpent(read, pin)
+        assertNull(storedPin())
+
+        db.carts.saveTrip(read)
+        db.carts.pinTripSpent(read, pin)
+        assertEquals(pin, storedPin())
+
+        db.carts.deleteTrip("t1")
+        db.carts.pinTripSpent(read, pin)
+        assertEquals(emptyList<Trip>(), db.carts.trips.get())
+    }
+
+    @Test
+    fun `the background refresh pins an ended trip from the saved rates`() {
+        val today = LocalDate.of(2026, 11, 8)
+        val ils = listOf("3.96", "4.40")
+        val rates =
+            ils.map { value ->
+                ExchangeRates(
+                    true,
+                    null,
+                    Currency.EUR,
+                    today,
+                    listOf(Rate(Currency.USD, BigDecimal("1.1")), Rate(Currency.ILS, BigDecimal(value))),
+                )
+            }
+        db.carts.saveTrip(Trip("t1", "Japan", Currency.ILS, end = today.minusDays(1)))
+        db.carts.saveTrip(Trip("t2", "Rome", Currency.ILS, end = today.plusDays(2)))
+        db.carts.saveCart(cart(CartItem("1", "", "10"), people = emptyList(), id = "c1", tripId = "t1"))
+        db.carts.saveCart(cart(CartItem("2", "", "10"), people = emptyList(), id = "c2", tripId = "t2"))
+
+        db.rates.insertExchangeRates(rates[0])
+        db.pinEndedTrips(today)
+        val pinned = pinOf("t1")
+        assertNotNull(pinned)
+        assertNull("a trip still on is not pinned", pinOf("t2"))
+
+        db.rates.insertExchangeRates(rates[1])
+        db.pinEndedTrips(today)
+        assertEquals(pinned, pinOf("t1"))
+    }
+
+    private fun pinOf(tripId: String): SpentPin? {
+        val trips = db.carts.trips.get()
+        return trips.first { it.id == tripId }.spentPin
     }
 }

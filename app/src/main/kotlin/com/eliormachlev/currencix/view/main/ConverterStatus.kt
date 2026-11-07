@@ -3,18 +3,24 @@ package com.eliormachlev.currencix.view.main
 import android.content.Context
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.model.ApiProvider
 import com.eliormachlev.currencix.repository.Database
-import com.eliormachlev.currencix.util.NetworkStatusLiveData
 import com.eliormachlev.currencix.util.fromHtmlLegacy
+import com.eliormachlev.currencix.util.networkStatus
 import com.eliormachlev.currencix.util.stripRtlMark
 import com.eliormachlev.currencix.util.stripTimePattern
 import com.eliormachlev.currencix.view.compose.AppSnackbar
 import com.eliormachlev.currencix.view.main.compose.BannerContent
 import com.eliormachlev.currencix.view.main.compose.BannerKind
 import com.eliormachlev.currencix.viewmodel.main.MainViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
@@ -45,10 +51,12 @@ internal fun formatRatesTimestamp(
  * them into the one [banner] the hero card's rate footer shows.
  *
  * Observes for the Activity's whole lifetime, but only reports errors while
- * the converter is on screen ([setConverterVisible]): an error that arrives
- * while another screen covers it is held and shown on return — the same
+ * the converter is on screen ([setConverterVisible]) and the Activity is
+ * started: an error that arrives while another screen covers it, or while
+ * the app is in the background, is held and shown on return — the same
  * thing the converter's Activity saw back when every screen was its own
- * Activity and LiveData paused it in the background.
+ * Activity, paused in the background. Connectivity is only watched while the
+ * Activity is started.
  */
 class ConverterStatus(
     private val context: Context,
@@ -85,44 +93,63 @@ class ConverterStatus(
     private var pendingError: String? = null
 
     fun observe(owner: LifecycleOwner) {
-        Database(context).display.dateFormat.liveData.observe(owner) { pattern ->
+        val scope = owner.lifecycleScope
+        scope.follow(Database(context).display.dateFormat.flow) { pattern ->
             dateFormatPattern = pattern
             recompute()
         }
-        viewModel.getExchangeRates().observe(owner) { rates ->
+        // Each new set once: the ViewModel holds the latest for its whole
+        // life, so this collection never sees one twice.
+        scope.follow(viewModel.getExchangeRates()) { rates ->
             latestRatesDate = rates?.date
             latestRatesTime = rates?.time
             fallback = rates?.fallbackFrom?.let { main -> rates.provider?.let { main to it } }
             if (rates != null) lastRefreshFailed = false
             recompute()
         }
-        viewModel.getHistoricalLiveDate().observe(owner) { date ->
+        scope.follow(viewModel.getHistoricalLiveDate()) { date ->
             historicalDate = date
             recompute()
         }
-        viewModel.getError().observe(owner) { message ->
+        scope.follow(viewModel.getError()) { message ->
             if (message == null) {
                 // A refresh succeeded: the provider is reachable again.
                 onRefreshSucceeded()
-            } else if (converterVisible) {
+            } else if (converterVisible && owner.lifecycle.currentState.isAtLeast(Lifecycle.State.STARTED)) {
                 onError(message)
             } else {
                 pendingError = message
             }
         }
-        NetworkStatusLiveData(context).observe(owner) { online ->
-            val reconnected = online && !isOnline
-            isOnline = online
-            if (reconnected) onReconnected() else recompute()
+        scope.launch {
+            owner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                // Back from the background: the error held meanwhile.
+                if (converterVisible) showPendingError()
+                networkStatus(context).collect { online ->
+                    val reconnected = online && !isOnline
+                    isOnline = online
+                    if (reconnected) onReconnected() else recompute()
+                }
+            }
         }
     }
 
     fun setConverterVisible(visible: Boolean) {
         visibleConverters = (visibleConverters + if (visible) 1 else -1).coerceAtLeast(0)
-        if (visible) {
-            pendingError?.let(::onError)
-            pendingError = null
-        }
+        if (visible) showPendingError()
+    }
+
+    private fun showPendingError() {
+        pendingError?.let(::onError)
+        pendingError = null
+    }
+
+    // Runs [onEach] for every value of [source] until the scope ends.
+    private fun <T> CoroutineScope.follow(
+        source: Flow<T>,
+        onEach: (T) -> Unit,
+    ) {
+        launch { source.collect { onEach(it) } }
     }
 
     fun formatTimestamp(

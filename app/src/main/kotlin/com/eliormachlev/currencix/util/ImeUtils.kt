@@ -16,7 +16,7 @@ fun Activity.hideSoftInputFrom(view: View) {
 }
 
 // Replace the field contents and drop the caret at the end — with a no-op
-// short-circuit when the text is unchanged so re-emitted LiveData values
+// short-circuit when the text is unchanged so re-emitted observed values
 // don't trigger a pointless setText (which on some Android versions still
 // fires TextWatchers and always kicks a measure/layout pass).
 fun EditText.setTextAndCursorToEnd(text: CharSequence) {

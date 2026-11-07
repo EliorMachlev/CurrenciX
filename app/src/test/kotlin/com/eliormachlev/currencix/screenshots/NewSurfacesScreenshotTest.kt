@@ -4,7 +4,6 @@ import android.app.Application
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.MutableLiveData
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.model.AbroadOffer
 import com.eliormachlev.currencix.model.CartExtras
@@ -52,6 +51,7 @@ import com.eliormachlev.currencix.viewmodel.cart.TripSummary
 import com.eliormachlev.currencix.viewmodel.preference.ReceiptLanguageRow
 import com.eliormachlev.currencix.viewmodel.preference.ReceiptLanguagesState
 import kotlinx.collections.immutable.persistentListOf
+import kotlinx.coroutines.flow.MutableStateFlow
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -133,7 +133,7 @@ class NewSurfacesScreenshotTest {
             // Laid out the way the language reads, as CartScreen does.
             ReadingDirection {
                 CartItemsList(
-                    sources = cartSources(MutableLiveData(CART_ITEMS)),
+                    sources = cartSources(MutableStateFlow(CART_ITEMS)),
                     actions = cartItemActions(),
                     reorder = NO_REORDER,
                     onAddItem = {},

@@ -3,8 +3,10 @@ package com.eliormachlev.currencix.worker
 import android.content.Context
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
+import com.eliormachlev.currencix.repository.Database
 import com.eliormachlev.currencix.repository.ExchangeRatesRepository
 import com.eliormachlev.currencix.view.tile.RateTileService
+import com.eliormachlev.currencix.viewmodel.cart.pinEndedTrips
 import timber.log.Timber
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
@@ -43,6 +45,7 @@ internal class RateRefreshWorker(
                 Timber.tag(TAG).d("Auto-refresh success")
                 // The tile shows the new rate if it's in Quick Settings.
                 RateTileService.requestRedraw(applicationContext)
+                pinTripsAfterRefresh()
                 if (TAG_PUBLISHED_REFRESH in tags) RateRefreshScheduler.scheduleNextPublication(applicationContext)
                 Result.success()
             },
@@ -55,6 +58,14 @@ internal class RateRefreshWorker(
                 Result.retry()
             },
         )
+    }
+
+    // Trips that have ended get their spending pinned at the new rates, even if
+    // the trips list is never opened. A failure here must not turn a good
+    // refresh into a retry.
+    private fun pinTripsAfterRefresh() {
+        runCatching { Database(applicationContext).pinEndedTrips() }
+            .onFailure { Timber.tag(TAG).w(it, "Pinning ended trips failed") }
     }
 
     // Broken out so both the "transient" log-line and any future decision to

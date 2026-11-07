@@ -284,7 +284,7 @@ class BackupManager(
             else -> {
                 restoreNamespaces(namespaces)
                 // Restore replaced every backed-up namespace on disk; long-lived
-                // in-memory PrefStore caches (and every LiveData built on them)
+                // in-memory PrefStore caches (and every flow built on them)
                 // now hold stale values. A full process restart is the simplest,
                 // safest way to hydrate the app from the restored state without
                 // reasoning about which observer resubscribes first.

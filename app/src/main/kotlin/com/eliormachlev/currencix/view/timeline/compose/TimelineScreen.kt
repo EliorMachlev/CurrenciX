@@ -9,11 +9,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.window.layout.FoldingFeature
 import com.eliormachlev.currencix.view.compose.AppTheme
 import com.eliormachlev.currencix.view.compose.LayerCapture
@@ -40,20 +40,20 @@ internal fun TimelineScreen(
             modifier = modifier.fillMaxSize(),
             color = Color.Transparent,
         ) {
-            val isRefreshing by model.isRefreshing().observeAsState(initial = false)
-            val error by model.getError().observeAsState()
-            val rangeEmpty by model.isRangeEmpty().observeAsState(initial = false)
-            val provider by model.getProvider().observeAsState()
-            val ratePast by model.getRatePast().observeAsState()
-            val rateCurrent by model.getRateCurrent().observeAsState()
-            val diffPercent by model.getRatesDifferencePercent().observeAsState()
-            val ratesMax by model.getRatesMax().observeAsState()
-            val ratesAvg by model.getRatesAverage().observeAsState()
-            val ratesMed by model.getRatesMedian().observeAsState()
-            val ratesMin by model.getRatesMin().observeAsState()
+            val isRefreshing by model.isRefreshing().collectAsStateWithLifecycle()
+            val error by model.getError().collectAsStateWithLifecycle(initialValue = null)
+            val rangeEmpty by model.isRangeEmpty().collectAsStateWithLifecycle()
+            val provider by model.getProvider().collectAsStateWithLifecycle()
+            val ratePast by model.getRatePast().collectAsStateWithLifecycle()
+            val rateCurrent by model.getRateCurrent().collectAsStateWithLifecycle()
+            val diffPercent by model.getRatesDifferencePercent().collectAsStateWithLifecycle()
+            val ratesMax by model.getRatesMax().collectAsStateWithLifecycle()
+            val ratesAvg by model.getRatesAverage().collectAsStateWithLifecycle()
+            val ratesMed by model.getRatesMedian().collectAsStateWithLifecycle()
+            val ratesMin by model.getRatesMin().collectAsStateWithLifecycle()
 
-            val selectedPeriod by model.getPeriod().observeAsState(TimelineViewModel.Period.YEAR)
-            val customRange by model.getCustomRange().observeAsState()
+            val selectedPeriod by model.getPeriod().collectAsStateWithLifecycle()
+            val customRange by model.getCustomRange().collectAsStateWithLifecycle()
             val period =
                 PeriodControl(
                     selected = selectedPeriod,

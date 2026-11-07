@@ -71,5 +71,5 @@
 # exceptions.md #12: Kotlin's == on two Doubles smart-cast from Double?, a comparison of values.
 - excluded-rule: java/reference-equality-of-boxed-types
   file: app/src/main/kotlin/com/eliormachlev/currencix/view/timeline/TimelineChart.kt
-  line: 522
+  line: 523
   message-contains: reference comparison of boxed numerical values

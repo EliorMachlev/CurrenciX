@@ -12,7 +12,6 @@ import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -21,7 +20,7 @@ import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
-import androidx.lifecycle.LiveData
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.model.CartItem
 import com.eliormachlev.currencix.model.Person
@@ -32,7 +31,7 @@ import com.eliormachlev.currencix.view.compose.onBackgroundTap
 import com.eliormachlev.currencix.view.compose.theme.Spacing
 import com.eliormachlev.currencix.viewmodel.cart.RowConversion
 import kotlinx.collections.immutable.ImmutableList
-import kotlinx.collections.immutable.persistentListOf
+import kotlinx.coroutines.flow.StateFlow
 import sh.calvin.reorderable.ReorderableItem
 import sh.calvin.reorderable.rememberReorderableLazyListState
 
@@ -41,16 +40,16 @@ typealias CartDragCommit = (displayOrder: List<String>, movedId: String) -> Unit
 
 /**
  * The live values the list renders. Stable: its fields never change, and
- * the values inside them reach the list by being observed.
+ * the values inside them reach the list by being collected.
  */
 @Stable
 class CartListSources(
-    val items: LiveData<ImmutableList<CartItem>>,
-    val currency: LiveData<String>,
-    val activeItemId: LiveData<String?>,
-    val activeExpression: LiveData<String>,
+    val items: StateFlow<ImmutableList<CartItem>>,
+    val currency: StateFlow<String>,
+    val activeItemId: StateFlow<String?>,
+    val activeExpression: StateFlow<String>,
     // Each row's price in the destination currency.
-    val conversion: LiveData<RowConversion?>,
+    val conversion: StateFlow<RowConversion?>,
     val mode: CartListMode,
 )
 
@@ -58,9 +57,9 @@ class CartListSources(
 @Stable
 class CartListMode(
     // Shopping-list mode: each row has a tick for "in the basket".
-    val shoppingMode: LiveData<Boolean>,
+    val shoppingMode: StateFlow<Boolean>,
     // The cart's people, when it splits by person; empty otherwise.
-    val people: LiveData<List<Person>>,
+    val people: StateFlow<List<Person>>,
 )
 
 /** What a row's menu can ask for: pin, duplicate, move to top, delete, who it's for. */
@@ -119,13 +118,13 @@ fun CartItemsList(
     onBackgroundTap: () -> Unit,
 ) {
     AppTheme {
-        val items by sources.items.observeAsState(initial = persistentListOf())
-        val currency by sources.currency.observeAsState(initial = "")
-        val activeId by sources.activeItemId.observeAsState()
-        val liveExpression by sources.activeExpression.observeAsState(initial = "")
-        val conversion by sources.conversion.observeAsState()
-        val shoppingMode by sources.mode.shoppingMode.observeAsState(initial = false)
-        val people by sources.mode.people.observeAsState(initial = emptyList())
+        val items by sources.items.collectAsStateWithLifecycle()
+        val currency by sources.currency.collectAsStateWithLifecycle()
+        val activeId by sources.activeItemId.collectAsStateWithLifecycle()
+        val liveExpression by sources.activeExpression.collectAsStateWithLifecycle()
+        val conversion by sources.conversion.collectAsStateWithLifecycle()
+        val shoppingMode by sources.mode.shoppingMode.collectAsStateWithLifecycle()
+        val people by sources.mode.people.collectAsStateWithLifecycle()
 
         // Local mirror the drag gesture mutates in-flight; ReorderableLazyList
         // needs a stable, mutable data source so the visual swap can settle

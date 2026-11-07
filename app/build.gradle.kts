@@ -383,7 +383,6 @@ dependencies {
     // dropped to the BOM default so upgrades are explicit.
     implementation("androidx.core:core-splashscreen:1.2.0")
     val livecycleVersion = "2.11.0"
-    implementation("androidx.lifecycle:lifecycle-livedata:$livecycleVersion")
     implementation("androidx.lifecycle:lifecycle-runtime:$livecycleVersion")
     // The app lock: when the app as a whole leaves and comes back (view/lock/AppLock).
     implementation("androidx.lifecycle:lifecycle-process:$livecycleVersion")
@@ -424,13 +423,12 @@ dependencies {
     implementation("androidx.compose.foundation:foundation")
     implementation("androidx.compose.material3:material3")
     implementation("androidx.compose.runtime:runtime")
-    implementation("androidx.compose.runtime:runtime-livedata")
     implementation("androidx.activity:activity-compose:1.13.0")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:$livecycleVersion")
     // Bridges StateFlow → Compose (`collectAsStateWithLifecycle`), which is
     // lifecycle-aware in a way `collectAsState` isn't: it pauses collection
-    // when the host goes to STOPPED and resumes on STARTED. Used by the
-    // StateFlow-based ViewModels (see #149 pilot in PreferenceViewModel).
+    // when the host goes to STOPPED and resumes on STARTED. Every screen
+    // collects its ViewModel's StateFlows through it.
     implementation("androidx.lifecycle:lifecycle-runtime-compose:$livecycleVersion")
     // Navigation 3: the whole app is one Activity; screens are NavDisplay
     // entries over a Compose-owned back stack (view/navigation). The ViewModel
@@ -487,9 +485,6 @@ dependencies {
     // test
     testImplementation("junit:junit:4.13.2")
     testImplementation("org.mockito:mockito-core:5.24.0")
-    // core-testing provides InstantTaskExecutorRule so LiveData setValue can
-    // run on the JVM test thread without hitting the main-thread assertion.
-    testImplementation("androidx.arch.core:core-testing:2.2.0")
     // A synchronous WorkManager for tests of what schedules background work (receipt languages).
     testImplementation("androidx.work:work-testing:$workVersion")
     // fuzzing

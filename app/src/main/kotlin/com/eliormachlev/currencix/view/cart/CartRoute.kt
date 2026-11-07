@@ -11,7 +11,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -19,9 +18,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.repeatOnLifecycle
 import com.eliormachlev.currencix.R
-import com.eliormachlev.currencix.model.CartExtras
 import com.eliormachlev.currencix.view.cart.compose.CartChoiceSheet
 import com.eliormachlev.currencix.view.cart.compose.CartExtrasSheet
 import com.eliormachlev.currencix.view.cart.compose.CartItemActions
@@ -71,13 +72,15 @@ fun CartRoute(
     val lifecycleOwner = LocalLifecycleOwner.current
     DisposableEffect(host, lifecycleOwner) {
         viewModel.seedFromMain(screen.mainBase, screen.mainDest)
-        host.observe(lifecycleOwner)
         onDispose {
             host.flushPendingCommits()
             host.dispose()
         }
     }
-    val cart by viewModel.getCurrentCart().observeAsState()
+    LaunchedEffect(host, lifecycleOwner) {
+        lifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) { host.followCart() }
+    }
+    val cart by viewModel.getCurrentCart().collectAsStateWithLifecycle()
     val scan = rememberReceiptScan(cart)
     val needsClosePrompt = remember(cart) { host.saveLoad.needsClosePrompt() }
     BackHandler(enabled = needsClosePrompt, onBack = host.saveLoad::attemptClose)
@@ -113,7 +116,7 @@ private fun ReceiptOverlays(
 ) {
     val snackbar = LocalAppSnackbar.current
     val resources = LocalResources.current
-    val currency by host.viewModel.getBaseCurrency().observeAsState()
+    val currency by host.viewModel.getBaseCurrency().collectAsStateWithLifecycle()
     val lines = scan.lines
     val setup = scan.setup
     if (scan.setupFailed) {
@@ -176,8 +179,8 @@ internal fun CartBarActions(
 
 private fun CartHost.listSources() =
     CartListSources(
-        items = itemsLive,
-        currency = currencyLive,
+        items = items,
+        currency = currency,
         activeItemId = keypad.activeItemId,
         activeExpression = keypad.liveExpression,
         conversion = viewModel.getRowConversion(),
@@ -224,7 +227,7 @@ private fun cartMenu(
     val import = stringResource(R.string.cart_menu_import)
     val clear = stringResource(R.string.cart_menu_clear)
     val extras = stringResource(R.string.cart_menu_extras)
-    val shoppingMode by host.viewModel.isShoppingMode().observeAsState(initial = false)
+    val shoppingMode by host.viewModel.isShoppingMode().collectAsStateWithLifecycle()
     val shoppingList = stringResource(if (shoppingMode) R.string.cart_menu_shopping_list_off else R.string.cart_menu_shopping_list)
     return remember(host, scan, scanLabel, share, extras, shoppingList, shoppingMode, saveAs, load, export, import, clear) {
         listOf(
@@ -257,10 +260,10 @@ private fun CartOverlays(
         )
     }
     if (state.extrasVisible) {
-        val extras by host.viewModel.getExtras().observeAsState()
-        val destination by host.viewModel.getDestinationCurrency().observeAsState()
+        val extras by host.viewModel.getExtras().collectAsStateWithLifecycle()
+        val destination by host.viewModel.getDestinationCurrency().collectAsStateWithLifecycle()
         CartExtrasSheet(
-            initial = extras ?: CartExtras(),
+            initial = extras,
             destination = destination,
             onDone = { edited ->
                 host.viewModel.setExtras(edited)

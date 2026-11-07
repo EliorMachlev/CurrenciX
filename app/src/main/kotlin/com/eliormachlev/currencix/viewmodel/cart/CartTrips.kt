@@ -1,15 +1,21 @@
 package com.eliormachlev.currencix.viewmodel.cart
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MediatorLiveData
 import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.model.ExchangeRates
 import com.eliormachlev.currencix.model.SavedCart
+import com.eliormachlev.currencix.model.SpentPin
 import com.eliormachlev.currencix.model.Trip
 import com.eliormachlev.currencix.model.convert
 import com.eliormachlev.currencix.repository.Database
 import com.eliormachlev.currencix.repository.withPlan
 import com.eliormachlev.currencix.util.newId
+import com.eliormachlev.currencix.util.todayEachDay
+import com.eliormachlev.currencix.viewmodel.util.stateInWhileSubscribed
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.onEach
 import java.math.BigDecimal
 import java.math.MathContext
 import java.time.LocalDate
@@ -28,8 +34,11 @@ data class TripDraft(
 data class TripSummary(
     val trip: Trip,
     // In the trip's currency, fees included; null when no cart could be converted.
+    // An ended trip shows its pinned amount, not today's rates.
     val spent: BigDecimal?,
     val cartCount: Int,
+    // For an ended trip not pinned yet (or whose carts changed since): the pin to save.
+    val toPin: SpentPin? = null,
 )
 
 /**
@@ -48,18 +57,64 @@ internal fun cartCostIn(
     return converted.multiply(feeStack(base, home), MathContext.DECIMAL128)
 }
 
-/** Each of [trips] with its [carts] added up in its own currency. */
+/**
+ * A fingerprint of what [carts] come to in their own currencies: when a cart
+ * is added, removed or edited, it changes, and a pin made before no longer holds.
+ */
+internal fun spendBasis(carts: List<SavedCart>): Int =
+    carts
+        .sortedBy { it.id }
+        .map { listOf(it.id, it.currency, (subtotalOf(it) + tipOf(it)).stripTrailingZeros().toPlainString()) }
+        .hashCode()
+
+/**
+ * Each of [trips] with its [carts] added up in its own currency. A trip still
+ * on (or with no end) follows the current [rates] and fees; one that ended
+ * before [today] keeps its pinned amount, as long as its carts are the ones
+ * it was pinned for, and otherwise offers a new pin ([TripSummary.toPin]).
+ */
 internal fun summarizeTrips(
     trips: List<Trip>,
     carts: List<SavedCart>,
     rates: ExchangeRates?,
+    today: LocalDate = LocalDate.now(),
     feeStack: (Currency, Currency) -> BigDecimal,
 ): List<TripSummary> =
     trips.map { trip ->
         val own = carts.filter { it.tripId == trip.id }
+        val basis = spendBasis(own)
+        val pinned = trip.spentPin?.takeIf { it.basis == basis }
+        if (trip.hasEnded(today) && pinned != null) return@map TripSummary(trip, pinned.amount, own.size)
         val costs = own.mapNotNull { cartCostIn(it, trip.currency, rates, feeStack) }
-        TripSummary(trip, costs.takeIf { it.isNotEmpty() }?.reduce(BigDecimal::add), own.size)
+        val spent = costs.takeIf { it.isNotEmpty() }?.reduce(BigDecimal::add)
+        // Only a total with every cart in it is pinned: a cart missing its rate would stay out for good.
+        val toPin = if (trip.hasEnded(today) && spent != null && costs.size == own.size) SpentPin(spent, basis) else null
+        TripSummary(trip, spent, own.size, toPin)
     }
+
+/** Saves the amount of each of [summaries] that has one to pin (see [TripSummary.toPin]). */
+internal fun Database.pinSummaries(summaries: List<TripSummary>) {
+    summaries.forEach { summary -> summary.toPin?.let { carts.pinTripSpent(summary.trip, it) } }
+}
+
+/**
+ * Pins the trips that have ended by [today] from what is saved now, with no
+ * screen involved: the background rate refresh calls it right after new
+ * rates arrive, so a trip is pinned at the first refresh after its end even
+ * if the trips list isn't opened.
+ */
+internal fun Database.pinEndedTrips(today: LocalDate = LocalDate.now()) {
+    val snapshot =
+        CartRatesSnapshot(
+            fees = fees.fees.get(),
+            rates = rates.getExchangeRatesBlocking(),
+            activeExchangeId = fees.activeExchangeId.get(),
+            activeBankId = fees.activeBankId.get(),
+        )
+    pinSummaries(
+        summarizeTrips(carts.trips.get(), carts.savedCarts.get(), snapshot.rates, today, snapshot::feeStackFor),
+    )
+}
 
 /**
  * The trips saved carts are grouped into ([CartViewModel.trips]): each with
@@ -68,27 +123,27 @@ internal fun summarizeTrips(
 class CartTrips internal constructor(
     private val db: Database,
     private val ratesCache: CartRatesCache,
+    private val scope: CoroutineScope,
 ) {
-    private val summariesLive: LiveData<List<TripSummary>> by lazy {
-        MediatorLiveData<List<TripSummary>>().apply {
-            val recompute = {
-                value =
-                    summarizeTrips(
-                        trips = db.carts.trips.get(),
-                        carts = db.carts.savedCarts.get(),
-                        rates = ratesCache.lastRates,
-                        feeStack = ratesCache::feeStackFor,
-                    )
-            }
-            addSource(db.carts.trips.liveData) { recompute() }
-            addSource(db.carts.savedCarts.liveData) { recompute() }
-            addSource(ratesCache.rates) { recompute() }
-            addSource(ratesCache.fees) { recompute() }
-        }
+    // The rates, once the fees and the chosen exchange and card are in step
+    // with them: the fee stack reads all of those.
+    private val feeAwareRates: Flow<ExchangeRates?> by lazy {
+        combine(ratesCache.rates, ratesCache.fees, ratesCache.activeExchangeId, ratesCache.activeBankId) { rates, _, _, _ -> rates }
+    }
+
+    // Redone when the trips, the saved carts, the rates, the fees or the day
+    // change. A trip that has just ended is pinned as it goes by; the trips
+    // list then changes and the summaries are worked out again, now from the
+    // pin. Empty until first observed.
+    private val summariesState: StateFlow<List<TripSummary>> by lazy {
+        combine(db.carts.trips.flow, db.carts.savedCarts.flow, feeAwareRates, todayEachDay()) { trips, carts, rates, today ->
+            summarizeTrips(trips = trips, carts = carts, rates = rates, feeStack = ratesCache::feeStackFor, today = today)
+        }.onEach(db::pinSummaries)
+            .stateInWhileSubscribed(scope, emptyList())
     }
 
     /** The trips with their spending, in the order made. */
-    fun getSummaries(): LiveData<List<TripSummary>> = summariesLive
+    fun getSummaries(): StateFlow<List<TripSummary>> = summariesState
 
     /** Saves a new trip or the edits to one; returns its id. */
     fun save(

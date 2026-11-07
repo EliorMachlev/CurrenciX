@@ -1,8 +1,6 @@
 package com.eliormachlev.currencix.repository
 
 import android.content.Context
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.alert.checkRateAlerts
 import com.eliormachlev.currencix.model.ApiProvider
@@ -21,7 +19,15 @@ import com.eliormachlev.currencix.util.isPinFailure
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
+import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeoutOrNull
 import java.net.SocketTimeoutException
@@ -102,9 +108,16 @@ class ExchangeRatesRepository(
     private val cooldown: ProviderCooldown = ProviderCooldown.shared,
 ) {
     private val db = Database(context)
-    private val liveExchangeRates = db.rates.getExchangeRates()
-    private val liveTimeline = MutableLiveData<Timeline?>()
-    private val liveError = MutableLiveData<String?>()
+    private val exchangeRates = db.rates.getExchangeRates()
+    private val timeline = MutableStateFlow<Timeline?>(null)
+    private val timelineState: StateFlow<Timeline?> = timeline.asStateFlow()
+
+    // Each refresh's outcome: null when it succeeded, else the message. Not
+    // a StateFlow, which would swallow a failure repeating the last one's
+    // message (each failure shows its own snackbar); the latest is replayed
+    // to a new collector, as a screen opened afterwards still shows it.
+    private val errors = MutableSharedFlow<String?>(replay = 1, onBufferOverflow = BufferOverflow.DROP_OLDEST)
+    private val errorReports: SharedFlow<String?> = errors.asSharedFlow()
 
     // In-house rate cache (#148): sits on top of the shared OkHttp Cache so
     // memory / disk tiers of *parsed* domain objects short-circuit the parse
@@ -129,7 +142,7 @@ class ExchangeRatesRepository(
 
     // The pair the user most recently requested. Timeline fetches for any other
     // pair still complete and populate the on-disk cache, but their result is
-    // not posted to [liveTimeline] — otherwise a stale prefetch finishing after
+    // not posted to [timeline] — otherwise a stale prefetch finishing after
     // the user switched currencies would clobber the visible chart. Volatile
     // because it's written from Main and read from IO in the fetch callback.
     @Volatile private var latestTimelineKey: String? = null
@@ -145,32 +158,39 @@ class ExchangeRatesRepository(
      * Gets and returns all latest exchange rates from the API.
      *
      * The actual fetch runs through the in-house rate cache (memory → disk →
-     * upstream with retry-with-jitter and in-flight dedupe). LiveData is
-     * still sourced from DataStore so existing UI subscribers keep working
-     * unchanged; a cache-hit still writes to DataStore so the LiveData
-     * refires with the fresh value. [fresh] (pull to refresh, back online)
+     * upstream with retry-with-jitter and in-flight dedupe). The returned
+     * flow is sourced from DataStore, so every screen and the widget follow
+     * the same store; a cache-hit still writes to DataStore so the flow
+     * emits the fresh value. [fresh] (pull to refresh, back online)
      * goes past the cache's freshness window and asks the server whether its
      * cached answer still holds.
      */
-    fun getExchangeRates(fresh: Boolean = false): LiveData<ExchangeRates?> {
-        if (ratesJob?.isActive != true) {
-            ratesJob =
-                launchApiCall {
-                    fetchRates(fresh).processResponse(
-                        successFlag = { success },
-                        errorMessage = { error },
-                        onSuccess = ::store,
-                    )
-                }
-        }
-        return liveExchangeRates
+    fun getExchangeRates(fresh: Boolean = false): Flow<ExchangeRates?> {
+        refreshExchangeRates(fresh)
+        return exchangeRates
+    }
+
+    /**
+     * Starts the fetch described at [getExchangeRates] unless one is already
+     * running, and returns at once: the rates arrive through the store.
+     */
+    fun refreshExchangeRates(fresh: Boolean = false) {
+        if (ratesJob?.isActive == true) return
+        ratesJob =
+            launchApiCall {
+                fetchRates(fresh).processResponse(
+                    successFlag = { success },
+                    errorMessage = { error },
+                    onSuccess = ::store,
+                )
+            }
     }
 
     /**
      * Suspend-only refresh path used by the WorkManager auto-refresh job
      * (#151). Bypasses cache freshness via [RateCache.refresh], re-populates
      * both cache tiers, and persists the result via [Database.insertExchangeRates]
-     * so LiveData subscribers (Compose UI, widget) see the fresh values on
+     * so the flow's collectors (Compose UI, widget) see the fresh values on
      * next launch. Returns a [Result] so the worker can distinguish
      * transient network errors (→ retry) from success.
      *
@@ -258,7 +278,21 @@ class ExchangeRatesRepository(
         base: Currency,
         symbol: Currency,
         since: LocalDate = defaultTimelineSince(),
-    ): LiveData<Timeline?> {
+    ): StateFlow<Timeline?> {
+        requestTimeline(base, symbol, since)
+        return timelineState
+    }
+
+    /**
+     * Starts the fetch described at [getTimeline] unless one for the same pair
+     * and reach is already running, and returns at once: the timeline arrives
+     * through the flow [getTimeline] returns.
+     */
+    fun requestTimeline(
+        base: Currency,
+        symbol: Currency,
+        since: LocalDate = defaultTimelineSince(),
+    ) {
         val key = timelineKey(base, symbol)
         val start = maxOf(since, LocalDate.now().minusYears(TIMELINE_MAX_YEARS))
         // Record intent before any dedup check so rapid pair switches always
@@ -277,10 +311,10 @@ class ExchangeRatesRepository(
                     // latestTimelineKey so a prefetch for a stale pair can't
                     // paint over whatever the user is currently looking at.
                     val cached = db.rates.getCachedTimeline(main, base, symbol)
-                    if (cached != null && isCurrentTimelinePair(key)) liveTimeline.postValue(cached)
+                    if (cached != null && isCurrentTimelinePair(key)) timeline.value = cached
                     // Main provider first; the fallback when it fails while
                     // online (its own cached window, not merged with the main's).
-                    val showPartial: (Timeline) -> Unit = { partial -> if (isCurrentTimelinePair(key)) liveTimeline.postValue(partial) }
+                    val showPartial: (Timeline) -> Unit = { partial -> if (isCurrentTimelinePair(key)) timeline.value = partial }
                     var result = fetchTimeline(main, base, symbol, start, showPartial)
                     if (result.shouldTryFallback { success }) {
                         val fallback = fetchTimeline(db.providers.fallbackProvider.get(), base, symbol, start, showPartial)
@@ -291,15 +325,14 @@ class ExchangeRatesRepository(
                         errorMessage = { error },
                         onSuccess = { merged ->
                             // Only notify the UI if this pair is still the one the user cares about.
-                            // postValue is safe from any thread — avoids spawning a
-                            // fire-and-forget CoroutineScope just to hop to Main.
-                            if (isCurrentTimelinePair(key)) liveTimeline.postValue(merged)
+                            // A StateFlow takes a value from any thread; its collectors
+                            // pick it up on their own dispatcher.
+                            if (isCurrentTimelinePair(key)) timeline.value = merged
                         },
                     )
                 }
             timelineJobs[jobKey] = job
         }
-        return liveTimeline
     }
 
     // [provider]'s timeline for the pair: the missing ranges fetched
@@ -413,7 +446,7 @@ class ExchangeRatesRepository(
             if (ok == null || ok == true) {
                 RefreshState.finish()
                 onSuccess(data)
-                liveError.postValue(null)
+                errors.tryEmit(null)
             } else {
                 postError(providerError(data.errorMessage()))
             }
@@ -468,7 +501,7 @@ class ExchangeRatesRepository(
         }
     }
 
-    fun getError(): LiveData<String?> = liveError
+    fun getError(): SharedFlow<String?> = errorReports
 
     private fun postError(message: String?) {
         // disable progress bar
@@ -480,7 +513,7 @@ class ExchangeRatesRepository(
         if (message?.contains(R.string.error_no_data.text()) != true) {
             errorMessage += "\n<br>${R.string.error_try_another_api.text()}$NERD_SUFFIX"
         }
-        liveError.postValue(errorMessage)
+        errors.tryEmit(errorMessage)
         // Preserve any cached/previously-fetched timeline instead of wiping it —
         // showing stale-but-valid data beats a blank chart when the network hiccups.
     }

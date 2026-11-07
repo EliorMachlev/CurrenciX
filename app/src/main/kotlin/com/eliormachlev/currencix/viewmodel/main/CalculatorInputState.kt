@@ -1,7 +1,5 @@
 package com.eliormachlev.currencix.viewmodel.main
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import com.eliormachlev.currencix.util.CALC_TOKEN_REGEX
 import com.eliormachlev.currencix.util.MULTI_ZERO_KEYS
 import com.eliormachlev.currencix.util.OPERATOR_MULTIPLY
@@ -12,6 +10,9 @@ import com.eliormachlev.currencix.util.ZERO
 import com.eliormachlev.currencix.util.ZERO_KEYS
 import com.eliormachlev.currencix.util.evaluateCalculatorExpression
 import com.eliormachlev.currencix.util.unclosedParens
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import java.math.BigDecimal
 
 /**
@@ -39,17 +40,17 @@ data class KeyAvailability(
  * is null iff we are not in calculation mode.
  */
 internal class CalculatorInputState {
-    private val _baseValueText = MutableLiveData(ZERO)
-    private val _calculationValueText = MutableLiveData<String?>()
+    private val _baseValueText = MutableStateFlow<String?>(ZERO)
+    private val _calculationValueText = MutableStateFlow<String?>(null)
 
-    val baseValueText: LiveData<String?> = _baseValueText
-    val calculationValueText: LiveData<String?> = _calculationValueText
+    val baseValueText: StateFlow<String?> = _baseValueText.asStateFlow()
+    val calculationValueText: StateFlow<String?> = _calculationValueText.asStateFlow()
 
     // Which keys would do something, for the keypad to dim the rest. Set on
-    // every change (not `LiveData.map`) so `.value` is current even with no
-    // observer, as unit tests read it.
-    private val _keys = MutableLiveData(KeyAvailability())
-    val keys: LiveData<KeyAvailability> = _keys
+    // every change (not a mapped flow) so `.value` is current even with no
+    // collector, as unit tests read it.
+    private val _keys = MutableStateFlow(KeyAvailability())
+    val keys: StateFlow<KeyAvailability> = _keys.asStateFlow()
 
     private fun setCalc(value: String?) {
         _calculationValueText.value = value
@@ -72,7 +73,7 @@ internal class CalculatorInputState {
                 closeParen = calc != null && calc.unclosedParens() > 0 && isCompletedValueTail(last),
                 equals = calc != null,
             )
-        if (_keys.value != next) _keys.value = next
+        _keys.value = next
     }
 
     fun isInCalculationMode(): Boolean = calculation() != null

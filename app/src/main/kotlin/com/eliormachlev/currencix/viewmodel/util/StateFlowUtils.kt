@@ -28,3 +28,14 @@ internal fun <T> Flow<T>.stateInWhileSubscribed(
 
 /** A setting as a [StateFlow] for the UI: its current value at once, then its changes. */
 internal fun <T> Pref<T>.stateInWhileSubscribed(scope: CoroutineScope): StateFlow<T> = flow.stateInWhileSubscribed(scope, get())
+
+/**
+ * Shorthand for `stateIn(scope, Eagerly, initial)`: state collected for the
+ * whole of [scope] (the ViewModel's life), for values read synchronously
+ * through `.value` whether or not a screen observes them, or kept current for
+ * work the ViewModel does on its own.
+ */
+internal fun <T> Flow<T>.stateInEagerly(
+    scope: CoroutineScope,
+    initial: T,
+): StateFlow<T> = stateIn(scope, SharingStarted.Eagerly, initial)

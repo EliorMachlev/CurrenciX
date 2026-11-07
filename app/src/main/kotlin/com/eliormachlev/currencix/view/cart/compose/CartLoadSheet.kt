@@ -10,13 +10,13 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.model.HomeCurrency
@@ -49,9 +49,9 @@ fun CartLoadSheet(
 ) {
     // Seed with the persisted snapshot so the first frame has the real list,
     // otherwise the empty-list default would trip the auto-dismiss before the
-    // LiveData observer even fires.
-    val saved by viewModel.getSavedCarts().observeAsState(viewModel.getSavedCartsSnapshot())
-    val trips by viewModel.trips.getSummaries().observeAsState(emptyList())
+    // collection even starts.
+    val saved by viewModel.getSavedCarts().collectAsStateWithLifecycle(remember(viewModel) { viewModel.getSavedCartsSnapshot() })
+    val trips by viewModel.trips.getSummaries().collectAsStateWithLifecycle()
     var editing by remember { mutableStateOf<TripEdit?>(null) }
     var checklistFor by remember { mutableStateOf<Trip?>(null) }
     LaunchedEffect(saved.isEmpty()) {
