@@ -1,5 +1,6 @@
 package com.eliormachlev.currencix.model.adapter
 
+import android.util.Xml
 import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.model.Rate
 import kotlinx.serialization.json.JsonElement
@@ -7,7 +8,6 @@ import kotlinx.serialization.json.JsonNull
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.jsonObject
 import org.xmlpull.v1.XmlPullParser
-import org.xmlpull.v1.XmlPullParserFactory
 import java.io.InputStream
 import java.math.BigDecimal
 import java.math.MathContext
@@ -88,14 +88,19 @@ internal fun MutableList<Rate>.addFokFromDkkIfMissing() {
     }
 }
 
-// Namespace-unaware XmlPullParser bound to [inputStream]. The five XML
-// parsers all want this exact configuration.
+/**
+ * A namespace-unaware XmlPullParser bound to [inputStream]. The five XML
+ * parsers all want this exact configuration. Xml.newPullParser() builds the
+ * platform parser directly (XmlPullParserFactory loads it by class name), but
+ * turns namespaces and DOCTYPE processing on, so both are set back off: the
+ * feeds need neither, and a DOCTYPE from the network stays unprocessed.
+ */
 internal fun newXmlPullParser(inputStream: InputStream): XmlPullParser =
-    XmlPullParserFactory
-        .newInstance()
-        .apply { isNamespaceAware = false }
-        .newPullParser()
-        .apply { setInput(inputStream, null) }
+    Xml.newPullParser().apply {
+        setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, false)
+        setFeature(XmlPullParser.FEATURE_PROCESS_DOCDECL, false)
+        setInput(inputStream, null)
+    }
 
 // Norges Bank encodes the currency's decimal scale as UNIT_MULT (an integer
 // exponent). Missing/invalid values fall back to 1 (10^0).

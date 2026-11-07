@@ -17,12 +17,14 @@ import org.junit.Test
  *   repository — ExchangeRatesRepository, Database, BackupManager, ...
  *   model      — Currency, ExchangeRates, Fee, adapter/, provider/, ...
  *
- * Rules encoded here (kept intentionally narrow — better 4 rock-solid rules
+ * Rules encoded here (kept intentionally narrow — better 5 rock-solid rules
  * than 10 flaky ones):
  *   1. ViewModel layer does not depend on View layer.
  *   2. Repository layer does not depend on View or ViewModel layers.
  *   3. Model layer does not depend on View, ViewModel, or Repository layers.
  *   4. Every `*ViewModel` class extends androidx.lifecycle.ViewModel (or a subclass).
+ *   5. View models are built by a factory or initializer the app passes, never by
+ *      the default factory, which finds their constructor by reflection.
  */
 class ArchitectureTest {
     private val scope get() = Konsist.scopeFromProject(sourceSetName = MAIN_SOURCE_SET)
@@ -78,6 +80,14 @@ class ArchitectureTest {
                     indirectParents = true,
                 )
             }
+    }
+
+    /** No file builds a ViewModel through the default factory, which finds its constructor by reflection. */
+    @Test
+    fun `view models are built by a factory, not by reflection`() {
+        scope
+            .files
+            .assertTrue { file -> defaultFactoryCalls(file.text).isEmpty() }
     }
 
     private companion object {

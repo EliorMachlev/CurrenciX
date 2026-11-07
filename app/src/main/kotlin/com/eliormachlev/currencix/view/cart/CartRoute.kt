@@ -20,7 +20,6 @@ import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.LocalLifecycleOwner
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.model.CartExtras
 import com.eliormachlev.currencix.view.cart.compose.CartChoiceSheet
@@ -46,6 +45,7 @@ import com.eliormachlev.currencix.view.compose.ReadingDirection
 import com.eliormachlev.currencix.view.compose.ScreenScaffold
 import com.eliormachlev.currencix.view.compose.TopBarAction
 import com.eliormachlev.currencix.view.compose.TopBarOverflowMenu
+import com.eliormachlev.currencix.view.compose.applicationViewModel
 import com.eliormachlev.currencix.view.compose.dialogs.LedgerConfirmSheet
 import com.eliormachlev.currencix.view.navigation.Screen
 import com.eliormachlev.currencix.viewmodel.cart.CartViewModel
@@ -65,7 +65,7 @@ fun CartRoute(
     onOpenFees: () -> Unit,
 ) {
     val activity = LocalActivity.current as ComponentActivity
-    val viewModel: CartViewModel = viewModel()
+    val viewModel = applicationViewModel { CartViewModel(it) }
     val snackbar = LocalAppSnackbar.current
     val host = remember(viewModel) { CartHost(activity, snackbar, viewModel, screen.mainBase, screen.mainDest, onBack) }
     val lifecycleOwner = LocalLifecycleOwner.current

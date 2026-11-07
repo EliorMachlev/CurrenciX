@@ -16,7 +16,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.repository.BackupResult
 import com.eliormachlev.currencix.repository.FileFailure
@@ -24,6 +23,7 @@ import com.eliormachlev.currencix.repository.fileFailureMessage
 import com.eliormachlev.currencix.view.compose.AppSnackbar
 import com.eliormachlev.currencix.view.compose.LocalAppSnackbar
 import com.eliormachlev.currencix.view.compose.ScreenScaffold
+import com.eliormachlev.currencix.view.compose.applicationViewModel
 import com.eliormachlev.currencix.view.compose.showOrToast
 import com.eliormachlev.currencix.view.navigation.Screen
 import com.eliormachlev.currencix.view.navigation.SettingsTopic
@@ -53,7 +53,7 @@ fun SettingsRoute(
     onThemeRequiresRestart: () -> Unit,
 ) {
     val context = LocalContext.current
-    val viewModel: PreferenceViewModel = viewModel()
+    val viewModel = applicationViewModel { PreferenceViewModel(it) }
     val callbacks =
         remember(context, onOpen, onThemeRequiresRestart) {
             PreferenceScreenCallbacks(
@@ -70,7 +70,7 @@ fun SettingsRoute(
 /** The fee manager — from Settings, the converter's drawer and fee chip, or the cart. */
 @Composable
 fun FeesRoute(onBack: () -> Unit) {
-    val viewModel: FeeManagerViewModel = viewModel()
+    val viewModel = applicationViewModel { FeeManagerViewModel(it) }
     SettingsScaffold(titleRes = R.string.fee_manager_title, onBack = onBack) {
         FeesScreen(viewModel = viewModel)
     }
@@ -79,7 +79,7 @@ fun FeesRoute(onBack: () -> Unit) {
 /** The languages receipts are read in: add one (for good or a trip), keep it longer, or delete it. */
 @Composable
 fun ReceiptLanguagesRoute(onBack: () -> Unit) {
-    val viewModel: ReceiptLanguagesViewModel = viewModel()
+    val viewModel = applicationViewModel { ReceiptLanguagesViewModel(it) }
     SettingsScaffold(titleRes = R.string.receipt_languages_title, onBack = onBack) {
         ReceiptLanguagesScreen(viewModel = viewModel)
     }
@@ -90,7 +90,7 @@ fun ReceiptLanguagesRoute(onBack: () -> Unit) {
 fun BackupRoute(onBack: () -> Unit) {
     val context = LocalContext.current
     val snackbar = LocalAppSnackbar.current
-    val viewModel: BackupViewModel = viewModel()
+    val viewModel = applicationViewModel { BackupViewModel(it) }
     val exportLauncher =
         rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             val uri = result.data?.data ?: return@rememberLauncherForActivityResult
