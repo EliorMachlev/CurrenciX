@@ -80,12 +80,20 @@ class NoSuppressionsTest {
     }
 
     @Test
-    fun `jactionlint runs with exactly the recorded flags`() {
+    fun `jactionlint runs only as the recorded command`() {
         // A config file can turn a rule off, and an ignore flag, comment or baseline can hide a
-        // finding. Pinning the whole command keeps --no-ignores and --config-file=/dev/null on
-        // it, and catches an ignore however its flag is spelled (-i x, -ix, -i=x, --ignore=x).
-        val run = File(root, JACTIONLINT_WORKFLOW).readLines().map { it.trim() }.single { it.startsWith(JACTIONLINT_RUN_KEY) }
-        assertEquals("$JACTIONLINT_WORKFLOW must run jactionlint with exactly these flags", JACTIONLINT_RUN, run)
+        // finding. The one command that runs it is pinned whole, which keeps --no-ignores and
+        // --config-file=/dev/null on it and catches an ignore however its flag is spelled
+        // (-i x, -ix, -i=x, --ignore=x). Any other invocation anywhere in the tree, a command
+        // split over continuation lines included, fails here too.
+        val runs =
+            scannedTree()
+                .filter { it.isFile && it.isScanned() }
+                .flatMap { file ->
+                    val path = file.relativeTo(root).path
+                    file.readLines().filter { JACTIONLINT_INVOCATION.containsMatchIn(it) }.map { "$path: ${it.trim()}" }
+                }.toList()
+        assertEquals("jactionlint must run only as the recorded command", listOf("$JACTIONLINT_WORKFLOW: $JACTIONLINT_RUN"), runs)
     }
 
     private fun scannedTree(): Sequence<File> = root.walkTopDown().onEnter { it.name !in SKIPPED_DIRECTORIES }
@@ -146,9 +154,12 @@ class NoSuppressionsTest {
         const val MUTABLE_TAG_RULE = "yaml.github-actions.security.github-actions-mutable-action-tag.github-actions-mutable-action-tag"
         const val SELF_REPOSITORY = "`$/`"
         const val JACTIONLINT_WORKFLOW = ".github/workflows/jactionlint.yaml"
-        const val JACTIONLINT_RUN_KEY = "run: '\"\$RUNNER_TEMP/jactionlint\""
         const val JACTIONLINT_RUN =
-            "$JACTIONLINT_RUN_KEY --profile default --strict-exit --no-ignores --config-file=/dev/null --format github'"
+            "run: '\"\$RUNNER_TEMP/jactionlint\" --profile default --strict-exit --no-ignores --config-file=/dev/null --format github'"
+
+        // A line that runs jactionlint: by path, as a bare command taking a flag or a line
+        // continuation, or as an action.
+        val JACTIONLINT_INVOCATION = Regex("""/jactionlint["']?(\s|$)|(^|[\s;&|(])jactionlint\s+[-\\]|uses:\s*\S*jactionlint""")
         const val WIRE_CVE = "CVE-2018-8909"
         const val WIRE_SERVER_CVE = "CVE-2023-22737"
         const val WIRE_RUNTIME = "wire-runtime"
