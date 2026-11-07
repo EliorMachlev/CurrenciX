@@ -11,8 +11,6 @@ import okhttp3.Dns
 import okhttp3.OkHttpClient
 import okhttp3.TlsVersion
 import okhttp3.android.AndroidDns
-import okhttp3.logging.HttpLoggingInterceptor
-import timber.log.Timber
 import java.io.File
 import java.util.concurrent.TimeUnit
 
@@ -57,8 +55,8 @@ internal val FORWARD_SECRET_TLS: ConnectionSpec =
             CipherSuite.TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305_SHA256,
         ).build()
 
-// Shared OkHttp client with an on-disk response cache and Timber-bridged
-// wire logging. Every rate provider funnels through this client via
+// Shared OkHttp client with an on-disk response cache (and, in debug builds,
+// call logging through Timber). Every rate provider funnels through this client via
 // HttpFetch.kt; the cache warms up whenever the upstream response carries
 // usable Cache-Control headers. Providers whose upstreams do not send
 // usable headers get their responses stamped with a per-host TTL by
@@ -116,16 +114,10 @@ object HttpClientProvider {
             uncachedInstance ?: build().also { uncachedInstance = it }
         }
 
-    private fun build(): OkHttpClient {
-        val loggingInterceptor =
-            HttpLoggingInterceptor { line ->
-                Timber.tag("HTTP").d(line)
-            }.apply {
-                level = HttpLoggingInterceptor.Level.BASIC
-            }
-        return OkHttpClient
+    private fun build(): OkHttpClient =
+        OkHttpClient
             .Builder()
-            .addInterceptor(loggingInterceptor)
+            .apply { httpLogger?.let(::addInterceptor) }
             // Network-layer rewrite runs before OkHttp's cache writer sees
             // the response, so the stamped Cache-Control controls what the
             // cache stores for the non-cooperative provider hosts.
@@ -144,7 +136,6 @@ object HttpClientProvider {
             .connectionSpecs(listOf(FORWARD_SECRET_TLS))
             .apply { encryptedClientHelloDns()?.let(::dns) }
             .build()
-    }
 
     // On Android 17 and later, resolve through the platform's DnsResolver
     // (OkHttp's AndroidDns), which also fetches each host's DNS HTTPS record
