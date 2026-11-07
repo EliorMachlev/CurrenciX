@@ -4,6 +4,7 @@ import org.junit.Assert.assertEquals
 import org.junit.Test
 
 class DefaultFactoryCallsTest {
+    /** Each of these calls leaves its ViewModel to the default factory, so each is reported once. */
     @Test
     fun `a call without a factory is found, whatever else it passes`() {
         listOf(
@@ -24,6 +25,7 @@ class DefaultFactoryCallsTest {
         ).forEach { source -> assertEquals(source, 1, defaultFactoryCalls(source).size) }
     }
 
+    /** Each of these passes a factory or an initializer, or isn't a ViewModel call at all, so none is reported. */
     @Test
     fun `a call that passes a factory or an initializer is left alone`() {
         listOf(

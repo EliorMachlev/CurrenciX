@@ -82,6 +82,7 @@ class ArchitectureTest {
             }
     }
 
+    /** No file builds a ViewModel through the default factory, which finds its constructor by reflection. */
     @Test
     fun `view models are built by a factory, not by reflection`() {
         scope
