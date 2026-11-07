@@ -114,8 +114,8 @@ object HttpClientProvider {
             uncachedInstance ?: build().also { uncachedInstance = it }
         }
 
-    private fun build(): OkHttpClient {
-        return OkHttpClient
+    private fun build(): OkHttpClient =
+        OkHttpClient
             .Builder()
             .apply { httpLogger?.let(::addInterceptor) }
             // Network-layer rewrite runs before OkHttp's cache writer sees
@@ -136,7 +136,6 @@ object HttpClientProvider {
             .connectionSpecs(listOf(FORWARD_SECRET_TLS))
             .apply { encryptedClientHelloDns()?.let(::dns) }
             .build()
-    }
 
     // On Android 17 and later, resolve through the platform's DnsResolver
     // (OkHttp's AndroidDns), which also fetches each host's DNS HTTPS record
