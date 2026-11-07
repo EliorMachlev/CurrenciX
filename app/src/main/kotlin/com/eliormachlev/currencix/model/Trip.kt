@@ -8,6 +8,16 @@ import java.time.ZoneId
 import java.time.temporal.ChronoUnit
 
 /**
+ * What an ended trip came to, held so later rate changes leave it alone: the
+ * [amount] in the trip's currency, and a [basis] fingerprint of the carts it
+ * covers (when they change, the pin no longer holds).
+ */
+data class SpentPin(
+    val amount: BigDecimal,
+    val basis: Int,
+)
+
+/**
  * A trip: saved carts grouped under a [name], their spending added up in the
  * [currency] of home, against an optional [budget] in it. Optionally where
  * it's to ([destination], the currency paid in there) and when ([start] to
@@ -22,6 +32,7 @@ data class Trip(
     val destination: Currency? = null,
     val start: LocalDate? = null,
     val end: LocalDate? = null,
+    val spentPin: SpentPin? = null,
 ) {
     /** How many days it lasts, both ends included; null without both dates. */
     val days: Long? get() = if (start != null && end != null) ChronoUnit.DAYS.between(start, end) + 1 else null

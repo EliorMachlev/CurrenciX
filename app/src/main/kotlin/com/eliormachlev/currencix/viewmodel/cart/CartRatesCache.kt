@@ -27,10 +27,10 @@ class CartRatesCache(
             .stateInEagerly(scope, db.fees.fees.get())
     val rates: StateFlow<ExchangeRates?> = db.rates.getExchangeRates().stateInEagerly(scope, db.rates.getExchangeRatesBlocking())
 
-    private val activeExchangeId: StateFlow<String?> =
+    internal val activeExchangeId: StateFlow<String?> =
         db.fees.activeExchangeId.flow
             .stateInEagerly(scope, db.fees.activeExchangeId.get())
-    private val activeBankId: StateFlow<String?> =
+    internal val activeBankId: StateFlow<String?> =
         db.fees.activeBankId.flow
             .stateInEagerly(scope, db.fees.activeBankId.get())
 

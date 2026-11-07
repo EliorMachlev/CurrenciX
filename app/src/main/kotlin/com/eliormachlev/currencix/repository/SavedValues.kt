@@ -9,6 +9,7 @@ import com.eliormachlev.currencix.model.Fee
 import com.eliormachlev.currencix.model.FeeType
 import com.eliormachlev.currencix.model.Person
 import com.eliormachlev.currencix.model.RateAlert
+import com.eliormachlev.currencix.model.SpentPin
 import com.eliormachlev.currencix.model.Trip
 import com.eliormachlev.currencix.util.newId
 import java.math.BigDecimal
@@ -77,6 +78,15 @@ internal fun Trip.withPlan(
         start = start,
         end = end?.takeIf { start == null || !it.isBefore(start) },
     )
+
+/** This trip with its pinned spending, when both parts are stored and the amount reads. */
+internal fun Trip.withPin(
+    amount: String?,
+    basis: Int?,
+): Trip {
+    val pinned = amount?.toBigDecimalOrNull() ?: return this
+    return if (basis == null) this else copy(spentPin = SpentPin(pinned, basis))
+}
 
 /** The fields of a fee, as stored. */
 internal class StoredFee(
