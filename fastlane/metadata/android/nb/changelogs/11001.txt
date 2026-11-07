@@ -1,3 +1,0 @@
-- Rettet et krasj på Android 8.0.
-- Oppdaterte oversettelser.
-- Små UI-forbedringer.

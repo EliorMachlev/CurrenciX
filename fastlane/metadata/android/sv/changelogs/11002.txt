@@ -1,1 +1,0 @@
-- Åtgärdade en krasch när inställningarna öppnas.

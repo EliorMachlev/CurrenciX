@@ -1,2 +1,0 @@
-- Nieuwe functie: Historische koersen kunnen nu worden geselecteerd om te worden gebruikt voor de berekening.
-- Nieuwe taal: Indonesisch. Hartelijk dank, @liimee! 🇮🇩🏝️

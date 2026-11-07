@@ -1,3 +1,0 @@
-- Åtgärdade en krasch på Android 8.0.
-- Uppdaterade översättningarna.
-- Mindre förbättringar av användargränssnittet.

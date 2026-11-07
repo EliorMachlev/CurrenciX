@@ -1,2 +1,0 @@
-- Nouvelle fonctionnalité : Les taux historiques peuvent désormais être sélectionnés pour être utilisés pour le calcul.
-- Nouvelle langue : Indonésien. Merci beaucoup, @liimee ! 🇮🇩🏝️

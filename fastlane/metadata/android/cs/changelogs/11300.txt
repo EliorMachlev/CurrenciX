@@ -1,4 +1,0 @@
-- Další nový jazyk: Nyní můžete aplikaci používat v arabštině. Díky moc, Ahmede! 🇦🇪🇧🇭🇩🇯🇩🇿🇪🇬🇪🇭🇪🇷🇮🇱🇮🇶🇯🇴🇰🇲🇰🇼🇱🇧🇱🇾🇲🇦🇲🇷🇴🇲🇶🇦🇸🇦🇸🇩🇸🇴🇸🇸🇸🇾🇹🇩🇹🇳🇾🇪
-- Další opravy RTL pro rozložení na šířku.
-- Opraven pád při zadání prázdné hodnoty pro výši poplatku.
-- Poskytovatel údajů se zobrazuje v zobrazení časové osy.

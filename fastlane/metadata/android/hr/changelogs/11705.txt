@@ -1,3 +1,0 @@
-- Povećana preciznost tečajeva na grafikonima.
-- Novi jezik: poljski. Puno hvala, ewm! 🇵🇱
-- Mnoštvo ažuriranih prijevoda. Hvala svima koji su pridonijeli!

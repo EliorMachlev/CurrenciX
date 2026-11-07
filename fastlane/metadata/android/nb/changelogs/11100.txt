@@ -1,4 +1,0 @@
-- Du kan nå dra for å oppdatere for å oppdatere prisene.
-- Mye forbedret tilbakemelding ved oppdateringsfrekvenser og ved feil.
-- Nytt språk: Et vennlig medlem av fellesskapet ga oversettelser til tyrkisk. Takk skal du ha! 🇹🇷
-– I noen situasjoner ble feil API brukt for tidslinjen. Det er fikset nå.

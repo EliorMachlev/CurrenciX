@@ -1,4 +1,0 @@
-- Siete ora in grado di tirare per aggiornare i tassi.
-- Feedback molto migliorato quando si aggiornano i tassi e in caso di errori.
-- Nuova lingua: Un gentile membro della comunità ha fornito le traduzioni per il turco. Grazie! 🇹🇷
-- In alcune situazioni, è stata usata l'API sbagliata per la linea temporale. Questo è stato risolto, ora.

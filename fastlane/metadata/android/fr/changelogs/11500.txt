@@ -1,4 +1,0 @@
-- Nouvelle langue : le néerlandais. Un grand merci au volontaire ! 🇳🇱🌷
-- Nouvelle fonctionnalité : Vous pouvez maintenant basculer les devises à l'intérieur de la vue chronologique en un seul clic.
-- Nous avons à nouveau corrigé un problème où l'application plantait dans certains cas, lorsque le thème sombre est utilisé.
-- Diverses petites améliorations de l'interface utilisateur.

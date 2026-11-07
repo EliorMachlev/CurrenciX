@@ -1,2 +1,0 @@
-- Daha iyi hata işleme
-- Küçük geliştirmeler

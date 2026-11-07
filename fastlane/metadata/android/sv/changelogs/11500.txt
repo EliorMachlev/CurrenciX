@@ -1,4 +1,0 @@
-- Nytt språk: Nederländska. Tusen tack till bidragsgivaren! 🇳🇱🌷
-- Ny funktion: Man kan du växla mellan valda valutor i tidslinjesvyn med en enda tryckning.
-- Åtgärdade återigen ett problem som gjorde att appen kraschade i vissa fall, vid användning av mörkt färgtema.
-- Blandade förbättringar av användargränssnittet.

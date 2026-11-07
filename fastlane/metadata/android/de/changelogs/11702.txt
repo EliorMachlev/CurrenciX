@@ -1,1 +1,0 @@
-- Neu: Zahlen können nun aus der Zwischenablage eingefügt werden.

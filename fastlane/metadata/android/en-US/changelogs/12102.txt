@@ -1,3 +1,0 @@
-- New selectable language: Esperanto!
-- Supporting hardware keyboard input.
-- Updated translations.

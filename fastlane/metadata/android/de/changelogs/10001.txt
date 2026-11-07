@@ -1,1 +1,0 @@
-- Möglichen Absturz unter Android 11 behoben

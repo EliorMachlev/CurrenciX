@@ -1,3 +1,0 @@
-- Nytt valbart språk: Esperanto!
-- Stöd för inmatning från hårdvarutangentbord.
-- Uppdaterade översättningar.

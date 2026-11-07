@@ -1,2 +1,0 @@
-- Bedre feilhåndtering
-- Mindre forbedringer

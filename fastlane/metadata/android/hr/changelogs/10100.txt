@@ -1,1 +1,0 @@
-- Ovisno o vašem pružatelju kartičnih usluga, vaša banka može naplaćivati proviziju na sve transakcije u stranim valutama. Sada tu proviziju možete uključiti u izračune kako biste znali točno koliko plaćate. 🙂

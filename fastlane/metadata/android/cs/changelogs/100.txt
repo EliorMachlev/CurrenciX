@@ -1,3 +1,0 @@
-- Větší spolehlivost aktualizace měnových kurzů
-- Přidáno prohlášení o vyloučení odpovědnosti
-- Přidán tento seznam změn

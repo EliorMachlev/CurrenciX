@@ -1,4 +1,0 @@
-- Novi jezik - aplikaciju sada možete koristiti na arapskom. Puno hvala, Ahmede! 🇦🇪🇧🇭🇩🇯🇩🇿🇪🇬🇪🇭🇪🇷🇮🇱🇮🇶🇯🇴🇰🇲🇰🇼🇱🇧🇱🇾🇲🇦🇲🇷🇴🇲🇶🇦🇸🇦🇸🇩🇸🇴🇸🇸🇸🇾🇹🇩🇹🇳🇾🇪
-- Ispravci za jezike koji pišu s desna na lijevo u vodoravnom prikazu.
-- Ispravljeno rušenje prilikom unosa prazne vrijednosti provizije.
-- Izvor podataka sada se prikazuje na grafikonima.

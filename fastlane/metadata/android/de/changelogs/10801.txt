@@ -1,1 +1,0 @@
-- Fehler behoben, bei dem die App in manchen Fällen abstürzte, wenn das dunkle Design in Verwendung war.

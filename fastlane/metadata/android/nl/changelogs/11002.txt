@@ -1,1 +1,0 @@
-- Een crash verholpen bij het openen van de voorkeuren.

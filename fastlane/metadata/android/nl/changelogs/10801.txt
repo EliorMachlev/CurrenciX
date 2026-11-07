@@ -1,1 +1,0 @@
-- Een fout opgelost waarbij de app in sommige gevallen crashte, wanneer het donkere thema werd gebruikt.

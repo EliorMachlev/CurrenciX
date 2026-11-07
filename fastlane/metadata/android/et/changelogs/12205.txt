@@ -1,3 +1,0 @@
-- Parandasime paigutuse vead Android 15'ga nutiseadmetes.
-- Parandasime vea, kus vanemate Androidi versioonide puhul liikumise nupud olid peidetud.
-- Väiksemad paigutuse täiendused.

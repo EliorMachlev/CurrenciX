@@ -1,3 +1,0 @@
-- Oprava: tlačítko Zpět nezavřelo aplikaci.
-- Aktualizovány překlady.
-- Celková vylepšení.

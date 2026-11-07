@@ -1,3 +1,0 @@
-- Daha tedbirli döviz kuru güncellemeleri
-- Sorumluluk reddi eklendi
-- Bu değişiklik günlüğü eklendi

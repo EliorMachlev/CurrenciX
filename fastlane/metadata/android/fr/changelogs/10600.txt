@@ -1,2 +1,0 @@
-- Grâce au soutien des membres de la communauté, cette application est maintenant localisée non seulement en anglais et en allemand, mais aussi en espagnol 🇪🇸, en français 🇫🇷, en italien 🇮🇹 et en norvégien (Bokmål) 🇳🇴. Merci beaucoup pour votre aide ! 🙏🙏🙏
-- Petites mises à jour sous le capot pour rendre l'appli encore plus fiable.

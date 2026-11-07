@@ -1,4 +1,0 @@
-- Új nyelv: Holland. Köszönet az önkéntesnek! 🇳🇱🌷
-- Új funkció: Mostantól egy kattintással átkapcsolhatod a pénznemeket az idővonal nézeten belül.
-- Ismét javítottunk egy problémát, ahol az alkalmazás bizonyos esetekben összeomlott, ha a sötét témát használtuk.
-- Különböző apró UI javítások.

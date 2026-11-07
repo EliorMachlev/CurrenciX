@@ -1,2 +1,0 @@
-- Diverses millores a la interfície d'usuari
-- Noves llengües: Xinès 🇨🇳🇹🇼🇸🇬 i rus 🇷🇺🇧🇾🇰🇿.

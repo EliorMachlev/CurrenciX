@@ -1,4 +1,0 @@
-- Vous pouvez maintenant tirer sur le bouton de rafraîchissement pour mettre à jour les tarifs.
-- Le retour d'information est nettement amélioré lors de l'actualisation des tarifs et en cas d'erreur.
-- Nouvelle langue : Un membre de la communauté a fourni des traductions pour le turc. Merci ! 🇹🇷
-- Dans certaines situations, la mauvaise API était utilisée pour la ligne de temps. Cela est maintenant corrigé.

@@ -1,1 +1,0 @@
-- Přidána funkce kopírování: Dlouhé kliknutí na hodnotu, kterou chcete zkopírovat

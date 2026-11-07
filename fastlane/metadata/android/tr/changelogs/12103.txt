@@ -1,3 +1,0 @@
-- Geri tuşunun uygulamayı kapatmaması hatası düzeltildi.
-- Çeviriler güncellendi.
-- Genel iyileştirmeler yapıldı.

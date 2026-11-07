@@ -1,3 +1,0 @@
-- Nouvelle langue : ukrainien 🇺🇦 ! Un grand merci à Bogdan !
-- Cuba : Fournir du peso cubain (CUP) au lieu du peso cubain convertible (CUC), obsolète.
-- Beaucoup de traductions améliorées. Merci beaucoup à tous les bénévoles !

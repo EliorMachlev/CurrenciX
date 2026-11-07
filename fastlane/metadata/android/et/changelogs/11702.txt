@@ -1,1 +1,0 @@
-- Uus funktsionaalsus: numbrite asetamine lõikelaualt.

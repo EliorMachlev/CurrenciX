@@ -1,2 +1,0 @@
-- Vylepšen design (Material 3).
-- Nový jazyk: čeština. Děkujeme, Fjuro! 🇨🇿

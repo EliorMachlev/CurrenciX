@@ -1,2 +1,0 @@
-- Ispravljeni netočni povijesni podatci preko InforEuro API-ja.
-- Ažurirani prijevodi.

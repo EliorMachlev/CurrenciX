@@ -1,1 +1,0 @@
-- Correction du crash lors du rafraîchissement des taux. Désolé ! 🤕

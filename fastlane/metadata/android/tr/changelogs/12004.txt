@@ -1,1 +1,0 @@
-- Zaman çizelgesi grafik görünümünde yüzde farkı için yanlış değerler düzeltildi.

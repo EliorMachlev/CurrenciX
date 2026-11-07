@@ -1,1 +1,0 @@
-- Kur oranları güncellenirken oluşan çökme sorunu düzeltildi.

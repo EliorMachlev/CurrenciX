@@ -1,5 +1,0 @@
-- Das Hauptdisplay zeigt jetzt im unteren rechten Eck den aktuellen Wechselkurs an.
-- Einen Fehler behoben, durch den Währungssymbole falsch waren, wenn Daten von Norges Bank genutzt wurden.
-- Neu unterstützte Sprache: Dänisch 🇩🇰
-- Verschiedene verbesserte Übersetzungen. Vielen Dank an alle Helfer!
-- Verschiedene kleine Verbesserungen, damit die App weiter zuverlässig läuft.

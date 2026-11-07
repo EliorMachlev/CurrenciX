@@ -1,3 +1,0 @@
-- Nuevo idioma: ¡Ucraniano 🇺🇦! ¡Muchas gracias a Bogdan!
-- Cuba: Proporcionar peso cubano (CUP) en lugar del obsoleto peso cubano convertible (CUC).
-- Muchas traducciones mejoradas. ¡Muchas gracias a todos los voluntarios!

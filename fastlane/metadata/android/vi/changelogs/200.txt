@@ -1,1 +1,0 @@
-- Thêm tính năng sao chép (copy): Chạm và giữ trên giá trị bạn muốn sao chép

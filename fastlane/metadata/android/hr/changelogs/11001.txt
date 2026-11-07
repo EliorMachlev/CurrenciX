@@ -1,3 +1,0 @@
-- Ispravljeno rušenje na Androidu 8.0.
-- Ažurirani prijevodi.
-- Manji ispravci korisničkog sučelja.

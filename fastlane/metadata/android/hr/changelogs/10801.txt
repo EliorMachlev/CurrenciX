@@ -1,1 +1,0 @@
-- Ispravljena pogreška zbog koje se aplikacija ponekad rušila prilikom korištenja tamne teme.

@@ -1,2 +1,0 @@
-- Bättre felhantering
-- Mindre förbättringar

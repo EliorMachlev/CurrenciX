@@ -1,1 +1,0 @@
-- Novo: Brojevi se sada mogu zalijepiti iz međuspremnika.

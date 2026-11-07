@@ -1,2 +1,0 @@
-- Takket være støtten fra fantastiske fellesskapsmedlemmer, er denne appen nå ikke bare lokalisert på engelsk og tysk, men også spansk 🇪🇸, fransk 🇫🇷, italiensk 🇮🇹 og norsk (bokmål) 🇳🇴. Tusen takk for hjelpen! 🙏🙏🙏
-- Små oppdateringer under panseret for å gjøre appen enda mer pålitelig.

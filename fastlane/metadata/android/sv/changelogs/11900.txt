@@ -1,2 +1,0 @@
-- Flera UI-förbättringar
--Nya språk: Kinesiska 🇨🇳🇹🇼🇸🇬 och Ryska 🇷🇺🇧🇾🇰🇿.

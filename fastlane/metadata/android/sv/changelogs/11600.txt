@@ -1,2 +1,0 @@
-- Ny funktion: Historiska kurser kan nu väljas för att användas för kursberäkningen.
-- Nytt språk: Indonesiska. Tack så mycket, @liimee! 🇮🇩🏝️

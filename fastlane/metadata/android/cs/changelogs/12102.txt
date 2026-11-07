@@ -1,3 +1,0 @@
-- Nový jazyk: Esperanto!
-- Podpora vstupu z hardwarové klávesnice.
-- Aktualizovány překlady.

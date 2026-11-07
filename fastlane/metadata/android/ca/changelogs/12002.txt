@@ -1,2 +1,0 @@
-- Corregides dades cronològiques incorrectes de l'API InforEuro.
-- Traduccions actualitzades.

@@ -1,2 +1,0 @@
-- Traductions actualisées.
-- Correction des taux historiques avec la banque centrale de Norvège.

@@ -1,3 +1,0 @@
-- Fixed layout issues on Android 15 devices.
-- Fixed an issue where the navigation buttons were hidden on older Android versions.
-- Minor design improvements.

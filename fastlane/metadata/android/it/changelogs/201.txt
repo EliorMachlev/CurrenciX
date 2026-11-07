@@ -1,2 +1,0 @@
-- Migliore gestione degli errori
-- Miglioramenti minori

@@ -1,2 +1,0 @@
-- Updated translations.
-- Fix historical rates with Norges Bank.

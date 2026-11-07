@@ -1,2 +1,0 @@
-- It is now possible to manually refresh the rates. Check it out in the overflow menu.
-- Performance improvements

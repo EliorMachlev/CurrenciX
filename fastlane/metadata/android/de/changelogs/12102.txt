@@ -1,3 +1,0 @@
-- Neue auswählbare Sprache: Esperanto!
-- Unterstütze Eingaben per Hardware-Tastatur.
-- Aktualisierte Übersetzungen.

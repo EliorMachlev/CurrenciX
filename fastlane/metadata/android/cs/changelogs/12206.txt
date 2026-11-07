@@ -1,4 +1,0 @@
-- Opraveny další problémy s rozložením na zařízeních se systémem Android 15.
-- Nový podporovaný jazyk: estonština 🇪🇪
-- Přidána podpora britské angličtiny pro lepší zobrazení čísel.
-- Různá vylepšení překladů. Děkujeme všem dobrovolníkům!

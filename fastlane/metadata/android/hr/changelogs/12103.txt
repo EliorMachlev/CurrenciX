@@ -1,3 +1,0 @@
-- Popravljeno: Tipka za povratak nije zatvarala aplikaciju.
-- Ažurirani prijevodi.
-- Druga poboljšanja.

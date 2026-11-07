@@ -1,2 +1,0 @@
-- Nueva API adicional: InforEuro proporciona los tipos contables mensuales oficiales de la Comisión Europea para el euro y más de 150 tipos de conversión correspondientes.
-- Solucionados problemas de diseño con algunos dispositivos plegables concretos.

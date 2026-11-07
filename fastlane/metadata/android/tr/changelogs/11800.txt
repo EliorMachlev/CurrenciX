@@ -1,3 +1,0 @@
-- Uygulama başına dil tercihleri için destek eklendi (Android 13'teki yeni özellik).
-- Ek olarak, TÜM cihazlar için (ayrıca < Android 13) artık uygulama ayarlarında uygulama dilini değiştirme seçeneği var.
-- Yeni dil: Katalanca 🇪🇸🇦🇩

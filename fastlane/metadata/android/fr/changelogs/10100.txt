@@ -1,1 +1,0 @@
-- En fonction de votre contrat de carte de crédit, votre banque peut facturer des frais sur toutes les opérations de change. Vous pouvez désormais inclure ces frais dans les calculs, afin de savoir combien vous payez réellement. 🙂

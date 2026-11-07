@@ -1,3 +1,0 @@
-- Ajout de la prise en charge des préférences linguistiques par application (nouvelle fonctionnalité dans Android 13).
-- De plus, pour TOUS les appareils (également < Android 13), il existe désormais une option permettant de changer la langue de l'application dans les paramètres de l'application.
-- Nouvelle langue : Catalan 🇪🇸🇦🇩

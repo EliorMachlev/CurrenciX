@@ -1,4 +1,0 @@
-- Ekranı aşağı doğru kaydırarak kurları güncelleyebilirsiniz.
-- Kurları yenilerken veya hatalarla karşılaşınca daha iyi geri bildirim
-- Currencies artık Türkçe! Türkçe yerelleştirme için Arda Arslan ve Alparslan Şakçi'ye teşekkürler! 🇹🇷
-- Bazı durumlarda zaman çizelgesi için yanlış API kullanma hatası düzeldi.

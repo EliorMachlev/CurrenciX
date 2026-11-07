@@ -1,3 +1,0 @@
-- Ažuriranje tečajeva otpornije na pogrješke
-- Dodana izjava o odricanju od odgovornosti
-- Dodana povijest izmjena

@@ -1,4 +1,0 @@
-- Vylepšeno zobrazení věku směnného kurzu.
-- Přidána položka předvoleb pro hodnocení aplikace na Google Play (samozřejmě ne ve verzi pro F-Droid).
-- Další lokalizace: aplikace je nyní přeložena do vietnamštiny. 🇻🇳
-- Drobná drobná vylepšení.

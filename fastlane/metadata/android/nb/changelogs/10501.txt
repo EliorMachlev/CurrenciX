@@ -1,2 +1,0 @@
-- Retter en feil der prisene ikke ville oppdateres når exchangerate.host brukes.
-- Bibliotekoppdateringer for å forbedre stabilitet og ytelse.

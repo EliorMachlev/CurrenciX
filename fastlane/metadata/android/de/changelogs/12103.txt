@@ -1,3 +1,0 @@
-- Behoben: Zurück-Button hat die App nicht beendet.
-- Aktualisierte Übersetzungen.
-- Allgemeine Verbesserungen.

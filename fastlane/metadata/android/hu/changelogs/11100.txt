@@ -1,4 +1,0 @@
-- Mostantól a frissítésre való húzással frissítheted az árfolyamokat.
-- Sokkal jobb visszajelzés az árak frissítésekor és hiba esetén.
-- Új nyelv: Egy kedves közösségi tag gondoskodott a török nyelvű fordításról. Köszönjük! 🇹🇷
-- Bizonyos helyzetekben rossz API-t használtak az idővonalhoz. Ez most már javítva van.

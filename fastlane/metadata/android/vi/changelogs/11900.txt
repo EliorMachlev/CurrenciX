@@ -1,2 +1,0 @@
-- Một vài cải tiến cho giao diện.
-- Hỗ trợ ngôn ngữ mới: Tiếng Hoa 🇨🇳🇸🇬 và tiếng Nga 🇷🇺🇧🇾🇰🇿.

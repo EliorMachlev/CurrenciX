@@ -1,2 +1,0 @@
-- Vylepšení rozhraní
-- Nové jazyky: čínština 🇨🇳🇹🇼🇸🇬 a ruština 🇷🇺🇧🇾🇰🇿.

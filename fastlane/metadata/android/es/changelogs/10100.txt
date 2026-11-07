@@ -1,1 +1,0 @@
-- Según el contrato de tu tarjeta de crédito, tu banco puede cobrar una comisión por todas las operaciones de cambio de divisas. Ahora puedes incluir esa comisión en los cálculos, para saber cuánto pagas realmente. 🙂

@@ -1,2 +1,0 @@
-- Vertalingen bijgewerkt.
-- Herstel historische koersen met Norges Bank.

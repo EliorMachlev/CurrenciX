@@ -1,2 +1,0 @@
-- Új funkció: A számításhoz mostantól a múltbeli árfolyamok is kiválaszthatók.
-- Új nyelv: Indonéz. Köszönjük szépen, @liimee! 🇮🇩🏝️
