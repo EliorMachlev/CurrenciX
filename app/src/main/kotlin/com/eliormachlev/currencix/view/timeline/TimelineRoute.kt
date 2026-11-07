@@ -228,6 +228,10 @@ private suspend fun shareChart(
 // The sheets the timeline opens over itself.
 private enum class TimelineSheet { GraphOptions, Provider }
 
+/**
+ * The [sheet] the timeline has open, if any. Picking a provider stores it
+ * and calls [onProviderPicked]; dismissing either sheet calls [onDismiss].
+ */
 @Composable
 private fun TimelineSheets(
     sheet: TimelineSheet?,

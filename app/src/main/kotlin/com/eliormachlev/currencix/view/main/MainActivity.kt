@@ -299,6 +299,11 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * The converter screen's dependencies, built once per activity. Its
+     * PreferenceViewModel comes from an initializer, not the default factory,
+     * which would find the constructor by reflection.
+     */
     private fun createConverterHost(playReveal: Boolean): ConverterHost {
         val status = ConverterStatus(this, viewModel, snackbar).also { it.observe(this) }
         val heroCapture = LayerCapture()

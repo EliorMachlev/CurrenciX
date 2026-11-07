@@ -45,8 +45,10 @@ internal fun defaultFactoryCalls(source: String): List<String> =
             if (trailingLambda || factories.any { it != "null" }) null else source.substring(call.range.first, close + 1)
         }.toList()
 
-// What [callee] is given as its factory: the argument at its factory position
-// (among those before the first named one) and any named factory, trimmed.
+/**
+ * What [callee] is given as its factory: the argument at its factory position
+ * (among those before the first named one) and any named factory, trimmed.
+ */
 private fun factoryArguments(
     callee: String,
     arguments: List<String>,
@@ -60,7 +62,7 @@ private fun factoryArguments(
     return (listOfNotNull(positional.getOrNull(FACTORY_POSITION.getValue(callee))) + named).map(String::trim)
 }
 
-// Where the parenthesis opened at [open] closes, or null when it doesn't.
+/** Where the parenthesis opened at [open] in [source] closes, or null when it doesn't. */
 private fun closingParenthesis(
     source: String,
     open: Int,
@@ -75,7 +77,7 @@ private fun closingParenthesis(
     return null
 }
 
-// [arguments] split at its own commas, not those inside nested brackets; blank for none.
+/** [arguments] split at its own commas, not those inside nested brackets; empty for none. */
 private fun topLevelArguments(arguments: String): List<String> {
     if (arguments.isBlank()) return emptyList()
     val split = mutableListOf<String>()

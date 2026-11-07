@@ -88,11 +88,13 @@ internal fun MutableList<Rate>.addFokFromDkkIfMissing() {
     }
 }
 
-// Namespace-unaware XmlPullParser bound to [inputStream]. The five XML
-// parsers all want this exact configuration. Xml.newPullParser() builds the
-// platform parser directly (XmlPullParserFactory loads it by class name), but
-// turns namespaces and DOCTYPE processing on, so both are set back off: the
-// feeds need neither, and a DOCTYPE from the network stays unprocessed.
+/**
+ * A namespace-unaware XmlPullParser bound to [inputStream]. The five XML
+ * parsers all want this exact configuration. Xml.newPullParser() builds the
+ * platform parser directly (XmlPullParserFactory loads it by class name), but
+ * turns namespaces and DOCTYPE processing on, so both are set back off: the
+ * feeds need neither, and a DOCTYPE from the network stays unprocessed.
+ */
 internal fun newXmlPullParser(inputStream: InputStream): XmlPullParser =
     Xml.newPullParser().apply {
         setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, false)
