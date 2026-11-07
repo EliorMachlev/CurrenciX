@@ -267,16 +267,17 @@ android {
         compose = true
     }
 
-    // One APK for every (64-bit) phone: it carries receipt scanning's native code for
-    // both 64-bit CPU types (about 7 MB each, compressed below), so a release is
-    // one file, one version code and one F-Droid build, and F-Droid can
-    // publish the APK signed here, hybrid signature included. Play builds
-    // from the app bundle, which it splits by CPU type itself.
-    // Native libraries compressed in the APK: smaller to download; Android
-    // unpacks them on install.
+    // One APK for every 64-bit Arm device: it carries receipt scanning's native code
+    // for arm64-v8a (about 7.5 MB), so a release is one file, one version code and
+    // one F-Droid build, and F-Droid can publish the APK signed here, hybrid
+    // signature included.
+    // Native libraries stored uncompressed and page-aligned, loaded straight from
+    // the APK: nothing is unpacked on install, so the device holds one copy and
+    // installs faster, at about 4 MB more APK to download (uncompressed instead
+    // of about 3.2 MB compressed).
     packaging {
         jniLibs {
-            useLegacyPackaging = true
+            useLegacyPackaging = false
         }
     }
 }
