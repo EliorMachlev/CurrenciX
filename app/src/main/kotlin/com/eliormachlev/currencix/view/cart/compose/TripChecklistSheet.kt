@@ -58,7 +58,8 @@ fun TripChecklistSheet(
 ) {
     val context = LocalContext.current
     val db = rememberDatabase()
-    val rates by remember(db) { db.rates.getExchangeRates() }.collectAsStateWithLifecycle(initialValue = null)
+    val rates by remember(db) { db.rates.getExchangeRates() }
+        .collectAsStateWithLifecycle(initialValue = remember(db) { db.rates.getExchangeRatesBlocking() })
     val fees by db.fees.fees.collectAsStateWithLifecycle()
     val downloading by remember(context) { TessdataDownloadWorker.downloading(context) }.collectAsStateWithLifecycle(emptySet())
     val today = remember { LocalDate.now() }

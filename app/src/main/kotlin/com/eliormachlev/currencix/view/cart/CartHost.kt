@@ -14,7 +14,6 @@ import com.eliormachlev.currencix.view.compose.AppSnackbar
 import com.eliormachlev.currencix.view.compose.showOrToast
 import com.eliormachlev.currencix.viewmodel.cart.CartViewModel
 import kotlinx.collections.immutable.ImmutableList
-import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -48,9 +47,10 @@ class CartHost(
     // The working cart's rows and currency as the list shows them, kept by
     // [followCart]; fields so the list's collection survives cart
     // re-emissions.
-    private val itemsState = MutableStateFlow<ImmutableList<CartItem>>(persistentListOf())
+    private val startCart = viewModel.getCurrentCart().value
+    private val itemsState = MutableStateFlow(startCart.items.toImmutableList())
     val items: StateFlow<ImmutableList<CartItem>> = itemsState.asStateFlow()
-    private val currencyState = MutableStateFlow("")
+    private val currencyState = MutableStateFlow(startCart.currency)
     val currency: StateFlow<String> = currencyState.asStateFlow()
 
     private val toast: (String) -> Unit = { message -> snackbar.showOrToast(activity, message) }
