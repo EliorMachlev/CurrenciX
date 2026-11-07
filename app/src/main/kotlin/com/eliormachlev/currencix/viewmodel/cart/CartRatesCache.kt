@@ -22,13 +22,17 @@ class CartRatesCache(
     db: Database,
     scope: CoroutineScope,
 ) {
-    val fees: StateFlow<ImmutableList<Fee>> = db.fees.fees.flow.stateInEagerly(scope, db.fees.fees.get())
+    val fees: StateFlow<ImmutableList<Fee>> =
+        db.fees.fees.flow
+            .stateInEagerly(scope, db.fees.fees.get())
     val rates: StateFlow<ExchangeRates?> = db.rates.getExchangeRates().stateInEagerly(scope, db.rates.getExchangeRatesBlocking())
 
     private val activeExchangeId: StateFlow<String?> =
-        db.fees.activeExchangeId.flow.stateInEagerly(scope, db.fees.activeExchangeId.get())
+        db.fees.activeExchangeId.flow
+            .stateInEagerly(scope, db.fees.activeExchangeId.get())
     private val activeBankId: StateFlow<String?> =
-        db.fees.activeBankId.flow.stateInEagerly(scope, db.fees.activeBankId.get())
+        db.fees.activeBankId.flow
+            .stateInEagerly(scope, db.fees.activeBankId.get())
 
     /**
      * Freeze all four current values into a single snapshot. Callers that

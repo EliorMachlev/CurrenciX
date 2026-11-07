@@ -149,11 +149,14 @@ class MainViewModel(
             when {
                 // force-use cache
                 onlyCache -> true
+
                 // first run: fetch data
                 cachedDate == null -> false
+
                 // Historical rates in use: serve from cache when the cached date
                 // already matches the requested historical date; otherwise re-fetch.
                 historicalDate != null -> historicalDate == cachedDate
+
                 // fetch if stored date is before the current date, else just use the cached value
                 else -> !cachedDate.isBefore(currentDate)
             }
@@ -289,7 +292,7 @@ class MainViewModel(
      */
     internal fun getCurrentBaseValueAsNumber(): StateFlow<BigDecimal?> = currentBaseValueAsNumber
 
-    private val currentBaseValueFormatted: StateFlow<SpannableStringBuilder?> by lazy {
+    private val currentBaseValueFormattedState: StateFlow<SpannableStringBuilder?> by lazy {
         combine(currentBaseValue, currentBaseCurrency) { value, currency ->
             val number = (
                 value?.toHumanReadableNumber(
@@ -305,7 +308,7 @@ class MainViewModel(
     /**
      * the nicely formatted, total base value including the currency symbol at the right position.
      */
-    internal fun getCurrentBaseValueFormatted(): StateFlow<SpannableStringBuilder?> = currentBaseValueFormatted
+    internal fun getCurrentBaseValueFormatted(): StateFlow<SpannableStringBuilder?> = currentBaseValueFormattedState
 
     // Bold [number] plus the currency [symbol] on the side dictated by the
     // active locale. Extracted so the base-value and result displays can't
@@ -326,7 +329,7 @@ class MainViewModel(
 
     // ===============================
 
-    private val calculationInputFormatted: StateFlow<String?> by lazy {
+    private val calculationInputFormattedState: StateFlow<String?> by lazy {
         input.calculationValueText
             .map { it?.replace(".", getDecimalSeparator(app)) }
             .stateInWhileSubscribed(viewModelScope, null)
@@ -335,7 +338,7 @@ class MainViewModel(
     /**
      * the nicely formatted calculation string: e.g. 4 + 2.2 - 4 / 2
      */
-    internal fun getCalculationInputFormatted(): StateFlow<String?> = calculationInputFormatted
+    internal fun getCalculationInputFormatted(): StateFlow<String?> = calculationInputFormattedState
 
     // ===============================
 
@@ -456,19 +459,21 @@ class MainViewModel(
      */
     internal fun getResultWithFeesAsNumber(): StateFlow<BigDecimal?> = resultWithFeesAsNumber
 
-    private val resultFormatted: StateFlow<SpannableStringBuilder?> by lazy { formattedDestinationAmount(result) }
+    private val resultFormattedState: StateFlow<SpannableStringBuilder?> by lazy { formattedDestinationAmount(result) }
 
     /**
      * the nicely formatted, total destination value including the currency symbol at the right position.
      */
-    internal fun getResultFormatted(): StateFlow<SpannableStringBuilder?> = resultFormatted
+    internal fun getResultFormatted(): StateFlow<SpannableStringBuilder?> = resultFormattedState
 
-    private val resultWithFeesFormatted: StateFlow<SpannableStringBuilder?> by lazy { formattedDestinationAmount(resultWithFees) }
+    private val resultWithFeesFormattedState: StateFlow<SpannableStringBuilder?> by lazy {
+        formattedDestinationAmount(resultWithFees)
+    }
 
     /**
      * the nicely formatted, fee-adjusted destination value (True Cost).
      */
-    internal fun getResultWithFeesFormatted(): StateFlow<SpannableStringBuilder?> = resultWithFeesFormatted
+    internal fun getResultWithFeesFormatted(): StateFlow<SpannableStringBuilder?> = resultWithFeesFormattedState
 
     // Formats a destination-currency numeric string ("302.3") into the hero's
     // bold-number-plus-currency-symbol SpannableStringBuilder, tracking the

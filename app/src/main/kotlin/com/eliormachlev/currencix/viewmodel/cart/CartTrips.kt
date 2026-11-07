@@ -75,14 +75,14 @@ class CartTrips internal constructor(
     // Redone when the trips, the saved carts, the rates or the fees change
     // (the fee stack also reads the active exchange and card). Empty until
     // first observed.
-    private val summaries: StateFlow<List<TripSummary>> by lazy {
+    private val summariesState: StateFlow<List<TripSummary>> by lazy {
         combine(db.carts.trips.flow, db.carts.savedCarts.flow, ratesCache.rates, ratesCache.fees) { trips, carts, rates, _ ->
             summarizeTrips(trips = trips, carts = carts, rates = rates, feeStack = ratesCache::feeStackFor)
         }.stateInWhileSubscribed(scope, emptyList())
     }
 
     /** The trips with their spending, in the order made. */
-    fun getSummaries(): StateFlow<List<TripSummary>> = summaries
+    fun getSummaries(): StateFlow<List<TripSummary>> = summariesState
 
     /** Saves a new trip or the edits to one; returns its id. */
     fun save(
