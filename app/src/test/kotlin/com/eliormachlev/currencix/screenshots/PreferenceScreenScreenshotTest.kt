@@ -24,7 +24,7 @@ import org.robolectric.annotation.Config
 import org.robolectric.annotation.GraphicsMode
 
 // PreferenceScreen is VM-driven; rendering it directly would need a fake
-// PreferenceViewModel + Database + AppCompatDelegate glue. Since screenshot
+// PreferenceViewModel + Database + night-mode and language glue. Since screenshot
 // tests exist to lock the *visual* composition, we reconstruct Settings'
 // category list and two of its screens from the same NavigationRow /
 // PreferenceRow / SwitchRow primitives the real screens compose — matching

@@ -376,22 +376,17 @@ dependencies {
     // hands them to ART at install time so first-frame + first-interaction
     // paths are precompiled. Version pinned explicitly.
     implementation("androidx.profileinstaller:profileinstaller:1.4.1")
-    // support libs
-    val appCompatVersion = "1.8.0"
-    implementation("androidx.appcompat:appcompat:$appCompatVersion")
-    implementation("androidx.appcompat:appcompat-resources:$appCompatVersion")
     // Splash screen: androidx compat wrapper around Android 12+ SplashScreen API.
     // Closes the black-frame gap between launcher tap and first Compose frame,
     // and hands off to the in-app wordmark reveal (#155). Pinned rather than
     // dropped to the BOM default so upgrades are explicit.
     implementation("androidx.core:core-splashscreen:1.2.0")
-    implementation("androidx.constraintlayout:constraintlayout:2.2.2")
     val livecycleVersion = "2.11.0"
-    implementation("androidx.lifecycle:lifecycle-livedata-ktx:$livecycleVersion")
-    implementation("androidx.lifecycle:lifecycle-runtime-ktx:$livecycleVersion")
+    implementation("androidx.lifecycle:lifecycle-livedata:$livecycleVersion")
+    implementation("androidx.lifecycle:lifecycle-runtime:$livecycleVersion")
     // The app lock: when the app as a whole leaves and comes back (view/lock/AppLock).
     implementation("androidx.lifecycle:lifecycle-process:$livecycleVersion")
-    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:$livecycleVersion")
+    implementation("androidx.lifecycle:lifecycle-viewmodel:$livecycleVersion")
     implementation("androidx.window:window:1.5.1")
     // downloader: OkHttp is the sole HTTP client. Timber-bridged logging
     // interceptor is wired up in HttpClientProvider; provider modules call
@@ -450,7 +445,7 @@ dependencies {
     // Provider-aware TTL — see worker/RateRefreshScheduler.kt. Default off;
     // opt-in via Settings until #147 onboarding wires the hero opt-in.
     val workVersion = "2.12.0"
-    implementation("androidx.work:work-runtime-ktx:$workVersion")
+    implementation("androidx.work:work-runtime:$workVersion")
     // Receipt scanning: Tesseract OCR on the device (:ocr-engine), in both
     // flavors. Its 64-bit-only native code is also what keeps the app off
     // 32-bit phones, in Play's compatibility check too (gradle.properties).
