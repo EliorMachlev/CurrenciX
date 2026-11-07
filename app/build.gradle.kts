@@ -281,10 +281,11 @@ android {
     }
 }
 
-// The APKs are named <applicationId>-v<versionCode>-…, from defaultConfig above
-// (where F-Droid's update check and the release workflow read the version).
+// The APKs are named <applicationId>-v<versionName>-…, from defaultConfig above
+// (where F-Droid's update check and the release workflow read the version),
+// so the file says the version a user sees (v0.1), as the release tag does.
 base {
-    archivesName.set("${android.defaultConfig.applicationId}-v${android.defaultConfig.versionCode}")
+    archivesName.set("${android.defaultConfig.applicationId}-v${android.defaultConfig.versionName}")
 }
 
 // The baseline profile plugin's build types (benchmarkRelease,

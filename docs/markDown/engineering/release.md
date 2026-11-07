@@ -64,7 +64,7 @@ Builds:
 
 # Optional: publish the APK signed here, hybrid signature included, once
 # F-Droid's build of the tag reproduces it byte for byte (see below).
-Binaries: https://github.com/EliorMachlev/CurrenciX/releases/download/v%v/com.eliormachlev.currencix-v%c-fdroid-release.apk
+Binaries: https://github.com/EliorMachlev/CurrenciX/releases/download/v%v/com.eliormachlev.currencix-v%v-fdroid-release.apk
 AllowedAPKSigningKeys: <the release key's SHA-256 above, lowercase, without colons>
 
 AutoUpdateMode: Version
