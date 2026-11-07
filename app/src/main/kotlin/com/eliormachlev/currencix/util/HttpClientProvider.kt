@@ -11,8 +11,6 @@ import okhttp3.Dns
 import okhttp3.OkHttpClient
 import okhttp3.TlsVersion
 import okhttp3.android.AndroidDns
-import okhttp3.logging.HttpLoggingInterceptor
-import timber.log.Timber
 import java.io.File
 import java.util.concurrent.TimeUnit
 
@@ -117,15 +115,9 @@ object HttpClientProvider {
         }
 
     private fun build(): OkHttpClient {
-        val loggingInterceptor =
-            HttpLoggingInterceptor { line ->
-                Timber.tag("HTTP").d(line)
-            }.apply {
-                level = HttpLoggingInterceptor.Level.BASIC
-            }
         return OkHttpClient
             .Builder()
-            .addInterceptor(loggingInterceptor)
+            .apply { httpLogger?.let(::addInterceptor) }
             // Network-layer rewrite runs before OkHttp's cache writer sees
             // the response, so the stamped Cache-Control controls what the
             // cache stores for the non-cooperative provider hosts.

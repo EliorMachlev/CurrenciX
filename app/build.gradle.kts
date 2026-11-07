@@ -385,7 +385,6 @@ dependencies {
     // and hands off to the in-app wordmark reveal (#155). Pinned rather than
     // dropped to the BOM default so upgrades are explicit.
     implementation("androidx.core:core-splashscreen:1.2.0")
-    implementation("androidx.constraintlayout:constraintlayout:2.2.2")
     val livecycleVersion = "2.11.0"
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:$livecycleVersion")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:$livecycleVersion")
@@ -398,7 +397,6 @@ dependencies {
     // the shared instance via the HttpClientProvider.fetch extension.
     val okHttpVersion = "5.5.1"
     implementation("com.squareup.okhttp3:okhttp:$okHttpVersion")
-    implementation("com.squareup.okhttp3:logging-interceptor:$okHttpVersion")
     // Chucker: in-app HTTP inspector for debug builds. The real library is
     // wired only into debug via the ChuckerInterceptorProvider source-set
     // split (src/debug vs src/release); release ships the library-no-op
@@ -406,6 +404,8 @@ dependencies {
     // no UI / storage code is dragged into the shipped APK.
     val chuckerVersion = "4.3.1"
     debugImplementation("com.github.chuckerteam.chucker:library:$chuckerVersion")
+    // Logs each call to Timber in debug builds only (src/debug/…/HttpLogger.kt).
+    debugImplementation("com.squareup.okhttp3:logging-interceptor:$okHttpVersion")
     releaseImplementation("com.github.chuckerteam.chucker:library-no-op:$chuckerVersion")
     // JSON: kotlinx.serialization. Provider responses decode into
     // @Serializable classes (model/provider/api) through Retrofit's
