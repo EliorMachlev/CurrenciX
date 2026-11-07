@@ -31,6 +31,8 @@ The native libraries are stored uncompressed (`useLegacyPackaging = false`) and 
 
 **64-bit only.** The 32-bit types (`armeabi-v7a`, `x86`) were dropped at 1.23.0, before the first release. Neither Android's manifest nor the Play Console can say "64-bit only" (the Console's device catalog excludes by model, RAM, chip or Android Go edition, not by CPU type), but both go by the native code an app carries: with code for 64-bit types only, Android refuses the APK on a phone that runs only 32-bit apps (some low-cost Android Go phones), and Play doesn't offer it there. The receipt reader used to be an on-demand Play module, which left the Play app itself with no native code, installable on such a phone with scanning broken; it's now in the app for both flavors, so every store refuses those phones alike, at ~7 MB more per Play download.
 
+Release builds are shrunk, optimized and obfuscated by R8 with AGP's `proguard-android-optimize.txt` and no rules of the app's own: full mode (the default since AGP 8.0), access modification (in that file) and class repackaging (the default for apps since AGP 9.1) are already on, so extra flags for them change nothing. The libraries' consumer rules keep what must keep its name.
+
 One APK means one version code, one F-Droid build and one file for F-Droid to reproduce and publish with this project's signature ([release.md](release.md#f-droid-draft-recipe-for-fdroiddata)), which stays true with one CPU type. Version codes: [release.md](release.md#version-codes).
 
 ## Dependency choices
