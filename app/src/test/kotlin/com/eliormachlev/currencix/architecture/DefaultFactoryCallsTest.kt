@@ -17,6 +17,10 @@ class DefaultFactoryCallsTest {
             "val vm = ViewModelProvider.create(owner)[PreferenceViewModel::class]",
             "private val vm: PreferenceViewModel by viewModels()",
             "val vm: PreferenceViewModel = viewModel(",
+            "val vm = viewModel<PreferenceViewModel>(factory = null)",
+            "val vm = viewModel<PreferenceViewModel>(owner, \"picker\", null)",
+            "val vm = ViewModelProvider.create(owner, extras = extras)[PreferenceViewModel::class]",
+            "val vm = ViewModelProvider(owner = this)[PreferenceViewModel::class.java]",
         ).forEach { source -> assertEquals(source, 1, defaultFactoryCalls(source).size) }
     }
 
@@ -30,6 +34,9 @@ class DefaultFactoryCallsTest {
             "val vm = viewModel { PreferenceViewModel(app) }",
             "val vm = ViewModelProvider(this, MainViewModel.factory(application))[MainViewModel::class.java]",
             "val vm = ViewModelProvider.create(owner, factory = preferenceFactory)[PreferenceViewModel::class]",
+            "val vm = ViewModelProvider.create(owner, preferenceFactory, extras)[PreferenceViewModel::class]",
+            "val vm = viewModel<PreferenceViewModel>(owner, \"picker\", preferenceFactory)",
+            "val vm = viewModel(key = \"picker\", factory = if (cached) cachedFactory else liveFactory)",
             "private val vm: PreferenceViewModel by viewModels { preferenceFactory }",
             "private val vm: PreferenceViewModel by viewModels(factoryProducer = { preferenceFactory })",
             "val vm = applicationViewModel { PreferenceViewModel(it) }",
