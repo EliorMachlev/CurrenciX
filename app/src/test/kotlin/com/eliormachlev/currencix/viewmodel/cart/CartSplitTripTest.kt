@@ -16,6 +16,7 @@ import com.eliormachlev.currencix.repository.throughJson
 import com.eliormachlev.currencix.repository.throughProto
 import org.junit.After
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -134,7 +135,12 @@ class CartSplitTripTest {
     fun `pinning a trip's spending skips a trip edited or deleted since it was read`() {
         val read = Trip("t1", "Japan", Currency.ILS, end = LocalDate.of(2026, 11, 1))
         val pin = SpentPin(BigDecimal("36.72"), 7)
-        fun storedPin() = db.carts.trips.get().single().spentPin
+
+        fun storedPin() =
+            db.carts.trips
+                .get()
+                .single()
+                .spentPin
 
         db.carts.saveTrip(read.copy(name = "Japan 2"))
         db.carts.pinTripSpent(read, pin)
@@ -147,5 +153,32 @@ class CartSplitTripTest {
         db.carts.deleteTrip("t1")
         db.carts.pinTripSpent(read, pin)
         assertEquals(emptyList<Trip>(), db.carts.trips.get())
+    }
+
+    @Test
+    fun `the background refresh pins an ended trip from the saved rates`() {
+        val today = LocalDate.of(2026, 11, 8)
+        fun rates(ils: String) =
+            ExchangeRates(
+                true,
+                null,
+                Currency.EUR,
+                today,
+                listOf(Rate(Currency.USD, BigDecimal("1.1")), Rate(Currency.ILS, BigDecimal(ils))),
+            )
+        db.carts.saveTrip(Trip("t1", "Japan", Currency.ILS, end = today.minusDays(1)))
+        db.carts.saveTrip(Trip("t2", "Rome", Currency.ILS, end = today.plusDays(2)))
+        db.carts.saveCart(cart(CartItem("1", "", "10"), people = emptyList(), id = "c1", tripId = "t1"))
+        db.carts.saveCart(cart(CartItem("2", "", "10"), people = emptyList(), id = "c2", tripId = "t2"))
+
+        db.rates.insertExchangeRates(rates("3.96"))
+        db.pinEndedTrips(today)
+        val pinned = db.carts.trips.get().first { it.id == "t1" }.spentPin
+        assertNotNull(pinned)
+        assertNull("a trip still on is not pinned", db.carts.trips.get().first { it.id == "t2" }.spentPin)
+
+        db.rates.insertExchangeRates(rates("4.40"))
+        db.pinEndedTrips(today)
+        assertEquals(pinned, db.carts.trips.get().first { it.id == "t1" }.spentPin)
     }
 }

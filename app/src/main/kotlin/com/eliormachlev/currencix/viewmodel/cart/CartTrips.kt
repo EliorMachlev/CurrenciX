@@ -92,6 +92,30 @@ internal fun summarizeTrips(
         TripSummary(trip, spent, own.size, toPin)
     }
 
+/** Saves the amount of each of [summaries] that has one to pin (see [TripSummary.toPin]). */
+internal fun Database.pinSummaries(summaries: List<TripSummary>) {
+    summaries.forEach { summary -> summary.toPin?.let { carts.pinTripSpent(summary.trip, it) } }
+}
+
+/**
+ * Pins the trips that have ended by [today] from what is saved now, with no
+ * screen involved: the background rate refresh calls it right after new
+ * rates arrive, so a trip is pinned at the first refresh after its end even
+ * if the trips list isn't opened.
+ */
+internal fun Database.pinEndedTrips(today: LocalDate = LocalDate.now()) {
+    val snapshot =
+        CartRatesSnapshot(
+            fees = fees.fees.get(),
+            rates = rates.getExchangeRatesBlocking(),
+            activeExchangeId = fees.activeExchangeId.get(),
+            activeBankId = fees.activeBankId.get(),
+        )
+    pinSummaries(
+        summarizeTrips(carts.trips.get(), carts.savedCarts.get(), snapshot.rates, today, snapshot::feeStackFor),
+    )
+}
+
 /**
  * The trips saved carts are grouped into ([CartViewModel.trips]): each with
  * its spending, and the edits to them.
@@ -108,19 +132,14 @@ class CartTrips internal constructor(
     }
 
     // Redone when the trips, the saved carts, the rates, the fees or the day
-    // change (a trip that ended overnight gets pinned). Empty until first
-    // observed.
+    // change. A trip that has just ended is pinned as it goes by; the trips
+    // list then changes and the summaries are worked out again, now from the
+    // pin. Empty until first observed.
     private val summariesState: StateFlow<List<TripSummary>> by lazy {
         combine(db.carts.trips.flow, db.carts.savedCarts.flow, feeAwareRates, todayEachDay()) { trips, carts, rates, today ->
             summarizeTrips(trips = trips, carts = carts, rates = rates, feeStack = ratesCache::feeStackFor, today = today)
-        }.onEach(::pinEndedTrips)
+        }.onEach(db::pinSummaries)
             .stateInWhileSubscribed(scope, emptyList())
-    }
-
-    // Saves the amount of each trip that has just ended; the trips list then
-    // changes and the summaries are worked out again, now from the pins.
-    private fun pinEndedTrips(summaries: List<TripSummary>) {
-        summaries.forEach { summary -> summary.toPin?.let { db.carts.pinTripSpent(summary.trip, it) } }
     }
 
     /** The trips with their spending, in the order made. */
