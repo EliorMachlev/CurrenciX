@@ -59,8 +59,14 @@ private fun topLevelArguments(arguments: String): List<String> {
     var start = 0
     arguments.forEachIndexed { index, char ->
         when {
-            char in OPENERS -> depth++
-            char in CLOSERS -> depth--
+            char in OPENERS -> {
+                depth++
+            }
+
+            char in CLOSERS -> {
+                depth--
+            }
+
             char == ',' && depth == 0 -> {
                 split += arguments.substring(start, index)
                 start = index + 1
