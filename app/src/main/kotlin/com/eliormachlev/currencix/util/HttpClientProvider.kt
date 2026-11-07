@@ -55,8 +55,8 @@ internal val FORWARD_SECRET_TLS: ConnectionSpec =
             CipherSuite.TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305_SHA256,
         ).build()
 
-// Shared OkHttp client with an on-disk response cache and Timber-bridged
-// wire logging. Every rate provider funnels through this client via
+// Shared OkHttp client with an on-disk response cache (and, in debug builds,
+// call logging through Timber). Every rate provider funnels through this client via
 // HttpFetch.kt; the cache warms up whenever the upstream response carries
 // usable Cache-Control headers. Providers whose upstreams do not send
 // usable headers get their responses stamped with a per-host TTL by
