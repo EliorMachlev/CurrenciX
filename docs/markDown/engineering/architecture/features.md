@@ -49,7 +49,7 @@ Saved carts group into trips (`Trip`: name, home currency, optional budget, dest
 
 ## Chart
 
-Rendered by [Vico](https://github.com/patrykandpatrick/vico) straight into Compose (`TimelineChart`), observing the ViewModel's `LiveData`. Vico replaced SparkView, which was unmaintained and needed a hand-rolled adapter, baseline and scrub handling.
+Rendered by [Vico](https://github.com/patrykandpatrick/vico) straight into Compose (`TimelineChart`), collecting the ViewModel's `StateFlow`s. Vico replaced SparkView, which was unmaintained and needed a hand-rolled adapter, baseline and scrub handling.
 
 - **Thinning.** At most two points per pair of pixels (`thinForWidth`: each bucket's low and high), so five years of days draw and scrub as a few hundred points with every peak kept; the chart is measured before it's drawn so it never gets the whole series. A new stretch draws in from the start edge (`drawIn`), a clip, no recomposition.
 - **Options** (`ChartSettings`: grid, axes labels, extremes, period change, all on by default) swap a Vico component for `null`, which Vico treats as "don't draw".

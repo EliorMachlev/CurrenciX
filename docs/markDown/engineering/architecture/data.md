@@ -6,7 +6,7 @@ There's no SQLite. Settings and small state are **Preferences DataStore**; what 
 
 Four preference namespaces (`PersistenceKey`: `rates`, `last_state`, `starred_currencies`, `prefs`), whose names are also the sections of an exported backup, all but `rates`, which is a network cache and refetched ([security.md](../security.md#backups)). Each setting is one `Pref<T>` declared in its store (`booleanPref(KEY, default = true)`, `keyedPref(key, decode, encode)`), so its key, default and stored shape live in one line:
 
-- `get()` reads the in-memory snapshot (only where a blocking read is unavoidable, such as startup), `set()` / `update { }` write, `flow` / `liveData` observe. ViewModels turn one into state with `Pref.stateInWhileSubscribed(viewModelScope)`; a composable without a ViewModel uses `rememberDatabase()` and `collectAsStateWithLifecycle()`, which starts from the stored value so the first frame is right.
+- `get()` reads the in-memory snapshot (only where a blocking read is unavoidable, such as startup), `set()` / `update { }` write, `flow` observes. ViewModels turn one into state with `Pref.stateInWhileSubscribed(viewModelScope)`; a composable without a ViewModel uses `rememberDatabase()` and `collectAsStateWithLifecycle()`, which starts from the stored value so the first frame is right.
 - A value stored under a key with another type than declared (a setting whose type changed between builds) reads as unset: the default applies and the next write replaces it, instead of failing to cast (`PrefTest`).
 
 ## Saved data: Protobuf files
