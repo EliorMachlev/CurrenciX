@@ -191,8 +191,10 @@ private fun DrawScope.drawDrawerArrow(
     val arrowSize = lerp(barLength, DRAWER_ARROW_HEAD_LENGTH.toPx(), progress)
     val middleBarCut = lerp(barLength, DRAWER_ARROW_SHAFT_LENGTH.toPx(), progress)
     val cut = lerp(0f, maxCut, progress).roundToInt().toFloat()
-    val arrowWidth = (arrowSize * cos(ARROW_HEAD_ANGLE)).roundToInt().toFloat()
-    val arrowHeight = (arrowSize * sin(ARROW_HEAD_ANGLE)).roundToInt().toFloat()
+    // The outer bars are level in the hamburger and tilt to the arrow-head angle.
+    val angle = lerp(0f, ARROW_HEAD_ANGLE.toFloat(), progress)
+    val arrowWidth = (arrowSize * cos(angle)).roundToInt().toFloat()
+    val arrowHeight = (arrowSize * sin(angle)).roundToInt().toFloat()
     val topBottomOffset = lerp(gap + thickness, -maxCut, progress)
     val arrowEdge = -middleBarCut / 2
     val spin = lerp(if (isRtl) 0f else -HALF_TURN, if (isRtl) HALF_TURN else 0f, progress) * if (isRtl) -1f else 1f
