@@ -196,7 +196,7 @@ class MainViewModel(
      */
     internal fun forceUpdateExchangeRate() {
         // The rates already follow the store the refresh writes into.
-        if (!RefreshState.inFlight.value) repository.getExchangeRates(fresh = true)
+        if (!RefreshState.inFlight.value) repository.refreshExchangeRates(fresh = true)
     }
 
     /**

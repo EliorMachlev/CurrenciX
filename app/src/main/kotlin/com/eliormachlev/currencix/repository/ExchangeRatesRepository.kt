@@ -166,17 +166,24 @@ class ExchangeRatesRepository(
      * cached answer still holds.
      */
     fun getExchangeRates(fresh: Boolean = false): Flow<ExchangeRates?> {
-        if (ratesJob?.isActive != true) {
-            ratesJob =
-                launchApiCall {
-                    fetchRates(fresh).processResponse(
-                        successFlag = { success },
-                        errorMessage = { error },
-                        onSuccess = ::store,
-                    )
-                }
-        }
+        refreshExchangeRates(fresh)
         return exchangeRates
+    }
+
+    /**
+     * Starts the fetch described at [getExchangeRates] unless one is already
+     * running, and returns at once: the rates arrive through the store.
+     */
+    fun refreshExchangeRates(fresh: Boolean = false) {
+        if (ratesJob?.isActive == true) return
+        ratesJob =
+            launchApiCall {
+                fetchRates(fresh).processResponse(
+                    successFlag = { success },
+                    errorMessage = { error },
+                    onSuccess = ::store,
+                )
+            }
     }
 
     /**
