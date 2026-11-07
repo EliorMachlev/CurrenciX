@@ -9,6 +9,7 @@ import com.eliormachlev.currencix.model.ExchangeRates
 import com.eliormachlev.currencix.model.Person
 import com.eliormachlev.currencix.model.Rate
 import com.eliormachlev.currencix.model.SavedCart
+import com.eliormachlev.currencix.model.SpentPin
 import com.eliormachlev.currencix.model.Trip
 import com.eliormachlev.currencix.repository.Database
 import com.eliormachlev.currencix.repository.throughJson
@@ -21,6 +22,7 @@ import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 import java.math.BigDecimal
+import java.time.LocalDate
 
 // Split by person and trips. Robolectric for the stores.
 @RunWith(RobolectricTestRunner::class)
@@ -125,6 +127,23 @@ class CartSplitTripTest {
                 .single()
                 .tripId,
         )
+        assertEquals(emptyList<Trip>(), db.carts.trips.get())
+    }
+
+    @Test
+    fun `pinning a trip's spending skips a trip edited or deleted since it was read`() {
+        val read = Trip("t1", "Japan", Currency.ILS, end = LocalDate.of(2026, 11, 1))
+        val pin = SpentPin(BigDecimal("36.72"), 7)
+        db.carts.saveTrip(read.copy(name = "Japan 2"))
+        db.carts.pinTripSpent(read, pin)
+        assertNull(db.carts.trips.get().single().spentPin)
+
+        db.carts.saveTrip(read)
+        db.carts.pinTripSpent(read, pin)
+        assertEquals(pin, db.carts.trips.get().single().spentPin)
+
+        db.carts.deleteTrip("t1")
+        db.carts.pinTripSpent(read, pin)
         assertEquals(emptyList<Trip>(), db.carts.trips.get())
     }
 }

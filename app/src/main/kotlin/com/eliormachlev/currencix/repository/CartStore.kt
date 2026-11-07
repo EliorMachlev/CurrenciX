@@ -2,6 +2,7 @@ package com.eliormachlev.currencix.repository
 
 import android.content.Context
 import com.eliormachlev.currencix.model.SavedCart
+import com.eliormachlev.currencix.model.SpentPin
 import com.eliormachlev.currencix.model.Trip
 import com.eliormachlev.currencix.proto.CartsData
 import com.eliormachlev.currencix.repository.persistence.CachedStore
@@ -45,6 +46,16 @@ class CartStore(
 
     /** Saves [trip] over the trip with its id, or as a new one. */
     fun saveTrip(trip: Trip) = trips.update { it.replacingOrAppending(trip) { saved -> saved.id == trip.id } }
+
+    /**
+     * Pins [pin] on [seen], the trip as it was read. Only that edit is made, and
+     * only while the trip is still exactly as read: one edited or deleted since
+     * is left alone.
+     */
+    fun pinTripSpent(
+        seen: Trip,
+        pin: SpentPin,
+    ) = trips.update { list -> list.map { if (it == seen) it.copy(spentPin = pin) else it } }
 
     /** Deletes trip [id]; its carts stay, in no trip. */
     fun deleteTrip(id: String) {

@@ -92,6 +92,14 @@ class TripSpentPinTest {
     }
 
     @Test
+    fun `an ended trip with a cart that has no rate yet is not pinned`() {
+        val carts = listOf(cart("10"), cart("5", id = "c2").copy(currency = "JPY"))
+        val summary = spentOf(trip(end = today.minusDays(1)), carts, ratesWithIls("3.96"))
+        assertNotNull(summary.spent)
+        assertNull(summary.toPin)
+    }
+
+    @Test
     fun `an ended trip without carts has nothing to pin`() {
         val summary = spentOf(trip(end = today.minusDays(1)), emptyList(), ratesWithIls("3.96"))
         assertNull(summary.spent)

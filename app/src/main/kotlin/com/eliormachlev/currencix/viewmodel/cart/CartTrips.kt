@@ -87,7 +87,8 @@ internal fun summarizeTrips(
         if (trip.hasEnded(today) && pinned != null) return@map TripSummary(trip, pinned.amount, own.size)
         val costs = own.mapNotNull { cartCostIn(it, trip.currency, rates, feeStack) }
         val spent = costs.takeIf { it.isNotEmpty() }?.reduce(BigDecimal::add)
-        val toPin = if (trip.hasEnded(today) && spent != null) SpentPin(spent, basis) else null
+        // Only a total with every cart in it is pinned: a cart missing its rate would stay out for good.
+        val toPin = if (trip.hasEnded(today) && spent != null && costs.size == own.size) SpentPin(spent, basis) else null
         TripSummary(trip, spent, own.size, toPin)
     }
 
@@ -119,7 +120,7 @@ class CartTrips internal constructor(
     // Saves the amount of each trip that has just ended; the trips list then
     // changes and the summaries are worked out again, now from the pins.
     private fun pinEndedTrips(summaries: List<TripSummary>) {
-        summaries.forEach { summary -> summary.toPin?.let { db.carts.saveTrip(summary.trip.copy(spentPin = it)) } }
+        summaries.forEach { summary -> summary.toPin?.let { db.carts.pinTripSpent(summary.trip, it) } }
     }
 
     /** The trips with their spending, in the order made. */
