@@ -37,6 +37,9 @@ env:
   JDK_JAVA_OPTIONS: -Xshare:off
   # Software GPU for the headless emulator on CI runners.
   GMD_GPU: -Pandroid.testoptions.manageddevices.emulator.gpu=swiftshader_indirect
+  # The emulator is x86_64 (the runners are), and gradle.properties ships Arm code
+  # only: an app without x86_64 code won't install on it.
+  GMD_ABIS: -Pcurrencix.abis=arm64-v8a,x86_64
   # The read-only dependency cache .github/actions/dependency-cache restores
   # (dependency-cache.yaml builds it): Gradle reads it from this variable.
   GRADLE_RO_DEP_CACHE: /home/runner/gradle-ro-dep-cache
@@ -86,7 +89,7 @@ jobs:
         run: |
           set -o pipefail
           benchmark() {
-            ./gradlew "${GMD_GPU}" :baselineprofile:pixel6Api34FdroidBenchmarkReleaseAndroidTest --stacktrace 2>&1 | tee "$BENCHMARK_LOG"
+            ./gradlew "${GMD_GPU}" "${GMD_ABIS}" :baselineprofile:pixel6Api34FdroidBenchmarkReleaseAndroidTest --stacktrace 2>&1 | tee "$BENCHMARK_LOG"
           }
           benchmark && exit 0
           if ! grep -rqF "$LAUNCH_FLAKE" "$BENCHMARK_LOG" baselineprofile/build/outputs/androidTest-results; then
