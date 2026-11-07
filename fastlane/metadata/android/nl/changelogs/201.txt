@@ -1,2 +1,0 @@
-- Betere foutafhandeling
-- Kleine verbeteringen

@@ -1,3 +1,0 @@
-- Google'ın güncel Material Design 3 yönergelerine uygun bazı küçük iyileştirmeler.
-- Çeviriler güncellendi. Emeği geçen herkese teşekkürler!
-- Çeşitli kararlılık iyileştirmeleri.

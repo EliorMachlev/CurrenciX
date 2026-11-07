@@ -1,3 +1,0 @@
-- Corrigé : la touche Retour ne fermait pas l'application.
-- Traductions mises à jour.
-- Améliorations globales.

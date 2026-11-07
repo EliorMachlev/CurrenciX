@@ -1,1 +1,0 @@
-- El vostre banc pot cobrar una comissió a les transaccions fetes a l'estranger depenent del contracte de la targeta de crèdit. A partir d'ara podreu introduir aquest valor per determinar quant es pagarà realment.🙂

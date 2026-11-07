@@ -1,1 +1,0 @@
-- Yeni özellik: Sayılar artık panodan yapıştırılabilir.

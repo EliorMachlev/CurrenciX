@@ -1,4 +1,0 @@
-- Nok et nytt språk: Du kan nå nyte appen på arabisk. Tusen takk, Ahmed! 🇦🇪🇧🇭🇩🇯🇩🇿🇪🇬🇪🇭🇪🇷🇮🇱🇮🇶🇯🇴🇰🇲🇰🇼🇱🇧🇱🇾🇲🇦🇲🇷🇴🇲🇶🇦🇸🇦🇸🇩🇸🇴🇸🇸🇸🇾🇹🇩🇹🇳 🇾🇪
-- Noen flere RTL-fikser for landskapsoppsettet.
-- Rettet krasj ved inntasting av en tom verdi for gebyrbeløpet.
-- Dataleverandøren vises i tidslinjevisningen.

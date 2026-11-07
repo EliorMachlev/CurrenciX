@@ -1,2 +1,0 @@
-- Uuendasime tõlkeid.
-- Parandasime vanade kursside laadimise Norra Panga andmetest.

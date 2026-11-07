@@ -1,3 +1,0 @@
-- Added support for per-app language preferences (new feature in Android 13).
-- Additionally, for ALL devices (also < Android 13) there's now an option to switch the app language inside the app settings.
-- New language: Catalan 🇪🇸🇦🇩

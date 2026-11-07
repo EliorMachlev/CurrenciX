@@ -1,3 +1,0 @@
-- Währungen können nun als Favorit markiert werden, für eine schnellere Auswahl. Viel Spaß damit! ❤
-- Option hinzugefügt, das Theme im Dark Mode komplett auf Schwarz umzustellen.
-- Aktualisierte Übersetzungen. Vielen Dank an alle Freiwilligen!

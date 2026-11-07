@@ -1,2 +1,0 @@
-- Aktualisierte Übersetzungen.
-- Historische Kursdaten bei Norges Bank gefixt.

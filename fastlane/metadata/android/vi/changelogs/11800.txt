@@ -1,3 +1,0 @@
-- Thêm hỗ trợ cho cài đặt ngôn ngữ riêng trong ứng dụng (tính năng mới trên Android 13).
-- Ngoài ra TẤT CẢ thiết bị (kể cả Android 13 trở về trước) đều sẽ có được tùy chọn để đổi ngôn ngữ ngay trong cài đặt của ứng dụng.
-- Ngôn ngữ mới: Tiếng Catalunya 🇪🇸🇦🇩

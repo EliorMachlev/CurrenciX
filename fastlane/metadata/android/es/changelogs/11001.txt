@@ -1,3 +1,0 @@
-- Se ha corregido un fallo en Android 8.0.
-- Actualizadas las traducciones.
-- Pequeñas mejoras en la interfaz de usuario.

@@ -1,2 +1,0 @@
-- Poboljšanja UI-ja.
-- Novi jezici: kineski 🇨🇳🇹🇼🇸🇬 i ruski 🇷🇺🇧🇾🇰🇿.

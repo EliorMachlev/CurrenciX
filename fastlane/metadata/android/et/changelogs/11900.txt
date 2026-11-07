@@ -1,2 +1,0 @@
-- Mitmed kasutajaliidese täiendused.
-- Uued keeled: hiina keel 🇨🇳🇹🇼🇸🇬 ja vene keel 🇷🇺🇧🇾.

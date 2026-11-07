@@ -1,3 +1,0 @@
-- Összeomlás javítása Android 8.0 alatt.
-- Frissített fordítások.
-- Kisebb UI javítások.

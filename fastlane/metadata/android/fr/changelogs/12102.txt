@@ -1,3 +1,0 @@
-- Nouvelle langue sélectionnable : l'espéranto !
-- Prise en charge de la saisie au clavier matériel.
-- Traductions mises à jour.

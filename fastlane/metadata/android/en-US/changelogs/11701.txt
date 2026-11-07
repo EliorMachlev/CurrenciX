@@ -1,3 +1,0 @@
-- New language #1: Bulgarian. Thank you very much, Mihail! 🇧🇬
-- New language #2: Bengali. Cheers, Pratyay! 🇧🇩🇮🇳
-- Also updates to the rest of the translations.

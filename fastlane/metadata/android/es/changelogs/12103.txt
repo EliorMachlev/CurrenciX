@@ -1,3 +1,0 @@
-- Corregido: La tecla Atrás no cerraba la aplicación.
-- Traducciones actualizadas.
-- Mejoras generales.

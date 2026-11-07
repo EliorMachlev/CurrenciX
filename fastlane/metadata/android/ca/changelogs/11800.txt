@@ -1,3 +1,0 @@
-- Afegit suport per a la configuració de la llengua per aplicació (nova funcionalitat d'Android 13).
-- Addicionalment, ara tots els dispositius (també < Android 13) disposen de l'opció de canviar la llengua dins de la configuració de l'aplicació.
-- Nova llengua: Català 🇪🇸🇦🇩

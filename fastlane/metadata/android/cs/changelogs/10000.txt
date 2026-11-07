@@ -1,3 +1,0 @@
-- Přidán německý překlad 🇩🇪
-- Drobné vylepšení: Velikost aplikace se zmenšila o 50 %!
-- Aplikace se zdá být poměrně stabilní: Veřejná verze 1.0! 🥳🥳🥳

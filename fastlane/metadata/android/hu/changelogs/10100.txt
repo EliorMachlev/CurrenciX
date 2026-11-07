@@ -1,1 +1,0 @@
-- Hitelkártya-szerződésétől függően bankod díjat számíthat fel minden devizatranzakció után. Ezt a díjat most már beleszámíthatod a számításokba, így tudod, hogy valójában mennyit fizetsz. 🙂

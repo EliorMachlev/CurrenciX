@@ -1,1 +1,0 @@
-- Lagt til en kopifunksjon: Langt klikk på verdien du vil kopiere

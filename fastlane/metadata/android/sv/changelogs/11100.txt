@@ -1,4 +1,0 @@
-- Det går nu att använda dra-för-att-uppdatera för att uppdatera kurserna.
-- Kraftigt förbättrad återkoppling när kurser uppdateras och vid fel.
-- Nytt språk: En vänlig community-medlem bidrog med översättningar för turkiska. Tack! 🇹🇷
-- I vissa situationer så användes fel API för tidslinjen. Det är åtgärdat nu.

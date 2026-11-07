@@ -1,4 +1,0 @@
-- Correction de plus de mises en page sur les appareils avec Android 15.
-- Nouvelle langue supportée : l'éstonien 🇪🇪
-- Ajouté un support pour l'anglais britannique, pour l'affichage des nombres.
-- Quelques améliorations au niveau des traductions. Merci aux volontaires !

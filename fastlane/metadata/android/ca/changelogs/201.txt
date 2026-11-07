@@ -1,2 +1,0 @@
-- Millora en la gestió d'errors
-- Millores menors

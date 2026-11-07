@@ -1,2 +1,0 @@
-- Nyní je možné sazby obnovovat ručně. Podívejte se na to v nabídce přetečení.
-- Vylepšení výkonu

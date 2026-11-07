@@ -1,4 +1,0 @@
-- Neue Sprache: Niederländisch. Vielen Dank an den Helfer! 🇳🇱🌷
-- Neue Funktion: Die Währungen in der Kursverlauf-Ansicht können nun mit einem Klick vertauscht werden.
-- Erneut einen Fehler behoben, der die App in seltenen Fällen bei der Verwendung des dunklen Themes abstürzen ließ.
-- Verschiedene kleine Design-Verbesserungen.

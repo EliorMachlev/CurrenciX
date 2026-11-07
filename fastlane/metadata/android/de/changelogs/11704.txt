@@ -1,2 +1,0 @@
-- Verbessertes Design (Material 3).
-- Neue Sprache: Tschechisch. Vielen Dank, Fjuro! 🇨🇿

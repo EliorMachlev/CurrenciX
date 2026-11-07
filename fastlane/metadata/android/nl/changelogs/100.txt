@@ -1,3 +1,0 @@
-- Meer faalbestendig actualisering van de valutakoersen
-- Een disclaimer toegevoegd
-- Dit changelog toegevoegd

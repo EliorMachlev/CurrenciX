@@ -1,3 +1,0 @@
-- Corregit: La tecla enrere no tancava l'aplicació.
-- Traduccions actualitzades.
-- Millores generals.

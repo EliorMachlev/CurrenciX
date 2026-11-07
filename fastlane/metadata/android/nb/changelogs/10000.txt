@@ -1,3 +1,0 @@
-- Lagt til tysk oversettelse 🇩🇪
-- Mindre forbedring: Appstørrelsen ble redusert med 50 %!
-- Appen virker ganske stabil: Public 1.0-utgivelse! 🥳🥳🥳

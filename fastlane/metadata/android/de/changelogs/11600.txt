@@ -1,2 +1,0 @@
-- Neue Funktion: Historische Raten können nun für die Berechnung ausgewählt werden.
-- Neue Sprache: Indonesisch. Vielen Dank, @liimee! 🇮🇩🏝️

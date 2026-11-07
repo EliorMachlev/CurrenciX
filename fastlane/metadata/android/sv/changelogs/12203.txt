@@ -1,3 +1,0 @@
-- Uppdaterade översättningar.
-- Kanadensisk dollar är nu även tillgänglig med Bank of Canada som leverantör.
-- Nytt språk: Persiska

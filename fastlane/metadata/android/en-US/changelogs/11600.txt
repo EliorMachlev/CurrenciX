@@ -1,2 +1,0 @@
-- New feature: Historical rates can now be selected to be used for the calculation.
-- New language: Indonesian. Thank you very much, @liimee! 🇮🇩🏝️

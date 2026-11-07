@@ -1,1 +1,0 @@
-- Bankanız, kredi kartı sözleşmenize bağlı olarak, tüm döviz işlemlerinden bir işlem ücreti alabilir. Artık bu ücreti hesaplamalara dahil edebilir ve tam olarak ne kadar ödeme yapacağınızı öğrenebilirsiniz. 🙂

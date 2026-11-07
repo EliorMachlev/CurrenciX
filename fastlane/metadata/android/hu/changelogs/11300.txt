@@ -1,4 +1,0 @@
-- Egy másik új nyelv: Mostantól arabul is élvezheted az alkalmazást. Köszönjük szépen, Ahmed! 🇦🇪🇧🇭🇩🇯🇩🇿🇪🇬🇪🇭🇪🇷🇮🇱🇮🇶🇯🇴🇰🇲🇰🇼🇱🇧🇱🇾🇲🇦🇲🇷🇴🇲🇶🇦🇸🇦🇸🇩🇸🇴🇸🇸🇸🇾🇹🇩🇹🇳🇾🇪
-- Néhány további RTL javítás fekvő nézethez.
-- A díj összegénél üres érték beírásakor bekövetkezett összeomlás javítása.
-- Az adatszolgáltató megjelenik az idővonal nézetben.

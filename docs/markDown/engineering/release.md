@@ -44,7 +44,7 @@ Check with `apksigner verify --verbose --print-certs` (JDK 24+): "v3.2 … true"
 
 ## Version codes
 
-`versionCode` follows `versionName`, each part two digits: `0.1 → 0×100 + 1 = 1`, `1.2.3 → 1×10000 + 2×100 + 3 = 10203`, checked by `checkVersion`. The first release is `0.1` (code 1); the `1.22`/`1.23` codes in [`changelogs/`](../../../fastlane/metadata/android/en-US/changelogs) are the upstream app's, under its own application ID. F-Droid's update check reads the `versionName = "…"` and `versionCode = …` lines of [`app/build.gradle.kts`](../../../app/build.gradle.kts) as text, and the release workflow reads the `versionName` one (with `sed`) to check the tag, so keep them literal.
+`versionCode` follows `versionName`, each part two digits: `0.1 → 0×100 + 1 = 1`, `1.2.3 → 1×10000 + 2×100 + 3 = 10203`, checked by `checkVersion`. The first release is `0.1` (code 1); the upstream app's versions and changelogs aren't carried over. F-Droid's update check reads the `versionName = "…"` and `versionCode = …` lines of [`app/build.gradle.kts`](../../../app/build.gradle.kts) as text, and the release workflow reads the `versionName` one (with `sed`) to check the tag, so keep them literal.
 
 The APK and the app bundle both carry that code as it is (one APK for both 64-bit CPU types, see [build.md](build.md#one-apk-for-every-phone-64-bit-only)). Codes only go up, so the scheme is permanent once released. Debug builds add the commit to the name (`0.1-<commit>`); Settings reads the installed APK's name from the package manager.
 

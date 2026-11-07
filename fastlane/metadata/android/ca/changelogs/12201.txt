@@ -1,2 +1,0 @@
-- Traduccions actualitzades
-- Corregides les taxes històriques del Norges Bank.

@@ -1,3 +1,0 @@
-- Noen små forbedringer for å følge Googles siste Material Design 3-retningslinje.
-- Oppdaterte oversettelser. Takk til alle som hjelper til!
-- Ulike stabilitetsforbedringer.

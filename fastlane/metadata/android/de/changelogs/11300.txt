@@ -1,4 +1,0 @@
-- Noch eine neue Sprache: Die App kann nun in Arabisch genutzt werden. Vielen Dank, Ahmed! 🇦🇪🇧🇭🇩🇯🇩🇿🇪🇬🇪🇭🇪🇷🇮🇱🇮🇶🇯🇴🇰🇲🇰🇼🇱🇧🇱🇾🇲🇦🇲🇷🇴🇲🇶🇦🇸🇦🇸🇩🇸🇴🇸🇸🇸🇾🇹🇩🇹🇳🇾🇪
-- Noch ein paar RTL-Fehlerbehebungen im Landscape Layout.
-- Absturz behoben, der Auftrat, wenn ein leerer Text als Gebührenwert eingegeben wurde.
-- Der Datenlieferant wird nun auch bei der Kurshistorie angezeigt.

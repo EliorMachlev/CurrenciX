@@ -1,4 +1,0 @@
-- Popravljeni još neki problemi s prijelomom na uređajima s Androidom 15
-- Novi podržani jezik: estonski 🇪🇪
-- Dodana podrška za britanski engleski, za bolji prikaz brojeva.
-- Dorađeni ostali prijevodi. Hvala volonterima!

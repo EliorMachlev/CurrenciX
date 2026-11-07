@@ -1,3 +1,0 @@
-- Ajout d'une traduction en allemand 🇩🇪
-- Amélioration mineure : La taille de l'appli a diminué de 50% !
-- L'application semble assez stable : Version publique 1.0 ! 🥳🥳

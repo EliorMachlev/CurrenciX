@@ -1,3 +1,0 @@
-- More fail-proof updating of the currency rates
-- Added a disclaimer
-- Added this changelog

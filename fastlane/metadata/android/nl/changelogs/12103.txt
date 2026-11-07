@@ -1,3 +1,0 @@
-- Opgelost: De terug-toets sloot de app niet.
-- Vertalingen bijgewerkt.
-- Algemene verbeteringen.

@@ -1,2 +1,0 @@
-- Çeşitli kullanıcı arayüzü iyileştirmeleri.
-- Yeni diller: Çince 🇨🇳🇹🇼🇸🇬 ve Rusça 🇷🇺🇧🇾🇰🇿.

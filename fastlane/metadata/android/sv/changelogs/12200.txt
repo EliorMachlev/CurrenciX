@@ -1,5 +1,0 @@
-- Nytt API: OpenExchangerates
-- Borttaget API: Fer.ee - fungerade inte pålitligt längre
-- Uppdaterade översättningar
-- Förbättrat användargränssnitt
-- Blandade förbättringar bakom ytan

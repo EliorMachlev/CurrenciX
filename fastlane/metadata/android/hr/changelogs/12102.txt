@@ -1,3 +1,0 @@
-- Novi jezik za odabir: esperanto!
-- Dodana podrška za unos fizičkom tipkovnicom.
-- Ažurirani prijevodi.

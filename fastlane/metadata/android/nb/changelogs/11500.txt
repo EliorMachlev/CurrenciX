@@ -1,4 +1,0 @@
-- Nytt språk: nederlandsk. Tusen takk til den frivillige! 🇳🇱🌷
-- Ny funksjon: Du kan nå veksle mellom valutaene i tidslinjevisningen med ett klikk.
-- Igjen fikset et problem der appen ville krasje i noen tilfeller når det mørke temaet ble brukt.
-- Ulike små UI-forbedringer.

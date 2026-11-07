@@ -1,2 +1,0 @@
-- Yeni özellik: Geçmiş kur verileri artık hesaplamada kullanılabilir.
-- Yeni dil: Endonezyaca. Çok teşekkürler, @liimee! 🇮🇩🏝️

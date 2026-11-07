@@ -1,2 +1,0 @@
-- Bolja obrada pogrešaka
-- Manja poboljšanja

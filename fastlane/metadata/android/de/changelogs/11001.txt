@@ -1,3 +1,0 @@
-- Möglichen Absturz bei Geräte mit Android 8.0 behoben.
-- Aktualisierte Übersetzungen.
-- Kleine UI-Verbesserungen.

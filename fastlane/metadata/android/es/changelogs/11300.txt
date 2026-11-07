@@ -1,4 +1,0 @@
-- Otro nuevo idioma: Ahora puedes disfrutar de la aplicación en árabe. ¡Muchas gracias, Ahmed! 🇦🇪🇧🇭🇩🇯🇩🇿🇪🇬🇪🇭🇪🇷🇮🇱🇮🇶🇯🇴🇰🇲🇰🇼🇱🇧🇱🇾🇲🇦🇲🇷🇴🇲🇶🇦🇸🇦🇸🇩🇸🇴🇸🇸🇸🇾🇹🇩🇹🇳🇾🇪
-- Algunas correcciones más en el RTL para el diseño apaisado.
-- Se ha corregido un fallo al introducir un valor vacío para el importe de la tasa.
-- El proveedor de datos se muestra en la vista de la línea de tiempo.

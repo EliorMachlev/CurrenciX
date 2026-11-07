@@ -1,3 +1,0 @@
-- 17 neue Währungen! Jetzt sind es insgesamt 50. 🥳 Zu viele, um alle aufzuzählen. Eine ganze Reihe beliebter Urlaubsorte im Mittleren Osten und in der Karibik sind jetzt jedoch hinzugefügt worden: die VAE, Katar, Barbados, die Bahamas, Kuba…
-- Obendrein ist nun auch eine Suchfunktion im Währungs-Auswahldialog verfügbar.
-- Der Auswahldialog zeigt jetzt auch den vollen Namen einer Währung, nicht nur ihre Abkürzung. Eine fantastische Ergänzung – in Kombination mit der Suche. Probier es aus!

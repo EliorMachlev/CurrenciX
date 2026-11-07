@@ -1,3 +1,0 @@
-- Lisasime saksa keele tõlke 🇩🇪
-- Pisike täiustus: rakenduse maht vähenes 50%!
-- Rakendus tundub olema üsna stabiilne: see on nüüd avalik esimene väljalase, versioon 1.0! 🥳🥳🥳

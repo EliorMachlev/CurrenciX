@@ -1,2 +1,0 @@
-- Mostantól lehetőség van az árfolyamok manuális frissítésére. Nézd meg a menüben.
-- Teljesítményjavítások

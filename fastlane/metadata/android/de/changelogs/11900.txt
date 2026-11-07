@@ -1,2 +1,0 @@
-- Einige Verbesserungen der Benutzeroberfläche.
-- Neue Sprachen: Chinesisch 🇨🇳🇹🇼🇸🇬 und Russisch 🇷🇺🇧🇾🇰🇿.
