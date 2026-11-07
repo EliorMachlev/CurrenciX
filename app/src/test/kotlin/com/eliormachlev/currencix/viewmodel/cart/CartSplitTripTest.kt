@@ -158,27 +158,35 @@ class CartSplitTripTest {
     @Test
     fun `the background refresh pins an ended trip from the saved rates`() {
         val today = LocalDate.of(2026, 11, 8)
-        fun rates(ils: String) =
-            ExchangeRates(
-                true,
-                null,
-                Currency.EUR,
-                today,
-                listOf(Rate(Currency.USD, BigDecimal("1.1")), Rate(Currency.ILS, BigDecimal(ils))),
-            )
+        val ils = listOf("3.96", "4.40")
+        val rates =
+            ils.map { value ->
+                ExchangeRates(
+                    true,
+                    null,
+                    Currency.EUR,
+                    today,
+                    listOf(Rate(Currency.USD, BigDecimal("1.1")), Rate(Currency.ILS, BigDecimal(value))),
+                )
+            }
         db.carts.saveTrip(Trip("t1", "Japan", Currency.ILS, end = today.minusDays(1)))
         db.carts.saveTrip(Trip("t2", "Rome", Currency.ILS, end = today.plusDays(2)))
         db.carts.saveCart(cart(CartItem("1", "", "10"), people = emptyList(), id = "c1", tripId = "t1"))
         db.carts.saveCart(cart(CartItem("2", "", "10"), people = emptyList(), id = "c2", tripId = "t2"))
 
-        db.rates.insertExchangeRates(rates("3.96"))
+        db.rates.insertExchangeRates(rates[0])
         db.pinEndedTrips(today)
-        val pinned = db.carts.trips.get().first { it.id == "t1" }.spentPin
+        val pinned = pinOf("t1")
         assertNotNull(pinned)
-        assertNull("a trip still on is not pinned", db.carts.trips.get().first { it.id == "t2" }.spentPin)
+        assertNull("a trip still on is not pinned", pinOf("t2"))
 
-        db.rates.insertExchangeRates(rates("4.40"))
+        db.rates.insertExchangeRates(rates[1])
         db.pinEndedTrips(today)
-        assertEquals(pinned, db.carts.trips.get().first { it.id == "t1" }.spentPin)
+        assertEquals(pinned, pinOf("t1"))
+    }
+
+    private fun pinOf(tripId: String): SpentPin? {
+        val trips = db.carts.trips.get()
+        return trips.first { it.id == tripId }.spentPin
     }
 }
