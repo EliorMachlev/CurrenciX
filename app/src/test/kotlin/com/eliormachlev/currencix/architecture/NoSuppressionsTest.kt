@@ -348,7 +348,7 @@ class NoSuppressionsTest {
                 codeqlException(
                     "java/reference-equality-of-boxed-types",
                     "view/timeline/TimelineChart",
-                    522,
+                    523,
                     "reference comparison of boxed numerical values",
                 ) +
                 listOf(
