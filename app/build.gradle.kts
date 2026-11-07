@@ -131,8 +131,8 @@ android {
         minSdk { version = release(33) }
         targetSdk { version = release(37) }
         // SemVer; 0.x is a pre-release (release-apk.yaml)
-        versionName = "0.1"
-        versionCode = 1
+        versionName = "0.1.1"
+        versionCode = 101
         // 64-bit CPU types only (gradle.properties): the receipt reader's
         // native code, which also makes stores refuse the app on 32-bit phones.
         ndk { abiFilters += providers.gradleProperty("currencix.abis").get().split(",") }
@@ -178,7 +178,7 @@ android {
             // Commit SHA sourced from -PdebugCommitSha (CI passes it) or, as
             // a fallback, the local git HEAD short SHA so a locally-built APK
             // still knows which commit it came from. versionName encodes the
-            // SHA (e.g. "0.1-abc1234"); if git isn't available, keep the
+            // SHA (e.g. "0.1.1-abc1234"); if git isn't available, keep the
             // "[DEBUG]" tag.
             val commitSha = providers.gradleProperty("debugCommitSha").orNull ?: gitShortSha()
             versionNameSuffix = if (commitSha != null) "-$commitSha" else " [DEBUG]"
@@ -281,10 +281,11 @@ android {
     }
 }
 
-// The APKs are named <applicationId>-v<versionCode>-…, from defaultConfig above
-// (where F-Droid's update check and the release workflow read the version).
+// The APKs are named <applicationId>-v<versionName>-…, from defaultConfig above
+// (where F-Droid's update check and the release workflow read the version),
+// so the file says the version a user sees (v0.1.1), as the release tag does.
 base {
-    archivesName.set("${android.defaultConfig.applicationId}-v${android.defaultConfig.versionCode}")
+    archivesName.set("${android.defaultConfig.applicationId}-v${android.defaultConfig.versionName}")
 }
 
 // The baseline profile plugin's build types (benchmarkRelease,
@@ -775,7 +776,7 @@ abstract class SignApksHybrid : DefaultTask() {
 
 /**
  * Draws the splash screen's branding image, `drawable/splash_version`: the
- * app's version ("v0.1") in the app's font, centred in the 200 × 80 dp
+ * app's version ("v0.1.1") in the app's font, centred in the 200 × 80 dp
  * the splash gives it, in a light-mode and a dark-mode colour. Android's
  * splash takes a drawable there, not text, so the version is drawn here, at
  * build time, as an extra-extra-extra-high-density PNG (which Android

@@ -2,7 +2,7 @@
 
 ## Releasing is pushing a tag
 
-Tag a commit of `master` `v<versionName>` (`v0.1`) and push it, or, with no git at hand, run **Tag a release** ([`tag-release.yaml`](../../../.github/workflows/tag-release.yaml)) on `master` from the Actions tab: it tags the current `master` with its `versionName` (refusing a tag that exists) and starts the release on the tag, since a tag made with the workflow's own token starts no workflow by itself. [`release-apk.yaml`](../../../.github/workflows/release-apk.yaml):
+Tag a commit of `master` `v<versionName>` (`v0.1.1`) and push it, or, with no git at hand, run **Tag a release** ([`tag-release.yaml`](../../../.github/workflows/tag-release.yaml)) on `master` from the Actions tab: it tags the current `master` with its `versionName` (refusing a tag that exists) and starts the release on the tag, since a tag made with the workflow's own token starts no workflow by itself. [`release-apk.yaml`](../../../.github/workflows/release-apk.yaml):
 
 1. checks the tag names the version being built and is on `master`, and that the certificate pins are at least 90 days from expiry (Android stops checking them after it; run the **Certificate pins** workflow with *update* first, see [security.md](security.md#certificate-pinning));
 2. decodes the keystores from the `release` environment's secrets into the runner's temp folder, builds `assembleFdroidRelease` (signing and verifying the APK), deletes the keys;
@@ -44,7 +44,7 @@ Check with `apksigner verify --verbose --print-certs` (JDK 24+): "v3.2 … true"
 
 ## Version codes
 
-`versionCode` follows `versionName`, each part two digits: `0.1 → 0×100 + 1 = 1`, `1.2.3 → 1×10000 + 2×100 + 3 = 10203`, checked by `checkVersion`. The first release is `0.1` (code 1); the upstream app's versions and changelogs aren't carried over. F-Droid's update check reads the `versionName = "…"` and `versionCode = …` lines of [`app/build.gradle.kts`](../../../app/build.gradle.kts) as text, and the release workflow reads the `versionName` one (with `sed`) to check the tag, so keep them literal.
+`versionCode` follows `versionName`, each part two digits: `0.1.1 → 0×10000 + 1×100 + 1 = 101`, `1.2.3 → 1×10000 + 2×100 + 3 = 10203`, checked by `checkVersion`. The first release is `0.1.1` (code 101); the upstream app's versions and changelogs aren't carried over. F-Droid's update check reads the `versionName = "…"` and `versionCode = …` lines of [`app/build.gradle.kts`](../../../app/build.gradle.kts) as text, and the release workflow reads the `versionName` one (with `sed`) to check the tag, so keep them literal.
 
 The APK and the app bundle both carry that code as it is (one APK for both 64-bit CPU types, see [build.md](build.md#one-apk-for-every-phone-64-bit-only)). Codes only go up, so the scheme is permanent once released. Debug builds add the commit to the name (`0.1-<commit>`); Settings reads the installed APK's name from the package manager.
 
@@ -54,17 +54,21 @@ One entry per release, building the one APK:
 
 ```yaml
 Builds:
-  - versionName: '0.1'
-    versionCode: 1
-    commit: v0.1
+  - versionName: 0.1.1
+    versionCode: 101
+    commit: v0.1.1
     subdir: app
     gradle:
       - fdroid
     output: build/outputs/apk/fdroid/release/*-fdroid-release-unsigned.apk
 
 # Optional: publish the APK signed here, hybrid signature included, once
-# F-Droid's build of the tag reproduces it byte for byte (see below).
-Binaries: https://github.com/EliorMachlev/CurrenciX/releases/download/v%v/com.eliormachlev.currencix-v%c-fdroid-release.apk
+# F-Droid's build of the tag reproduces it byte for byte (see below). To have
+# F-Droid sign it instead, leave out Binaries and AllowedAPKSigningKeys. Pick
+# one before the first F-Droid release and keep it: Android updates an app only
+# with the key it was installed with, so switching later means users reinstall
+# and lose their data (unless F-Droid publishes both signed APKs side by side).
+Binaries: https://github.com/EliorMachlev/CurrenciX/releases/download/v%v/com.eliormachlev.currencix-v%v-fdroid-release.apk
 AllowedAPKSigningKeys: <the release key's SHA-256 above, lowercase, without colons>
 
 AutoUpdateMode: Version
@@ -72,6 +76,6 @@ UpdateCheckMode: Tags
 UpdateCheckData: app/build.gradle.kts|versionCode = (\d+)|.|versionName = "(.*)"
 ```
 
-F-Droid's app page shows `fastlane/metadata/android/<locale>/changelogs/<versionCode>.txt` (`1.txt`), the file `checkFastlaneChangelog` (run by `./gradlew build`) requires, else `default.txt`.
+F-Droid's app page shows `fastlane/metadata/android/<locale>/changelogs/<versionCode>.txt` (`101.txt`), the file `checkFastlaneChangelog` (run by `./gradlew build`) requires, else `default.txt`.
 
 **Publishing this project's signature.** With `Binaries:`, F-Droid builds the tag itself, compares it with the GitHub release's APK, and when they match byte for byte apart from the signature it publishes ours instead of signing its own ([Reproducible Builds](https://f-droid.org/docs/Reproducible_Builds/)); without a match it skips that version. The signature is carried over as the whole APK Signing Block, where the v3.2 hybrid signature sits, so F-Droid and GitHub installs would share one key and update from each other. Not yet tried: F-Droid's server reproducing the APK (CI only shows our own two builds agree, [`apk-checks.yaml`](../../../.github/workflows/apk-checks.yaml)), and F-Droid's tools accepting a v3.2 block, which their documentation covers only up to v3. Check both on the first release before relying on it.

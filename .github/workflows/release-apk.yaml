@@ -4,7 +4,7 @@ name: Release
 # release key and Android 17's post-quantum hybrid signature (APK Signature
 # Scheme v3.2) and publishes it as a GitHub release.
 #
-# - Push a tag "v<versionName>" (e.g. v0.1) on a commit of master, or run
+# - Push a tag "v<versionName>" (e.g. v0.1.1) on a commit of master, or run
 #   "Tag a release" (tag-release.yaml) on master, which tags it and starts
 #   this run on the tag: the release is published with the APK, its SBOM (CycloneDX JSON) and
 #   checksums, its notes written from the commits since the last
