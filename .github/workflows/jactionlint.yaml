@@ -64,6 +64,6 @@ jobs:
       # --no-ignores: no ignore comment, config-file ignore or baseline hides a
       # finding; --config-file=/dev/null: no config file turns a rule off.
       # Nothing can be silenced without editing this line (NoSuppressionsTest
-      # checks both flags are here).
+      # pins this whole command).
       - name: Lint the workflows
         run: '"$RUNNER_TEMP/jactionlint" --profile default --strict-exit --no-ignores --config-file=/dev/null --format github'

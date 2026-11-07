@@ -80,12 +80,12 @@ class NoSuppressionsTest {
     }
 
     @Test
-    fun `jactionlint reads no config file and applies no ignores`() {
-        // A config file can turn a rule off, and an ignore comment or baseline can hide a
-        // finding; the run line keeps both out.
-        val run = File(root, JACTIONLINT_WORKFLOW).readLines().single { "jactionlint\" --" in it }
-        val missing = JACTIONLINT_GUARDS.filterNot { it in run.split(' ') }
-        assertEquals("$JACTIONLINT_WORKFLOW must run jactionlint with these flags", emptyList<String>(), missing)
+    fun `jactionlint runs with exactly the recorded flags`() {
+        // A config file can turn a rule off, and an ignore flag, comment or baseline can hide a
+        // finding. Pinning the whole command keeps --no-ignores and --config-file=/dev/null on
+        // it, and catches an ignore however its flag is spelled (-i x, -ix, -i=x, --ignore=x).
+        val run = File(root, JACTIONLINT_WORKFLOW).readLines().map { it.trim() }.single { it.startsWith(JACTIONLINT_RUN_KEY) }
+        assertEquals("$JACTIONLINT_WORKFLOW must run jactionlint with exactly these flags", JACTIONLINT_RUN, run)
     }
 
     private fun scannedTree(): Sequence<File> = root.walkTopDown().onEnter { it.name !in SKIPPED_DIRECTORIES }
@@ -146,7 +146,9 @@ class NoSuppressionsTest {
         const val MUTABLE_TAG_RULE = "yaml.github-actions.security.github-actions-mutable-action-tag.github-actions-mutable-action-tag"
         const val SELF_REPOSITORY = "`$/`"
         const val JACTIONLINT_WORKFLOW = ".github/workflows/jactionlint.yaml"
-        val JACTIONLINT_GUARDS = listOf("--no-ignores", "--config-file=/dev/null")
+        const val JACTIONLINT_RUN_KEY = "run: '\"\$RUNNER_TEMP/jactionlint\""
+        const val JACTIONLINT_RUN =
+            "$JACTIONLINT_RUN_KEY --profile default --strict-exit --no-ignores --config-file=/dev/null --format github'"
         const val WIRE_CVE = "CVE-2018-8909"
         const val WIRE_SERVER_CVE = "CVE-2023-22737"
         const val WIRE_RUNTIME = "wire-runtime"
@@ -412,7 +414,7 @@ class NoSuppressionsTest {
                 // Workflow linters: ShellCheck (run by jactionlint on each run: script), jactionlint
                 // (an -i / --ignore / -ignore flag, or its # jactionlint / # actionlint ignore= comment), zizmor
                 Regex("""shellcheck\s+disable="""),
-                Regex("""actionlint\b.*\s(-i|--?ignore)(\s|=|$)"""),
+                Regex("""actionlint\b.*\s(?!-init-config\b)(-[A-Za-z]*i|--ignore\b)"""),
                 Regex("""#\s*j?actionlint\s+ignore="""),
                 Regex("""zizmor:\s*ignore"""),
                 // Gradle dependency verification: files accepted without a checksum
