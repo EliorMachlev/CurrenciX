@@ -23,15 +23,15 @@
 
 Flavor- and build-type-specific code goes in `app/src/<flavor>/` behind a hook `main` asks for (see [architecture](architecture/README.md#rules-that-hold-everywhere)).
 
-## One APK for every phone, 64-bit only
+## One APK for every phone, 64-bit Arm only
 
-`assemble*` builds one APK per variant (`assembleDebug` builds both flavors), never one per CPU type. Both flavors carry receipt scanning's native code (`:ocr-engine`) for the two 64-bit CPU types, `arm64-v8a` (phones, tablets, Arm Chromebooks) and `x86_64` (Chromebooks with Intel or AMD chips, Windows Android emulators such as Google Play Games on PC, and the SDK's emulators), about 7.5 MB each; the list is `currencix.abis` in [`gradle.properties`](../../../gradle.properties).
+`assemble*` builds one APK per variant (`assembleDebug` builds both flavors), never one per CPU type. Both flavors carry receipt scanning's native code (`:ocr-engine`) for `arm64-v8a` only (phones, tablets, Arm Chromebooks), about 7.5 MB; the list is `currencix.abis` in [`gradle.properties`](../../../gradle.properties). `x86_64` (Intel and AMD Chromebooks, Windows emulators) isn't supported: the app installs nowhere that runs only x86_64 code. The CI emulators (baseline profiles, benchmarks) are x86_64, so those two workflows pass `-Pcurrencix.abis=arm64-v8a,x86_64` to build the app they install; no release does.
 
-The native libraries are stored uncompressed (`useLegacyPackaging = false`) and 16 KB page-aligned, so Android loads them straight from the APK instead of unpacking a copy on install: the device keeps one copy and installs faster. The cost is download size: the APK carries both CPU types' code at full size, about 15.5 MB, instead of about 6.6 MB compressed (v0.1.1: 16.6 MB APK). Every library is built for 16 KB memory pages, which Play requires and which loading from the APK needs. Play gets the app bundle and splits it by CPU type itself, so a Play install downloads one type's.
+The native libraries are stored uncompressed (`useLegacyPackaging = false`) and 16 KB page-aligned, so Android loads them straight from the APK instead of unpacking a copy on install: the device keeps one copy and installs faster. The cost is download size: the APK carries the code at full size, about 7.5 MB, instead of about 3.2 MB compressed, so about 4 MB more (v0.1.1, which carried both CPU types compressed: 16.6 MB APK). Every library is built for 16 KB memory pages, which Play requires and which loading from the APK needs. Play gets the app bundle and builds each device's APK from it.
 
 **64-bit only.** The 32-bit types (`armeabi-v7a`, `x86`) were dropped at 1.23.0, before the first release. Neither Android's manifest nor the Play Console can say "64-bit only" (the Console's device catalog excludes by model, RAM, chip or Android Go edition, not by CPU type), but both go by the native code an app carries: with code for 64-bit types only, Android refuses the APK on a phone that runs only 32-bit apps (some low-cost Android Go phones), and Play doesn't offer it there. The receipt reader used to be an on-demand Play module, which left the Play app itself with no native code, installable on such a phone with scanning broken; it's now in the app for both flavors, so every store refuses those phones alike, at ~7 MB more per Play download.
 
-One APK means one version code, one F-Droid build and one file for F-Droid to reproduce and publish with this project's signature ([release.md](release.md#f-droid-draft-recipe-for-fdroiddata)), which the ~7 MB the second CPU type adds was judged worth. Version codes: [release.md](release.md#version-codes).
+One APK means one version code, one F-Droid build and one file for F-Droid to reproduce and publish with this project's signature ([release.md](release.md#f-droid-draft-recipe-for-fdroiddata)), which stays true with one CPU type. Version codes: [release.md](release.md#version-codes).
 
 ## Dependency choices
 
