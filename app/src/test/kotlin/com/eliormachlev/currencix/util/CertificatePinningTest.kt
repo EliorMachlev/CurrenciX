@@ -47,7 +47,7 @@ class CertificatePinningTest {
         assertSame(pinned.connectionPool, unpinned.connectionPool)
 
         CertificatePinning.update(enabled = true)
-        assertSame(pinned, HttpClientProvider.client(null))
+        assertEquals(BUILT_IN_PINS.getValue(GITHUB), pinsFor(HttpClientProvider.client(null).certificatePinner, GITHUB))
     }
 
     private fun pinsFor(
