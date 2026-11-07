@@ -184,7 +184,11 @@ class CartHost(
 
     // The row as the view model holds it now: [itemsState] follows the cart a
     // moment later, so a second commit in a row must not read it.
-    private fun currentRow(id: String): CartItem? = viewModel.getCurrentCart().value.items.firstOrNull { it.id == id }
+    private fun currentRow(id: String): CartItem? =
+        viewModel
+            .getCurrentCart()
+            .value.items
+            .firstOrNull { it.id == id }
 
     fun commitName(
         id: String,
