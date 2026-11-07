@@ -279,6 +279,20 @@ class ExchangeRatesRepository(
         symbol: Currency,
         since: LocalDate = defaultTimelineSince(),
     ): StateFlow<Timeline?> {
+        requestTimeline(base, symbol, since)
+        return timelineState
+    }
+
+    /**
+     * Starts the fetch described at [getTimeline] unless one for the same pair
+     * and reach is already running, and returns at once: the timeline arrives
+     * through the flow [getTimeline] returns.
+     */
+    fun requestTimeline(
+        base: Currency,
+        symbol: Currency,
+        since: LocalDate = defaultTimelineSince(),
+    ) {
         val key = timelineKey(base, symbol)
         val start = maxOf(since, LocalDate.now().minusYears(TIMELINE_MAX_YEARS))
         // Record intent before any dedup check so rapid pair switches always
@@ -319,7 +333,6 @@ class ExchangeRatesRepository(
                 }
             timelineJobs[jobKey] = job
         }
-        return timelineState
     }
 
     // [provider]'s timeline for the pair: the missing ranges fetched

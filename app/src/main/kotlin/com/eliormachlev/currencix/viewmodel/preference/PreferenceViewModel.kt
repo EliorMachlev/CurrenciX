@@ -81,7 +81,7 @@ class PreferenceViewModel(
     // doesn't keep showing the previous provider's cached values.
     private fun persistAndRefreshRates(persist: () -> Unit) {
         persist()
-        ExchangeRatesRepository(app).getExchangeRates()
+        ExchangeRatesRepository(app).refreshExchangeRates()
     }
 
     /**

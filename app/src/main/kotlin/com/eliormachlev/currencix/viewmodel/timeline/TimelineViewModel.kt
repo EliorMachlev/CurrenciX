@@ -158,7 +158,7 @@ class TimelineViewModel(
     private fun fetchCovering(span: Span) {
         if (!span.start.isBefore(fetchedSince)) return
         fetchedSince = span.start
-        repository.getTimeline(base, target, fetchedSince)
+        repository.requestTimeline(base, target, fetchedSince)
     }
 
     /*
@@ -180,7 +180,7 @@ class TimelineViewModel(
 
     /** Fetches the pair again — after an error, or once the provider changed. */
     fun retry() {
-        repository.getTimeline(base, target, fetchedSince)
+        repository.requestTimeline(base, target, fetchedSince)
     }
 
     fun toggleCurrencies() = setCurrencies(target, base)
@@ -197,7 +197,7 @@ class TimelineViewModel(
         if (base == this.base && target == this.target) return
         this.base = base
         this.target = target
-        repository.getTimeline(base, target, fetchedSince)
+        repository.requestTimeline(base, target, fetchedSince)
     }
 
     fun getProvider(): StateFlow<CharSequence?> = providerState

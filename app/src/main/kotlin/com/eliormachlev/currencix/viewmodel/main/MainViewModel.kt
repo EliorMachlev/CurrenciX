@@ -539,7 +539,7 @@ class MainViewModel(
         target: Currency?,
     ) {
         if (base == null || target == null) return
-        repository.getTimeline(base, target)
+        repository.requestTimeline(base, target)
     }
 
     internal fun getBaseCurrency(): StateFlow<Currency?> = currentBaseCurrency
