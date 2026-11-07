@@ -208,13 +208,4 @@
     <string name="settings_advanced_section">進階</string>
     <string name="certificate_pinning_title">憑證綁定</string>
     <string name="certificate_pinning_summary">只透過為匯率伺服器綁定的憑證授權單位連線。只有在伺服器更換憑證且匯率無法載入時才關閉。</string>
-    <string name="repin_title">重新綁定至目前憑證</string>
-    <string name="repin_summary_builtin">正在使用 App 內建的綁定</string>
-    <string name="repin_summary_own">正在為 %2$d 個伺服器中的 %1$d 個使用在這支手機上取得的綁定</string>
-    <string name="repin_summary_running">正在檢查伺服器…</string>
-    <string name="repin_prompt_title">要重新綁定憑證嗎？</string>
-    <string name="repin_prompt_message">App 會立即連線到你的資料供應商和備用供應商，之後只接受它們各自使用的憑證授權單位。其他供應商保留 App 內建的綁定。請在你信任的網路上進行，例如家中的 Wi-Fi。</string>
-    <string name="repin_confirm">重新綁定</string>
-    <string name="restore_pins_title">使用內建綁定</string>
-    <string name="restore_pins_summary">清除在這支手機上取得的綁定</string>
 </resources>

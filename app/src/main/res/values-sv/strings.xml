@@ -361,5 +361,5 @@
     <string name="receipt_language_not_now">Inte nu</string>
     <string name="receipt_languages_intro">Kvitton läses på din telefon, på språken här. Inget laddas ned förrän du säger ja.</string>
     <string name="receipt_languages_empty">Inga ännu. Din första kvittoskanning frågar vilka som ska laddas ned.</string>
-    <string name="error_certificate_pinning">Serverns certifikat är inte något av dem appen har fäst för den. Om leverantören har bytt det, fäst om i Inställningar eller stäng av certifikatfästning.</string>
+    <string name="error_certificate_pinning">Serverns certifikat är inte något av dem appen har fäst för den. Om leverantören har bytt det, uppdatera appen eller stäng av certifikatfästning i Inställningar.</string>
 </resources>

@@ -211,13 +211,4 @@
     <string name="settings_advanced_section">Avanzate</string>
     <string name="certificate_pinning_title">Pinning dei certificati</string>
     <string name="certificate_pinning_summary">Connettiti ai server dei tassi solo tramite le autorità di certificazione fissate per ciascuno. Disattiva solo se un server ha cambiato certificato e i tassi non si caricano più.</string>
-    <string name="repin_title">Fissa di nuovo sui certificati attuali</string>
-    <string name="repin_summary_builtin">In uso i pin integrati nell\'app</string>
-    <string name="repin_summary_own">In uso i pin presi su questo telefono per %1$d server su %2$d</string>
-    <string name="repin_summary_running">Controllo dei server…</string>
-    <string name="repin_prompt_title">Fissare di nuovo i certificati?</string>
-    <string name="repin_prompt_message">L\'app si collegherà ora al tuo fornitore di dati e al fornitore di riserva, e da quel momento accetterà solo le autorità di certificazione usate da ciascuno. Gli altri fornitori mantengono i pin integrati nell\'app. Fallo su una rete di cui ti fidi, come il Wi-Fi di casa.</string>
-    <string name="repin_confirm">Fissa di nuovo</string>
-    <string name="restore_pins_title">Usa i pin integrati</string>
-    <string name="restore_pins_summary">Dimentica i pin presi su questo telefono</string>
 </resources>

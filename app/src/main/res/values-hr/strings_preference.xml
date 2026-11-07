@@ -211,13 +211,4 @@
     <string name="settings_advanced_section">Napredno</string>
     <string name="certificate_pinning_title">Prikvačivanje certifikata</string>
     <string name="certificate_pinning_summary">Spajaj se na poslužitelje tečajeva samo preko certifikacijskih tijela prikvačenih za njih. Isključi samo ako je poslužitelj promijenio certifikat i tečajevi se prestanu učitavati.</string>
-    <string name="repin_title">Ponovno prikvači trenutačne certifikate</string>
-    <string name="repin_summary_builtin">Koriste se prikvačivanja ugrađena u aplikaciju</string>
-    <string name="repin_summary_own">Koriste se prikvačivanja s ovog telefona za %1$d od %2$d poslužitelja</string>
-    <string name="repin_summary_running">Provjeravaju se poslužitelji…</string>
-    <string name="repin_prompt_title">Ponovno prikvačiti certifikate?</string>
-    <string name="repin_prompt_message">Aplikacija će se sada spojiti na tvog pružatelja podataka i rezervnog pružatelja te nakon toga prihvaćati samo certifikacijska tijela koja svaki od njih koristi. Ostali pružatelji zadržavaju prikvačivanja ugrađena u aplikaciju. Učini to na mreži kojoj vjeruješ, npr. kućnom Wi-Fiju.</string>
-    <string name="repin_confirm">Ponovno prikvači</string>
-    <string name="restore_pins_title">Koristi ugrađena prikvačivanja</string>
-    <string name="restore_pins_summary">Zaboravi prikvačivanja s ovog telefona</string>
 </resources>

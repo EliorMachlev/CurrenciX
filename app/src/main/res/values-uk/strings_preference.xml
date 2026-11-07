@@ -212,13 +212,4 @@
     <string name="settings_advanced_section">Додатково</string>
     <string name="certificate_pinning_title">Прив’язування сертифікатів</string>
     <string name="certificate_pinning_summary">Підключатися до серверів курсів лише через закріплені за ними центри сертифікації. Вимикайте, лише якщо сервер змінив сертифікат і курси перестали завантажуватися.</string>
-    <string name="repin_title">Прив’язати до поточних сертифікатів</string>
-    <string name="repin_summary_builtin">Використовуються прив’язки, вбудовані в застосунок</string>
-    <string name="repin_summary_own">Використовуються прив’язки з цього телефона для %1$d з %2$d серверів</string>
-    <string name="repin_summary_running">Перевірка серверів…</string>
-    <string name="repin_prompt_title">Прив’язати сертифікати заново?</string>
-    <string name="repin_prompt_message">Застосунок зараз підключиться до вашого постачальника даних і резервного постачальника та надалі прийматиме лише центри сертифікації, які використовує кожен із них. Інші постачальники зберігають прив’язки, вбудовані в застосунок. Робіть це в мережі, якій довіряєте, наприклад у домашньому Wi-Fi.</string>
-    <string name="repin_confirm">Прив’язати заново</string>
-    <string name="restore_pins_title">Використовувати вбудовані прив’язки</string>
-    <string name="restore_pins_summary">Забути прив’язки з цього телефона</string>
 </resources>

@@ -108,18 +108,6 @@ object HttpClientProvider {
      */
     val allowedHosts: Set<String> get() = ApiProvider.allHosts + TessLanguage.DOWNLOAD_HOST
 
-    /**
-     * For taking a host's current pins only: the shared client without pins
-     * (any certificate the phone trusts) and without following redirects,
-     * so the handshake is the asked host's own.
-     */
-    internal fun unpinnedClient(): OkHttpClient =
-        base()
-            .newBuilder()
-            .followRedirects(false)
-            .followSslRedirects(false)
-            .build()
-
     private fun cached(context: Context): OkHttpClient =
         cachedInstance ?: synchronized(this) {
             cachedInstance ?: withCache(base(), context).also { cachedInstance = it }

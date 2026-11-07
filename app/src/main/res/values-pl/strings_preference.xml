@@ -212,13 +212,4 @@
     <string name="settings_advanced_section">Zaawansowane</string>
     <string name="certificate_pinning_title">Przypinanie certyfikatów</string>
     <string name="certificate_pinning_summary">Łącz się z serwerami kursów tylko przez urzędy certyfikacji przypięte dla nich. Wyłącz tylko wtedy, gdy serwer zmienił certyfikat i kursy przestały się wczytywać.</string>
-    <string name="repin_title">Przypnij ponownie do obecnych certyfikatów</string>
-    <string name="repin_summary_builtin">Używane są przypięcia wbudowane w aplikację</string>
-    <string name="repin_summary_own">Używane są przypięcia z tego telefonu dla %1$d z %2$d serwerów</string>
-    <string name="repin_summary_running">Sprawdzanie serwerów…</string>
-    <string name="repin_prompt_title">Przypiąć certyfikaty ponownie?</string>
-    <string name="repin_prompt_message">Aplikacja połączy się teraz z Twoim dostawcą danych i dostawcą zapasowym i od tej chwili będzie akceptować tylko urzędy certyfikacji, których używa każdy z nich. Pozostali dostawcy zachowują przypięcia wbudowane w aplikację. Zrób to w sieci, której ufasz, np. w domowym Wi-Fi.</string>
-    <string name="repin_confirm">Przypnij ponownie</string>
-    <string name="restore_pins_title">Użyj wbudowanych przypięć</string>
-    <string name="restore_pins_summary">Zapomnij przypięcia z tego telefonu</string>
 </resources>
