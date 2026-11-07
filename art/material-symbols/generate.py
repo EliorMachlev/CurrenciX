@@ -20,6 +20,7 @@ SYMBOLS_VERSION = "0.48.1"
 ICONS = {
     "ic_no_screenshots": ("no_photography", False),
     # navigation / chrome
+    "ic_menu": ("menu", False),
     "ic_arrow_back": ("arrow_back", True),
     "ic_arrow_forward": ("arrow_forward", True),
     "ic_more_vert": ("more_vert", False),
@@ -141,7 +142,7 @@ TEMPLATE = """<?xml version="1.0" encoding="utf-8"?>
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="24dp"
     android:height="24dp"{mirror}
-    android:tint="?attr/colorControlNormal"
+    android:tint="?android:attr/colorControlNormal"
     android:viewportWidth="960"
     android:viewportHeight="960">
     <group android:translateY="960">
