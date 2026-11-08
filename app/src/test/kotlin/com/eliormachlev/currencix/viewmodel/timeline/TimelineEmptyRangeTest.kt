@@ -34,6 +34,7 @@ import java.util.concurrent.Executor
 class TimelineEmptyRangeTest {
     private val app = ApplicationProvider.getApplicationContext<Application>()
     private val today = LocalDate.now()
+
     // Work runs on the calling thread, at once, so the assertions see it.
     private val atOnce = Executor { it.run() }.asCoroutineDispatcher()
     private val collecting = CoroutineScope(SupervisorJob() + atOnce)
