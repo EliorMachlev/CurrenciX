@@ -211,7 +211,7 @@ class NoSuppressionsTest {
                 "view/preference/compose/PreferenceScreen",
                 "view/preference/compose/ReceiptLanguagesScreen",
                 "viewmodel/cart/TripChecklist",
-                "viewmodel/preference/BackupViewModel",
+                "viewmodel/preference/BackupStateHolder",
             )
 
         const val VERIFICATION_METADATA = "gradle/verification-metadata.xml"

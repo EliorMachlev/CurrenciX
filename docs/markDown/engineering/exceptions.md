@@ -61,7 +61,7 @@ The build's own tools and compilers: Gradle and the Android Gradle plugin, and c
 
 #### 11. CodeQL: `java/local-variable-is-never-read` in data objects' `equals()`
 
-- **What it reports:** "Variable '… `tmp0_other_with_cast`' is never read", at line 1 of 11 files: `BackupManager`, `CartExporter`, `ReceiptScan`, `SelectionConversion`, `ConverterLaunch`, `Screen`, `FeesScreen`, `PreferenceScreen`, `ReceiptLanguagesScreen`, `TripChecklist`, `BackupViewModel`.
+- **What it reports:** "Variable '… `tmp0_other_with_cast`' is never read", at line 1 of 11 files: `BackupManager`, `CartExporter`, `ReceiptScan`, `SelectionConversion`, `ConverterLaunch`, `Screen`, `FeesScreen`, `PreferenceScreen`, `ReceiptLanguagesScreen`, `TripChecklist`, `BackupStateHolder`.
 - **Why the finding is wrong:** for a `data object` the Kotlin compiler generates `equals()`, which casts `other` to a temporary (`tmp0_other_with_cast`) and then has no properties to compare, so it never reads it. The variable exists only in the compiled code.
 - **Why it can't be fixed:** the only way to remove the generated `equals()` would be turning the data objects (sealed states, navigation keys, results) into plain objects, which changes their `toString()` and `equals()` for no reason but the finding.
 - **What is excluded:** each finding by rule, file, line 1 and a message naming `tmp0_other_with_cast`. An unread variable written in the source is still reported, in these files too.

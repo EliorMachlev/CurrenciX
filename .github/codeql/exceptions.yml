@@ -64,7 +64,7 @@
   line: 1
   message-contains: tmp0_other_with_cast
 - excluded-rule: java/local-variable-is-never-read
-  file: app/src/main/kotlin/com/eliormachlev/currencix/viewmodel/preference/BackupViewModel.kt
+  file: app/src/main/kotlin/com/eliormachlev/currencix/viewmodel/preference/BackupStateHolder.kt
   line: 1
   message-contains: tmp0_other_with_cast
 

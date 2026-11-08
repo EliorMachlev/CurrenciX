@@ -24,7 +24,6 @@ import com.eliormachlev.currencix.repository.fileFailureMessage
 import com.eliormachlev.currencix.view.compose.AppSnackbar
 import com.eliormachlev.currencix.view.compose.LocalAppSnackbar
 import com.eliormachlev.currencix.view.compose.ScreenScaffold
-import com.eliormachlev.currencix.view.compose.applicationViewModel
 import com.eliormachlev.currencix.view.compose.currentApplication
 import com.eliormachlev.currencix.view.compose.rememberDatabase
 import com.eliormachlev.currencix.view.compose.showOrToast
@@ -36,7 +35,7 @@ import com.eliormachlev.currencix.view.preference.compose.PreferenceScreen
 import com.eliormachlev.currencix.view.preference.compose.PreferenceScreenCallbacks
 import com.eliormachlev.currencix.view.preference.compose.ReceiptLanguagesScreen
 import com.eliormachlev.currencix.view.preference.compose.titleRes
-import com.eliormachlev.currencix.viewmodel.preference.BackupViewModel
+import com.eliormachlev.currencix.viewmodel.preference.BackupStateHolder
 import com.eliormachlev.currencix.viewmodel.preference.PreferenceSettings
 import com.eliormachlev.currencix.viewmodel.preference.ReceiptLanguagesStateHolder
 
@@ -94,22 +93,23 @@ fun ReceiptLanguagesRoute(onBack: () -> Unit) {
 fun BackupRoute(onBack: () -> Unit) {
     val context = LocalContext.current
     val snackbar = LocalAppSnackbar.current
-    val viewModel = applicationViewModel { BackupViewModel(it) }
+    val application = currentApplication()
+    val holder = retain { BackupStateHolder(application) }
     val exportLauncher =
         rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             val uri = result.data?.data ?: return@rememberLauncherForActivityResult
-            viewModel.runExport(uri) { exported -> snackbar.showOrToast(context, exportResultMessage(context, exported)) }
+            holder.runExport(uri) { exported -> snackbar.showOrToast(context, exportResultMessage(context, exported)) }
         }
     val importLauncher =
         rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            result.data?.data?.let(viewModel::beginImport)
+            result.data?.data?.let(holder::beginImport)
         }
     SettingsScaffold(titleRes = R.string.backup_manager_title, onBack = onBack) {
         BackupScreen(
-            viewModel = viewModel,
+            holder = holder,
             onLaunchExport = { exportLauncher.launch(backupDocumentIntent(context, Intent.ACTION_CREATE_DOCUMENT)) },
             onLaunchImport = { importLauncher.launch(backupDocumentIntent(context, Intent.ACTION_OPEN_DOCUMENT)) },
-            onImportConfirmed = { uri, password -> runImport(context, snackbar, viewModel, uri, password) },
+            onImportConfirmed = { uri, password -> runImport(context, snackbar, holder, uri, password) },
         )
     }
 }
@@ -143,17 +143,17 @@ private fun backupDocumentIntent(
 private fun runImport(
     context: Context,
     snackbar: AppSnackbar?,
-    viewModel: BackupViewModel,
+    holder: BackupStateHolder,
     uri: Uri,
     password: CharArray?,
 ) {
-    viewModel.runImport(uri, password) { result -> showImportResult(context, snackbar, viewModel, uri, result) }
+    holder.runImport(uri, password) { result -> showImportResult(context, snackbar, holder, uri, result) }
 }
 
 private fun showImportResult(
     context: Context,
     snackbar: AppSnackbar?,
-    viewModel: BackupViewModel,
+    holder: BackupStateHolder,
     uri: Uri,
     result: BackupResult,
 ) {
@@ -170,11 +170,11 @@ private fun showImportResult(
         }
 
         is BackupResult.PasswordRequired -> {
-            viewModel.promptPasswordRetry(uri)
+            holder.promptPasswordRetry(uri)
         }
 
         is BackupResult.WrongPassword -> {
-            viewModel.promptPasswordRetry(uri)
+            holder.promptPasswordRetry(uri)
         }
     }
 }
