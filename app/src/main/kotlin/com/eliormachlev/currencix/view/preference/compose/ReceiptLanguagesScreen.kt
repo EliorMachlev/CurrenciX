@@ -58,6 +58,7 @@ import com.eliormachlev.currencix.view.compose.theme.Spacing
 import com.eliormachlev.currencix.viewmodel.preference.ReceiptLanguageRow
 import com.eliormachlev.currencix.viewmodel.preference.ReceiptLanguagesState
 import com.eliormachlev.currencix.viewmodel.preference.receiptLanguagesState
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -94,12 +95,13 @@ private sealed interface LanguagePrompt {
     ) : LanguagePrompt
 }
 
-// File work on the IO dispatcher, then a nudge for the list to look again.
+// File work on [io], then a nudge for the list to look again.
 private suspend fun onIo(
+    io: CoroutineDispatcher,
     refresh: MutableStateFlow<Int>,
     block: () -> Unit,
 ) {
-    withContext(AppDispatchers.production.io) { block() }
+    withContext(io) { block() }
     refresh.value++
 }
 
@@ -114,23 +116,29 @@ private suspend fun onIo(
 fun ReceiptLanguagesScreen() {
     val app = currentApplication()
     val scope = rememberCoroutineScope()
+    // The list is worked out, and the files changed, on the same dispatcher.
+    val io = AppDispatchers.production.io
     // Bumped after a change the settings and downloads don't show (a file deleted).
     val refresh = remember { MutableStateFlow(0) }
     // The last state shown, kept across a rotation so the list doesn't blink empty.
     var lastShown by retain { mutableStateOf(ReceiptLanguagesState()) }
-    val state by remember(app) { receiptLanguagesState(app, refresh) }.collectAsStateWithLifecycle(lastShown)
+    val state by remember(app) { receiptLanguagesState(app, refresh, io) }.collectAsStateWithLifecycle(lastShown)
     LaunchedEffect(state) { lastShown = state }
     // A language whose time came while the app was closed goes before it's listed.
-    LaunchedEffect(app) { onIo(refresh) { OcrLanguages.deleteExpired(app) } }
-    val change = { block: () -> Unit -> scope.launch { onIo(refresh, block) } }
+    LaunchedEffect(app) { onIo(io, refresh) { OcrLanguages.deleteExpired(app) } }
     var prompt by remember { mutableStateOf<LanguagePrompt?>(null) }
+    val close = { prompt = null }
+    // A confirmed prompt: its file work starts, and the prompt closes.
+    val changeAndClose = { block: () -> Unit ->
+        scope.launch { onIo(io, refresh, block) }
+        close()
+    }
     ReceiptLanguagesList(
         state = state,
         onAdd = { prompt = LanguagePrompt.Pick },
         onEdit = { prompt = LanguagePrompt.Edit(it) },
         onDelete = { prompt = LanguagePrompt.Delete(it) },
     )
-    val close = { prompt = null }
     when (val open = prompt) {
         LanguagePrompt.Pick -> {
             ReceiptLanguagePickerSheet(available = state.available, onDismiss = close, onPicked = { prompt = LanguagePrompt.Add(it) })
@@ -141,10 +149,7 @@ fun ReceiptLanguagesScreen() {
                 language = open.language,
                 initialUntil = null,
                 confirmLabel = stringResource(R.string.receipt_setup_download),
-                onConfirm = { until ->
-                    change { OcrLanguages.download(app, open.language, until) }
-                    close()
-                },
+                onConfirm = { until -> changeAndClose { OcrLanguages.download(app, open.language, until) } },
                 onDismiss = close,
             )
         }
@@ -154,10 +159,7 @@ fun ReceiptLanguagesScreen() {
                 language = open.row.language,
                 initialUntil = open.row.keepUntil,
                 confirmLabel = stringResource(R.string.receipt_languages_save),
-                onConfirm = { until ->
-                    change { OcrLanguages.keep(app, open.row.language, until) }
-                    close()
-                },
+                onConfirm = { until -> changeAndClose { OcrLanguages.keep(app, open.row.language, until) } },
                 onDismiss = close,
                 onDelete = { prompt = LanguagePrompt.Delete(open.row.language) },
             )
@@ -166,10 +168,7 @@ fun ReceiptLanguagesScreen() {
         is LanguagePrompt.Delete -> {
             DeleteLanguageSheet(
                 language = open.language,
-                onConfirm = {
-                    change { OcrLanguages.delete(app, open.language) }
-                    close()
-                },
+                onConfirm = { changeAndClose { OcrLanguages.delete(app, open.language) } },
                 onDismiss = close,
             )
         }

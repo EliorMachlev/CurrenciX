@@ -2,7 +2,6 @@ package com.eliormachlev.currencix.viewmodel.preference
 
 import android.app.Application
 import androidx.compose.runtime.Immutable
-import com.eliormachlev.currencix.ocr.OcrLanguages
 import com.eliormachlev.currencix.ocr.TessLanguage
 import com.eliormachlev.currencix.ocr.Tessdata
 import com.eliormachlev.currencix.ocr.TessdataDownloadWorker
