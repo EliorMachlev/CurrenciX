@@ -3,6 +3,7 @@ package com.eliormachlev.currencix.worker
 import android.content.Context
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
+import com.eliormachlev.currencix.model.ExchangeRates
 import com.eliormachlev.currencix.repository.Database
 import com.eliormachlev.currencix.repository.ExchangeRatesRepository
 import com.eliormachlev.currencix.view.tile.RateTileService
@@ -10,6 +11,7 @@ import com.eliormachlev.currencix.viewmodel.cart.pinEndedTrips
 import timber.log.Timber
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
+import kotlin.coroutines.cancellation.CancellationException
 
 /**
  * WorkManager worker that periodically refreshes exchange rates in the
@@ -35,11 +37,16 @@ internal class RateRefreshWorker(
     context: Context,
     params: WorkerParameters,
 ) : CoroutineWorker(context, params) {
-    override suspend fun doWork(): Result {
-        val repository = ExchangeRatesRepository(applicationContext)
+    override suspend fun doWork(): Result = refresh { ExchangeRatesRepository(applicationContext).refreshLatestRates() }
+
+    /** One refresh through [fetch] (the repository's, or a test's), mapped as described above. */
+    internal suspend fun refresh(fetch: suspend () -> kotlin.Result<ExchangeRates>): Result {
         val outcome =
-            runCatching { repository.refreshLatestRates() }
-                .getOrElse { throwable -> kotlin.Result.failure(throwable) }
+            runCatching { fetch() }
+                .onFailure { throwable ->
+                    // WorkManager stopping the work is not a failed refresh to retry.
+                    if (throwable is CancellationException) throw throwable
+                }.getOrElse { throwable -> kotlin.Result.failure(throwable) }
         return outcome.fold(
             onSuccess = {
                 Timber.tag(TAG).d("Auto-refresh success")
