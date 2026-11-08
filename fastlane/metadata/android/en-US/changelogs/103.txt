@@ -1,0 +1,2 @@
+- Restoring an encrypted backup with the correct password now works.
+- Internal cleanup of screen state handling; no change to how the app looks.
