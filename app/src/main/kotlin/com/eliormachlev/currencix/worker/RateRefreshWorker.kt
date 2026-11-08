@@ -3,6 +3,7 @@ package com.eliormachlev.currencix.worker
 import android.content.Context
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
+import com.eliormachlev.currencix.model.ExchangeRates
 import com.eliormachlev.currencix.repository.Database
 import com.eliormachlev.currencix.repository.ExchangeRatesRepository
 import com.eliormachlev.currencix.view.tile.RateTileService
@@ -35,10 +36,12 @@ internal class RateRefreshWorker(
     context: Context,
     params: WorkerParameters,
 ) : CoroutineWorker(context, params) {
-    override suspend fun doWork(): Result {
-        val repository = ExchangeRatesRepository(applicationContext)
+    override suspend fun doWork(): Result = refresh { ExchangeRatesRepository(applicationContext).refreshLatestRates() }
+
+    /** One refresh through [fetch] (the repository's, or a test's), mapped as described above. */
+    internal suspend fun refresh(fetch: suspend () -> kotlin.Result<ExchangeRates>): Result {
         val outcome =
-            runCatching { repository.refreshLatestRates() }
+            runCatching { fetch() }
                 .getOrElse { throwable -> kotlin.Result.failure(throwable) }
         return outcome.fold(
             onSuccess = {
