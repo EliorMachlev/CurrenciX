@@ -117,7 +117,7 @@ internal fun Database.pinEndedTrips(today: LocalDate = LocalDate.now()) {
 }
 
 /**
- * The trips saved carts are grouped into ([CartViewModel.trips]): each with
+ * The trips saved carts are grouped into ([CartStateHolder.trips]): each with
  * its spending, and the edits to them.
  */
 class CartTrips internal constructor(

@@ -5,6 +5,8 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.material3.Text
+import androidx.compose.runtime.retain.RetainObserver
+import androidx.compose.runtime.retain.retain
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.lifecycle.ViewModel
@@ -35,6 +37,30 @@ class ProbeViewModel : ViewModel() {
     }
 }
 
+// Counts retained values created and retired, to check the same scoping for `retain`.
+class ProbeRetained : RetainObserver {
+    init {
+        created++
+    }
+
+    override fun onRetained() {}
+
+    override fun onEnteredComposition() {}
+
+    override fun onExitedComposition() {}
+
+    override fun onRetired() {
+        retired++
+    }
+
+    override fun onUnused() {}
+
+    companion object {
+        var created = 0
+        var retired = 0
+    }
+}
+
 // Hosts AppNavHost the way MainActivity does, with one Text + one
 // ViewModel per screen.
 class NavHostTestActivity : ComponentActivity() {
@@ -46,6 +72,7 @@ class NavHostTestActivity : ComponentActivity() {
             navigator = rememberAppNavigator()
             AppNavHost(navigator) { screen ->
                 viewModel<ProbeViewModel>()
+                retain { ProbeRetained() }
                 Text(screen.encode())
             }
         }
@@ -62,6 +89,8 @@ class AppNavHostTest {
         registerActivityRule(NavHostTestActivity::class.java) {
             ProbeViewModel.created = 0
             ProbeViewModel.cleared = 0
+            ProbeRetained.created = 0
+            ProbeRetained.retired = 0
         }
 
     private val compose = createAndroidComposeRule<NavHostTestActivity>()
@@ -96,6 +125,18 @@ class AppNavHostTest {
     }
 
     @Test
+    fun `each screen retains its own values, kept under another screen and retired when popped`() {
+        compose.runOnIdle { navigator.navigate(Screen.Settings) }
+        compose.waitForIdle()
+        assertEquals(2, ProbeRetained.created)
+        assertEquals(0, ProbeRetained.retired)
+
+        compose.runOnIdle { navigator.pop() }
+        compose.waitForIdle()
+        assertEquals(1, ProbeRetained.retired)
+    }
+
+    @Test
     fun `system back pops the top screen`() {
         compose.runOnIdle { navigator.navigate(Screen.Settings) }
         compose.onNodeWithText("settings").assertExists()
@@ -121,6 +162,9 @@ class AppNavHostTest {
             // A configuration change keeps each screen's ViewModel.
             assertEquals(createdBefore, ProbeViewModel.created)
             assertEquals(0, ProbeViewModel.cleared)
+            // And each screen's retained values.
+            assertEquals(3, ProbeRetained.created)
+            assertEquals(0, ProbeRetained.retired)
         }
     }
 }

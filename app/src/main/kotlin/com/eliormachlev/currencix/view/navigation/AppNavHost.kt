@@ -73,6 +73,7 @@ fun AppNavHost(
                         listOf(
                             rememberSaveableStateHolderNavEntryDecorator(),
                             rememberViewModelStoreNavEntryDecorator(),
+                            rememberRetainedValuesStoreNavEntryDecorator(),
                         ),
                     entryProvider = { screen ->
                         NavEntry(screen, metadata = paneMetadata(screen.paneRole)) {

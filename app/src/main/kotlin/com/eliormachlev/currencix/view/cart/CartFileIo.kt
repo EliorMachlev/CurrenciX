@@ -9,7 +9,7 @@ import com.eliormachlev.currencix.repository.CartExporter
 import com.eliormachlev.currencix.repository.CartFileResult
 import com.eliormachlev.currencix.repository.fileFailureMessage
 import com.eliormachlev.currencix.util.filenameTimestampNow
-import com.eliormachlev.currencix.viewmodel.cart.CartViewModel
+import com.eliormachlev.currencix.viewmodel.cart.CartStateHolder
 
 private const val EXPORT_FILE_MIME = "application/json"
 private const val EXPORT_FILE_EXT = ".json"
@@ -30,7 +30,7 @@ private const val IMPORT_KEY = "cart_import_json"
  */
 class CartFileIo(
     private val activity: ComponentActivity,
-    private val viewModel: CartViewModel,
+    private val viewModel: CartStateHolder,
     private val exporter: CartExporter,
     private val flushPendingCommits: () -> Unit,
     private val snackbar: (String) -> Unit,

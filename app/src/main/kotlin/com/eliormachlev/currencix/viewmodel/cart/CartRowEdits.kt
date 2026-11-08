@@ -6,7 +6,7 @@ import com.eliormachlev.currencix.model.afterDrop
 import com.eliormachlev.currencix.util.newId
 
 /**
- * Edits to the working cart's rows ([CartViewModel.rows]). Each hands
+ * Edits to the working cart's rows ([CartStateHolder.rows]). Each hands
  * [mutate] a change to the cart; returning the same cart means "nothing
  * changed", which skips the emission and the write.
  */

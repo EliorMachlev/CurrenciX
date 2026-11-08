@@ -170,7 +170,7 @@ private class ConverterDestinations(
         openDetail(Screen.Timeline(from, to))
     }
 
-    // A null side is fine here — CartViewModel.seedFromMain keeps the cart's
+    // A null side is fine here — CartStateHolder.seedFromMain keeps the cart's
     // own pair or resolves just the missing side.
     private fun openCart() = openDetail(Screen.Cart(viewModel.getBaseCurrency().value, viewModel.getDestinationCurrency().value))
 

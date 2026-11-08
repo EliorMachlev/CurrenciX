@@ -4,7 +4,7 @@ import android.content.Context
 import androidx.annotation.StringRes
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.model.SavedCart
-import com.eliormachlev.currencix.viewmodel.cart.CartViewModel
+import com.eliormachlev.currencix.viewmodel.cart.CartStateHolder
 
 /**
  * Payload for the "give this cart a name" dialog. Save-as and Rename both use
@@ -52,14 +52,14 @@ class CartSaveLoadPrompts(
 /**
  * Owns the Save / Save-as / Load / Rename / Delete flows plus the
  * unsaved-changes prompt that gates destructive transitions (loading another
- * cart, closing the screen). Persistence is delegated to [CartViewModel];
+ * cart, closing the screen). Persistence is delegated to [CartStateHolder];
  * this class only decides *which* dialog to show and hands the payload to the
  * compose overlays via injected callbacks. All UI is compose-native ledger
  * chrome — no AppCompat AlertDialog instances anywhere.
  */
 class CartSaveLoadCoordinator(
     private val context: Context,
-    private val viewModel: CartViewModel,
+    private val viewModel: CartStateHolder,
     private val flushPendingCommits: () -> Unit,
     private val prompts: CartSaveLoadPrompts,
     private val onClose: () -> Unit,

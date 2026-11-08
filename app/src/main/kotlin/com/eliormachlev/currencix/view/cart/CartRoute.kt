@@ -13,6 +13,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.retain.retain
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalResources
@@ -46,10 +47,10 @@ import com.eliormachlev.currencix.view.compose.ReadingDirection
 import com.eliormachlev.currencix.view.compose.ScreenScaffold
 import com.eliormachlev.currencix.view.compose.TopBarAction
 import com.eliormachlev.currencix.view.compose.TopBarOverflowMenu
-import com.eliormachlev.currencix.view.compose.applicationViewModel
+import com.eliormachlev.currencix.view.compose.currentApplication
 import com.eliormachlev.currencix.view.compose.dialogs.LedgerConfirmSheet
 import com.eliormachlev.currencix.view.navigation.Screen
-import com.eliormachlev.currencix.viewmodel.cart.CartViewModel
+import com.eliormachlev.currencix.viewmodel.cart.CartStateHolder
 
 /**
  * The shopping cart: items, totals and the floating keypad, under a top bar
@@ -66,7 +67,8 @@ fun CartRoute(
     onOpenFees: () -> Unit,
 ) {
     val activity = LocalActivity.current as ComponentActivity
-    val viewModel = applicationViewModel { CartViewModel(it) }
+    val application = currentApplication()
+    val viewModel = retain { CartStateHolder(application) }
     val snackbar = LocalAppSnackbar.current
     val host = remember(viewModel) { CartHost(activity, snackbar, viewModel, screen.mainBase, screen.mainDest, onBack) }
     val lifecycleOwner = LocalLifecycleOwner.current
