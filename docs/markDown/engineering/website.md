@@ -14,6 +14,7 @@ The Site workflow (`check docs`) fails while a version is stale or an inline scr
 
 ## See also
 
+- The README's privacy badge is a local file, so it loads nothing from an outside service: regenerate it with [`art/badges/generate.py`](../../../art/badges/generate.py), and keep its words as the [privacy policy](../legal/privacy-policy.md) says. The "APK checks" badge is the reproducible-build check ([`apk-checks.yaml`](../../../.github/workflows/apk-checks.yaml)).
 - The live site: <https://currencix.machlev.org/> ([features](https://currencix.machlev.org/features.html), [providers](https://currencix.machlev.org/providers.html), [privacy](https://currencix.machlev.org/privacy.html)); the README links to it.
 - The screenshot tests the pictures are cropped from, and how to review them: [contributing.md](contributing.md#pull-request-checklist).
 - The site's checks (`check docs`) and the CSP: [ci-cd.md](ci-cd.md#workflows); the CSP check itself is [`site-assets.py`](../../../.github/scripts/site-assets.py).
