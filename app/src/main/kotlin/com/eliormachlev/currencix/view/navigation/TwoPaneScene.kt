@@ -31,6 +31,18 @@ enum class PaneRole { List, Detail }
 /** Material's "expanded" width class: from here on, a detail screen opens beside the converter. */
 internal val TWO_PANE_MIN_WIDTH: Dp = 840.dp
 
+/**
+ * Material's "compact" height ends here: a phone turned sideways can be wide
+ * enough for two panes but is too short for them, so it keeps one.
+ */
+internal val TWO_PANE_MIN_HEIGHT: Dp = 480.dp
+
+/** Whether a window of [width] by [height] has room for two panes (a tablet or an unfolded foldable, not a phone). */
+internal fun hasRoomForTwoPanes(
+    width: Dp,
+    height: Dp,
+): Boolean = width >= TWO_PANE_MIN_WIDTH && height >= TWO_PANE_MIN_HEIGHT
+
 // The converter pane: a fraction of the window, kept between a phone-sized
 // minimum (its keypad needs the width) and a maximum past which the extra
 // room is better spent on the chart.
@@ -124,11 +136,11 @@ internal class TwoPaneSceneStrategy<T : Any>(
     }
 }
 
-/** True when the window is wide enough for [TwoPaneSceneStrategy]'s side-by-side layout. */
+/** True when the window has room for [TwoPaneSceneStrategy]'s side-by-side layout. */
 @Composable
 internal fun isTwoPaneWindow(): Boolean {
-    val widthPx = LocalWindowInfo.current.containerSize.width
-    return with(LocalDensity.current) { widthPx.toDp() >= TWO_PANE_MIN_WIDTH }
+    val size = LocalWindowInfo.current.containerSize
+    return with(LocalDensity.current) { hasRoomForTwoPanes(size.width.toDp(), size.height.toDp()) }
 }
 
 /**
