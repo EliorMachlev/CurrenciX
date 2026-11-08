@@ -21,6 +21,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.retain.retain
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -33,7 +34,6 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.window.layout.FoldingFeature
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.alert.ALERT_RATE_DECIMALS
@@ -71,7 +71,7 @@ import com.eliormachlev.currencix.view.preference.compose.ProviderPickerWithKeyP
 import com.eliormachlev.currencix.view.timeline.compose.TIMELINE_CONTENT_PADDING
 import com.eliormachlev.currencix.view.timeline.compose.TimelineScreen
 import com.eliormachlev.currencix.viewmodel.preference.PreferenceSettings
-import com.eliormachlev.currencix.viewmodel.timeline.TimelineViewModel
+import com.eliormachlev.currencix.viewmodel.timeline.TimelineStateHolder
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
@@ -93,7 +93,8 @@ fun TimelineRoute(
     onConvertAt: (pair: CurrencyPair, date: LocalDate) -> Unit = { _, _ -> },
 ) {
     val context = LocalContext.current
-    val model: TimelineViewModel = viewModel(factory = TimelineViewModel.factory(currentApplication(), screen.from, screen.to))
+    val application = currentApplication()
+    val model = retain(screen.from, screen.to) { TimelineStateHolder(application, screen.from, screen.to) }
     val db = rememberDatabase()
     val formatter = remember(db) { DateTimeFormatter.ofPattern(stripTimePattern(db.display.dateFormat.get())) }
     val pair by model.getCurrencyPair().collectAsStateWithLifecycle()
@@ -158,7 +159,7 @@ fun TimelineRoute(
 // options (swap is the pills' round button).
 @Composable
 private fun TimelineBarActions(
-    model: TimelineViewModel,
+    model: TimelineStateHolder,
     onOptions: () -> Unit,
     onAlert: (BigDecimal) -> Unit,
     onShare: () -> Unit,
@@ -184,7 +185,7 @@ private fun TimelineBarActions(
 // The rate alert sheet for the timeline's pair at [rate]; [onClose] when set or dismissed.
 @Composable
 private fun TimelineAlertSheet(
-    model: TimelineViewModel,
+    model: TimelineStateHolder,
     rate: BigDecimal,
     onClose: () -> Unit,
 ) {
@@ -207,7 +208,7 @@ private fun TimelineAlertSheet(
 private suspend fun shareChart(
     context: Context,
     capture: LayerCapture,
-    model: TimelineViewModel,
+    model: TimelineStateHolder,
     formatter: DateTimeFormatter,
 ) {
     val image = capture.capture() ?: return
@@ -265,7 +266,7 @@ private fun TimelineSheets(
 
 @Composable
 private fun TimelineChartContent(
-    model: TimelineViewModel,
+    model: TimelineStateHolder,
     db: Database,
     onScrub: (LocalDate?) -> Unit,
 ) {
@@ -321,7 +322,7 @@ private class TouchedDay {
 // and showing that day's figures.
 @Composable
 private fun TouchableChart(
-    model: TimelineViewModel,
+    model: TimelineStateHolder,
     db: Database,
     touched: TouchedDay,
 ) {
@@ -332,7 +333,7 @@ private fun TouchableChart(
 }
 
 @Composable
-private fun rememberTouchedDay(model: TimelineViewModel): TouchedDay {
+private fun rememberTouchedDay(model: TimelineStateHolder): TouchedDay {
     val touched = remember { TouchedDay() }
     val pair by model.getCurrencyPair().collectAsStateWithLifecycle()
     val period by model.getPeriod().collectAsStateWithLifecycle()
@@ -347,7 +348,7 @@ private fun rememberTouchedDay(model: TimelineViewModel): TouchedDay {
 // starting edge.
 @Composable
 private fun ChartDayActions(
-    model: TimelineViewModel,
+    model: TimelineStateHolder,
     day: LocalDate?,
     formatter: DateTimeFormatter,
     onConvertAt: (CurrencyPair, LocalDate) -> Unit,
@@ -419,7 +420,7 @@ private val DAY_ACTIONS_HEIGHT = 48.dp
 // the converter, its pills fly into these.
 @Composable
 private fun TimelinePairRow(
-    model: TimelineViewModel,
+    model: TimelineStateHolder,
     db: Database,
     pair: Pair<Currency, Currency>,
 ) {
@@ -450,7 +451,7 @@ private fun TimelinePairRow(
 @Composable
 private fun TimelineCurrencyPicker(
     side: PillSide,
-    model: TimelineViewModel,
+    model: TimelineStateHolder,
     db: Database,
     pair: Pair<Currency, Currency>,
     onDismiss: () -> Unit,

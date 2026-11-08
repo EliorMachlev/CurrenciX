@@ -1,11 +1,6 @@
 package com.eliormachlev.currencix.viewmodel.timeline
 
 import android.app.Application
-import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.initializer
-import androidx.lifecycle.viewmodel.viewModelFactory
 import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.model.Rate
 import com.eliormachlev.currencix.model.Timeline
@@ -16,6 +11,7 @@ import com.eliormachlev.currencix.repository.defaultTimelineSince
 import com.eliormachlev.currencix.util.AppDispatchers
 import com.eliormachlev.currencix.util.calculateDifference
 import com.eliormachlev.currencix.util.getSignificantDecimalPlaces
+import com.eliormachlev.currencix.viewmodel.util.RetainedScope
 import com.eliormachlev.currencix.viewmodel.util.stateInWhileSubscribed
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -66,21 +62,13 @@ private fun medianOf(values: List<BigDecimal>): BigDecimal {
     }
 }
 
-class TimelineViewModel(
+/** The timeline screen's state for [base] → [target], kept with `retain`. */
+class TimelineStateHolder(
     private val app: Application,
     private var base: Currency,
     private var target: Currency,
     private val dispatchers: AppDispatchers = AppDispatchers.production,
-) : AndroidViewModel(app) {
-    companion object {
-        /** Builds the [TimelineViewModel] for [base] → [target]. */
-        fun factory(
-            app: Application,
-            base: Currency,
-            target: Currency,
-        ): ViewModelProvider.Factory = viewModelFactory { initializer { TimelineViewModel(app, base, target) } }
-    }
-
+) : RetainedScope(dispatchers) {
     enum class Period {
         WEEK,
         MONTH,
@@ -131,7 +119,7 @@ class TimelineViewModel(
 
     // updating — see RefreshState: the chart's progress bar is a passive
     // indicator; menu enablement is logic, so it reads the raw state.
-    private val refreshIndicator: StateFlow<Boolean> = RefreshState.passiveIndicator.stateInWhileSubscribed(viewModelScope, false)
+    private val refreshIndicator: StateFlow<Boolean> = RefreshState.passiveIndicator.stateInWhileSubscribed(scope, false)
 
     // The timeline for the dates on screen. Asks the repository for it on
     // first use; null until it arrives.
@@ -144,7 +132,7 @@ class TimelineViewModel(
                     rates = fetched.rates?.filterKeys { !it.isBefore(span.start) && !it.isAfter(span.end) },
                 )
             }
-        }.stateInWhileSubscribed(viewModelScope, null)
+        }.stateInWhileSubscribed(scope, null)
     }
 
     /** The dates on screen: the chosen period's, or the custom range. */
@@ -210,7 +198,7 @@ class TimelineViewModel(
 
     // [transform] of the timeline on screen, following it; null until first observed.
     private fun <T> fromItems(transform: (Timeline?) -> T?): StateFlow<T?> =
-        dbItems.map { transform(it) }.stateInWhileSubscribed(viewModelScope, null)
+        dbItems.map { transform(it) }.stateInWhileSubscribed(scope, null)
 
     /**
      * True when the dates on screen hold no rates once loading is done — a
@@ -222,7 +210,7 @@ class TimelineViewModel(
 
     private val rangeEmptyState: StateFlow<Boolean> by lazy {
         combine(dbItems, RefreshState.inFlight) { timeline, loading -> !loading && timeline?.rates?.isEmpty() == true }
-            .stateInWhileSubscribed(viewModelScope, false)
+            .stateInWhileSubscribed(scope, false)
     }
 
     fun getRateCurrent(): StateFlow<RateReadout?> = rateCurrentState
@@ -327,11 +315,11 @@ class TimelineViewModel(
             if (withDecimals) decimalPlaces else flowOf(DEFAULT_DECIMAL_PLACES),
         ) { timeline, scrub, decimals -> RangeInput(timeline?.rates?.entries, scrub, decimals) }
             .mapLatest { input -> withContext(dispatchers.default) { compute(input.rates, input.scrubDate, input.decimals) } }
-            .stateInWhileSubscribed(viewModelScope, null)
+            .stateInWhileSubscribed(scope, null)
 
     // One for all the readouts (each used to scan the rates for its own).
     private val decimalPlaces: StateFlow<Int> by lazy {
-        dbItems.map(::decimalPlacesOf).stateInWhileSubscribed(viewModelScope, decimalPlacesOf(null))
+        dbItems.map(::decimalPlacesOf).stateInWhileSubscribed(scope, decimalPlacesOf(null))
     }
 
     fun getPeriod(): StateFlow<Period> = periodState

@@ -1,6 +1,6 @@
 package com.eliormachlev.currencix.repository
 
-import com.eliormachlev.currencix.viewmodel.timeline.TimelineViewModel.Period
+import com.eliormachlev.currencix.viewmodel.timeline.TimelineStateHolder.Period
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Test
