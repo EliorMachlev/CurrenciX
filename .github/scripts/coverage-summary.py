@@ -2,9 +2,10 @@
 """
 Kover's XML report (JaCoCo's format) as a Markdown table for the run
 summary: line and branch coverage overall, then the ten least-covered
-packages with at least 20 lines.
+packages with at least 20 lines. Given a second report (master's), the
+table also shows how far each figure moved.
 
-    python3 .github/scripts/coverage-summary.py app/build/reports/kover/reportFdroidDebug.xml Fdroid
+    python3 .github/scripts/coverage-summary.py app/build/reports/kover/reportFdroidDebug.xml Fdroid [master.xml]
 """
 import sys
 
@@ -28,15 +29,23 @@ def percent(covered: int, missed: int) -> float:
     return 100.0 * covered / total if total else 100.0
 
 
-def main(report: str, flavor: str) -> None:
+def change(measure: str, now: dict, before: dict | None) -> str:
+    # The move in percentage points since [before], or "" with nothing to compare to.
+    if before is None:
+        return ""
+    return f" | {percent(*now.get(measure, (0, 0))) - percent(*before.get(measure, (0, 0))):+.1f} pts"
+
+
+def main(report: str, flavor: str, baseline: str | None = None) -> None:
     root = ElementTree.parse(report).getroot()
     total = counters(root)
+    before = counters(ElementTree.parse(baseline).getroot()) if baseline else None
     print(f"## Unit test coverage ({flavor} debug)\n")
-    print("| | Covered | Missed | Coverage |")
-    print("|---|---|---|---|")
+    print("| | Covered | Missed | Coverage |" + (" Change vs master |" if before else ""))
+    print("|---|---|---|---|" + ("---|" if before else ""))
     for measure, label in MEASURES.items():
         covered, missed = total.get(measure, (0, 0))
-        print(f"| {label} | {covered} | {missed} | {percent(covered, missed):.1f}% |")
+        print(f"| {label} | {covered} | {missed} | {percent(covered, missed):.1f}%{change(measure, total, before)} |")
     packages = []
     for package in root.findall("package"):
         covered, missed = counters(package).get("LINE", (0, 0))
@@ -51,4 +60,4 @@ def main(report: str, flavor: str) -> None:
 
 
 if __name__ == "__main__":
-    main(*sys.argv[1:3])
+    main(*sys.argv[1:4])
