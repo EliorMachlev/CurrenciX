@@ -1,6 +1,6 @@
 # Exchange rate providers
 
-Picked in **Settings → Exchange rates → Data provider**; a change takes effect on the next refresh. How they're fetched and cached: [networking](../engineering/architecture/networking.md).
+The short version for users is on the [website](https://currencix.machlev.org/providers.html). Picked in **Settings → Exchange rates → Data provider**; a change takes effect on the next refresh. How they're fetched and cached: [networking](../engineering/architecture/networking.md).
 
 | Provider | Currencies | Updates | Base | Notes |
 |---|---|---|---|---|
