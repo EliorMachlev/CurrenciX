@@ -23,6 +23,7 @@ import java.io.IOException
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
 import java.time.LocalDate
+import kotlin.coroutines.cancellation.CancellationException
 
 private const val PUBLISHED = "rate-refresh-published"
 
@@ -86,6 +87,16 @@ class RateRefreshWorkerTest {
         runBlocking {
             assertEquals(Result.retry(), worker().refresh { throw IllegalStateException("boom") })
         }
+
+    @Test
+    fun `work stopped by WorkManager is cancelled, not retried`() {
+        val stopped =
+            runCatching {
+                runBlocking { worker().refresh { throw CancellationException("stopped") } }
+            }.exceptionOrNull()
+
+        assertTrue(stopped is CancellationException)
+    }
 
     @Test
     fun `a refresh timed to a publication queues the next one when it succeeds`() =

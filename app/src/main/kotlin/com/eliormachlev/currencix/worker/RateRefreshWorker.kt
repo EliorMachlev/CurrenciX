@@ -11,6 +11,7 @@ import com.eliormachlev.currencix.viewmodel.cart.pinEndedTrips
 import timber.log.Timber
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
+import kotlin.coroutines.cancellation.CancellationException
 
 /**
  * WorkManager worker that periodically refreshes exchange rates in the
@@ -41,8 +42,14 @@ internal class RateRefreshWorker(
     /** One refresh through [fetch] (the repository's, or a test's), mapped as described above. */
     internal suspend fun refresh(fetch: suspend () -> kotlin.Result<ExchangeRates>): Result {
         val outcome =
-            runCatching { fetch() }
-                .getOrElse { throwable -> kotlin.Result.failure(throwable) }
+            try {
+                fetch()
+            } catch (e: CancellationException) {
+                // WorkManager stopping the work is not a failed refresh to retry.
+                throw e
+            } catch (e: Exception) {
+                kotlin.Result.failure(e)
+            }
         return outcome.fold(
             onSuccess = {
                 Timber.tag(TAG).d("Auto-refresh success")
