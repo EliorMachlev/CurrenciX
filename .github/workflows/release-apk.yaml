@@ -252,13 +252,7 @@ jobs:
           TAG: ${{ github.ref_name }}
           VERSION: ${{ needs.build.outputs.version }}
         run: |
-          {
-            python3 .github/scripts/release-notes.py "$TAG"
-            echo
-            echo "---"
-            echo
-            echo "Signed with the release key (all Android versions) and the post-quantum hybrid signature (Android 17 and later). Certificate SHA-256: \`B0:87:B0:31:48:D7:73:B4:CE:DA:C0:24:79:F5:0B:2F:EB:C5:C8:08:AF:17:2E:16:7B:2E:D0:BB:68:E1:E0:59\`. The libraries it ships, with versions and licences: \`currencix-${VERSION}-sbom.cdx.json\` (CycloneDX). Checksums in \`SHA256SUMS\`; where each file was built: \`gh attestation verify <file> --repo EliorMachlev/CurrenciX\` (the attestations are also attached as \`currencix-${VERSION}.intoto.jsonl\`)."
-          } > notes.md
+          python3 .github/scripts/release-notes.py "$TAG" > notes.md
           prerelease=()
           # A suffix (1.24.0-beta1) or a 0.x version (before 1.0) is a pre-release.
           case "$VERSION" in *-* | 0.*) prerelease=(--prerelease) ;; esac
