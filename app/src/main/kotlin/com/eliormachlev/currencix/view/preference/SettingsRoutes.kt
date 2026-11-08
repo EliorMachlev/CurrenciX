@@ -53,8 +53,7 @@ fun SettingsRoute(
     onThemeRequiresRestart: () -> Unit,
 ) {
     val context = LocalContext.current
-    val application = currentApplication()
-    val settings = remember(application) { PreferenceSettings(application) }
+    val settings = rememberPreferenceSettings()
     val callbacks =
         remember(context, onOpen, onThemeRequiresRestart) {
             PreferenceScreenCallbacks(
@@ -66,6 +65,13 @@ fun SettingsRoute(
     SettingsScaffold(titleRes = topic?.titleRes ?: R.string.title_preferences, onBack = onBack) {
         PreferenceScreen(settings = settings, callbacks = callbacks, topic = topic)
     }
+}
+
+/** The stored settings, for the screens that read and change them (built from the application, so kept across recompositions). */
+@Composable
+internal fun rememberPreferenceSettings(): PreferenceSettings {
+    val application = currentApplication()
+    return remember(application) { PreferenceSettings(application) }
 }
 
 /** The fee manager — from Settings, the converter's drawer and fee chip, or the cart. */
@@ -166,11 +172,7 @@ private fun showImportResult(
             )
         }
 
-        is BackupResult.PasswordRequired -> {
-            holder.promptPasswordRetry(uri)
-        }
-
-        is BackupResult.WrongPassword -> {
+        is BackupResult.PasswordRequired, is BackupResult.WrongPassword -> {
             holder.promptPasswordRetry(uri)
         }
     }

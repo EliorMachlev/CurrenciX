@@ -62,7 +62,7 @@ class BackupStateHolder(
      * toast — the caller supplies the string).
      */
     fun stashExportPasswordAndDismiss(password: CharArray?) {
-        pendingExportPassword?.wipe()
+        wipePendingExportPassword()
         pendingExportPassword = password
         dialog = null
     }
@@ -136,11 +136,15 @@ class BackupStateHolder(
         dialog = BackupDialog.ImportPassword(uri = uri, isRetry = true)
     }
 
-    override fun onCleared() {
+    // Zero-fills the export password held across the SAF round-trip, if any, and lets it go.
+    private fun wipePendingExportPassword() {
         pendingExportPassword?.wipe()
         pendingExportPassword = null
-        (dialog as? BackupDialog.ImportConfirm)?.password?.wipe()
-        dialog = null
+    }
+
+    override fun onCleared() {
+        wipePendingExportPassword()
+        dismissDialog()
     }
 }
 
