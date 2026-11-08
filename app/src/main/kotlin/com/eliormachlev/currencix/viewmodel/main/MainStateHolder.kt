@@ -125,8 +125,11 @@ class MainStateHolder(
         // screen paints instantly when the user opens it — otherwise the very
         // first graph tap still pays the full network fetch. The repository
         // dedupes per-pair, so redundant calls collapse into one fetch.
-        combine(currentBaseCurrency, currentDestinationCurrency) { base, destination -> prefetchTimeline(base, destination) }
-            .launchIn(scope)
+        // The currency picker's cache-only copy never asks the network.
+        if (!onlyCache) {
+            combine(currentBaseCurrency, currentDestinationCurrency) { base, destination -> prefetchTimeline(base, destination) }
+                .launchIn(scope)
+        }
     }
 
     // The rates to show: the cached set, after asking the network for a new
