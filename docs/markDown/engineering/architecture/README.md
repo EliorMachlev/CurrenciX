@@ -19,7 +19,7 @@ CurrenciX is **MVVM** with a repository layer, in Kotlin: Compose screens in one
                │ collects StateFlow
 ┌──────────────▼───────────────────────┐
 │ State holders: Main · Timeline ·     │
-│ Cart · Backup · ReceiptLanguages     │
+│ Cart · Backup                        │
 └──────────────┬───────────────────────┘
                │ calls
 ┌──────────────▼───────────────────────┐
@@ -51,7 +51,7 @@ app/src/main/kotlin/com/eliormachlev/currencix/
 │   ├── cache/                 # Memory → disk → network rate cache
 │   ├── json/                  # The app's own JSON files: JsonTree, DuplicateFieldName
 │   └── persistence/           # PersistenceKey, CachedStore / PrefStore, Pref, SavedDataFile
-├── viewmodel/                 # state holders: main (conversion pipeline), preference (settings), timeline, cart, backup, receipt languages; util (RetainedScope, StateFlow helpers)
+├── viewmodel/                 # state holders: main (conversion pipeline), preference (settings), timeline, cart, backup; util (RetainedScope, StateFlow helpers)
 ├── view/
 │   ├── main/                  # MainActivity + the converter route
 │   ├── navigation/            # Screen keys, AppNavigator, AppNavHost, screen motion

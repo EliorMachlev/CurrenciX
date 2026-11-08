@@ -69,7 +69,7 @@ import com.eliormachlev.currencix.view.navigation.PaneRole
 import com.eliormachlev.currencix.view.navigation.Screen
 import com.eliormachlev.currencix.view.navigation.SettingsTopic
 import com.eliormachlev.currencix.view.navigation.paneRole
-import com.eliormachlev.currencix.view.preference.compose.ProviderPickerWithKeyPrompt
+import com.eliormachlev.currencix.view.preference.compose.StoredProviderPicker
 import com.eliormachlev.currencix.viewmodel.main.MainStateHolder
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.collections.immutable.toImmutableSet
@@ -157,6 +157,13 @@ internal fun ConverterRoute(
     )
 }
 
+/**
+ * The cart, seeded with the converter's pair. A null side is fine here —
+ * CartStateHolder.seedFromMain keeps the cart's own pair or resolves just the
+ * missing side.
+ */
+internal fun MainStateHolder.cartScreen(): Screen.Cart = Screen.Cart(getBaseCurrency().value, getDestinationCurrency().value)
+
 // The screens the converter opens, with the arguments they take from it.
 // [paneRole] is the converter's pane in the two-pane layout (null otherwise).
 private class ConverterDestinations(
@@ -170,9 +177,7 @@ private class ConverterDestinations(
         openDetail(Screen.Timeline(from, to))
     }
 
-    // A null side is fine here — CartStateHolder.seedFromMain keeps the cart's
-    // own pair or resolves just the missing side.
-    private fun openCart() = openDetail(Screen.Cart(viewModel.getBaseCurrency().value, viewModel.getDestinationCurrency().value))
+    private fun openCart() = openDetail(viewModel.cartScreen())
 
     // Beside the converter, a detail screen takes the detail pane's place
     // rather than stacking on it: back then returns to the converter alone.
@@ -278,13 +283,7 @@ private fun ConverterOverlays(
     val viewModel = host.viewModel
     when (overlay) {
         ConverterOverlay.ProviderPicker -> {
-            val current by host.preferences.apiProvider.collectAsStateWithLifecycle()
-            ProviderPickerWithKeyPrompt(
-                selected = current,
-                settings = host.preferences,
-                onDismiss = onDismiss,
-                onPicked = host.preferences::setApiProvider,
-            )
+            StoredProviderPicker(settings = host.preferences, onDismiss = onDismiss)
         }
 
         ConverterOverlay.QuickConversions -> {

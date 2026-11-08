@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.retain.retain
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -26,6 +25,7 @@ import com.eliormachlev.currencix.view.compose.LocalAppSnackbar
 import com.eliormachlev.currencix.view.compose.ScreenScaffold
 import com.eliormachlev.currencix.view.compose.currentApplication
 import com.eliormachlev.currencix.view.compose.rememberDatabase
+import com.eliormachlev.currencix.view.compose.retainWithApplication
 import com.eliormachlev.currencix.view.compose.showOrToast
 import com.eliormachlev.currencix.view.navigation.Screen
 import com.eliormachlev.currencix.view.navigation.SettingsTopic
@@ -37,7 +37,6 @@ import com.eliormachlev.currencix.view.preference.compose.ReceiptLanguagesScreen
 import com.eliormachlev.currencix.view.preference.compose.titleRes
 import com.eliormachlev.currencix.viewmodel.preference.BackupStateHolder
 import com.eliormachlev.currencix.viewmodel.preference.PreferenceSettings
-import com.eliormachlev.currencix.viewmodel.preference.ReceiptLanguagesStateHolder
 
 /**
  * Settings: its list of categories ([topic] null), or one category's own
@@ -54,8 +53,7 @@ fun SettingsRoute(
     onThemeRequiresRestart: () -> Unit,
 ) {
     val context = LocalContext.current
-    val application = currentApplication()
-    val settings = remember(application) { PreferenceSettings(application) }
+    val settings = rememberPreferenceSettings()
     val callbacks =
         remember(context, onOpen, onThemeRequiresRestart) {
             PreferenceScreenCallbacks(
@@ -67,6 +65,13 @@ fun SettingsRoute(
     SettingsScaffold(titleRes = topic?.titleRes ?: R.string.title_preferences, onBack = onBack) {
         PreferenceScreen(settings = settings, callbacks = callbacks, topic = topic)
     }
+}
+
+/** The stored settings, for the screens that read and change them (built from the application, so kept across recompositions). */
+@Composable
+internal fun rememberPreferenceSettings(): PreferenceSettings {
+    val application = currentApplication()
+    return remember(application) { PreferenceSettings(application) }
 }
 
 /** The fee manager — from Settings, the converter's drawer and fee chip, or the cart. */
@@ -81,10 +86,8 @@ fun FeesRoute(onBack: () -> Unit) {
 /** The languages receipts are read in: add one (for good or a trip), keep it longer, or delete it. */
 @Composable
 fun ReceiptLanguagesRoute(onBack: () -> Unit) {
-    val application = currentApplication()
-    val holder = retain { ReceiptLanguagesStateHolder(application) }
     SettingsScaffold(titleRes = R.string.receipt_languages_title, onBack = onBack) {
-        ReceiptLanguagesScreen(holder = holder)
+        ReceiptLanguagesScreen()
     }
 }
 
@@ -93,8 +96,7 @@ fun ReceiptLanguagesRoute(onBack: () -> Unit) {
 fun BackupRoute(onBack: () -> Unit) {
     val context = LocalContext.current
     val snackbar = LocalAppSnackbar.current
-    val application = currentApplication()
-    val holder = retain { BackupStateHolder(application) }
+    val holder = retainWithApplication { BackupStateHolder(it) }
     val exportLauncher =
         rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             val uri = result.data?.data ?: return@rememberLauncherForActivityResult
@@ -169,11 +171,7 @@ private fun showImportResult(
             )
         }
 
-        is BackupResult.PasswordRequired -> {
-            holder.promptPasswordRetry(uri)
-        }
-
-        is BackupResult.WrongPassword -> {
+        is BackupResult.PasswordRequired, is BackupResult.WrongPassword -> {
             holder.promptPasswordRetry(uri)
         }
     }

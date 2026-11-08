@@ -21,7 +21,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.retain.retain
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -58,18 +57,17 @@ import com.eliormachlev.currencix.view.compose.ReadingDirection
 import com.eliormachlev.currencix.view.compose.ScreenScaffold
 import com.eliormachlev.currencix.view.compose.TopBarOverflowMenu
 import com.eliormachlev.currencix.view.compose.TopBarStyle
-import com.eliormachlev.currencix.view.compose.collectAsStateWithLifecycle
-import com.eliormachlev.currencix.view.compose.currentApplication
 import com.eliormachlev.currencix.view.compose.rememberDatabase
+import com.eliormachlev.currencix.view.compose.retainWithApplication
 import com.eliormachlev.currencix.view.compose.theme.Spacing
 import com.eliormachlev.currencix.view.main.spinner.CurrencyPickerSheet
 import com.eliormachlev.currencix.view.navigation.PillSide
 import com.eliormachlev.currencix.view.navigation.Screen
 import com.eliormachlev.currencix.view.preference.compose.GraphOptionsSheet
-import com.eliormachlev.currencix.view.preference.compose.ProviderPickerWithKeyPrompt
+import com.eliormachlev.currencix.view.preference.compose.StoredProviderPicker
+import com.eliormachlev.currencix.view.preference.rememberPreferenceSettings
 import com.eliormachlev.currencix.view.timeline.compose.TIMELINE_CONTENT_PADDING
 import com.eliormachlev.currencix.view.timeline.compose.TimelineScreen
-import com.eliormachlev.currencix.viewmodel.preference.PreferenceSettings
 import com.eliormachlev.currencix.viewmodel.timeline.TimelineStateHolder
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.map
@@ -92,8 +90,7 @@ fun TimelineRoute(
     onConvertAt: (pair: CurrencyPair, date: LocalDate) -> Unit = { _, _ -> },
 ) {
     val context = LocalContext.current
-    val application = currentApplication()
-    val model = retain(screen.from, screen.to) { TimelineStateHolder(application, screen.from, screen.to) }
+    val model = retainWithApplication(screen.from, screen.to) { TimelineStateHolder(it, screen.from, screen.to) }
     val db = rememberDatabase()
     val formatter = remember(db) { DateTimeFormatter.ofPattern(stripTimePattern(db.display.dateFormat.get())) }
     val pair by model.getCurrencyPair().collectAsStateWithLifecycle()
@@ -245,18 +242,7 @@ private fun TimelineSheets(
         }
 
         TimelineSheet.Provider -> {
-            val application = currentApplication()
-            val preferences = remember(application) { PreferenceSettings(application) }
-            val current by preferences.apiProvider.collectAsStateWithLifecycle()
-            ProviderPickerWithKeyPrompt(
-                selected = current,
-                settings = preferences,
-                onDismiss = onDismiss,
-                onPicked = { provider ->
-                    preferences.setApiProvider(provider)
-                    onProviderPicked()
-                },
-            )
+            StoredProviderPicker(settings = rememberPreferenceSettings(), onDismiss = onDismiss, onPicked = onProviderPicked)
         }
 
         null -> {}

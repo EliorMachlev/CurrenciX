@@ -68,6 +68,28 @@ fun ProviderPickerWithKeyPrompt(
     )
 }
 
+/**
+ * A [ProviderPickerWithKeyPrompt] for the stored provider: a pick is stored
+ * (which fetches its rates), then [onPicked] runs.
+ */
+@Composable
+fun StoredProviderPicker(
+    settings: PreferenceSettings,
+    onDismiss: () -> Unit,
+    onPicked: () -> Unit = {},
+) {
+    val current by settings.apiProvider.collectAsStateWithLifecycle()
+    ProviderPickerWithKeyPrompt(
+        selected = current,
+        settings = settings,
+        onDismiss = onDismiss,
+        onPicked = { provider ->
+            settings.setApiProvider(provider)
+            onPicked()
+        },
+    )
+}
+
 /** What the key row and its sheet say for a keyed provider. */
 internal class ApiKeyTexts(
     @StringRes val title: Int,
