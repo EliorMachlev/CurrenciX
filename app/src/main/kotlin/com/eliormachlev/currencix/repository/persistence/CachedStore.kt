@@ -22,7 +22,7 @@ import java.io.IOException
 /**
  * A [DataStore] of any kind (a preferences file, or a typed Protobuf one)
  * read synchronously and written fire-and-forget, with DataStore the source
- * of truth on disk. [PrefStore] is the preferences flavour; the saved carts,
+ * of truth on disk. [PrefStore] wraps one for preferences; the saved carts,
  * trips and fees use it directly with their Protobuf messages.
  *
  * Read path — reads hit an in-memory [MutableStateFlow] cache that mirrors the
@@ -42,7 +42,7 @@ import java.io.IOException
  * the cache is resynced from disk. Without that, a read between two quick
  * writes could see the first one undone.
  */
-open class CachedStore<S> internal constructor(
+class CachedStore<S> internal constructor(
     private val store: DataStore<S>,
     private val scope: CoroutineScope = storeScope,
 ) {

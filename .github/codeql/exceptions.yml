@@ -13,10 +13,6 @@
 # exceptions.md #10: the static $stable field the Compose compiler adds to every class, on a class
 # whose superclass has its own (no such field in the source).
 - excluded-rule: java/field-masks-super-field
-  file: app/src/main/kotlin/com/eliormachlev/currencix/repository/persistence/PrefStore.kt
-  line: 1
-  message-contains: $stable
-- excluded-rule: java/field-masks-super-field
   file: app/src/main/kotlin/com/eliormachlev/currencix/view/widget/CurrencyWidget.kt
   line: 1
   message-contains: $stable

@@ -91,7 +91,7 @@ internal fun <T> PrefStore.pref(
     read: (Preferences) -> T,
     write: MutablePreferences.(T) -> Unit,
     afterWrite: () -> Unit = {},
-): Pref<T> = statePref(read, { prefs, value -> prefs.edited { write(value) } }, afterWrite)
+): Pref<T> = cached.statePref(read, { prefs, value -> prefs.edited { write(value) } }, afterWrite)
 
 /**
  * A setting stored under one [key], with [decode] / [encode] between the stored and the app's value. Null [encode] removes it.
