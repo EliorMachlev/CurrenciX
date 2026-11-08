@@ -1,29 +1,40 @@
 <div align="center">
 
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="art/brand/currencix-mark-dark.gif">
-  <img alt="The CurrenciX mark: two arrows turning around a ×" src="art/brand/currencix-mark-light.gif" width="160">
-</picture>
+<a href="https://currencix.machlev.org/">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="art/brand/currencix-mark-dark.gif">
+    <img alt="The CurrenciX mark: two arrows turning around a ×. Opens the CurrenciX website" src="art/brand/currencix-mark-light.gif" width="160">
+  </picture>
+</a>
 
 # CurrenciX
 
 **A simple, private currency converter for Android.**<br>
 A handy travel companion, not a tool for real-time financial business.
 
+[![Latest release](https://img.shields.io/github/v/release/EliorMachlev/CurrenciX?include_prereleases&label=release)](https://github.com/EliorMachlev/CurrenciX/releases)
 [![Build](https://github.com/EliorMachlev/CurrenciX/actions/workflows/build.yaml/badge.svg)](https://github.com/EliorMachlev/CurrenciX/actions/workflows/build.yaml)
 [![OpenSSF Best Practices](https://www.bestpractices.dev/projects/15831/badge)](https://www.bestpractices.dev/projects/15831)
-[![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/EliorMachlev/CurrenciX/badge)](https://securityscorecards.dev/viewer/?uri=github.com/EliorMachlev/CurrenciX)
+[![OpenSSF Scorecard](https://img.shields.io/ossf-scorecard/github.com/EliorMachlev/CurrenciX?label=openssf+scorecard)](https://securityscorecards.dev/viewer/?uri=github.com/EliorMachlev/CurrenciX)
 [![License: GPL-3.0-or-later](https://img.shields.io/badge/license-GPL--3.0--or--later-blue)](COPYING)
 [![Android 13+](https://img.shields.io/badge/Android-13%2B-3DDC84?logo=android&logoColor=white)](docs/markDown/engineering/build.md)
 
-[Website](https://currencix.machlev.org/) · [Features](https://currencix.machlev.org/features.html) · [Providers](https://currencix.machlev.org/providers.html) · [Privacy](https://currencix.machlev.org/privacy.html) · [Docs](docs/markDown/README.md)
+**[Website](https://currencix.machlev.org/)** · [Features](https://currencix.machlev.org/features.html) · [Providers](https://currencix.machlev.org/providers.html) · [Privacy](https://currencix.machlev.org/privacy.html) · [Releases](https://github.com/EliorMachlev/CurrenciX/releases) · [Docs](docs/markDown/README.md)
 
 <br>
 
-<img src="docs/img/phone-converter.webp" width="200" alt="The converter: 1 US dollar is 0.893 euro, and 0.916 euro with a 2.5% card fee">&nbsp;
-<img src="docs/img/phone-quick-conversions.webp" width="200" alt="Quick conversions: 1 to 1,000 dollars in euros, each with the 2.5% fee counted in">&nbsp;
-<img src="docs/img/phone-cart.webp" width="200" alt="A shopping cart split between Jordan and Nick, with a 10% tip, a 2.50% conversion fee and the budget left">&nbsp;
-<img src="docs/img/phone-chart.webp" width="200" alt="A year of the dollar against the euro: up 3.74%, with the maximum, minimum, average and median">
+<table>
+  <tr>
+    <td><img src="docs/img/phone-converter.webp" width="240" alt="The converter: 1 US dollar is 0.893 euro, and 0.916 euro with a 2.5% card fee"></td>
+    <td><img src="docs/img/phone-quick-conversions.webp" width="240" alt="Quick conversions: 1 to 1,000 dollars in euros, each with the 2.5% fee counted in"></td>
+  </tr>
+  <tr>
+    <td><img src="docs/img/phone-cart.webp" width="240" alt="A shopping cart split between Jordan and Nick, with a 10% tip, a 2.50% conversion fee and the budget left"></td>
+    <td><img src="docs/img/phone-chart.webp" width="240" alt="A year of the dollar against the euro: up 3.74%, with the maximum, minimum, average and median"></td>
+  </tr>
+</table>
+
+More on the [website](https://currencix.machlev.org/features.html).
 
 </div>
 
@@ -43,24 +54,22 @@ A handy travel companion, not a tool for real-time financial business.
 
 ## 🏦 Exchange rate providers
 
-Eight sources, and a fallback for when your main one is down. Details in [providers](docs/markDown/product/providers.md).
-
-| Provider | Source | Currencies | Updates | API key |
-|---|---|---|---|---|
-| [Frankfurter.app](https://frankfurter.dev/) | European Central Bank | ~30 | Business days | — |
-| [Open Exchangerates](https://openexchangerates.org/) | Commercial aggregator | 160+ | Hourly | Free key |
-| [AllRatesToday](https://allratestoday.com/) | Mid-market interbank | ~160 | About every minute | Key |
-| [InforEuro](https://commission.europa.eu/funding-tenders/procedures-guidelines-tenders/information-contractors-and-beneficiaries/exchange-rate-inforeuro_en) | European Commission | ~150 | Monthly | — |
-| [Bank of Canada](https://www.bankofcanada.ca/rates/exchange/daily-exchange-rates/) | Central bank | ~23 | Business days | — |
-| [Norges Bank](https://www.norges-bank.no/en/topics/Statistics/exchange_rates/) | Central bank | ~40 | Business days | — |
-| [Bank Rossii](https://cbr.ru/eng/currency_base/daily/) | Central bank | ~44 | Business days | — |
-| [Bank of Israel](https://www.boi.org.il/en/economic-roles/statistics/foreign-exchange-market/exchange-rates/) | Central bank | ~14 | Business days | — |
+Eight sources, with a fallback for when your main one is down: [Frankfurter](https://frankfurter.dev/) (European Central Bank), [Open Exchangerates](https://openexchangerates.org/), [AllRatesToday](https://allratestoday.com/), [InforEuro](https://commission.europa.eu/funding-tenders/procedures-guidelines-tenders/information-contractors-and-beneficiaries/exchange-rate-inforeuro_en), and the central banks of [Canada](https://www.bankofcanada.ca/rates/exchange/daily-exchange-rates/), [Norway](https://www.norges-bank.no/en/topics/Statistics/exchange_rates/), [Russia](https://cbr.ru/eng/currency_base/daily/) and [Israel](https://www.boi.org.il/en/economic-roles/statistics/foreign-exchange-market/exchange-rates/). Coverage, update frequency and API keys for each: [providers](docs/markDown/product/providers.md), or the [website's providers page](https://currencix.machlev.org/providers.html).
 
 ## 📦 Get it
 
-CurrenciX hasn't had its first release yet. Releases will be published on [GitHub Releases](https://github.com/EliorMachlev/CurrenciX/releases): one signed APK that installs on any 64-bit phone (Android 13 or later), its `SHA256SUMS`, and an SBOM of every library they ship. Android 17 and later also check a post-quantum signature. An F-Droid build is prepared.
+Download the latest APK from [GitHub Releases](https://github.com/EliorMachlev/CurrenciX/releases): one signed APK for Android 13 or later on arm64-v8a devices (nearly all current phones), plus `SHA256SUMS`, an SBOM of every library it ships and its signed build provenance. Versions before 1.0 are marked pre-releases. Android 17 and later also check a post-quantum signature; an F-Droid build is prepared.
 
-The upstream **Currencies** app is on [Google Play](https://play.google.com/store/apps/details?id=de.salomax.currencies) and [F-Droid](https://f-droid.org/packages/de.salomax.currencies/) under its own package name. To build CurrenciX (`com.eliormachlev.currencix`) yourself:
+To check a download, from the folder holding the release files (the second command asks GitHub; for the offline variant, see [verifying a release](docs/markDown/engineering/release.md#verifying-a-release)):
+
+```bash
+sha256sum --check --ignore-missing SHA256SUMS
+gh attestation verify *.apk --repo EliorMachlev/CurrenciX
+```
+
+How a release is made and signed: [release](docs/markDown/engineering/release.md).
+
+The upstream **Currencies** app is on [Google Play](https://play.google.com/store/apps/details?id=de.salomax.currencies) and [F-Droid](https://f-droid.org/packages/de.salomax.currencies/) under its own package name. To build CurrenciX (`com.eliormachlev.currencix`) yourself ([build guide](docs/markDown/engineering/build.md)):
 
 ```bash
 git clone https://github.com/EliorMachlev/CurrenciX.git
@@ -76,7 +85,7 @@ Checked on every change by Android Lint, detekt, Qodana, Semgrep, CodeQL, Gitlea
 
 ## 📚 Documentation
 
-[All docs](docs/markDown/README.md): [architecture](docs/markDown/engineering/architecture/README.md), [build](docs/markDown/engineering/build.md), [release](docs/markDown/engineering/release.md), [providers](docs/markDown/product/providers.md), [CI / CD](docs/markDown/engineering/ci-cd.md), [security](docs/markDown/engineering/security.md), [exceptions](docs/markDown/engineering/exceptions.md) and the [website](docs/markDown/engineering/website.md).
+Start at the [documentation index](docs/markDown/README.md): [architecture](docs/markDown/engineering/architecture/README.md), [build](docs/markDown/engineering/build.md), [release](docs/markDown/engineering/release.md), [CI / CD](docs/markDown/engineering/ci-cd.md), [security](docs/markDown/engineering/security.md) and the [website](docs/markDown/engineering/website.md). The [website](https://currencix.machlev.org/) is the user-facing version.
 
 ## 🤝 Contributing
 
