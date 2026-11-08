@@ -64,7 +64,7 @@ To check a download, from the folder holding the release files (the second comma
 
 ```bash
 sha256sum --check --ignore-missing SHA256SUMS
-gh attestation verify *.apk --repo EliorMachlev/CurrenciX
+gh attestation verify *.apk --repo EliorMachlev/CurrenciX --signer-workflow EliorMachlev/CurrenciX/.github/workflows/build-release.yaml
 ```
 
 How a release is made and signed: [release](docs/markDown/engineering/release.md).
