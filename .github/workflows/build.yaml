@@ -286,6 +286,7 @@ jobs:
           PR_NUMBER: ${{ github.event.pull_request.number }}
           MARKER: "<!-- coverage-report -->"
         run: |
+          set -o pipefail
           pip install --quiet --require-hashes -r .github/scripts/requirements.txt
           args=(coverage/reportFdroidDebug.xml Fdroid)
           [ -f master-coverage/reportFdroidDebug.xml ] && args+=(master-coverage/reportFdroidDebug.xml)
