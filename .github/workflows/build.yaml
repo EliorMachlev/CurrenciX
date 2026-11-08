@@ -296,7 +296,7 @@ jobs:
             echo "The full report is in this run's \`coverage-Fdroid\` artifact."
           } > comment.md
           # One comment, updated by every push, found by its marker.
-          comment_id=$(gh api "repos/$REPO/issues/$PR_NUMBER/comments" --paginate --jq "[.[] | select(.body | startswith(\"$MARKER\")) | .id][0] // empty")
+          comment_id=$(gh api "repos/$REPO/issues/$PR_NUMBER/comments" --paginate | jq -s -r --arg marker "$MARKER" '[.[][] | select(.body | startswith($marker)) | .id][0] // empty')
           if [ -n "$comment_id" ]; then
             gh api --method PATCH "repos/$REPO/issues/comments/$comment_id" --field body=@comment.md
           else

@@ -30,10 +30,10 @@ def percent(covered: int, missed: int) -> float:
 
 
 def change(measure: str, now: dict, before: dict | None) -> str:
-    # The move in percentage points since [before], or "" with nothing to compare to.
-    if before is None:
+    # The move in percentage points since [before], or "" when either report lacks the measure.
+    if before is None or measure not in now or measure not in before:
         return ""
-    return f" | {percent(*now.get(measure, (0, 0))) - percent(*before.get(measure, (0, 0))):+.1f} pts"
+    return f" | {percent(*now[measure]) - percent(*before[measure]):+.1f} pts"
 
 
 def main(report: str, flavor: str, baseline: str | None = None) -> None:
