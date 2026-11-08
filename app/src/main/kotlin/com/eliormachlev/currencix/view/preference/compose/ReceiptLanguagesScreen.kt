@@ -94,13 +94,6 @@ private sealed interface LanguagePrompt {
     ) : LanguagePrompt
 }
 
-/**
- * Settings → Receipt languages: the languages receipts are read in, on the
- * phone or downloading, each with its size and how long it's kept; a tap
- * changes that or deletes it, the bin deletes it, and "Add a language"
- * downloads another once the user agrees to it (kept for good, or until a
- * time they pick, for a trip).
- */
 // File work on the IO dispatcher, then a nudge for the list to look again.
 private suspend fun onIo(
     refresh: MutableStateFlow<Int>,
@@ -110,6 +103,13 @@ private suspend fun onIo(
     refresh.value++
 }
 
+/**
+ * Settings → Receipt languages: the languages receipts are read in, on the
+ * phone or downloading, each with its size and how long it's kept; a tap
+ * changes that or deletes it, the bin deletes it, and "Add a language"
+ * downloads another once the user agrees to it (kept for good, or until a
+ * time they pick, for a trip).
+ */
 @Composable
 fun ReceiptLanguagesScreen() {
     val app = currentApplication()
