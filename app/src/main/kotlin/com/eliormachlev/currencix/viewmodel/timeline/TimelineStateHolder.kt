@@ -1,6 +1,7 @@
 package com.eliormachlev.currencix.viewmodel.timeline
 
 import android.app.Application
+import androidx.compose.runtime.retain.RetainObserver
 import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.model.Rate
 import com.eliormachlev.currencix.model.Timeline
@@ -68,7 +69,10 @@ class TimelineStateHolder(
     private var base: Currency,
     private var target: Currency,
     private val dispatchers: AppDispatchers = AppDispatchers.production,
-) : RetainedScope(dispatchers) {
+    private val retained: RetainedScope = RetainedScope(dispatchers),
+) : RetainObserver by retained {
+    private val scope = retained.scope
+
     enum class Period {
         WEEK,
         MONTH,
