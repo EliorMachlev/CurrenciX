@@ -59,6 +59,8 @@ import com.eliormachlev.currencix.viewmodel.preference.ReceiptLanguageRow
 import com.eliormachlev.currencix.viewmodel.preference.ReceiptLanguagesState
 import com.eliormachlev.currencix.viewmodel.preference.receiptLanguagesState
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineStart
+import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -128,9 +130,10 @@ fun ReceiptLanguagesScreen() {
     LaunchedEffect(app) { onIo(io, refresh) { OcrLanguages.deleteExpired(app) } }
     var prompt by remember { mutableStateOf<LanguagePrompt?>(null) }
     val close = { prompt = null }
-    // A confirmed prompt: its file work starts, and the prompt closes.
+    // A confirmed prompt: its file work starts, and the prompt closes. The work is the
+    // user's decision, so a rotation that ends the screen's scope doesn't drop it.
     val changeAndClose = { block: () -> Unit ->
-        scope.launch { onIo(io, refresh, block) }
+        scope.launch(start = CoroutineStart.ATOMIC) { withContext(NonCancellable) { onIo(io, refresh, block) } }
         close()
     }
     ReceiptLanguagesList(
