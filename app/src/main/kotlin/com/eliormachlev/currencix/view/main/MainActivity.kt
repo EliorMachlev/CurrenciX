@@ -237,7 +237,7 @@ class MainActivity : ComponentActivity() {
             }
 
             ConverterLaunch.Request.OpenCart -> {
-                nav.navigate(Screen.Cart(main.getBaseCurrency().value, main.getDestinationCurrency().value))
+                nav.navigate(main.cartScreen())
             }
 
             // Back from the chart lands on the converter, on the same pair.
