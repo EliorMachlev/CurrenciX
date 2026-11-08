@@ -9,7 +9,6 @@ import com.eliormachlev.currencix.model.Timeline
 import com.eliormachlev.currencix.repository.Database
 import com.eliormachlev.currencix.util.AppDispatchers
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.cancel
@@ -35,7 +34,9 @@ import java.util.concurrent.Executor
 class TimelineEmptyRangeTest {
     private val app = ApplicationProvider.getApplicationContext<Application>()
     private val today = LocalDate.now()
-    private val collecting = CoroutineScope(SupervisorJob() + Dispatchers.Unconfined)
+    // Work runs on the calling thread, at once, so the assertions see it.
+    private val atOnce = Executor { it.run() }.asCoroutineDispatcher()
+    private val collecting = CoroutineScope(SupervisorJob() + atOnce)
 
     @After
     fun stopCollecting() = collecting.cancel()
@@ -55,7 +56,6 @@ class TimelineEmptyRangeTest {
     fun `a range without rates leaves the readouts empty instead of crashing`() {
         // The readouts are worked out off the main thread in the app; here on
         // the calling thread, at once, so the assertions see them.
-        val atOnce = Executor { it.run() }.asCoroutineDispatcher()
         val model = TimelineStateHolder(app, Currency.USD, Currency.EUR, AppDispatchers(io = atOnce, default = atOnce) { atOnce })
         val past = model.getRatePast().observed()
         val current = model.getRateCurrent().observed()
