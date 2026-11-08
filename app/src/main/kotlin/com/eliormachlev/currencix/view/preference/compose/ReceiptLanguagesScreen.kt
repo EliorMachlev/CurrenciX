@@ -26,9 +26,12 @@ import androidx.compose.material3.TimeInput
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.retain.retain
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -39,10 +42,13 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.eliormachlev.currencix.R
+import com.eliormachlev.currencix.ocr.OcrLanguages
 import com.eliormachlev.currencix.ocr.TessLanguage
+import com.eliormachlev.currencix.util.AppDispatchers
 import com.eliormachlev.currencix.util.normalizeForSearch
 import com.eliormachlev.currencix.view.compose.LedgerRow
 import com.eliormachlev.currencix.view.compose.SupportingText
+import com.eliormachlev.currencix.view.compose.currentApplication
 import com.eliormachlev.currencix.view.compose.dialogs.LedgerBottomSheet
 import com.eliormachlev.currencix.view.compose.dialogs.LedgerPromptSheet
 import com.eliormachlev.currencix.view.compose.dialogs.PromptMessage
@@ -51,7 +57,10 @@ import com.eliormachlev.currencix.view.compose.fieldName
 import com.eliormachlev.currencix.view.compose.theme.Spacing
 import com.eliormachlev.currencix.viewmodel.preference.ReceiptLanguageRow
 import com.eliormachlev.currencix.viewmodel.preference.ReceiptLanguagesState
-import com.eliormachlev.currencix.viewmodel.preference.ReceiptLanguagesStateHolder
+import com.eliormachlev.currencix.viewmodel.preference.receiptLanguagesState
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalTime
@@ -92,9 +101,28 @@ private sealed interface LanguagePrompt {
  * downloads another once the user agrees to it (kept for good, or until a
  * time they pick, for a trip).
  */
+// File work on the IO dispatcher, then a nudge for the list to look again.
+private suspend fun onIo(
+    refresh: MutableStateFlow<Int>,
+    block: () -> Unit,
+) {
+    withContext(AppDispatchers.production.io) { block() }
+    refresh.value++
+}
+
 @Composable
-fun ReceiptLanguagesScreen(holder: ReceiptLanguagesStateHolder) {
-    val state by holder.state.collectAsStateWithLifecycle()
+fun ReceiptLanguagesScreen() {
+    val app = currentApplication()
+    val scope = rememberCoroutineScope()
+    // Bumped after a change the settings and downloads don't show (a file deleted).
+    val refresh = remember { MutableStateFlow(0) }
+    // The last state shown, kept across a rotation so the list doesn't blink empty.
+    var lastShown by retain { mutableStateOf(ReceiptLanguagesState()) }
+    val state by remember(app) { receiptLanguagesState(app, refresh) }.collectAsStateWithLifecycle(lastShown)
+    LaunchedEffect(state) { lastShown = state }
+    // A language whose time came while the app was closed goes before it's listed.
+    LaunchedEffect(app) { onIo(refresh) { OcrLanguages.deleteExpired(app) } }
+    val change = { block: () -> Unit -> scope.launch { onIo(refresh, block) } }
     var prompt by remember { mutableStateOf<LanguagePrompt?>(null) }
     ReceiptLanguagesList(
         state = state,
@@ -114,7 +142,7 @@ fun ReceiptLanguagesScreen(holder: ReceiptLanguagesStateHolder) {
                 initialUntil = null,
                 confirmLabel = stringResource(R.string.receipt_setup_download),
                 onConfirm = { until ->
-                    holder.add(open.language, until)
+                    change { OcrLanguages.download(app, open.language, until) }
                     close()
                 },
                 onDismiss = close,
@@ -127,7 +155,7 @@ fun ReceiptLanguagesScreen(holder: ReceiptLanguagesStateHolder) {
                 initialUntil = open.row.keepUntil,
                 confirmLabel = stringResource(R.string.receipt_languages_save),
                 onConfirm = { until ->
-                    holder.keep(open.row.language, until)
+                    change { OcrLanguages.keep(app, open.row.language, until) }
                     close()
                 },
                 onDismiss = close,
@@ -139,7 +167,7 @@ fun ReceiptLanguagesScreen(holder: ReceiptLanguagesStateHolder) {
             DeleteLanguageSheet(
                 language = open.language,
                 onConfirm = {
-                    holder.delete(open.language)
+                    change { OcrLanguages.delete(app, open.language) }
                     close()
                 },
                 onDismiss = close,

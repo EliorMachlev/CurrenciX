@@ -37,7 +37,6 @@ import com.eliormachlev.currencix.view.preference.compose.ReceiptLanguagesScreen
 import com.eliormachlev.currencix.view.preference.compose.titleRes
 import com.eliormachlev.currencix.viewmodel.preference.BackupStateHolder
 import com.eliormachlev.currencix.viewmodel.preference.PreferenceSettings
-import com.eliormachlev.currencix.viewmodel.preference.ReceiptLanguagesStateHolder
 
 /**
  * Settings: its list of categories ([topic] null), or one category's own
@@ -81,10 +80,8 @@ fun FeesRoute(onBack: () -> Unit) {
 /** The languages receipts are read in: add one (for good or a trip), keep it longer, or delete it. */
 @Composable
 fun ReceiptLanguagesRoute(onBack: () -> Unit) {
-    val application = currentApplication()
-    val holder = retain { ReceiptLanguagesStateHolder(application) }
     SettingsScaffold(titleRes = R.string.receipt_languages_title, onBack = onBack) {
-        ReceiptLanguagesScreen(holder = holder)
+        ReceiptLanguagesScreen()
     }
 }
 
