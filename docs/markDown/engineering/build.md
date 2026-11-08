@@ -145,4 +145,4 @@ The baseline profile plugin turns unit tests off for the build types it adds (`b
 
 ## Known issue: `Configuration.setVisible(boolean)` deprecation
 
-Gradle warned about it while configuring `:app`, and a build ended "incompatible with Gradle 10". It was inside AGP 9.4.1 (`BasePlugin.createAndroidJdkImageConfiguration`), not in any build script here. With AGP 9.5.0 a build still ends with that line; which deprecation it now reports hasn't been checked (`./gradlew help --warning-mode all` lists each one and where it comes from). Left visible either way: `org.gradle.warning.mode=none` would hide every other deprecation too.
+A build still ends with Gradle's "incompatible with Gradle 10" line. The deprecation was inside AGP 9.4.1 (`BasePlugin.createAndroidJdkImageConfiguration`), not in any build script here; which one AGP 9.5.0 reports hasn't been checked (`./gradlew help --warning-mode all` lists each and where it comes from). It stays visible: `org.gradle.warning.mode=none` would hide every other deprecation too ([contributing.md](contributing.md#no-suppressions-no-cosmetic-workarounds)).

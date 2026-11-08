@@ -11,3 +11,9 @@ python3 .github/scripts/site-assets.py stamp docs
 ```
 
 The Site workflow (`check docs`) fails while a version is stale or an inline script isn't allowed by its page's CSP. `FontFilesTest` checks every bundled font, the app's and the site's, is a font file.
+
+## See also
+
+- The live site: <https://currencix.machlev.org/> ([features](https://currencix.machlev.org/features.html), [providers](https://currencix.machlev.org/providers.html), [privacy](https://currencix.machlev.org/privacy.html)); the README links to it.
+- The screenshot tests the pictures are cropped from, and how to review them: [contributing.md](contributing.md#pull-request-checklist).
+- The site's checks (`check docs`) and the CSP: [ci-cd.md](ci-cd.md#workflows); the CSP check itself is [`site-assets.py`](../../../.github/scripts/site-assets.py).
