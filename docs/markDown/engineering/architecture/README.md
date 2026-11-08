@@ -37,7 +37,7 @@ CurrenciX is **MVVM** with a repository layer, in Kotlin: Compose screens in one
 └──────────────────────────────────────┘
 ```
 
-Konsist tests (`ArchitectureTest`) hold the View / ViewModel / Repository / Model boundaries, so a refactor can't blur them. The app has no `ViewModel`: a screen's state holder is a plain class on `RetainedScope`, built in the route with `retain { … }` (keys for what it is made for), and the tests keep a bare `viewModel()` or `ViewModelProvider(owner)`, which finds a constructor by reflection, out of the source.
+Konsist tests (`ArchitectureTest`) hold the View / ViewModel / Repository / Model boundaries, so a refactor can't blur them. The app has no `ViewModel`: a screen's state holder is a plain class that takes a `RetainedScope` (its coroutine scope, cancelled when the holder is retired) and delegates `RetainObserver` to it, built in the route with `retain { … }` (keys for what it is made for), and the tests keep a bare `viewModel()` or `ViewModelProvider(owner)`, which finds a constructor by reflection, out of the source.
 
 ## Source layout
 

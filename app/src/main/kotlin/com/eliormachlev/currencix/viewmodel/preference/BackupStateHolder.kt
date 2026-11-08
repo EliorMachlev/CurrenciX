@@ -4,6 +4,7 @@ import android.app.Application
 import android.net.Uri
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.retain.RetainObserver
 import androidx.compose.runtime.setValue
 import com.eliormachlev.currencix.repository.BackupManager
 import com.eliormachlev.currencix.repository.BackupResult
@@ -29,7 +30,9 @@ const val BACKUP_MIN_PASSWORD_LENGTH = 8
  */
 class BackupStateHolder(
     app: Application,
-) : RetainedScope() {
+    private val retained: RetainedScope = RetainedScope(),
+) : RetainObserver by retained {
+    private val scope = retained.scope
     private val backupManager = BackupManager(app.applicationContext)
 
     var dialog by mutableStateOf<BackupDialog?>(null)
@@ -151,9 +154,11 @@ class BackupStateHolder(
         pendingExportPassword = null
     }
 
-    override fun onCleared() {
-        wipePendingExportPassword()
-        dismissDialog()
+    init {
+        retained.onCleared = {
+            wipePendingExportPassword()
+            dismissDialog()
+        }
     }
 }
 

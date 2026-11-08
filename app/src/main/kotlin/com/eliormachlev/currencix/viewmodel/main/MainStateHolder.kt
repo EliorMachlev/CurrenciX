@@ -2,6 +2,7 @@ package com.eliormachlev.currencix.viewmodel.main
 
 import android.app.Application
 import android.text.SpannableStringBuilder
+import androidx.compose.runtime.retain.RetainObserver
 import androidx.core.text.bold
 import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.model.CurrencyPair
@@ -45,7 +46,9 @@ import java.time.ZoneId
 class MainStateHolder(
     private val app: Application,
     onlyCache: Boolean = false,
-) : RetainedScope() {
+    private val retained: RetainedScope = RetainedScope(),
+) : RetainObserver by retained {
+    private val scope = retained.scope
     private val repository: ExchangeRatesRepository = ExchangeRatesRepository(app)
     private val db = Database(app)
 

@@ -7,18 +7,20 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 
 /**
- * The base of a state holder kept with `retain { ... }`: it owns a
- * [CoroutineScope] that lives as long as the holder is retained, so work it
- * started survives a rotation and stops when the screen is gone for good
- * (what `viewModelScope` did for a ViewModel).
+ * What a state holder kept with `retain { ... }` owns: a [CoroutineScope] that lives as long as
+ * the holder is retained, so work it started survives a rotation and stops when the screen is
+ * gone for good (what `viewModelScope` did for a ViewModel). A holder takes one as a constructor
+ * parameter and delegates [RetainObserver] to it (`: RetainObserver by retained`). It is not a
+ * base class: the Compose compiler adds a `$stable` field to every class, and a subclass's would
+ * hide its base's.
  */
-open class RetainedScope(
+class RetainedScope(
     dispatchers: AppDispatchers = AppDispatchers.production,
 ) : RetainObserver {
-    protected val scope = CoroutineScope(SupervisorJob() + dispatchers.main)
+    val scope = CoroutineScope(SupervisorJob() + dispatchers.main)
 
-    /** Called once the holder is let go of, after its [scope] is cancelled (wipe what must not linger). */
-    protected open fun onCleared() {}
+    /** Run once the holder is let go of, after its [scope] is cancelled (wipe what must not linger). */
+    var onCleared: () -> Unit = {}
 
     override fun onRetained() = Unit
 

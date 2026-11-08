@@ -1,6 +1,7 @@
 package com.eliormachlev.currencix.viewmodel.cart
 
 import android.app.Application
+import androidx.compose.runtime.retain.RetainObserver
 import com.eliormachlev.currencix.model.CartExtras
 import com.eliormachlev.currencix.model.CartItem
 import com.eliormachlev.currencix.model.Currency
@@ -25,7 +26,9 @@ import java.time.LocalDate
 
 class CartStateHolder(
     private val app: Application,
-) : RetainedScope() {
+    private val retained: RetainedScope = RetainedScope(),
+) : RetainObserver by retained {
+    private val scope = retained.scope
     private val db = Database(app)
     private val ratesCache = CartRatesCache(db, scope)
 
