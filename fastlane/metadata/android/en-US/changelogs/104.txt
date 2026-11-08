@@ -1,0 +1,2 @@
+- Each release now carries its signed build provenance as a file, so a download can be verified.
+- No change to how the app looks or works.

@@ -131,8 +131,8 @@ android {
         minSdk { version = release(33) }
         targetSdk { version = release(37) }
         // SemVer; 0.x is a pre-release (release-apk.yaml)
-        versionName = "0.1.3"
-        versionCode = 103
+        versionName = "0.1.4"
+        versionCode = 104
         // 64-bit CPU types only (gradle.properties): the receipt reader's
         // native code, which also makes stores refuse the app on 32-bit phones.
         ndk { abiFilters += providers.gradleProperty("currencix.abis").get().split(",") }
