@@ -194,7 +194,6 @@ class NoSuppressionsTest {
         // Classes whose superclass also carries the Compose compiler's $stable (exceptions.md #10).
         val STABLE_SHADOWING =
             listOf(
-                "repository/persistence/PrefStore",
                 "view/widget/CurrencyWidget",
             )
 

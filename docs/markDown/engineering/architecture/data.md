@@ -19,7 +19,7 @@ The working cart, saved carts, trips, fees and rate alerts are trees of values, 
 
 ## One store type behind both
 
-Both kinds sit behind `CachedStore<S>` (`PrefStore` is the preferences flavour). Writes update the in-memory cache at once and reach disk through a serial queue; disk emissions are ignored while the store's own writes are pending, and the cache resyncs when the queue drains, so a read between two quick writes never sees the first undone (`PrefStoreTest`).
+Both kinds sit behind `CachedStore<S>` (`PrefStore` wraps one for preferences). Writes update the in-memory cache at once and reach disk through a serial queue; disk emissions are ignored while the store's own writes are pending, and the cache resyncs when the queue drains, so a read between two quick writes never sees the first undone (`PrefStoreTest`).
 
 `Database` hands out twelve stores, one concern each:
 
