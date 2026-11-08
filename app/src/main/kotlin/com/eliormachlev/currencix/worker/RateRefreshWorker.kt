@@ -42,14 +42,11 @@ internal class RateRefreshWorker(
     /** One refresh through [fetch] (the repository's, or a test's), mapped as described above. */
     internal suspend fun refresh(fetch: suspend () -> kotlin.Result<ExchangeRates>): Result {
         val outcome =
-            try {
-                fetch()
-            } catch (e: CancellationException) {
-                // WorkManager stopping the work is not a failed refresh to retry.
-                throw e
-            } catch (e: Exception) {
-                kotlin.Result.failure(e)
-            }
+            runCatching { fetch() }
+                .onFailure { throwable ->
+                    // WorkManager stopping the work is not a failed refresh to retry.
+                    if (throwable is CancellationException) throw throwable
+                }.getOrElse { throwable -> kotlin.Result.failure(throwable) }
         return outcome.fold(
             onSuccess = {
                 Timber.tag(TAG).d("Auto-refresh success")
