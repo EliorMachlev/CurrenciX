@@ -7,7 +7,8 @@ Everything is in [`.github/workflows/`](../../../.github/workflows). Every actio
 | Workflow | Runs on | Does |
 |---|---|---|
 | [`build.yaml`](../../../.github/workflows/build.yaml) | PR, push → `master`, manual | The gate (below) |
-| [`release-apk.yaml`](../../../.github/workflows/release-apk.yaml) | `v*` tag, manual | Signed release APKs, SBOM, checksums, provenance, GitHub release ([release.md](release.md)) |
+| [`release-apk.yaml`](../../../.github/workflows/release-apk.yaml) | `v*` tag, manual | Calls `build-release.yaml`, then publishes the GitHub release ([release.md](release.md)) |
+| [`build-release.yaml`](../../../.github/workflows/build-release.yaml) | Called by `release-apk.yaml` | Signed release APK, SBOM, checksums and the provenance attestation |
 | [`tag-release.yaml`](../../../.github/workflows/tag-release.yaml) | Manual, on `master` | Tags `master` `v<versionName>` (an existing tag fails it) and starts `release-apk.yaml` on the tag ([release.md](release.md#releasing-is-pushing-a-tag)) |
 | [`apk-artifact.yaml`](../../../.github/workflows/apk-artifact.yaml) | Push → non-master, manual | fdroid debug APK as an artifact, linked in the run summary |
 | [`apk-checks.yaml`](../../../.github/workflows/apk-checks.yaml) | PR touching the app or the build, push → `master`, weekly, manual | The unsigned fdroid release built twice, from two checkouts with no build cache, and compared byte for byte (any difference fails, with `diffoscope`'s account as an artifact); on PRs, `diffuse` compares the APK with master's latest in the run summary. Not part of the gate |
@@ -89,7 +90,8 @@ Every workflow starts at `contents: read` ([`scorecard.yaml`](../../../.github/w
 | screenshots, apk-checks (`size` job) | `actions: read`, to fetch master's latest screenshots or APK |
 | dependency-submission | `contents: write` on its submit job, which the dependency-graph API requires |
 | scorecard | `security-events: write`, `id-token: write`, `actions: read` |
-| release-apk | `contents`, `id-token`, `attestations: write` on the publish job only, which never sees the keys |
+| release-apk | the caller: `contents: write` on the publish job only, which never sees the keys; `id-token` and `attestations: write` only so the called workflow's `attest` job can have them |
+| build-release | reusable: `contents: read` for the build job, which holds the keys; `id-token` and `attestations: write` for the attest job only, which never sees them |
 | baseline-profile | `contents`, `actions: write` on its commit job only |
 | commit-baseline-profiles, update-verification-metadata, certificate-pins (*update* only) | `contents`, `actions: write`: push to the branch, then dispatch the checks; no build in the commit workflow |
 | tag-release | `contents`, `actions: write`: create the tag through the API, then dispatch Release (`release-apk.yaml`) on it |
