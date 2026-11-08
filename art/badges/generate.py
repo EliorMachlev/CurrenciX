@@ -4,7 +4,9 @@ outside service for it. The words must stay what the privacy policy and the webs
 
 Flat, two-part badges (a grey label, a coloured message), 20 px high, Verdana 11 px like the usual
 shields. Text widths are measured with DejaVu Sans (Verdana's metric twin) and fixed with
-`textLength`, so every renderer draws the same box. Needs Pillow.
+`textLength`, so every renderer draws the same box. Needs Pillow and the DejaVu Sans font
+(Debian/Ubuntu: `apt install fonts-dejavu-core`; macOS: `brew install --cask font-dejavu`; Windows:
+install DejaVuSans.ttf from https://dejavu-fonts.github.io/).
 """
 
 from html import escape
@@ -12,7 +14,8 @@ from pathlib import Path
 
 from PIL import ImageFont
 
-FONT = "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf"
+# A bare file name: Pillow looks it up in the system's font folders (Linux, macOS and Windows).
+FONT = "DejaVuSans.ttf"
 HEIGHT = 20
 PAD = 6
 LABEL_COLOR = "#555"
@@ -25,12 +28,19 @@ BADGES = {
 }
 
 
+def load_font() -> ImageFont.FreeTypeFont:
+    try:
+        return ImageFont.truetype(FONT, FONT_SIZE)
+    except OSError as error:
+        raise SystemExit(f"{FONT} not found in the system's font folders (see the install hints at the top of this file)") from error
+
+
 def text_width(font: ImageFont.FreeTypeFont, text: str) -> int:
     return round(font.getlength(text))
 
 
 def badge(label: str, message: str, color: str) -> str:
-    font = ImageFont.truetype(FONT, FONT_SIZE)
+    font = load_font()
     label_w = text_width(font, label) + 2 * PAD
     message_w = text_width(font, message) + 2 * PAD
     total = label_w + message_w
