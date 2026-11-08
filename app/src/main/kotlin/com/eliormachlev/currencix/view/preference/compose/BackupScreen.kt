@@ -101,7 +101,7 @@ fun BackupScreen(
                 onCancel = holder::dismissDialog,
                 onConfirm = {
                     val password = dialog.password
-                    holder.dismissDialog()
+                    holder.closeImportConfirmation()
                     onImportConfirmed(dialog.uri, password)
                 },
             )
