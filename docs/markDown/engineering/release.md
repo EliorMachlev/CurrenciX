@@ -25,9 +25,16 @@ Each release carries the APK, `SHA256SUMS` (APK and SBOM), the CycloneDX SBOM an
 
 ```bash
 sha256sum --check --ignore-missing SHA256SUMS
-gh attestation verify <apk> --repo EliorMachlev/CurrenciX                    # asks GitHub
-gh attestation verify <apk> --repo EliorMachlev/CurrenciX --bundle <bundle>  # offline, with the release's provenance file
-apksigner verify --verbose --print-certs <apk>                               # the signing certificate, below
+gh attestation verify *.apk --repo EliorMachlev/CurrenciX               # asks GitHub
+gh attestation verify *-sbom.cdx.json --repo EliorMachlev/CurrenciX     # the SBOM is attested too
+apksigner verify --verbose --print-certs *.apk                          # the signing certificate, below
+```
+
+`SHA256SUMS` comes from the same release as the files it lists, so only the attestation proves where a file came from. Offline, fetch GitHub's trusted root once while online and pass it with the release's provenance file (here saved as `provenance.jsonl`):
+
+```bash
+gh attestation trusted-root > trusted_root.jsonl
+gh attestation verify *.apk --repo EliorMachlev/CurrenciX --bundle provenance.jsonl --custom-trusted-root trusted_root.jsonl
 ```
 
 The attestation says which commit and workflow run built the file. The certificate to expect is the release key's SHA-256 in [post-quantum signing](#post-quantum-signing-android-17). What the project promises about its supply chain: [security.md](security.md#supply-chain).

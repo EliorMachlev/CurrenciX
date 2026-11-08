@@ -58,13 +58,13 @@ Eight sources, with a fallback for when your main one is down: [Frankfurter](htt
 
 ## 📦 Get it
 
-Download the latest APK from [GitHub Releases](https://github.com/EliorMachlev/CurrenciX/releases): one signed APK that installs on any 64-bit phone (Android 13 or later), plus `SHA256SUMS`, an SBOM of every library it ships and its signed build provenance. Versions before 1.0 are marked pre-releases. Android 17 and later also check a post-quantum signature; an F-Droid build is prepared.
+Download the latest APK from [GitHub Releases](https://github.com/EliorMachlev/CurrenciX/releases): one signed APK for Android 13 or later on arm64-v8a devices (nearly all current phones), plus `SHA256SUMS`, an SBOM of every library it ships and its signed build provenance. Versions before 1.0 are marked pre-releases. Android 17 and later also check a post-quantum signature; an F-Droid build is prepared.
 
-To check a download (the second command can also run offline: add `--bundle` and the provenance file from the same release):
+To check a download, from the folder holding the release files (the second command asks GitHub; for the offline variant, see [verifying a release](docs/markDown/engineering/release.md#verifying-a-release)):
 
 ```bash
 sha256sum --check --ignore-missing SHA256SUMS
-gh attestation verify <the .apk> --repo EliorMachlev/CurrenciX
+gh attestation verify *.apk --repo EliorMachlev/CurrenciX
 ```
 
 How a release is made and signed: [release](docs/markDown/engineering/release.md).
