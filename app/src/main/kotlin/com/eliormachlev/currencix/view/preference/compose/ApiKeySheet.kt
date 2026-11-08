@@ -7,10 +7,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.res.stringResource
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.model.ApiProvider
-import com.eliormachlev.currencix.viewmodel.preference.PreferenceViewModel
+import com.eliormachlev.currencix.view.compose.collectAsStateWithLifecycle
+import com.eliormachlev.currencix.viewmodel.preference.PreferenceSettings
 
 /** [provider]'s key, trimmed on the way in; how to get one is its own text. */
 @Composable
@@ -18,7 +18,7 @@ internal fun ApiKeySheet(
     provider: ApiProvider,
     apiKey: String?,
     dismiss: () -> Unit,
-    viewModel: PreferenceViewModel,
+    settings: PreferenceSettings,
 ) {
     val texts = provider.apiKeyTexts ?: return
     TextEntrySheet(
@@ -27,7 +27,7 @@ internal fun ApiKeySheet(
         message = stringResource(id = texts.message),
         onDismiss = dismiss,
         onConfirm = { newKey ->
-            viewModel.setApiKey(provider, newKey.trim())
+            settings.setApiKey(provider, newKey.trim())
             dismiss()
         },
     )
@@ -42,17 +42,17 @@ internal fun ApiKeySheet(
 @Composable
 fun ProviderPickerWithKeyPrompt(
     selected: ApiProvider?,
-    viewModel: PreferenceViewModel,
+    settings: PreferenceSettings,
     onDismiss: () -> Unit,
     onPicked: (ApiProvider) -> Unit,
     title: String = stringResource(id = R.string.api_title),
     unavailable: ApiProvider? = null,
 ) {
-    val apiKeys by viewModel.apiKeys.collectAsStateWithLifecycle()
+    val apiKeys by settings.apiKeys.collectAsStateWithLifecycle()
     var needsKey by remember { mutableStateOf<ApiProvider?>(null) }
     val keyFor = needsKey
     if (keyFor != null) {
-        ApiKeySheet(provider = keyFor, apiKey = null, dismiss = onDismiss, viewModel = viewModel)
+        ApiKeySheet(provider = keyFor, apiKey = null, dismiss = onDismiss, settings = settings)
         return
     }
     ProviderPickerSheet(
@@ -65,6 +65,28 @@ fun ProviderPickerWithKeyPrompt(
         },
         title = title,
         unavailable = unavailable,
+    )
+}
+
+/**
+ * A [ProviderPickerWithKeyPrompt] for the stored provider: a pick is stored
+ * (which fetches its rates), then [onPicked] runs.
+ */
+@Composable
+fun StoredProviderPicker(
+    settings: PreferenceSettings,
+    onDismiss: () -> Unit,
+    onPicked: () -> Unit = {},
+) {
+    val current by settings.apiProvider.collectAsStateWithLifecycle()
+    ProviderPickerWithKeyPrompt(
+        selected = current,
+        settings = settings,
+        onDismiss = onDismiss,
+        onPicked = { provider ->
+            settings.setApiProvider(provider)
+            onPicked()
+        },
     )
 }
 

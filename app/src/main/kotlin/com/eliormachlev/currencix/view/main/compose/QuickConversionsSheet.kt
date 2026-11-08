@@ -28,7 +28,7 @@ import com.eliormachlev.currencix.view.compose.theme.Spacing
 import com.eliormachlev.currencix.view.main.ConverterStatus
 import com.eliormachlev.currencix.view.main.copyToClipboard
 import com.eliormachlev.currencix.view.navigation.PillSide
-import com.eliormachlev.currencix.viewmodel.main.MainViewModel
+import com.eliormachlev.currencix.viewmodel.main.MainStateHolder
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.launch
 import java.math.BigDecimal
@@ -48,7 +48,7 @@ private const val SHARE_NAME_PREFIX = "currencix-quick"
  */
 @Composable
 internal fun QuickConversionsSheet(
-    viewModel: MainViewModel,
+    viewModel: MainStateHolder,
     status: ConverterStatus,
     onSwap: () -> Unit,
     onOpenFees: () -> Unit,
@@ -120,7 +120,7 @@ internal fun QuickConversionsSheet(
 // where its rates come from.
 @Composable
 private fun rememberQuickConversionsTable(
-    viewModel: MainViewModel,
+    viewModel: MainStateHolder,
     status: ConverterStatus,
 ): QuickConversionsTable {
     val ctx = LocalContext.current
@@ -185,7 +185,7 @@ private fun QuickConversionsTable.shareText(): String =
 // The recent pairs other than the one on screen: a tap switches the table.
 @Composable
 private fun QuickConversionsRecentPairs(
-    viewModel: MainViewModel,
+    viewModel: MainStateHolder,
     from: Currency?,
     to: Currency?,
 ) {

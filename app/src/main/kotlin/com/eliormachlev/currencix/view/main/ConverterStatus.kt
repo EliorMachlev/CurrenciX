@@ -17,7 +17,7 @@ import com.eliormachlev.currencix.util.stripTimePattern
 import com.eliormachlev.currencix.view.compose.AppSnackbar
 import com.eliormachlev.currencix.view.main.compose.BannerContent
 import com.eliormachlev.currencix.view.main.compose.BannerKind
-import com.eliormachlev.currencix.viewmodel.main.MainViewModel
+import com.eliormachlev.currencix.viewmodel.main.MainStateHolder
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
@@ -60,7 +60,7 @@ internal fun formatRatesTimestamp(
  */
 class ConverterStatus(
     private val context: Context,
-    private val viewModel: MainViewModel,
+    private val viewModel: MainStateHolder,
     private val snackbar: AppSnackbar,
 ) {
     private val bannerState = mutableStateOf<BannerContent?>(null)
@@ -92,8 +92,10 @@ class ConverterStatus(
     private val converterVisible get() = visibleConverters > 0
     private var pendingError: String? = null
 
-    fun observe(owner: LifecycleOwner) {
-        val scope = owner.lifecycleScope
+    fun observe(
+        owner: LifecycleOwner,
+        scope: CoroutineScope = owner.lifecycleScope,
+    ) {
         scope.follow(Database(context).display.dateFormat.flow) { pattern ->
             dateFormatPattern = pattern
             recompute()

@@ -1,8 +1,6 @@
 package com.eliormachlev.currencix.viewmodel.cart
 
 import android.app.Application
-import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.viewModelScope
 import com.eliormachlev.currencix.model.CartExtras
 import com.eliormachlev.currencix.model.CartItem
 import com.eliormachlev.currencix.model.Currency
@@ -12,6 +10,7 @@ import com.eliormachlev.currencix.model.Person
 import com.eliormachlev.currencix.model.SavedCart
 import com.eliormachlev.currencix.repository.Database
 import com.eliormachlev.currencix.util.newId
+import com.eliormachlev.currencix.viewmodel.util.RetainedScope
 import com.eliormachlev.currencix.viewmodel.util.stateInWhileSubscribed
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.coroutines.flow.Flow
@@ -24,11 +23,11 @@ import java.math.BigDecimal
 import java.math.MathContext
 import java.time.LocalDate
 
-class CartViewModel(
-    app: Application,
-) : AndroidViewModel(app) {
+class CartStateHolder(
+    private val app: Application,
+) : RetainedScope() {
     private val db = Database(app)
-    private val ratesCache = CartRatesCache(db, viewModelScope)
+    private val ratesCache = CartRatesCache(db, scope)
 
     // The session cart. Backed by the saved carts file (CartStore), so it
     // survives process death but can be cleared explicitly.
@@ -63,18 +62,18 @@ class CartViewModel(
      * Same source of truth as the main screen so the cart's slide-up keypad
      * shows the same layout the user picked.
      */
-    val isExpandedKeypadEnabled: StateFlow<Boolean> = db.display.expandedKeypad.stateInWhileSubscribed(viewModelScope)
+    val isExpandedKeypadEnabled: StateFlow<Boolean> = db.display.expandedKeypad.stateInWhileSubscribed(scope)
 
     /** Shared with the main screen — same preference gates haptics everywhere. */
-    val isHapticFeedbackEnabled: StateFlow<Boolean> = db.display.hapticFeedback.stateInWhileSubscribed(viewModelScope)
+    val isHapticFeedbackEnabled: StateFlow<Boolean> = db.display.hapticFeedback.stateInWhileSubscribed(scope)
 
     /** The totals card shows only the total; remembered across carts and launches. */
-    val isTotalsCollapsed: StateFlow<Boolean> = db.display.cartTotalsCollapsed.stateInWhileSubscribed(viewModelScope)
+    val isTotalsCollapsed: StateFlow<Boolean> = db.display.cartTotalsCollapsed.stateInWhileSubscribed(scope)
 
     fun setTotalsCollapsed(collapsed: Boolean) = db.display.cartTotalsCollapsed.set(collapsed)
 
     /** The user's date format, for the rates' date on the totals card. */
-    val dateFormat: StateFlow<String> = db.display.dateFormat.stateInWhileSubscribed(viewModelScope)
+    val dateFormat: StateFlow<String> = db.display.dateFormat.stateInWhileSubscribed(scope)
 
     // Each derived stream is built once, on first use: a screen asks for them
     // while it composes. Each starts from its value for the current cart, so
@@ -100,12 +99,12 @@ class CartViewModel(
     private val totalState: StateFlow<BigDecimal> by lazy {
         val total = { cart: SavedCart, rates: ExchangeRates? -> totalOf(cart, rates, currentFeeStack()) }
         combine(current, ratesCache.rates, ratesCache.fees) { cart, rates, _ -> total(cart, rates) }
-            .stateInWhileSubscribed(viewModelScope, total(current.value, ratesCache.rates.value))
+            .stateInWhileSubscribed(scope, total(current.value, ratesCache.rates.value))
     }
 
     // [transform] of the working cart, following it.
     private fun <T> fromCart(transform: (SavedCart) -> T): StateFlow<T> =
-        current.map { transform(it) }.stateInWhileSubscribed(viewModelScope, transform(current.value))
+        current.map { transform(it) }.stateInWhileSubscribed(scope, transform(current.value))
 
     // [transform] of the working cart and [other], following both.
     private fun <O, T> fromCartAnd(
@@ -113,7 +112,7 @@ class CartViewModel(
         transform: (SavedCart, O) -> T,
     ): StateFlow<T> =
         combine(current, other) { cart, value -> transform(cart, value) }
-            .stateInWhileSubscribed(viewModelScope, transform(current.value, other.value))
+            .stateInWhileSubscribed(scope, transform(current.value, other.value))
 
     fun getBaseCurrency(): StateFlow<Currency> = baseCurrencyState
 
@@ -168,7 +167,7 @@ class CartViewModel(
     val rows = CartRowEdits(::mutate)
 
     /** The trips saved carts are grouped into, with their spending. */
-    val trips = CartTrips(db, ratesCache, viewModelScope)
+    val trips = CartTrips(db, ratesCache, scope)
 
     /** Turns shopping-list mode on or off; ticks stay for the next time it's on. */
     fun setShoppingMode(enabled: Boolean) {
@@ -382,7 +381,7 @@ class CartViewModel(
             providerName =
                 ratesSnapshot.rates
                     ?.provider
-                    ?.getName(getApplication())
+                    ?.getName(app)
                     ?.toString(),
             ratesDate = ratesSnapshot.rates?.date,
         )

@@ -5,10 +5,10 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.material3.Text
+import androidx.compose.runtime.retain.RetainObserver
+import androidx.compose.runtime.retain.retain
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithText
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.util.registerActivityRule
 import org.junit.Assert.assertEquals
@@ -19,24 +19,32 @@ import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 
-// Counts ViewModels created and cleared, to check per-screen scoping.
-class ProbeViewModel : ViewModel() {
+// Counts retained values created and retired, to check the same scoping for `retain`.
+class ProbeRetained : RetainObserver {
     init {
         created++
     }
 
-    override fun onCleared() {
-        cleared++
+    override fun onRetained() = Unit
+
+    override fun onEnteredComposition() = Unit
+
+    override fun onExitedComposition() = Unit
+
+    override fun onRetired() {
+        retired++
     }
+
+    override fun onUnused() = Unit
 
     companion object {
         var created = 0
-        var cleared = 0
+        var retired = 0
     }
 }
 
 // Hosts AppNavHost the way MainActivity does, with one Text + one
-// ViewModel per screen.
+// retained value per screen.
 class NavHostTestActivity : ComponentActivity() {
     lateinit var navigator: AppNavigator
 
@@ -45,7 +53,7 @@ class NavHostTestActivity : ComponentActivity() {
         setContent {
             navigator = rememberAppNavigator()
             AppNavHost(navigator) { screen ->
-                viewModel<ProbeViewModel>()
+                retain { ProbeRetained() }
                 Text(screen.encode())
             }
         }
@@ -60,8 +68,8 @@ class AppNavHostTest {
     // rule launches it.
     private val registerActivity =
         registerActivityRule(NavHostTestActivity::class.java) {
-            ProbeViewModel.created = 0
-            ProbeViewModel.cleared = 0
+            ProbeRetained.created = 0
+            ProbeRetained.retired = 0
         }
 
     private val compose = createAndroidComposeRule<NavHostTestActivity>()
@@ -84,15 +92,15 @@ class AppNavHostTest {
     }
 
     @Test
-    fun `each screen gets its own ViewModel, cleared when the screen is popped`() {
+    fun `each screen retains its own values, kept under another screen and retired when popped`() {
         compose.runOnIdle { navigator.navigate(Screen.Settings) }
         compose.waitForIdle()
-        assertEquals(2, ProbeViewModel.created)
-        assertEquals(0, ProbeViewModel.cleared)
+        assertEquals(2, ProbeRetained.created)
+        assertEquals(0, ProbeRetained.retired)
 
         compose.runOnIdle { navigator.pop() }
         compose.waitForIdle()
-        assertEquals(1, ProbeViewModel.cleared)
+        assertEquals(1, ProbeRetained.retired)
     }
 
     @Test
@@ -105,22 +113,22 @@ class AppNavHostTest {
     }
 
     @Test
-    fun `the back stack and screen ViewModels survive recreation`() {
+    fun `the back stack and each screen's retained values survive recreation`() {
         compose.runOnIdle {
             navigator.navigate(Screen.Settings)
             navigator.navigate(Screen.Fees)
         }
         compose.waitForIdle()
-        val createdBefore = ProbeViewModel.created
+        val createdBefore = ProbeRetained.created
 
         compose.activityRule.scenario.recreate()
 
         compose.onNodeWithText("fees").assertExists()
         compose.runOnIdle {
             assertEquals(listOf(Screen.Converter, Screen.Settings, Screen.Fees), navigator.backStack.toList())
-            // A configuration change keeps each screen's ViewModel.
-            assertEquals(createdBefore, ProbeViewModel.created)
-            assertEquals(0, ProbeViewModel.cleared)
+            // A configuration change keeps each screen's retained values.
+            assertEquals(createdBefore, ProbeRetained.created)
+            assertEquals(0, ProbeRetained.retired)
         }
     }
 }

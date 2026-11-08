@@ -12,7 +12,7 @@ import com.eliormachlev.currencix.repository.CartExporter
 import com.eliormachlev.currencix.view.cart.compose.CartChoiceRequest
 import com.eliormachlev.currencix.view.compose.AppSnackbar
 import com.eliormachlev.currencix.view.compose.showOrToast
-import com.eliormachlev.currencix.viewmodel.cart.CartViewModel
+import com.eliormachlev.currencix.viewmodel.cart.CartStateHolder
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -32,7 +32,7 @@ import kotlinx.coroutines.flow.asStateFlow
 class CartHost(
     private val activity: ComponentActivity,
     snackbar: AppSnackbar?,
-    val viewModel: CartViewModel,
+    val viewModel: CartStateHolder,
     private val mainBase: Currency?,
     private val mainDest: Currency?,
     onClose: () -> Unit,

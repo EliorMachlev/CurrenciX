@@ -57,7 +57,7 @@ import com.eliormachlev.currencix.view.compose.theme.Spacing
 import com.eliormachlev.currencix.view.main.formatRatesTimestamp
 import com.eliormachlev.currencix.view.main.spinner.CurrencyPickerSheet
 import com.eliormachlev.currencix.view.navigation.PillSide
-import com.eliormachlev.currencix.viewmodel.cart.CartViewModel
+import com.eliormachlev.currencix.viewmodel.cart.CartStateHolder
 import com.eliormachlev.currencix.viewmodel.cart.budgetLeft
 import com.eliormachlev.currencix.viewmodel.cart.perPerson
 import java.math.BigDecimal
@@ -114,7 +114,7 @@ data class CartTotals(
  */
 @Composable
 fun CartFooter(
-    viewModel: CartViewModel,
+    viewModel: CartStateHolder,
     onOpenFees: () -> Unit,
     onEditExtras: () -> Unit,
 ) {
@@ -151,7 +151,7 @@ fun CartFooter(
 
 @Composable
 private fun observeTotals(
-    viewModel: CartViewModel,
+    viewModel: CartStateHolder,
     rates: ExchangeRates?,
 ): CartTotals {
     val baseCurrency by viewModel.getBaseCurrency().collectAsStateWithLifecycle()

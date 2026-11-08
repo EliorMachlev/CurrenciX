@@ -20,7 +20,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.core.net.toUri
 import androidx.core.text.HtmlCompat
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.model.ApiProvider
 import com.eliormachlev.currencix.model.PublicationSchedule
@@ -188,7 +187,7 @@ private fun InputSection(page: SettingsPageContext) {
             summary = stringResource(R.string.keyboard_summary_expanded),
             iconRes = R.drawable.ic_keyboard_extended,
             checked = values.expandedKeypadEnabled,
-            onCheckedChange = page.viewModel::setExpandedKeypadEnabled,
+            onCheckedChange = page.settings::setExpandedKeypadEnabled,
         )
         PreferenceRow(
             title = stringResource(R.string.decimal_places_title),
@@ -201,7 +200,7 @@ private fun InputSection(page: SettingsPageContext) {
             summary = stringResource(R.string.previewConversion_summary),
             iconRes = R.drawable.ic_conversion_preview,
             checked = values.appearance.previewEnabled,
-            onCheckedChange = page.viewModel::setPreviewConversionEnabled,
+            onCheckedChange = page.settings::setPreviewConversionEnabled,
         )
     }
 }
@@ -285,13 +284,13 @@ private fun RefreshIntervalRow(page: SettingsPageContext) {
 // Whether the provider pickers list the providers that are often down or inaccurate.
 @Composable
 private fun ShowUnreliableProvidersRow(page: SettingsPageContext) {
-    val enabled by page.viewModel.isShowUnreliableProvidersEnabled.collectAsStateWithLifecycle()
+    val enabled by page.settings.isShowUnreliableProvidersEnabled.collectAsStateWithLifecycle()
     SwitchRow(
         title = stringResource(R.string.show_unreliable_providers_title),
         summary = stringResource(R.string.show_unreliable_providers_summary),
         iconRes = R.drawable.ic_visibility,
         checked = enabled,
-        onCheckedChange = page.viewModel::setShowUnreliableProvidersEnabled,
+        onCheckedChange = page.settings::setShowUnreliableProvidersEnabled,
     )
 }
 
@@ -304,7 +303,7 @@ private fun UpdatesSection(page: SettingsPageContext) {
             summary = stringResource(R.string.auto_refresh_summary),
             iconRes = R.drawable.ic_schedule,
             checked = page.values.api.autoRefreshEnabled,
-            onCheckedChange = page.viewModel::setAutoRefreshEnabled,
+            onCheckedChange = page.settings::setAutoRefreshEnabled,
         )
         RefreshIntervalRow(page)
         PreferenceRow(
@@ -344,7 +343,7 @@ private fun DisplaySection(page: SettingsPageContext) {
             summary = stringResource(R.string.dynamic_color_summary),
             iconRes = R.drawable.ic_palette,
             checked = values.dynamicColorEnabled,
-            onCheckedChange = page.viewModel::setDynamicColorEnabled,
+            onCheckedChange = page.settings::setDynamicColorEnabled,
         )
         PreferenceRow(
             title = stringResource(R.string.language_title),
@@ -373,7 +372,7 @@ private fun DisplaySection(page: SettingsPageContext) {
                 summary = stringResource(R.string.high_refresh_rate_summary, hz),
                 iconRes = R.drawable.ic_speed,
                 checked = values.highRefreshRateEnabled,
-                onCheckedChange = page.viewModel::setHighRefreshRateEnabled,
+                onCheckedChange = page.settings::setHighRefreshRateEnabled,
             )
         }
     }
@@ -388,14 +387,14 @@ private fun TouchSection(page: SettingsPageContext) {
             summary = stringResource(R.string.haptic_feedback_summary),
             iconRes = R.drawable.ic_vibration,
             checked = values.hapticEnabled,
-            onCheckedChange = page.viewModel::setHapticFeedbackEnabled,
+            onCheckedChange = page.settings::setHapticFeedbackEnabled,
         )
         SwitchRow(
             title = stringResource(R.string.click_sounds_title),
             summary = stringResource(R.string.click_sounds_summary),
             iconRes = R.drawable.ic_volume_up,
             checked = values.clickSoundsEnabled,
-            onCheckedChange = page.viewModel::setClickSoundsEnabled,
+            onCheckedChange = page.settings::setClickSoundsEnabled,
         )
     }
 }
@@ -406,7 +405,7 @@ private fun TouchSection(page: SettingsPageContext) {
 @Composable
 private fun AccessSection(page: SettingsPageContext) {
     val context = LocalContext.current
-    val enabled by page.viewModel.isAppLockEnabled.collectAsStateWithLifecycle()
+    val enabled by page.settings.isAppLockEnabled.collectAsStateWithLifecycle()
     val available = remember(context) { AppLock.isAvailable(context) }
     PreferenceSection(text = stringResource(R.string.settings_access_section)) {
         SwitchRow(
@@ -419,9 +418,9 @@ private fun AccessSection(page: SettingsPageContext) {
                 if (on) {
                     AppLock.authenticate(
                         context,
-                    ) { page.viewModel.setAppLockEnabled(true) }
+                    ) { page.settings.setAppLockEnabled(true) }
                 } else {
-                    page.viewModel.setAppLockEnabled(false)
+                    page.settings.setAppLockEnabled(false)
                 }
             },
         )
@@ -432,26 +431,26 @@ private fun AccessSection(page: SettingsPageContext) {
 // FLAG_SECURE on the app's windows: blank in screenshots, recordings and Recents.
 @Composable
 private fun BlockScreenshotsRow(page: SettingsPageContext) {
-    val blocked by page.viewModel.isBlockScreenshotsEnabled.collectAsStateWithLifecycle()
+    val blocked by page.settings.isBlockScreenshotsEnabled.collectAsStateWithLifecycle()
     SwitchRow(
         title = stringResource(R.string.block_screenshots_title),
         summary = stringResource(R.string.block_screenshots_summary),
         iconRes = R.drawable.ic_no_screenshots,
         checked = blocked,
-        onCheckedChange = page.viewModel::setBlockScreenshotsEnabled,
+        onCheckedChange = page.settings::setBlockScreenshotsEnabled,
     )
 }
 
 @Composable
 private fun NetworkPrivacySection(page: SettingsPageContext) {
-    val enabled by page.viewModel.isPrivateRequestsEnabled.collectAsStateWithLifecycle()
+    val enabled by page.settings.isPrivateRequestsEnabled.collectAsStateWithLifecycle()
     PreferenceSection(text = stringResource(R.string.settings_network_section)) {
         SwitchRow(
             title = stringResource(R.string.private_requests_title),
             summary = stringResource(R.string.private_requests_summary),
             iconRes = R.drawable.ic_visibility_off,
             checked = enabled,
-            onCheckedChange = page.viewModel::setPrivateRequestsEnabled,
+            onCheckedChange = page.settings::setPrivateRequestsEnabled,
         )
     }
 }

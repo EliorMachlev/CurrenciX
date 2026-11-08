@@ -33,7 +33,6 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.window.layout.FoldingFeature
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.alert.ALERT_RATE_DECIMALS
@@ -58,19 +57,18 @@ import com.eliormachlev.currencix.view.compose.ReadingDirection
 import com.eliormachlev.currencix.view.compose.ScreenScaffold
 import com.eliormachlev.currencix.view.compose.TopBarOverflowMenu
 import com.eliormachlev.currencix.view.compose.TopBarStyle
-import com.eliormachlev.currencix.view.compose.applicationViewModel
-import com.eliormachlev.currencix.view.compose.currentApplication
 import com.eliormachlev.currencix.view.compose.rememberDatabase
+import com.eliormachlev.currencix.view.compose.retainWithApplication
 import com.eliormachlev.currencix.view.compose.theme.Spacing
 import com.eliormachlev.currencix.view.main.spinner.CurrencyPickerSheet
 import com.eliormachlev.currencix.view.navigation.PillSide
 import com.eliormachlev.currencix.view.navigation.Screen
 import com.eliormachlev.currencix.view.preference.compose.GraphOptionsSheet
-import com.eliormachlev.currencix.view.preference.compose.ProviderPickerWithKeyPrompt
+import com.eliormachlev.currencix.view.preference.compose.StoredProviderPicker
+import com.eliormachlev.currencix.view.preference.rememberPreferenceSettings
 import com.eliormachlev.currencix.view.timeline.compose.TIMELINE_CONTENT_PADDING
 import com.eliormachlev.currencix.view.timeline.compose.TimelineScreen
-import com.eliormachlev.currencix.viewmodel.preference.PreferenceViewModel
-import com.eliormachlev.currencix.viewmodel.timeline.TimelineViewModel
+import com.eliormachlev.currencix.viewmodel.timeline.TimelineStateHolder
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
@@ -92,7 +90,7 @@ fun TimelineRoute(
     onConvertAt: (pair: CurrencyPair, date: LocalDate) -> Unit = { _, _ -> },
 ) {
     val context = LocalContext.current
-    val model: TimelineViewModel = viewModel(factory = TimelineViewModel.factory(currentApplication(), screen.from, screen.to))
+    val model = retainWithApplication(screen.from, screen.to) { TimelineStateHolder(it, screen.from, screen.to) }
     val db = rememberDatabase()
     val formatter = remember(db) { DateTimeFormatter.ofPattern(stripTimePattern(db.display.dateFormat.get())) }
     val pair by model.getCurrencyPair().collectAsStateWithLifecycle()
@@ -157,7 +155,7 @@ fun TimelineRoute(
 // options (swap is the pills' round button).
 @Composable
 private fun TimelineBarActions(
-    model: TimelineViewModel,
+    model: TimelineStateHolder,
     onOptions: () -> Unit,
     onAlert: (BigDecimal) -> Unit,
     onShare: () -> Unit,
@@ -183,7 +181,7 @@ private fun TimelineBarActions(
 // The rate alert sheet for the timeline's pair at [rate]; [onClose] when set or dismissed.
 @Composable
 private fun TimelineAlertSheet(
-    model: TimelineViewModel,
+    model: TimelineStateHolder,
     rate: BigDecimal,
     onClose: () -> Unit,
 ) {
@@ -206,7 +204,7 @@ private fun TimelineAlertSheet(
 private suspend fun shareChart(
     context: Context,
     capture: LayerCapture,
-    model: TimelineViewModel,
+    model: TimelineStateHolder,
     formatter: DateTimeFormatter,
 ) {
     val image = capture.capture() ?: return
@@ -244,17 +242,7 @@ private fun TimelineSheets(
         }
 
         TimelineSheet.Provider -> {
-            val preferences = applicationViewModel { PreferenceViewModel(it) }
-            val current by preferences.apiProvider.collectAsStateWithLifecycle()
-            ProviderPickerWithKeyPrompt(
-                selected = current,
-                viewModel = preferences,
-                onDismiss = onDismiss,
-                onPicked = { provider ->
-                    preferences.setApiProvider(provider)
-                    onProviderPicked()
-                },
-            )
+            StoredProviderPicker(settings = rememberPreferenceSettings(), onDismiss = onDismiss, onPicked = onProviderPicked)
         }
 
         null -> {}
@@ -263,7 +251,7 @@ private fun TimelineSheets(
 
 @Composable
 private fun TimelineChartContent(
-    model: TimelineViewModel,
+    model: TimelineStateHolder,
     db: Database,
     onScrub: (LocalDate?) -> Unit,
 ) {
@@ -319,7 +307,7 @@ private class TouchedDay {
 // and showing that day's figures.
 @Composable
 private fun TouchableChart(
-    model: TimelineViewModel,
+    model: TimelineStateHolder,
     db: Database,
     touched: TouchedDay,
 ) {
@@ -330,7 +318,7 @@ private fun TouchableChart(
 }
 
 @Composable
-private fun rememberTouchedDay(model: TimelineViewModel): TouchedDay {
+private fun rememberTouchedDay(model: TimelineStateHolder): TouchedDay {
     val touched = remember { TouchedDay() }
     val pair by model.getCurrencyPair().collectAsStateWithLifecycle()
     val period by model.getPeriod().collectAsStateWithLifecycle()
@@ -345,7 +333,7 @@ private fun rememberTouchedDay(model: TimelineViewModel): TouchedDay {
 // starting edge.
 @Composable
 private fun ChartDayActions(
-    model: TimelineViewModel,
+    model: TimelineStateHolder,
     day: LocalDate?,
     formatter: DateTimeFormatter,
     onConvertAt: (CurrencyPair, LocalDate) -> Unit,
@@ -417,7 +405,7 @@ private val DAY_ACTIONS_HEIGHT = 48.dp
 // the converter, its pills fly into these.
 @Composable
 private fun TimelinePairRow(
-    model: TimelineViewModel,
+    model: TimelineStateHolder,
     db: Database,
     pair: Pair<Currency, Currency>,
 ) {
@@ -448,7 +436,7 @@ private fun TimelinePairRow(
 @Composable
 private fun TimelineCurrencyPicker(
     side: PillSide,
-    model: TimelineViewModel,
+    model: TimelineStateHolder,
     db: Database,
     pair: Pair<Currency, Currency>,
     onDismiss: () -> Unit,

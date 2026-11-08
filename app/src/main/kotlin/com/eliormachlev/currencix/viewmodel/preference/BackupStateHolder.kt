@@ -5,11 +5,10 @@ import android.net.Uri
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.viewModelScope
 import com.eliormachlev.currencix.repository.BackupManager
 import com.eliormachlev.currencix.repository.BackupResult
 import com.eliormachlev.currencix.util.wipe
+import com.eliormachlev.currencix.viewmodel.util.RetainedScope
 import kotlinx.coroutines.launch
 
 /**
@@ -21,16 +20,16 @@ import kotlinx.coroutines.launch
 const val BACKUP_MIN_PASSWORD_LENGTH = 8
 
 /**
- * Backup ViewModel — owns the dialog state machine, the pending export
+ * Backup state holder, kept with `retain` — owns the dialog state machine, the pending export
  * password (survives the SAF round-trip), and the [BackupManager] handle.
  * Compose owns nothing that has to survive rotation; the fragment owns the
  * SAF launchers because ActivityResult must be registered in a lifecycle
  * owner. State is a plain [BackupDialog] sealed hierarchy so both surfaces
  * agree on shape without stringly-typed keys.
  */
-class BackupViewModel(
+class BackupStateHolder(
     app: Application,
-) : AndroidViewModel(app) {
+) : RetainedScope() {
     private val backupManager = BackupManager(app.applicationContext)
 
     var dialog by mutableStateOf<BackupDialog?>(null)
@@ -63,7 +62,7 @@ class BackupViewModel(
      * toast — the caller supplies the string).
      */
     fun stashExportPasswordAndDismiss(password: CharArray?) {
-        pendingExportPassword?.wipe()
+        wipePendingExportPassword()
         pendingExportPassword = password
         dialog = null
     }
@@ -119,7 +118,7 @@ class BackupViewModel(
     private fun whileBusy(block: suspend () -> Unit) {
         if (busy) return
         busy = true
-        viewModelScope.launch {
+        scope.launch {
             try {
                 block()
             } finally {
@@ -137,18 +136,22 @@ class BackupViewModel(
         dialog = BackupDialog.ImportPassword(uri = uri, isRetry = true)
     }
 
-    override fun onCleared() {
+    // Zero-fills the export password held across the SAF round-trip, if any, and lets it go.
+    private fun wipePendingExportPassword() {
         pendingExportPassword?.wipe()
         pendingExportPassword = null
-        (dialog as? BackupDialog.ImportConfirm)?.password?.wipe()
-        dialog = null
+    }
+
+    override fun onCleared() {
+        wipePendingExportPassword()
+        dismissDialog()
     }
 }
 
 /**
  * Which backup dialog is currently on screen. `null` = nothing open. All
  * sensitive material (passwords) lives inside the sealed values so dismissing
- * a dialog is enough to release the reference — the VM zero-fills what it
+ * a dialog is enough to release the reference — the holder zero-fills what it
  * had to hold across the SAF round-trip separately.
  */
 sealed interface BackupDialog {

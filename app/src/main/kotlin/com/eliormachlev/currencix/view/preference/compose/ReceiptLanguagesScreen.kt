@@ -26,9 +26,12 @@ import androidx.compose.material3.TimeInput
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.retain.retain
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -39,10 +42,13 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.eliormachlev.currencix.R
+import com.eliormachlev.currencix.ocr.OcrLanguages
 import com.eliormachlev.currencix.ocr.TessLanguage
+import com.eliormachlev.currencix.util.AppDispatchers
 import com.eliormachlev.currencix.util.normalizeForSearch
 import com.eliormachlev.currencix.view.compose.LedgerRow
 import com.eliormachlev.currencix.view.compose.SupportingText
+import com.eliormachlev.currencix.view.compose.currentApplication
 import com.eliormachlev.currencix.view.compose.dialogs.LedgerBottomSheet
 import com.eliormachlev.currencix.view.compose.dialogs.LedgerPromptSheet
 import com.eliormachlev.currencix.view.compose.dialogs.PromptMessage
@@ -51,7 +57,13 @@ import com.eliormachlev.currencix.view.compose.fieldName
 import com.eliormachlev.currencix.view.compose.theme.Spacing
 import com.eliormachlev.currencix.viewmodel.preference.ReceiptLanguageRow
 import com.eliormachlev.currencix.viewmodel.preference.ReceiptLanguagesState
-import com.eliormachlev.currencix.viewmodel.preference.ReceiptLanguagesViewModel
+import com.eliormachlev.currencix.viewmodel.preference.receiptLanguagesState
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineStart
+import kotlinx.coroutines.NonCancellable
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalTime
@@ -85,6 +97,16 @@ private sealed interface LanguagePrompt {
     ) : LanguagePrompt
 }
 
+// File work on [io], then a nudge for the list to look again.
+private suspend fun onIo(
+    io: CoroutineDispatcher,
+    refresh: MutableStateFlow<Int>,
+    block: () -> Unit,
+) {
+    withContext(io) { block() }
+    refresh.value++
+}
+
 /**
  * Settings → Receipt languages: the languages receipts are read in, on the
  * phone or downloading, each with its size and how long it's kept; a tap
@@ -93,16 +115,33 @@ private sealed interface LanguagePrompt {
  * time they pick, for a trip).
  */
 @Composable
-fun ReceiptLanguagesScreen(viewModel: ReceiptLanguagesViewModel) {
-    val state by viewModel.state.collectAsStateWithLifecycle()
+fun ReceiptLanguagesScreen() {
+    val app = currentApplication()
+    val scope = rememberCoroutineScope()
+    // The list is worked out, and the files changed, on the same dispatcher.
+    val io = AppDispatchers.production.io
+    // Bumped after a change the settings and downloads don't show (a file deleted).
+    val refresh = remember { MutableStateFlow(0) }
+    // The last state shown, kept across a rotation so the list doesn't blink empty.
+    var lastShown by retain { mutableStateOf(ReceiptLanguagesState()) }
+    val state by remember(app) { receiptLanguagesState(app, refresh, io) }.collectAsStateWithLifecycle(lastShown)
+    LaunchedEffect(state) { lastShown = state }
+    // A language whose time came while the app was closed goes before it's listed.
+    LaunchedEffect(app) { onIo(io, refresh) { OcrLanguages.deleteExpired(app) } }
     var prompt by remember { mutableStateOf<LanguagePrompt?>(null) }
+    val close = { prompt = null }
+    // A confirmed prompt: its file work starts, and the prompt closes. The work is the
+    // user's decision, so a rotation that ends the screen's scope doesn't drop it.
+    val changeAndClose = { block: () -> Unit ->
+        scope.launch(start = CoroutineStart.ATOMIC) { withContext(NonCancellable) { onIo(io, refresh, block) } }
+        close()
+    }
     ReceiptLanguagesList(
         state = state,
         onAdd = { prompt = LanguagePrompt.Pick },
         onEdit = { prompt = LanguagePrompt.Edit(it) },
         onDelete = { prompt = LanguagePrompt.Delete(it) },
     )
-    val close = { prompt = null }
     when (val open = prompt) {
         LanguagePrompt.Pick -> {
             ReceiptLanguagePickerSheet(available = state.available, onDismiss = close, onPicked = { prompt = LanguagePrompt.Add(it) })
@@ -113,10 +152,7 @@ fun ReceiptLanguagesScreen(viewModel: ReceiptLanguagesViewModel) {
                 language = open.language,
                 initialUntil = null,
                 confirmLabel = stringResource(R.string.receipt_setup_download),
-                onConfirm = { until ->
-                    viewModel.add(open.language, until)
-                    close()
-                },
+                onConfirm = { until -> changeAndClose { OcrLanguages.download(app, open.language, until) } },
                 onDismiss = close,
             )
         }
@@ -126,10 +162,7 @@ fun ReceiptLanguagesScreen(viewModel: ReceiptLanguagesViewModel) {
                 language = open.row.language,
                 initialUntil = open.row.keepUntil,
                 confirmLabel = stringResource(R.string.receipt_languages_save),
-                onConfirm = { until ->
-                    viewModel.keep(open.row.language, until)
-                    close()
-                },
+                onConfirm = { until -> changeAndClose { OcrLanguages.keep(app, open.row.language, until) } },
                 onDismiss = close,
                 onDelete = { prompt = LanguagePrompt.Delete(open.row.language) },
             )
@@ -138,10 +171,7 @@ fun ReceiptLanguagesScreen(viewModel: ReceiptLanguagesViewModel) {
         is LanguagePrompt.Delete -> {
             DeleteLanguageSheet(
                 language = open.language,
-                onConfirm = {
-                    viewModel.delete(open.language)
-                    close()
-                },
+                onConfirm = { changeAndClose { OcrLanguages.delete(app, open.language) } },
                 onDismiss = close,
             )
         }

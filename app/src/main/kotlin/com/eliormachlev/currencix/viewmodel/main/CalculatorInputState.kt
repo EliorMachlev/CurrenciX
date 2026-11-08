@@ -32,7 +32,7 @@ data class KeyAvailability(
  * "calculation" row — and the operations the calculator UI performs on them
  * (digits, decimal point, operators, percent, delete, clear, paste).
  *
- * Extracted from MainViewModel so the string-manipulation edge cases (empty
+ * Extracted from MainStateHolder so the string-manipulation edge cases (empty
  * operator slots, trailing decimals, "00"/"000" collapsing, operator swap on
  * a trailing operator) can be exercised without an Android Application.
  *

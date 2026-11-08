@@ -69,8 +69,8 @@ import com.eliormachlev.currencix.view.navigation.PaneRole
 import com.eliormachlev.currencix.view.navigation.Screen
 import com.eliormachlev.currencix.view.navigation.SettingsTopic
 import com.eliormachlev.currencix.view.navigation.paneRole
-import com.eliormachlev.currencix.view.preference.compose.ProviderPickerWithKeyPrompt
-import com.eliormachlev.currencix.viewmodel.main.MainViewModel
+import com.eliormachlev.currencix.view.preference.compose.StoredProviderPicker
+import com.eliormachlev.currencix.viewmodel.main.MainStateHolder
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.collections.immutable.toImmutableSet
 import kotlinx.coroutines.delay
@@ -157,10 +157,17 @@ internal fun ConverterRoute(
     )
 }
 
+/**
+ * The cart, seeded with the converter's pair. A null side is fine here —
+ * CartStateHolder.seedFromMain keeps the cart's own pair or resolves just the
+ * missing side.
+ */
+internal fun MainStateHolder.cartScreen(): Screen.Cart = Screen.Cart(getBaseCurrency().value, getDestinationCurrency().value)
+
 // The screens the converter opens, with the arguments they take from it.
 // [paneRole] is the converter's pane in the two-pane layout (null otherwise).
 private class ConverterDestinations(
-    private val viewModel: MainViewModel,
+    private val viewModel: MainStateHolder,
     private val navigator: AppNavigator,
     private val paneRole: PaneRole?,
 ) {
@@ -170,9 +177,7 @@ private class ConverterDestinations(
         openDetail(Screen.Timeline(from, to))
     }
 
-    // A null side is fine here — CartViewModel.seedFromMain keeps the cart's
-    // own pair or resolves just the missing side.
-    private fun openCart() = openDetail(Screen.Cart(viewModel.getBaseCurrency().value, viewModel.getDestinationCurrency().value))
+    private fun openCart() = openDetail(viewModel.cartScreen())
 
     // Beside the converter, a detail screen takes the detail pane's place
     // rather than stacking on it: back then returns to the converter alone.
@@ -244,7 +249,7 @@ private fun rememberDrawerClosedOnReturn(drawerState: DrawerState): (DrawerActio
 // shows: changing the pair swaps the detail pane to the new pair's chart.
 @Composable
 private fun TimelineFollowsPair(
-    viewModel: MainViewModel,
+    viewModel: MainStateHolder,
     navigator: AppNavigator,
 ) {
     val base = viewModel.getBaseCurrency().collectAsStateWithLifecycle().value
@@ -278,13 +283,7 @@ private fun ConverterOverlays(
     val viewModel = host.viewModel
     when (overlay) {
         ConverterOverlay.ProviderPicker -> {
-            val current by host.preferenceModel.apiProvider.collectAsStateWithLifecycle()
-            ProviderPickerWithKeyPrompt(
-                selected = current,
-                viewModel = host.preferenceModel,
-                onDismiss = onDismiss,
-                onPicked = host.preferenceModel::setApiProvider,
-            )
+            StoredProviderPicker(settings = host.preferences, onDismiss = onDismiss)
         }
 
         ConverterOverlay.QuickConversions -> {
@@ -396,7 +395,7 @@ private fun recentPairsTop(compact: Boolean): Dp = if (compact) RECENT_PAIRS_COM
 // the one in force.
 @Composable
 private fun CompareCardsHost(
-    viewModel: MainViewModel,
+    viewModel: MainStateHolder,
     onDismiss: () -> Unit,
 ) {
     val db = rememberDatabase()
@@ -424,7 +423,7 @@ private fun CompareCardsHost(
 // the recent pairs with pass-throughs.
 @Composable
 private fun rememberRecordedPair(
-    viewModel: MainViewModel,
+    viewModel: MainStateHolder,
     database: Database,
 ): CurrencyPair? {
     val base = viewModel.getBaseCurrency().collectAsStateWithLifecycle().value
@@ -441,7 +440,7 @@ private fun rememberRecordedPair(
 // One-tap chips for the pairs used before the one on screen ([current]).
 @Composable
 private fun ConverterRecentPairs(
-    viewModel: MainViewModel,
+    viewModel: MainStateHolder,
     database: Database,
     current: CurrencyPair?,
     compact: Boolean,
@@ -478,7 +477,7 @@ private fun ConverterRecentPairs(
 // before the pair has a rate.
 @Composable
 private fun PairAlertSheet(
-    viewModel: MainViewModel,
+    viewModel: MainStateHolder,
     pair: CurrencyPair,
     onDismiss: () -> Unit,
 ) {
@@ -505,7 +504,7 @@ private fun PairAlertSheet(
 // message when there's none. Null while there's nothing to offer.
 @Composable
 private fun rememberPasteAmount(
-    viewModel: MainViewModel,
+    viewModel: MainStateHolder,
     current: CurrencyPair?,
 ): (() -> Unit)? {
     val offer = rememberClipboardOffer()
@@ -544,7 +543,7 @@ private fun rememberRemoveWithUndo(database: Database): (CurrencyPair) -> Unit {
 // The in-app keypad. The picker only offers in-app variants, so the
 // preference feeds straight into MainKeypad.
 @Composable
-private fun ConverterKeypad(viewModel: MainViewModel) {
+private fun ConverterKeypad(viewModel: MainStateHolder) {
     val isExpanded by viewModel.isExpandedKeypadEnabled.collectAsStateWithLifecycle()
     val input = viewModel.input
     val keys by input.keys.collectAsStateWithLifecycle()
@@ -610,7 +609,7 @@ private fun OnboardingSpotlightHost() {
 // it forgets the last visit so the next one is asked about.
 @Composable
 private fun AbroadOfferHost(
-    viewModel: MainViewModel,
+    viewModel: MainStateHolder,
     enabled: Boolean,
 ) {
     val context = LocalContext.current

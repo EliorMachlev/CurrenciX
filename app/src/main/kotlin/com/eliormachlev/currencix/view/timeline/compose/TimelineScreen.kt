@@ -18,12 +18,12 @@ import androidx.window.layout.FoldingFeature
 import com.eliormachlev.currencix.view.compose.AppTheme
 import com.eliormachlev.currencix.view.compose.LayerCapture
 import com.eliormachlev.currencix.view.compose.captureInto
-import com.eliormachlev.currencix.viewmodel.timeline.TimelineViewModel
+import com.eliormachlev.currencix.viewmodel.timeline.TimelineStateHolder
 import java.time.format.DateTimeFormatter
 
 @Composable
 internal fun TimelineScreen(
-    model: TimelineViewModel,
+    model: TimelineStateHolder,
     formatter: DateTimeFormatter,
     foldingFeature: FoldingFeature?,
     onChangeProvider: () -> Unit,

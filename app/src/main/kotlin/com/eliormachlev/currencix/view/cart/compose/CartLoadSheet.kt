@@ -25,7 +25,7 @@ import com.eliormachlev.currencix.model.Trip
 import com.eliormachlev.currencix.util.rememberHapticOnClick
 import com.eliormachlev.currencix.view.compose.dialogs.LedgerBottomSheet
 import com.eliormachlev.currencix.view.compose.theme.Spacing
-import com.eliormachlev.currencix.viewmodel.cart.CartViewModel
+import com.eliormachlev.currencix.viewmodel.cart.CartStateHolder
 
 /**
  * Ledger-styled saved-cart picker sheet — a [LedgerBottomSheet] hosting the
@@ -40,7 +40,7 @@ import com.eliormachlev.currencix.viewmodel.cart.CartViewModel
  */
 @Composable
 fun CartLoadSheet(
-    viewModel: CartViewModel,
+    viewModel: CartStateHolder,
     onPick: (SavedCart) -> Unit,
     onRename: (SavedCart) -> Unit,
     onDelete: (SavedCart) -> Unit,
@@ -124,7 +124,7 @@ private class TripEdit(
 @Composable
 private fun TripEditor(
     edit: TripEdit,
-    viewModel: CartViewModel,
+    viewModel: CartStateHolder,
     saved: List<SavedCart>,
     onClose: () -> Unit,
 ) {

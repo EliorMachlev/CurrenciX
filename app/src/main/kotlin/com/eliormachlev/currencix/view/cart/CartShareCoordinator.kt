@@ -17,7 +17,7 @@ import com.eliormachlev.currencix.util.toPngBytes
 import com.eliormachlev.currencix.view.cart.compose.CartChoiceOption
 import com.eliormachlev.currencix.view.cart.compose.CartChoiceRequest
 import com.eliormachlev.currencix.viewmodel.cart.CartSnapshot
-import com.eliormachlev.currencix.viewmodel.cart.CartViewModel
+import com.eliormachlev.currencix.viewmodel.cart.CartStateHolder
 import com.eliormachlev.currencix.viewmodel.cart.budgetLeft
 import com.eliormachlev.currencix.viewmodel.cart.perPerson
 import com.eliormachlev.currencix.viewmodel.cart.personSharesOf
@@ -36,7 +36,7 @@ private const val PNG_EXT = ".png"
  */
 class CartShareCoordinator(
     private val context: Context,
-    private val viewModel: CartViewModel,
+    private val viewModel: CartStateHolder,
     private val flushPendingCommits: () -> Unit,
     private val snackbar: (String) -> Unit,
     private val showChoice: (CartChoiceRequest) -> Unit,

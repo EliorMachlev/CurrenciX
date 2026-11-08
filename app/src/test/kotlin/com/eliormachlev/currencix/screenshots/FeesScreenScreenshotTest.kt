@@ -19,7 +19,7 @@ import org.robolectric.annotation.GraphicsMode
 import java.math.BigDecimal
 
 // Fees screen — three sections mirroring FeesScreen (global exchange /
-// global bank / specific pair). Bypasses FeeManagerViewModel + Database
+// global bank / specific pair). Bypasses FeeStore + Database
 // by feeding hand-authored Fee samples straight into the primitives, per
 // the CartScreenshotTest pattern.
 // The fees screen is laid out the way the language reads (ProseTheme in the app).

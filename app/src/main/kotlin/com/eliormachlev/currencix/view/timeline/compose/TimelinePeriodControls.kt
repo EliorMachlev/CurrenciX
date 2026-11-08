@@ -19,8 +19,8 @@ import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.repository.TIMELINE_MAX_YEARS
 import com.eliormachlev.currencix.view.compose.ConnectedToggleGroup
 import com.eliormachlev.currencix.view.compose.dialogs.LedgerPromptSheet
-import com.eliormachlev.currencix.viewmodel.timeline.TimelineViewModel.Period
-import com.eliormachlev.currencix.viewmodel.timeline.TimelineViewModel.Span
+import com.eliormachlev.currencix.viewmodel.timeline.TimelineStateHolder.Period
+import com.eliormachlev.currencix.viewmodel.timeline.TimelineStateHolder.Span
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneOffset

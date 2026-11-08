@@ -3,11 +3,6 @@ package com.eliormachlev.currencix.viewmodel.main
 import android.app.Application
 import android.text.SpannableStringBuilder
 import androidx.core.text.bold
-import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.initializer
-import androidx.lifecycle.viewmodel.viewModelFactory
 import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.model.CurrencyPair
 import com.eliormachlev.currencix.model.ExchangeRates
@@ -22,6 +17,7 @@ import com.eliormachlev.currencix.util.evaluateCalculatorExpression
 import com.eliormachlev.currencix.util.getDecimalSeparator
 import com.eliormachlev.currencix.util.isCurrencySymbolOnRight
 import com.eliormachlev.currencix.util.toHumanReadableNumber
+import com.eliormachlev.currencix.viewmodel.util.RetainedScope
 import com.eliormachlev.currencix.viewmodel.util.stateInEagerly
 import com.eliormachlev.currencix.viewmodel.util.stateInWhileSubscribed
 import kotlinx.collections.immutable.ImmutableList
@@ -42,51 +38,47 @@ import java.text.Collator
 import java.time.LocalDate
 import java.time.ZoneId
 
-class MainViewModel(
+/**
+ * The converter's state, kept with `retain`. With [onlyCache] it never asks the
+ * network (the currency picker's copy).
+ */
+class MainStateHolder(
     private val app: Application,
     onlyCache: Boolean = false,
-) : AndroidViewModel(app) {
-    companion object {
-        /** Builds a [MainViewModel]; with [onlyCache] it never asks the network (the currency picker's copy). */
-        fun factory(
-            app: Application,
-            onlyCache: Boolean = false,
-        ): ViewModelProvider.Factory = viewModelFactory { initializer { MainViewModel(app, onlyCache) } }
-    }
-
+) : RetainedScope() {
     private val repository: ExchangeRatesRepository = ExchangeRatesRepository(app)
     private val db = Database(app)
 
     private val starredLiveItems: StateFlow<ImmutableList<Currency>> =
         db.stars.starredCurrencies.flow
-            .stateInWhileSubscribed(viewModelScope, db.stars.starredCurrencies.get())
+            .stateInWhileSubscribed(scope, db.stars.starredCurrencies.get())
     private val onlyShowStarred: StateFlow<Boolean> =
         db.stars.filterStarred.flow
-            .stateInWhileSubscribed(viewModelScope, db.stars.filterStarred.get())
+            .stateInWhileSubscribed(scope, db.stars.filterStarred.get())
 
     // ui
     // Refresh indicators — debounced for display; see RefreshState.
     private val refreshSpinner: StateFlow<Boolean> =
-        RefreshState.pullIndicator.stateInWhileSubscribed(viewModelScope, false)
+        RefreshState.pullIndicator.stateInWhileSubscribed(scope, false)
     private val refreshShimmer: StateFlow<Boolean> =
-        RefreshState.passiveIndicator.stateInWhileSubscribed(viewModelScope, false)
+        RefreshState.passiveIndicator.stateInWhileSubscribed(scope, false)
     val isExpandedKeypadEnabled: StateFlow<Boolean> =
-        db.display.expandedKeypad.stateInWhileSubscribed(viewModelScope)
+        db.display.expandedKeypad.stateInWhileSubscribed(scope)
     private val decimalPlaces: StateFlow<Int> =
-        db.display.decimalPlaces.stateInWhileSubscribed(viewModelScope)
+        db.display.decimalPlaces.stateInWhileSubscribed(scope)
 
     /** What the keypad has typed. The keypad drives it directly; the amounts below follow it. */
     internal val input = CalculatorInputState()
 
     private val fees: StateFlow<ImmutableList<Fee>> =
         db.fees.fees.flow
-            .stateInWhileSubscribed(viewModelScope, db.fees.fees.get())
+            .stateInWhileSubscribed(scope, db.fees.fees.get())
     private val activeExchangeId: StateFlow<String?> =
         db.fees.activeExchangeId.flow
-            .stateInWhileSubscribed(viewModelScope, db.fees.activeExchangeId.get())
+            .stateInWhileSubscribed(scope, db.fees.activeExchangeId.get())
     private val activeBankId: StateFlow<String?> =
         db.fees.activeBankId.flow
-            .stateInWhileSubscribed(viewModelScope, db.fees.activeBankId.get())
+            .stateInWhileSubscribed(scope, db.fees.activeBankId.get())
 
     /*
      * repository data =============================================================================
@@ -102,7 +94,7 @@ class MainViewModel(
         ratesSource(onlyCache)
             .filterNotNull()
             .map(::sortedByName)
-            .stateInEagerly(viewModelScope, null)
+            .stateInEagerly(scope, null)
 
     // currency selection
     // update currently selected currencies when rates are updated:
@@ -113,7 +105,7 @@ class MainViewModel(
             rates?.rateFor(base)?.currency
                 // not present, so just return the first of the set
                 ?: rates?.rates?.firstOrNull()?.currency
-        }.stateInEagerly(viewModelScope, null)
+        }.stateInEagerly(scope, null)
 
     // Cross-observes the resolved base so a stale-prefs collision (both sides
     // pointing at the same currency on first read after an
@@ -125,7 +117,7 @@ class MainViewModel(
         combineTransform(db.lastState.lastDestinationCurrency.flow, exchangeRates, currentBaseCurrency) { destination, rates, base ->
             val available = rates?.rates ?: return@combineTransform
             emit(destinationFrom(available, destination, base))
-        }.stateInEagerly(viewModelScope, null)
+        }.stateInEagerly(scope, null)
 
     init {
         // Background timeline prefetcher: fires whenever the selected
@@ -133,8 +125,11 @@ class MainViewModel(
         // screen paints instantly when the user opens it — otherwise the very
         // first graph tap still pays the full network fetch. The repository
         // dedupes per-pair, so redundant calls collapse into one fetch.
-        combine(currentBaseCurrency, currentDestinationCurrency) { base, destination -> prefetchTimeline(base, destination) }
-            .launchIn(viewModelScope)
+        // The currency picker's cache-only copy never asks the network.
+        if (!onlyCache) {
+            combine(currentBaseCurrency, currentDestinationCurrency) { base, destination -> prefetchTimeline(base, destination) }
+                .launchIn(scope)
+        }
     }
 
     // The rates to show: the cached set, after asking the network for a new
@@ -205,7 +200,7 @@ class MainViewModel(
      * and its outcome says nothing about now.
      */
     internal fun refreshAfterReconnect() {
-        viewModelScope.launch {
+        scope.launch {
             RefreshState.inFlight.first { running -> !running }
             forceUpdateExchangeRate()
         }
@@ -280,12 +275,12 @@ class MainViewModel(
             } else {
                 baseValueText
             }
-        }.stateInEagerly(viewModelScope, null)
+        }.stateInEagerly(scope, null)
 
     // Read synchronously (the share text, the currency picker), so kept
     // current; null until the base value is known.
     private val currentBaseValueAsNumber: StateFlow<BigDecimal?> =
-        currentBaseValue.map(::toAmount).stateInEagerly(viewModelScope, null)
+        currentBaseValue.map(::toAmount).stateInEagerly(scope, null)
 
     /**
      * the total base value, as BigDecimal (internal is string)
@@ -302,7 +297,7 @@ class MainViewModel(
                 ) ?: "0"
             )
             buildBoldNumberWithSymbol(number, currency?.symbol())
-        }.stateInWhileSubscribed(viewModelScope, null)
+        }.stateInWhileSubscribed(scope, null)
     }
 
     /**
@@ -332,7 +327,7 @@ class MainViewModel(
     private val calculationInputFormattedState: StateFlow<String?> by lazy {
         input.calculationValueText
             .map { it?.replace(".", getDecimalSeparator(app)) }
-            .stateInWhileSubscribed(viewModelScope, null)
+            .stateInWhileSubscribed(scope, null)
     }
 
     /**
@@ -362,7 +357,7 @@ class MainViewModel(
     private val feeStack: StateFlow<BigDecimal?> =
         pairFeeFlow { list, base, dest, exchangeId, bankId ->
             FeeCalculator.feeStack(list, base, dest, exchangeId, bankId)
-        }.stateInEagerly(viewModelScope, null)
+        }.stateInEagerly(scope, null)
 
     /**
      * The active fees participating in [feeStack] for the current pair —
@@ -375,7 +370,7 @@ class MainViewModel(
     private val activeFees: StateFlow<ImmutableList<Fee>?> =
         pairFeeFlow { list, base, dest, exchangeId, bankId ->
             FeeCalculator.activeFees(list, base, dest, exchangeId, bankId).toImmutableList()
-        }.stateInEagerly(viewModelScope, null)
+        }.stateInEagerly(scope, null)
 
     /**
      * the total destination value — fees don't touch the displayed result;
@@ -399,7 +394,7 @@ class MainViewModel(
                     .divide(baseRate.value, MathContext.DECIMAL128)
                     .multiply(destinationRate.value)
             emit(fair.toPlainString())
-        }.stateInEagerly(viewModelScope, null)
+        }.stateInEagerly(scope, null)
 
     /**
      * Fee stack for an arbitrary pair — used by ad-hoc UIs
@@ -431,7 +426,7 @@ class MainViewModel(
     // Null (no result yet) stays null; read synchronously (the share text,
     // the currency picker), so kept current.
     private val resultAsNumber: StateFlow<BigDecimal?> =
-        result.map { it?.let(::toAmount) }.stateInEagerly(viewModelScope, null)
+        result.map { it?.let(::toAmount) }.stateInEagerly(scope, null)
 
     /**
      * the total destination value, as BigDecimal (internal is string)
@@ -447,12 +442,12 @@ class MainViewModel(
             val amount = r?.toBigDecimalOrNull() ?: return@combine null
             val stack = s ?: BigDecimal.ONE
             amount.multiply(stack, MathContext.DECIMAL128).toPlainString()
-        }.stateInEagerly(viewModelScope, null)
+        }.stateInEagerly(scope, null)
 
     // Null only until the pipeline has run once; zero while there's no
     // result. Kept current: the share text reads it.
     private val resultWithFeesAsNumber: StateFlow<BigDecimal?> =
-        resultWithFees.map(::toAmount).stateInEagerly(viewModelScope, null)
+        resultWithFees.map(::toAmount).stateInEagerly(scope, null)
 
     /**
      * the fee-adjusted destination value, as BigDecimal — result × feeStack.
@@ -489,7 +484,7 @@ class MainViewModel(
                 ) ?: "0"
             )
             buildBoldNumberWithSymbol(number, currency?.symbol())
-        }.stateInWhileSubscribed(viewModelScope, null)
+        }.stateInWhileSubscribed(scope, null)
 
     /**
      * the current decimal-places preference, for output-side rounding.

@@ -35,7 +35,7 @@ import com.eliormachlev.currencix.view.compose.dialogs.takePassword
 import com.eliormachlev.currencix.view.compose.theme.Spacing
 import com.eliormachlev.currencix.viewmodel.preference.BACKUP_MIN_PASSWORD_LENGTH
 import com.eliormachlev.currencix.viewmodel.preference.BackupDialog
-import com.eliormachlev.currencix.viewmodel.preference.BackupViewModel
+import com.eliormachlev.currencix.viewmodel.preference.BackupStateHolder
 import kotlinx.coroutines.flow.drop
 
 private val CHECKBOX_TO_FIELD_GAP = Spacing.Medium
@@ -50,14 +50,14 @@ private enum class BackupSection {
 
 /**
  * Full backup-and-restore screen. Renders two preference cards and
- * dispatches the active dialog off the [viewModel]'s dialog state. The
+ * dispatches the active dialog off the [holder]'s dialog state. The
  * document pickers and toasts live in the route (BackupRoute); the screen
  * calls back through [onLaunchExport] / [onLaunchImport] /
  * [onImportConfirmed] once its own dialog state has settled.
  */
 @Composable
 fun BackupScreen(
-    viewModel: BackupViewModel,
+    holder: BackupStateHolder,
     onLaunchExport: () -> Unit,
     onLaunchImport: () -> Unit,
     onImportConfirmed: (uri: android.net.Uri, password: CharArray?) -> Unit,
@@ -67,20 +67,20 @@ fun BackupScreen(
             // A restore or export reads or writes the file, and a password
             // takes a moment to check: the bar shows it's working, and the
             // rows wait until it's done.
-            if (viewModel.busy) LinearProgressIndicator(Modifier.fillMaxWidth())
+            if (holder.busy) LinearProgressIndicator(Modifier.fillMaxWidth())
             BackupSectionsList(
-                onExportClick = { if (!viewModel.busy) viewModel.openExportPasswordPrompt() },
-                onImportClick = { if (!viewModel.busy) onLaunchImport() },
+                onExportClick = { if (!holder.busy) holder.openExportPasswordPrompt() },
+                onImportClick = { if (!holder.busy) onLaunchImport() },
             )
         }
     }
 
-    when (val dialog = viewModel.dialog) {
+    when (val dialog = holder.dialog) {
         BackupDialog.ExportPassword -> {
             ExportPasswordSheet(
-                onCancel = viewModel::dismissDialog,
+                onCancel = holder::dismissDialog,
                 onConfirm = { password ->
-                    viewModel.stashExportPasswordAndDismiss(password)
+                    holder.stashExportPasswordAndDismiss(password)
                     onLaunchExport()
                 },
             )
@@ -89,19 +89,19 @@ fun BackupScreen(
         is BackupDialog.ImportPassword -> {
             ImportPasswordSheet(
                 isRetry = dialog.isRetry,
-                onCancel = viewModel::dismissDialog,
+                onCancel = holder::dismissDialog,
                 onConfirm = { password ->
-                    viewModel.confirmImportPassword(dialog.uri, password)
+                    holder.confirmImportPassword(dialog.uri, password)
                 },
             )
         }
 
         is BackupDialog.ImportConfirm -> {
             ImportConfirmSheet(
-                onCancel = viewModel::dismissDialog,
+                onCancel = holder::dismissDialog,
                 onConfirm = {
                     val password = dialog.password
-                    viewModel.dismissDialog()
+                    holder.dismissDialog()
                     onImportConfirmed(dialog.uri, password)
                 },
             )

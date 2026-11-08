@@ -21,7 +21,7 @@ import com.eliormachlev.currencix.view.timeline.compose.TimelinePeriodControls
 import com.eliormachlev.currencix.view.timeline.compose.TimelineSecondary
 import com.eliormachlev.currencix.view.timeline.compose.TimelineStats
 import com.eliormachlev.currencix.viewmodel.timeline.RateReadout
-import com.eliormachlev.currencix.viewmodel.timeline.TimelineViewModel
+import com.eliormachlev.currencix.viewmodel.timeline.TimelineStateHolder
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -87,8 +87,8 @@ class TimelineScreenshotTest {
             TimelinePeriodControls(
                 control =
                     PeriodControl(
-                        TimelineViewModel.Period.CUSTOM,
-                        TimelineViewModel.Span(SAMPLE_MIN_DATE, SAMPLE_MAX_DATE),
+                        TimelineStateHolder.Period.CUSTOM,
+                        TimelineStateHolder.Span(SAMPLE_MIN_DATE, SAMPLE_MAX_DATE),
                         {},
                         { _, _ -> },
                     ),
@@ -102,7 +102,7 @@ class TimelineScreenshotTest {
                 TimelineSecondary(
                     stats = SAMPLE_STATS,
                     formatter = FORMATTER,
-                    period = PeriodControl(TimelineViewModel.Period.YEAR, null, {}, { _, _ -> }),
+                    period = PeriodControl(TimelineStateHolder.Period.YEAR, null, {}, { _, _ -> }),
                     modifier = Modifier.fillMaxSize(),
                 )
             }
@@ -114,7 +114,7 @@ class TimelineScreenshotTest {
                 TimelineSecondary(
                     stats = SAMPLE_STATS,
                     formatter = FORMATTER,
-                    period = PeriodControl(TimelineViewModel.Period.YEAR, null, {}, { _, _ -> }),
+                    period = PeriodControl(TimelineStateHolder.Period.YEAR, null, {}, { _, _ -> }),
                     modifier = Modifier.fillMaxSize(),
                 )
             }

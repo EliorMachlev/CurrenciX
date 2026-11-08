@@ -17,7 +17,7 @@ import org.robolectric.annotation.GraphicsMode
 
 // Backup screen — two idle-state sections (export / restore). Dialogs
 // (ExportPassword, ImportPassword, ImportConfirm) fire off VM state and
-// are covered indirectly by BackupViewModel unit tests; only the resting
+// are covered indirectly by BackupStateHolder unit tests; only the resting
 // screen shape needs a golden.
 @RunWith(RobolectricTestRunner::class)
 @GraphicsMode(GraphicsMode.Mode.NATIVE)

@@ -2,16 +2,19 @@ package com.eliormachlev.currencix.viewmodel.timeline
 
 import android.app.Application
 import android.os.Looper
-import androidx.lifecycle.viewModelScope
 import androidx.test.core.app.ApplicationProvider
 import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.model.Rate
 import com.eliormachlev.currencix.model.Timeline
 import com.eliormachlev.currencix.repository.Database
 import com.eliormachlev.currencix.util.AppDispatchers
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.asCoroutineDispatcher
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Before
@@ -32,6 +35,13 @@ class TimelineEmptyRangeTest {
     private val app = ApplicationProvider.getApplicationContext<Application>()
     private val today = LocalDate.now()
 
+    // Work runs on the calling thread, at once, so the assertions see it.
+    private val atOnce = Executor { it.run() }.asCoroutineDispatcher()
+    private val collecting = CoroutineScope(SupervisorJob() + atOnce)
+
+    @After
+    fun stopCollecting() = collecting.cancel()
+
     @Before
     fun seedCache() {
         val db = Database(app)
@@ -47,26 +57,24 @@ class TimelineEmptyRangeTest {
     fun `a range without rates leaves the readouts empty instead of crashing`() {
         // The readouts are worked out off the main thread in the app; here on
         // the calling thread, at once, so the assertions see them.
-        val atOnce = Executor { it.run() }.asCoroutineDispatcher()
-        val model = TimelineViewModel(app, Currency.USD, Currency.EUR, AppDispatchers(io = atOnce, default = atOnce) { atOnce })
-        val past = model.getRatePast().observed(model)
-        val current = model.getRateCurrent().observed(model)
-        val diff = model.getRatesDifferencePercent().observed(model)
+        val model = TimelineStateHolder(app, Currency.USD, Currency.EUR, AppDispatchers(io = atOnce, default = atOnce) { atOnce })
+        val past = model.getRatePast().observed()
+        val current = model.getRateCurrent().observed()
+        val diff = model.getRatesDifferencePercent().observed()
         idle()
 
         val emptyStart = today.minusYears(3)
         model.setCustomRange(emptyStart, emptyStart.plusDays(1))
         idle()
 
-        assertEquals(TimelineViewModel.Period.CUSTOM, model.getPeriod().value)
+        assertEquals(TimelineStateHolder.Period.CUSTOM, model.getPeriod().value)
         assertNull(past.value?.rate)
         assertNull(current.value?.rate)
         assertNull(diff.value)
     }
 
     // Collected for as long as [model] lives, as a screen showing it would.
-    private fun <T> StateFlow<T>.observed(model: TimelineViewModel): StateFlow<T> =
-        also { flow -> model.viewModelScope.launch { flow.collect {} } }
+    private fun <T> StateFlow<T>.observed(): StateFlow<T> = also { flow -> collecting.launch { flow.collect {} } }
 
     private fun idle() = shadowOf(Looper.getMainLooper()).idle()
 

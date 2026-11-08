@@ -23,7 +23,9 @@ import com.eliormachlev.currencix.repository.fileFailureMessage
 import com.eliormachlev.currencix.view.compose.AppSnackbar
 import com.eliormachlev.currencix.view.compose.LocalAppSnackbar
 import com.eliormachlev.currencix.view.compose.ScreenScaffold
-import com.eliormachlev.currencix.view.compose.applicationViewModel
+import com.eliormachlev.currencix.view.compose.currentApplication
+import com.eliormachlev.currencix.view.compose.rememberDatabase
+import com.eliormachlev.currencix.view.compose.retainWithApplication
 import com.eliormachlev.currencix.view.compose.showOrToast
 import com.eliormachlev.currencix.view.navigation.Screen
 import com.eliormachlev.currencix.view.navigation.SettingsTopic
@@ -33,10 +35,8 @@ import com.eliormachlev.currencix.view.preference.compose.PreferenceScreen
 import com.eliormachlev.currencix.view.preference.compose.PreferenceScreenCallbacks
 import com.eliormachlev.currencix.view.preference.compose.ReceiptLanguagesScreen
 import com.eliormachlev.currencix.view.preference.compose.titleRes
-import com.eliormachlev.currencix.viewmodel.preference.BackupViewModel
-import com.eliormachlev.currencix.viewmodel.preference.FeeManagerViewModel
-import com.eliormachlev.currencix.viewmodel.preference.PreferenceViewModel
-import com.eliormachlev.currencix.viewmodel.preference.ReceiptLanguagesViewModel
+import com.eliormachlev.currencix.viewmodel.preference.BackupStateHolder
+import com.eliormachlev.currencix.viewmodel.preference.PreferenceSettings
 
 /**
  * Settings: its list of categories ([topic] null), or one category's own
@@ -53,7 +53,7 @@ fun SettingsRoute(
     onThemeRequiresRestart: () -> Unit,
 ) {
     val context = LocalContext.current
-    val viewModel = applicationViewModel { PreferenceViewModel(it) }
+    val settings = rememberPreferenceSettings()
     val callbacks =
         remember(context, onOpen, onThemeRequiresRestart) {
             PreferenceScreenCallbacks(
@@ -63,25 +63,31 @@ fun SettingsRoute(
             )
         }
     SettingsScaffold(titleRes = topic?.titleRes ?: R.string.title_preferences, onBack = onBack) {
-        PreferenceScreen(viewModel = viewModel, callbacks = callbacks, topic = topic)
+        PreferenceScreen(settings = settings, callbacks = callbacks, topic = topic)
     }
+}
+
+/** The stored settings, for the screens that read and change them (built from the application, so kept across recompositions). */
+@Composable
+internal fun rememberPreferenceSettings(): PreferenceSettings {
+    val application = currentApplication()
+    return remember(application) { PreferenceSettings(application) }
 }
 
 /** The fee manager — from Settings, the converter's drawer and fee chip, or the cart. */
 @Composable
 fun FeesRoute(onBack: () -> Unit) {
-    val viewModel = applicationViewModel { FeeManagerViewModel(it) }
+    val fees = rememberDatabase().fees
     SettingsScaffold(titleRes = R.string.fee_manager_title, onBack = onBack) {
-        FeesScreen(viewModel = viewModel)
+        FeesScreen(store = fees)
     }
 }
 
 /** The languages receipts are read in: add one (for good or a trip), keep it longer, or delete it. */
 @Composable
 fun ReceiptLanguagesRoute(onBack: () -> Unit) {
-    val viewModel = applicationViewModel { ReceiptLanguagesViewModel(it) }
     SettingsScaffold(titleRes = R.string.receipt_languages_title, onBack = onBack) {
-        ReceiptLanguagesScreen(viewModel = viewModel)
+        ReceiptLanguagesScreen()
     }
 }
 
@@ -90,22 +96,22 @@ fun ReceiptLanguagesRoute(onBack: () -> Unit) {
 fun BackupRoute(onBack: () -> Unit) {
     val context = LocalContext.current
     val snackbar = LocalAppSnackbar.current
-    val viewModel = applicationViewModel { BackupViewModel(it) }
+    val holder = retainWithApplication { BackupStateHolder(it) }
     val exportLauncher =
         rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             val uri = result.data?.data ?: return@rememberLauncherForActivityResult
-            viewModel.runExport(uri) { exported -> snackbar.showOrToast(context, exportResultMessage(context, exported)) }
+            holder.runExport(uri) { exported -> snackbar.showOrToast(context, exportResultMessage(context, exported)) }
         }
     val importLauncher =
         rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            result.data?.data?.let(viewModel::beginImport)
+            result.data?.data?.let(holder::beginImport)
         }
     SettingsScaffold(titleRes = R.string.backup_manager_title, onBack = onBack) {
         BackupScreen(
-            viewModel = viewModel,
+            holder = holder,
             onLaunchExport = { exportLauncher.launch(backupDocumentIntent(context, Intent.ACTION_CREATE_DOCUMENT)) },
             onLaunchImport = { importLauncher.launch(backupDocumentIntent(context, Intent.ACTION_OPEN_DOCUMENT)) },
-            onImportConfirmed = { uri, password -> runImport(context, snackbar, viewModel, uri, password) },
+            onImportConfirmed = { uri, password -> runImport(context, snackbar, holder, uri, password) },
         )
     }
 }
@@ -139,17 +145,17 @@ private fun backupDocumentIntent(
 private fun runImport(
     context: Context,
     snackbar: AppSnackbar?,
-    viewModel: BackupViewModel,
+    holder: BackupStateHolder,
     uri: Uri,
     password: CharArray?,
 ) {
-    viewModel.runImport(uri, password) { result -> showImportResult(context, snackbar, viewModel, uri, result) }
+    holder.runImport(uri, password) { result -> showImportResult(context, snackbar, holder, uri, result) }
 }
 
 private fun showImportResult(
     context: Context,
     snackbar: AppSnackbar?,
-    viewModel: BackupViewModel,
+    holder: BackupStateHolder,
     uri: Uri,
     result: BackupResult,
 ) {
@@ -165,12 +171,8 @@ private fun showImportResult(
             )
         }
 
-        is BackupResult.PasswordRequired -> {
-            viewModel.promptPasswordRetry(uri)
-        }
-
-        is BackupResult.WrongPassword -> {
-            viewModel.promptPasswordRetry(uri)
+        is BackupResult.PasswordRequired, is BackupResult.WrongPassword -> {
+            holder.promptPasswordRetry(uri)
         }
     }
 }

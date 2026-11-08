@@ -10,7 +10,7 @@ import androidx.compose.ui.Modifier
 import com.eliormachlev.currencix.view.cart.CartKeypadController
 import com.eliormachlev.currencix.view.compose.Ltr
 import com.eliormachlev.currencix.view.compose.ProseTheme
-import com.eliormachlev.currencix.viewmodel.cart.CartViewModel
+import com.eliormachlev.currencix.viewmodel.cart.CartStateHolder
 
 /**
  * Root of the cart screen. Column-lays the items list (weighted, so it
@@ -20,7 +20,7 @@ import com.eliormachlev.currencix.viewmodel.cart.CartViewModel
  */
 @Composable
 fun CartScreen(
-    viewModel: CartViewModel,
+    viewModel: CartStateHolder,
     keypad: CartKeypadController,
     sources: CartListSources,
     actions: CartScreenActions,
