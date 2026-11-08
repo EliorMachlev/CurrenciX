@@ -15,22 +15,20 @@ import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.model.Rate
 import com.eliormachlev.currencix.model.RecentPairs
 import com.eliormachlev.currencix.repository.Database
-import com.eliormachlev.currencix.view.compose.applicationViewModel
+import com.eliormachlev.currencix.view.compose.collectAsStateWithLifecycle
 import com.eliormachlev.currencix.view.compose.currentApplication
 import com.eliormachlev.currencix.view.compose.dialogs.LedgerBottomSheet
 import com.eliormachlev.currencix.view.compose.rememberDatabase
 import com.eliormachlev.currencix.viewmodel.main.MainViewModel
-import com.eliormachlev.currencix.viewmodel.preference.PreferenceViewModel
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import java.math.BigDecimal
 
-// Distinct keys so this sheet's read-only MainViewModel and PreferenceViewModel
-// instances don't collide with the primary VMs the hosting screen may already
-// own on the same ViewModelStore. Matches the intent of the pre-Compose
+// A distinct key so this sheet's read-only MainViewModel instance doesn't
+// collide with the primary VM the hosting screen may already own on the same
+// ViewModelStore. Matches the intent of the pre-Compose
 // [SearchableSpinnerDialog], which scoped its VM to its own DialogFragment.
 private const val PICKER_MAIN_VM_KEY = "CurrencyPickerSheet.main"
-private const val PICKER_PREF_VM_KEY = "CurrencyPickerSheet.pref"
 
 /**
  * Compose-native currency picker — a [LedgerBottomSheet] wrapping the shared
@@ -56,7 +54,6 @@ fun CurrencyPickerSheet(
             key = PICKER_MAIN_VM_KEY,
             factory = MainViewModel.factory(currentApplication(), onlyCache = true),
         )
-    val prefViewModel = applicationViewModel(key = PICKER_PREF_VM_KEY) { PreferenceViewModel(it) }
 
     LedgerBottomSheet(
         title = stringResource(id = R.string.picker_currency_title),
@@ -70,9 +67,9 @@ fun CurrencyPickerSheet(
         val rates by mainViewModel.getExchangeRates().collectAsStateWithLifecycle()
         val stars by mainViewModel.getStarredCurrencies().collectAsStateWithLifecycle()
         val filterStarred by mainViewModel.isFilterStarredEnabled().collectAsStateWithLifecycle()
-        val previewEnabled by prefViewModel.isPreviewConversionEnabled.collectAsStateWithLifecycle()
         val decimalPlaces by mainViewModel.getDecimalPlaces().collectAsStateWithLifecycle()
         val database = rememberDatabase()
+        val previewEnabled by database.display.previewConversion.collectAsStateWithLifecycle()
         val recents = rememberRecentCurrencies(database, excluded = setOfNotNull(disabledCurrency, selectedCurrency))
 
         // Kept across recompositions (typing a search), so the rows that

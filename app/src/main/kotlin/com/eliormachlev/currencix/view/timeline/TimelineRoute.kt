@@ -59,6 +59,7 @@ import com.eliormachlev.currencix.view.compose.ScreenScaffold
 import com.eliormachlev.currencix.view.compose.TopBarOverflowMenu
 import com.eliormachlev.currencix.view.compose.TopBarStyle
 import com.eliormachlev.currencix.view.compose.applicationViewModel
+import com.eliormachlev.currencix.view.compose.collectAsStateWithLifecycle
 import com.eliormachlev.currencix.view.compose.currentApplication
 import com.eliormachlev.currencix.view.compose.rememberDatabase
 import com.eliormachlev.currencix.view.compose.theme.Spacing
@@ -69,7 +70,7 @@ import com.eliormachlev.currencix.view.preference.compose.GraphOptionsSheet
 import com.eliormachlev.currencix.view.preference.compose.ProviderPickerWithKeyPrompt
 import com.eliormachlev.currencix.view.timeline.compose.TIMELINE_CONTENT_PADDING
 import com.eliormachlev.currencix.view.timeline.compose.TimelineScreen
-import com.eliormachlev.currencix.viewmodel.preference.PreferenceViewModel
+import com.eliormachlev.currencix.viewmodel.preference.PreferenceSettings
 import com.eliormachlev.currencix.viewmodel.timeline.TimelineViewModel
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.map
@@ -244,11 +245,12 @@ private fun TimelineSheets(
         }
 
         TimelineSheet.Provider -> {
-            val preferences = applicationViewModel { PreferenceViewModel(it) }
+            val application = currentApplication()
+            val preferences = remember(application) { PreferenceSettings(application) }
             val current by preferences.apiProvider.collectAsStateWithLifecycle()
             ProviderPickerWithKeyPrompt(
                 selected = current,
-                viewModel = preferences,
+                settings = preferences,
                 onDismiss = onDismiss,
                 onPicked = { provider ->
                     preferences.setApiProvider(provider)

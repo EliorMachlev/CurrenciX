@@ -24,7 +24,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.eliormachlev.currencix.BuildConfig
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.model.ApiProvider
@@ -37,11 +36,12 @@ import com.eliormachlev.currencix.util.inReadingOrder
 import com.eliormachlev.currencix.view.alert.RateAlertsSheet
 import com.eliormachlev.currencix.view.compose.FULL_SUMMARY
 import com.eliormachlev.currencix.view.compose.ProseTheme
+import com.eliormachlev.currencix.view.compose.collectAsStateWithLifecycle
 import com.eliormachlev.currencix.view.compose.rememberLinkedText
 import com.eliormachlev.currencix.view.compose.theme.Spacing
 import com.eliormachlev.currencix.view.navigation.Screen
 import com.eliormachlev.currencix.view.navigation.SettingsTopic
-import com.eliormachlev.currencix.viewmodel.preference.PreferenceViewModel
+import com.eliormachlev.currencix.viewmodel.preference.PreferenceSettings
 
 // One centrally-tracked "which picker dialog is currently open" — nulling it
 // closes whatever's open. Keeps dialog state out of every row and lets us
@@ -77,20 +77,20 @@ internal sealed interface OpenDialog {
  */
 @Composable
 fun PreferenceScreen(
-    viewModel: PreferenceViewModel,
+    settings: PreferenceSettings,
     callbacks: PreferenceScreenCallbacks,
     topic: SettingsTopic?,
 ) {
     var openDialog by remember { mutableStateOf<OpenDialog?>(null) }
-    val values = observePreferenceValues(viewModel)
-    val page = SettingsPageContext(viewModel, callbacks, values) { openDialog = it }
+    val values = observePreferenceValues(settings)
+    val page = SettingsPageContext(settings, callbacks, values) { openDialog = it }
 
     ProseTheme { SettingsPage(topic, page) }
 
     PreferenceDialogsHost(
         openDialog = openDialog,
         dismiss = { openDialog = null },
-        viewModel = viewModel,
+        settings = settings,
         callbacks = callbacks,
         values = values,
     )
@@ -98,7 +98,7 @@ fun PreferenceScreen(
 
 /** What a settings screen's rows read and do. */
 internal class SettingsPageContext(
-    val viewModel: PreferenceViewModel,
+    val settings: PreferenceSettings,
     val callbacks: PreferenceScreenCallbacks,
     val values: PreferenceValues,
     val openDialog: (OpenDialog) -> Unit,
@@ -136,17 +136,17 @@ internal data class AppearanceValues(
 )
 
 @Composable
-private fun observePreferenceValues(viewModel: PreferenceViewModel): PreferenceValues {
-    val provider by viewModel.apiProvider.collectAsStateWithLifecycle()
-    val fallback by viewModel.fallbackProvider.collectAsStateWithLifecycle()
-    val apiKeys by viewModel.apiKeys.collectAsStateWithLifecycle()
-    val autoRefreshEnabled by viewModel.isAutoRefreshEnabled.collectAsStateWithLifecycle()
-    val autoRefreshInterval by viewModel.autoRefreshInterval.collectAsStateWithLifecycle()
-    val decimalPlaces by viewModel.decimalPlaces.collectAsStateWithLifecycle()
-    val expandedKeypadEnabled by viewModel.isExpandedKeypadEnabled.collectAsStateWithLifecycle()
+private fun observePreferenceValues(settings: PreferenceSettings): PreferenceValues {
+    val provider by settings.apiProvider.collectAsStateWithLifecycle()
+    val fallback by settings.fallbackProvider.collectAsStateWithLifecycle()
+    val apiKeys by settings.apiKeys.collectAsStateWithLifecycle()
+    val autoRefreshEnabled by settings.isAutoRefreshEnabled.collectAsStateWithLifecycle()
+    val autoRefreshInterval by settings.autoRefreshInterval.collectAsStateWithLifecycle()
+    val decimalPlaces by settings.decimalPlaces.collectAsStateWithLifecycle()
+    val expandedKeypadEnabled by settings.isExpandedKeypadEnabled.collectAsStateWithLifecycle()
     return PreferenceValues(
         api = ApiValues(provider, fallback, apiKeys, autoRefreshEnabled, autoRefreshInterval),
-        appearance = observeAppearanceValues(viewModel, provider),
+        appearance = observeAppearanceValues(settings, provider),
         decimalPlaces = decimalPlaces,
         expandedKeypadEnabled = expandedKeypadEnabled,
     )
@@ -154,18 +154,18 @@ private fun observePreferenceValues(viewModel: PreferenceViewModel): PreferenceV
 
 @Composable
 private fun observeAppearanceValues(
-    viewModel: PreferenceViewModel,
+    settings: PreferenceSettings,
     provider: ApiProvider?,
 ): AppearanceValues {
-    val dateFormat by viewModel.dateFormat.collectAsStateWithLifecycle()
-    val hapticEnabled by viewModel.isHapticFeedbackEnabled.collectAsStateWithLifecycle()
-    val clickSoundsEnabled by viewModel.isClickSoundsEnabled.collectAsStateWithLifecycle()
-    val highRefreshRateEnabled by viewModel.isHighRefreshRateEnabled.collectAsStateWithLifecycle()
-    val dynamicColorEnabled by viewModel.isDynamicColorEnabled.collectAsStateWithLifecycle()
-    val previewEnabled by viewModel.isPreviewConversionEnabled.collectAsStateWithLifecycle()
+    val dateFormat by settings.dateFormat.collectAsStateWithLifecycle()
+    val hapticEnabled by settings.isHapticFeedbackEnabled.collectAsStateWithLifecycle()
+    val clickSoundsEnabled by settings.isClickSoundsEnabled.collectAsStateWithLifecycle()
+    val highRefreshRateEnabled by settings.isHighRefreshRateEnabled.collectAsStateWithLifecycle()
+    val dynamicColorEnabled by settings.isDynamicColorEnabled.collectAsStateWithLifecycle()
+    val previewEnabled by settings.isPreviewConversionEnabled.collectAsStateWithLifecycle()
     return AppearanceValues(
-        theme = remember { viewModel.getTheme() },
-        language = remember(provider) { viewModel.getLanguage() },
+        theme = remember { settings.getTheme() },
+        language = remember(provider) { settings.getLanguage() },
         dateFormat = dateFormat,
         hapticEnabled = hapticEnabled,
         clickSoundsEnabled = clickSoundsEnabled,
@@ -184,47 +184,47 @@ private fun observeAppearanceValues(
 private fun PreferenceDialogsHost(
     openDialog: OpenDialog?,
     dismiss: () -> Unit,
-    viewModel: PreferenceViewModel,
+    settings: PreferenceSettings,
     callbacks: PreferenceScreenCallbacks,
     values: PreferenceValues,
 ) {
     val appearance = values.appearance
     when (openDialog) {
         OpenDialog.DecimalPlaces -> {
-            DecimalPlacesPickerSheet(decimalPlaces = values.decimalPlaces, dismiss = dismiss, viewModel = viewModel)
+            DecimalPlacesPickerSheet(decimalPlaces = values.decimalPlaces, dismiss = dismiss, settings = settings)
         }
 
         OpenDialog.Theme -> {
-            ThemePickerSheet(theme = appearance.theme, dismiss = dismiss, viewModel = viewModel, callbacks = callbacks)
+            ThemePickerSheet(theme = appearance.theme, dismiss = dismiss, settings = settings, callbacks = callbacks)
         }
 
         OpenDialog.DateFormat -> {
-            DateFormatPickerSheet(dateFormat = appearance.dateFormat, dismiss = dismiss, viewModel = viewModel)
+            DateFormatPickerSheet(dateFormat = appearance.dateFormat, dismiss = dismiss, settings = settings)
         }
 
         OpenDialog.Language -> {
             LanguagePickerSheet(
                 selected = appearance.language,
                 onDismiss = dismiss,
-                onPicked = viewModel::setLanguage,
+                onPicked = settings::setLanguage,
             )
         }
 
         OpenDialog.Provider -> {
             ProviderPickerWithKeyPrompt(
                 selected = values.api.provider,
-                viewModel = viewModel,
+                settings = settings,
                 onDismiss = dismiss,
-                onPicked = viewModel::setApiProvider,
+                onPicked = settings::setApiProvider,
             )
         }
 
         OpenDialog.FallbackProvider -> {
-            FallbackPickerSheet(viewModel, dismiss)
+            FallbackPickerSheet(settings, dismiss)
         }
 
         OpenDialog.AutoRefreshInterval -> {
-            RefreshIntervalPickerSheet(selected = values.api.autoRefreshInterval, dismiss = dismiss, viewModel = viewModel)
+            RefreshIntervalPickerSheet(selected = values.api.autoRefreshInterval, dismiss = dismiss, settings = settings)
         }
 
         OpenDialog.RateAlerts -> {
@@ -236,7 +236,7 @@ private fun PreferenceDialogsHost(
                 provider = openDialog.provider,
                 apiKey = values.api.apiKeys[openDialog.provider],
                 dismiss = dismiss,
-                viewModel = viewModel,
+                settings = settings,
             )
         }
 
@@ -248,13 +248,13 @@ private fun PreferenceDialogsHost(
 private fun DecimalPlacesPickerSheet(
     decimalPlaces: Int,
     dismiss: () -> Unit,
-    viewModel: PreferenceViewModel,
+    settings: PreferenceSettings,
 ) {
     SingleChoicePickerSheet(
         title = stringResource(id = R.string.decimal_places_title),
         choices = Choices((DECIMAL_PLACES_MIN..DECIMAL_PLACES_MAX).toList(), decimalPlaces) { it.toString() },
         onDismiss = dismiss,
-        onPicked = viewModel::setDecimalPlaces,
+        onPicked = settings::setDecimalPlaces,
     )
 }
 
@@ -263,14 +263,14 @@ private fun DecimalPlacesPickerSheet(
 private fun RefreshIntervalPickerSheet(
     selected: RefreshInterval,
     dismiss: () -> Unit,
-    viewModel: PreferenceViewModel,
+    settings: PreferenceSettings,
 ) {
     val locale = LocalConfiguration.current.locales[0]
     SingleChoicePickerSheet(
         title = stringResource(id = R.string.refresh_interval_title),
         choices = Choices(RefreshInterval.entries, selected) { it.label(locale) },
         onDismiss = dismiss,
-        onPicked = viewModel::setAutoRefreshInterval,
+        onPicked = settings::setAutoRefreshInterval,
     )
 }
 
@@ -278,7 +278,7 @@ private fun RefreshIntervalPickerSheet(
 private fun ThemePickerSheet(
     theme: AppTheme,
     dismiss: () -> Unit,
-    viewModel: PreferenceViewModel,
+    settings: PreferenceSettings,
     callbacks: PreferenceScreenCallbacks,
 ) {
     val themeEntries = AppTheme.entries.toList()
@@ -288,7 +288,7 @@ private fun ThemePickerSheet(
         choices = Choices(themeEntries, theme) { themeLabels[themeEntries.indexOf(it)] },
         onDismiss = dismiss,
         onPicked = { picked ->
-            if (viewModel.setTheme(picked)) callbacks.onThemeRequiresRestart()
+            if (settings.setTheme(picked)) callbacks.onThemeRequiresRestart()
         },
     )
 }
@@ -297,7 +297,7 @@ private fun ThemePickerSheet(
 private fun DateFormatPickerSheet(
     dateFormat: String,
     dismiss: () -> Unit,
-    viewModel: PreferenceViewModel,
+    settings: PreferenceSettings,
 ) {
     val patterns = stringArrayResource(id = R.array.date_format_values).toList()
     val names = stringArrayResource(id = R.array.date_format_names).toList()
@@ -305,7 +305,7 @@ private fun DateFormatPickerSheet(
         title = stringResource(id = R.string.date_format_title),
         choices = Choices(patterns, dateFormat) { pattern -> names.getOrNull(patterns.indexOf(pattern)) ?: pattern },
         onDismiss = dismiss,
-        onPicked = viewModel::setDateFormat,
+        onPicked = settings::setDateFormat,
     )
 }
 
@@ -375,16 +375,16 @@ internal fun FallbackProviderRow(
 // The fallback picker: the main provider is greyed out, since it can't stand in for itself.
 @Composable
 private fun FallbackPickerSheet(
-    viewModel: PreferenceViewModel,
+    settings: PreferenceSettings,
     onDismiss: () -> Unit,
 ) {
-    val main by viewModel.apiProvider.collectAsStateWithLifecycle()
-    val fallback by viewModel.fallbackProvider.collectAsStateWithLifecycle()
+    val main by settings.apiProvider.collectAsStateWithLifecycle()
+    val fallback by settings.fallbackProvider.collectAsStateWithLifecycle()
     ProviderPickerWithKeyPrompt(
         selected = fallback,
-        viewModel = viewModel,
+        settings = settings,
         onDismiss = onDismiss,
-        onPicked = viewModel::setFallbackProvider,
+        onPicked = settings::setFallbackProvider,
         title = stringResource(id = R.string.fallback_provider_title),
         unavailable = main,
     )

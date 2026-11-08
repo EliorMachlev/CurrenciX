@@ -11,7 +11,7 @@
 | `AppNavHost` | `NavDisplay` in a `SharedTransitionLayout`; each entry gets its own saved state and **its own `ViewModelStore`**, so a screen's ViewModel lives exactly as long as its entry |
 | Routes | `ConverterRoute`, `TimelineRoute`, `CartRoute`, `SettingsRoute` (Settings and each `SettingsPage`), `FeesRoute`, `BackupRoute`, `ReceiptLanguagesRoute`: each wires its ViewModel, top bar and sheets |
 
-The Activity keeps the splash, the XML theme, foldable posture, hardware-keyboard input and the Activity-scoped `MainViewModel` / `PreferenceViewModel`. `ConverterStatus` holds errors that arrive while another screen covers the converter until it's back. The cart's import / export pickers register on the Activity's `ActivityResultRegistry` with fixed keys, so a result outliving a recreation still arrives. Tests: `AppNavigatorTest`, `AppNavHostTest`, `MainActivitySmokeTest`, `TwoPaneSmokeTest`.
+The Activity keeps the splash, the XML theme, foldable posture, hardware-keyboard input and the Activity-scoped `MainViewModel` and the plain `PreferenceSettings` (no state of its own). Screens that need their state kept across a rotation hold a plain class with `retain` (`ReceiptLanguagesStateHolder`, on the `RetainedScope` base that owns its coroutine scope) instead of a ViewModel; the fee screen reads `FeeStore` directly. `ConverterStatus` holds errors that arrive while another screen covers the converter until it's back. The cart's import / export pickers register on the Activity's `ActivityResultRegistry` with fixed keys, so a result outliving a recreation still arrives. Tests: `AppNavigatorTest`, `AppNavHostTest`, `MainActivitySmokeTest`, `TwoPaneSmokeTest`.
 
 ## Two panes
 

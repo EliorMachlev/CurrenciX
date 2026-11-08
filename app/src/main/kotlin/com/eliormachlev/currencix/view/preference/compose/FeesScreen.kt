@@ -19,15 +19,15 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.model.Fee
+import com.eliormachlev.currencix.repository.FeeStore
 import com.eliormachlev.currencix.view.compose.LedgerRow
 import com.eliormachlev.currencix.view.compose.Ltr
 import com.eliormachlev.currencix.view.compose.ProseTheme
+import com.eliormachlev.currencix.view.compose.collectAsStateWithLifecycle
 import com.eliormachlev.currencix.view.compose.theme.Spacing
-import com.eliormachlev.currencix.viewmodel.preference.FeeManagerViewModel
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 
@@ -69,16 +69,16 @@ internal sealed interface EditorKind {
 }
 
 /**
- * Full fee-manager screen. Observes fees via the
- * [viewModel]; opens per-category picker/editor sheets via local state so a
+ * Full fee-manager screen. Reads fees from the
+ * [store]; opens per-category picker/editor sheets via local state so a
  * single [FeeEditorSheet] instance is reused across categories. Currency
  * selection is fully compose-native — [FeeEditorSheet] hosts its own
  * [com.eliormachlev.currencix.view.main.spinner.CurrencyPickerSheet], so this
  * screen doesn't need to thread a picker callback in.
  */
 @Composable
-fun FeesScreen(viewModel: FeeManagerViewModel) {
-    val lists = observeFeeLists(viewModel)
+fun FeesScreen(store: FeeStore) {
+    val lists = observeFeeLists(store)
     var openPicker by remember { mutableStateOf<GlobalFeeKind?>(null) }
     var openEditor by remember { mutableStateOf<EditorTarget?>(null) }
 
@@ -94,7 +94,7 @@ fun FeesScreen(viewModel: FeeManagerViewModel) {
         GlobalPickerHost(
             kind = kind,
             fees = lists.of(kind),
-            viewModel = viewModel,
+            store = store,
             onDismiss = { openPicker = null },
             onOpenEditor = { openEditor = it },
         )
@@ -103,7 +103,7 @@ fun FeesScreen(viewModel: FeeManagerViewModel) {
     openEditor?.let { target ->
         EditorHost(
             target = target,
-            viewModel = viewModel,
+            store = store,
             onDismiss = { openEditor = null },
         )
     }
@@ -131,10 +131,10 @@ private data class FeeLists(
 }
 
 @Composable
-private fun observeFeeLists(viewModel: FeeManagerViewModel): FeeLists {
-    val fees by viewModel.fees.collectAsStateWithLifecycle()
-    val activeExchangeId by viewModel.activeExchangeId.collectAsStateWithLifecycle()
-    val activeBankId by viewModel.activeBankId.collectAsStateWithLifecycle()
+private fun observeFeeLists(store: FeeStore): FeeLists {
+    val fees by store.fees.collectAsStateWithLifecycle()
+    val activeExchangeId by store.activeExchangeId.collectAsStateWithLifecycle()
+    val activeBankId by store.activeBankId.collectAsStateWithLifecycle()
     return FeeLists(
         exchange = GlobalFees(remember(fees) { fees.filterIsInstance<Fee.GlobalExchange>().toImmutableList() }, activeExchangeId),
         bank = GlobalFees(remember(fees) { fees.filterIsInstance<Fee.GlobalBank>().toImmutableList() }, activeBankId),
@@ -150,7 +150,7 @@ private fun observeFeeLists(viewModel: FeeManagerViewModel): FeeLists {
 private fun GlobalPickerHost(
     kind: GlobalFeeKind,
     fees: GlobalFees<out Fee>,
-    viewModel: FeeManagerViewModel,
+    store: FeeStore,
     onDismiss: () -> Unit,
     onOpenEditor: (EditorTarget) -> Unit,
 ) {
@@ -165,8 +165,8 @@ private fun GlobalPickerHost(
             FeePickerActions(
                 onPicked = { picked ->
                     when (kind) {
-                        GlobalFeeKind.EXCHANGE -> viewModel.setActiveExchangeId(picked)
-                        GlobalFeeKind.BANK -> viewModel.setActiveBankId(picked)
+                        GlobalFeeKind.EXCHANGE -> store.activeExchangeId.set(picked)
+                        GlobalFeeKind.BANK -> store.activeBankId.set(picked)
                     }
                 },
                 onAdd = { onOpenEditor(EditorTarget(EditorKind.Global(kind))) },
@@ -183,7 +183,7 @@ private fun GlobalPickerHost(
 @Composable
 private fun EditorHost(
     target: EditorTarget,
-    viewModel: FeeManagerViewModel,
+    store: FeeStore,
     onDismiss: () -> Unit,
 ) {
     val kind = target.kind
@@ -199,13 +199,13 @@ private fun EditorHost(
         isPair = isPair,
         onDismiss = onDismiss,
         onConfirm = { draft ->
-            persistEditorConfirm(viewModel, target, draft)
+            persistEditorConfirm(store, target, draft)
             onDismiss()
         },
         onDelete =
             target.existing?.let { existing ->
                 {
-                    viewModel.deleteFee(existing.id)
+                    store.deleteFee(existing.id)
                     onDismiss()
                 }
             },
@@ -318,7 +318,7 @@ private fun LazyListScope.specificPairSection(
  * focused on presentation and the `when` on editor kind lives in one spot.
  */
 private fun persistEditorConfirm(
-    viewModel: FeeManagerViewModel,
+    store: FeeStore,
     target: EditorTarget,
     draft: FeeDraft,
 ) {
@@ -329,7 +329,7 @@ private fun persistEditorConfirm(
                 is EditorKind.Global -> existing.withEditableFields(draft.name, draft.percent, draft.isActive)
                 EditorKind.Pair -> draft.toSpecificPair(id = existing.id) ?: return
             }
-        viewModel.updateFee(updated)
+        store.updateFee(updated)
     } else {
         val created =
             when (target.kind) {
@@ -344,8 +344,8 @@ private fun persistEditorConfirm(
                     draft.toSpecificPair() ?: return
                 }
             }
-        viewModel.addFee(created)
-        adoptFirstGlobalAsActive(viewModel, target.kind, created.id)
+        store.addFee(created)
+        adoptFirstGlobalAsActive(store, target.kind, created.id)
     }
 }
 
@@ -356,18 +356,18 @@ private fun persistEditorConfirm(
  * [persistEditorConfirm] to keep NestedBlockDepth under the detekt threshold.
  */
 private fun adoptFirstGlobalAsActive(
-    viewModel: FeeManagerViewModel,
+    store: FeeStore,
     kind: EditorKind,
     createdId: String,
 ) {
     if (kind !is EditorKind.Global) return
     when (kind.globalKind) {
         GlobalFeeKind.EXCHANGE -> {
-            if (viewModel.activeExchangeId.value == null) viewModel.setActiveExchangeId(createdId)
+            if (store.activeExchangeId.get() == null) store.activeExchangeId.set(createdId)
         }
 
         GlobalFeeKind.BANK -> {
-            if (viewModel.activeBankId.value == null) viewModel.setActiveBankId(createdId)
+            if (store.activeBankId.get() == null) store.activeBankId.set(createdId)
         }
     }
 }

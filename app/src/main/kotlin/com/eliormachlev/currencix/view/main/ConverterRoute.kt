@@ -278,12 +278,12 @@ private fun ConverterOverlays(
     val viewModel = host.viewModel
     when (overlay) {
         ConverterOverlay.ProviderPicker -> {
-            val current by host.preferenceModel.apiProvider.collectAsStateWithLifecycle()
+            val current by host.preferences.apiProvider.collectAsStateWithLifecycle()
             ProviderPickerWithKeyPrompt(
                 selected = current,
-                viewModel = host.preferenceModel,
+                settings = host.preferences,
                 onDismiss = onDismiss,
-                onPicked = host.preferenceModel::setApiProvider,
+                onPicked = host.preferences::setApiProvider,
             )
         }
 

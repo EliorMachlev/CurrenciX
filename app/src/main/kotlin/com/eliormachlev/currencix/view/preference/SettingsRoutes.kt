@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.retain.retain
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -24,6 +25,8 @@ import com.eliormachlev.currencix.view.compose.AppSnackbar
 import com.eliormachlev.currencix.view.compose.LocalAppSnackbar
 import com.eliormachlev.currencix.view.compose.ScreenScaffold
 import com.eliormachlev.currencix.view.compose.applicationViewModel
+import com.eliormachlev.currencix.view.compose.currentApplication
+import com.eliormachlev.currencix.view.compose.rememberDatabase
 import com.eliormachlev.currencix.view.compose.showOrToast
 import com.eliormachlev.currencix.view.navigation.Screen
 import com.eliormachlev.currencix.view.navigation.SettingsTopic
@@ -34,9 +37,8 @@ import com.eliormachlev.currencix.view.preference.compose.PreferenceScreenCallba
 import com.eliormachlev.currencix.view.preference.compose.ReceiptLanguagesScreen
 import com.eliormachlev.currencix.view.preference.compose.titleRes
 import com.eliormachlev.currencix.viewmodel.preference.BackupViewModel
-import com.eliormachlev.currencix.viewmodel.preference.FeeManagerViewModel
-import com.eliormachlev.currencix.viewmodel.preference.PreferenceViewModel
-import com.eliormachlev.currencix.viewmodel.preference.ReceiptLanguagesViewModel
+import com.eliormachlev.currencix.viewmodel.preference.PreferenceSettings
+import com.eliormachlev.currencix.viewmodel.preference.ReceiptLanguagesStateHolder
 
 /**
  * Settings: its list of categories ([topic] null), or one category's own
@@ -53,7 +55,8 @@ fun SettingsRoute(
     onThemeRequiresRestart: () -> Unit,
 ) {
     val context = LocalContext.current
-    val viewModel = applicationViewModel { PreferenceViewModel(it) }
+    val application = currentApplication()
+    val settings = remember(application) { PreferenceSettings(application) }
     val callbacks =
         remember(context, onOpen, onThemeRequiresRestart) {
             PreferenceScreenCallbacks(
@@ -63,25 +66,26 @@ fun SettingsRoute(
             )
         }
     SettingsScaffold(titleRes = topic?.titleRes ?: R.string.title_preferences, onBack = onBack) {
-        PreferenceScreen(viewModel = viewModel, callbacks = callbacks, topic = topic)
+        PreferenceScreen(settings = settings, callbacks = callbacks, topic = topic)
     }
 }
 
 /** The fee manager — from Settings, the converter's drawer and fee chip, or the cart. */
 @Composable
 fun FeesRoute(onBack: () -> Unit) {
-    val viewModel = applicationViewModel { FeeManagerViewModel(it) }
+    val fees = rememberDatabase().fees
     SettingsScaffold(titleRes = R.string.fee_manager_title, onBack = onBack) {
-        FeesScreen(viewModel = viewModel)
+        FeesScreen(store = fees)
     }
 }
 
 /** The languages receipts are read in: add one (for good or a trip), keep it longer, or delete it. */
 @Composable
 fun ReceiptLanguagesRoute(onBack: () -> Unit) {
-    val viewModel = applicationViewModel { ReceiptLanguagesViewModel(it) }
+    val application = currentApplication()
+    val holder = retain { ReceiptLanguagesStateHolder(application) }
     SettingsScaffold(titleRes = R.string.receipt_languages_title, onBack = onBack) {
-        ReceiptLanguagesScreen(viewModel = viewModel)
+        ReceiptLanguagesScreen(holder = holder)
     }
 }
 

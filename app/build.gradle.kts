@@ -423,6 +423,9 @@ dependencies {
     implementation("androidx.compose.foundation:foundation")
     implementation("androidx.compose.material3:material3")
     implementation("androidx.compose.runtime:runtime")
+    // `retain`: keeps a screen's state holder across rotation and drops it when
+    // the screen is left for good (the role a ViewModel played).
+    implementation("androidx.compose.runtime:runtime-retain")
     implementation("androidx.activity:activity-compose:1.13.0")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:$livecycleVersion")
     // Bridges StateFlow → Compose (`collectAsStateWithLifecycle`), which is

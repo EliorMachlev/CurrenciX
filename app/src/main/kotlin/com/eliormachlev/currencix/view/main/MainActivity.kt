@@ -25,8 +25,6 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import androidx.lifecycle.viewmodel.initializer
-import androidx.lifecycle.viewmodel.viewModelFactory
 import androidx.window.layout.FoldingFeature
 import androidx.window.layout.WindowInfoTracker
 import com.eliormachlev.currencix.R
@@ -59,7 +57,7 @@ import com.eliormachlev.currencix.view.preference.SettingsRoute
 import com.eliormachlev.currencix.view.timeline.TimelineRoute
 import com.eliormachlev.currencix.viewmodel.main.MainViewModel
 import com.eliormachlev.currencix.viewmodel.main.Operator
-import com.eliormachlev.currencix.viewmodel.preference.PreferenceViewModel
+import com.eliormachlev.currencix.viewmodel.preference.PreferenceSettings
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 
@@ -300,17 +298,14 @@ class MainActivity : ComponentActivity() {
     }
 
     /**
-     * The converter screen's dependencies, built once per activity. Its
-     * PreferenceViewModel comes from an initializer, not the default factory,
-     * which would find the constructor by reflection.
+     * The converter screen's dependencies, built once per activity.
      */
     private fun createConverterHost(playReveal: Boolean): ConverterHost {
         val status = ConverterStatus(this, viewModel, snackbar).also { it.observe(this) }
         val heroCapture = LayerCapture()
-        val preferenceFactory = viewModelFactory { initializer { PreferenceViewModel(application) } }
         return ConverterHost(
             viewModel = viewModel,
-            preferenceModel = ViewModelProvider(this, preferenceFactory)[PreferenceViewModel::class.java],
+            preferences = PreferenceSettings(application),
             status = status,
             share = ConversionShare(this, viewModel, heroCapture, status),
             wordmarkReveal =

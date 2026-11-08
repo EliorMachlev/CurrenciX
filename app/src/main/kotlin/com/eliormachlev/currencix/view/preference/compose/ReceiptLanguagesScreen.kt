@@ -51,7 +51,7 @@ import com.eliormachlev.currencix.view.compose.fieldName
 import com.eliormachlev.currencix.view.compose.theme.Spacing
 import com.eliormachlev.currencix.viewmodel.preference.ReceiptLanguageRow
 import com.eliormachlev.currencix.viewmodel.preference.ReceiptLanguagesState
-import com.eliormachlev.currencix.viewmodel.preference.ReceiptLanguagesViewModel
+import com.eliormachlev.currencix.viewmodel.preference.ReceiptLanguagesStateHolder
 import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalTime
@@ -93,8 +93,8 @@ private sealed interface LanguagePrompt {
  * time they pick, for a trip).
  */
 @Composable
-fun ReceiptLanguagesScreen(viewModel: ReceiptLanguagesViewModel) {
-    val state by viewModel.state.collectAsStateWithLifecycle()
+fun ReceiptLanguagesScreen(holder: ReceiptLanguagesStateHolder) {
+    val state by holder.state.collectAsStateWithLifecycle()
     var prompt by remember { mutableStateOf<LanguagePrompt?>(null) }
     ReceiptLanguagesList(
         state = state,
@@ -114,7 +114,7 @@ fun ReceiptLanguagesScreen(viewModel: ReceiptLanguagesViewModel) {
                 initialUntil = null,
                 confirmLabel = stringResource(R.string.receipt_setup_download),
                 onConfirm = { until ->
-                    viewModel.add(open.language, until)
+                    holder.add(open.language, until)
                     close()
                 },
                 onDismiss = close,
@@ -127,7 +127,7 @@ fun ReceiptLanguagesScreen(viewModel: ReceiptLanguagesViewModel) {
                 initialUntil = open.row.keepUntil,
                 confirmLabel = stringResource(R.string.receipt_languages_save),
                 onConfirm = { until ->
-                    viewModel.keep(open.row.language, until)
+                    holder.keep(open.row.language, until)
                     close()
                 },
                 onDismiss = close,
@@ -139,7 +139,7 @@ fun ReceiptLanguagesScreen(viewModel: ReceiptLanguagesViewModel) {
             DeleteLanguageSheet(
                 language = open.language,
                 onConfirm = {
-                    viewModel.delete(open.language)
+                    holder.delete(open.language)
                     close()
                 },
                 onDismiss = close,

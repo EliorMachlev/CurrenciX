@@ -2,68 +2,54 @@ package com.eliormachlev.currencix.viewmodel.preference
 
 import android.app.Application
 import android.os.LocaleList
-import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.viewModelScope
 import com.eliormachlev.currencix.model.ApiProvider
 import com.eliormachlev.currencix.model.AppTheme
 import com.eliormachlev.currencix.model.Language
 import com.eliormachlev.currencix.model.RefreshInterval
 import com.eliormachlev.currencix.repository.Database
 import com.eliormachlev.currencix.repository.ExchangeRatesRepository
+import com.eliormachlev.currencix.repository.persistence.Pref
 import com.eliormachlev.currencix.util.androidLanguageCode
 import com.eliormachlev.currencix.util.appLocales
 import com.eliormachlev.currencix.util.setAppLocales
 import com.eliormachlev.currencix.util.setAppNightMode
-import com.eliormachlev.currencix.viewmodel.util.stateInWhileSubscribed
-import kotlinx.coroutines.flow.StateFlow
 
-class PreferenceViewModel(
+/**
+ * The settings screens' view of the stored settings: each setting as its [Pref]
+ * (the screen follows it with `collectAsStateWithLifecycle`), and the few
+ * changes that do more than store a value. Holds no state of its own, so
+ * there is nothing to keep across a rotation: build it where it is used.
+ */
+class PreferenceSettings(
     private val app: Application,
-) : AndroidViewModel(app) {
+) {
     private val db = Database(app)
 
-    val apiProvider: StateFlow<ApiProvider> =
-        db.providers.apiProvider.stateInWhileSubscribed(viewModelScope)
-    val fallbackProvider: StateFlow<ApiProvider> =
-        db.providers.fallbackProvider.stateInWhileSubscribed(viewModelScope)
-    val isShowUnreliableProvidersEnabled: StateFlow<Boolean> =
-        db.providers.showUnreliable.stateInWhileSubscribed(viewModelScope)
+    val apiProvider: Pref<ApiProvider> = db.providers.apiProvider
+    val fallbackProvider: Pref<ApiProvider> = db.providers.fallbackProvider
+    val isShowUnreliableProvidersEnabled: Pref<Boolean> = db.providers.showUnreliable
 
     /** The API key entered for each keyed provider. */
-    val apiKeys: StateFlow<Map<ApiProvider, String>> =
-        db.providers.apiKeys.stateInWhileSubscribed(viewModelScope)
-    val isPreviewConversionEnabled: StateFlow<Boolean> =
-        db.display.previewConversion.stateInWhileSubscribed(viewModelScope)
-    val isExpandedKeypadEnabled: StateFlow<Boolean> =
-        db.display.expandedKeypad.stateInWhileSubscribed(viewModelScope)
-    val isHapticFeedbackEnabled: StateFlow<Boolean> =
-        db.display.hapticFeedback.stateInWhileSubscribed(viewModelScope)
+    val apiKeys: Pref<Map<ApiProvider, String>> = db.providers.apiKeys
+    val isPreviewConversionEnabled: Pref<Boolean> = db.display.previewConversion
+    val isExpandedKeypadEnabled: Pref<Boolean> = db.display.expandedKeypad
+    val isHapticFeedbackEnabled: Pref<Boolean> = db.display.hapticFeedback
 
-    val isClickSoundsEnabled: StateFlow<Boolean> =
-        db.display.clickSounds.stateInWhileSubscribed(viewModelScope)
+    val isClickSoundsEnabled: Pref<Boolean> = db.display.clickSounds
 
-    val isHighRefreshRateEnabled: StateFlow<Boolean> =
-        db.display.highRefreshRate.stateInWhileSubscribed(viewModelScope)
+    val isHighRefreshRateEnabled: Pref<Boolean> = db.display.highRefreshRate
 
-    val isAppLockEnabled: StateFlow<Boolean> =
-        db.privacy.appLock.stateInWhileSubscribed(viewModelScope)
+    val isAppLockEnabled: Pref<Boolean> = db.privacy.appLock
 
-    val isPrivateRequestsEnabled: StateFlow<Boolean> =
-        db.privacy.privateRequests.stateInWhileSubscribed(viewModelScope)
+    val isPrivateRequestsEnabled: Pref<Boolean> = db.privacy.privateRequests
 
-    val isBlockScreenshotsEnabled: StateFlow<Boolean> =
-        db.privacy.blockScreenshots.stateInWhileSubscribed(viewModelScope)
+    val isBlockScreenshotsEnabled: Pref<Boolean> = db.privacy.blockScreenshots
 
-    val isDynamicColorEnabled: StateFlow<Boolean> =
-        db.display.dynamicColor.stateInWhileSubscribed(viewModelScope)
-    val decimalPlaces: StateFlow<Int> =
-        db.display.decimalPlaces.stateInWhileSubscribed(viewModelScope)
-    val dateFormat: StateFlow<String> =
-        db.display.dateFormat.stateInWhileSubscribed(viewModelScope)
-    val isAutoRefreshEnabled: StateFlow<Boolean> =
-        db.providers.autoRefresh.stateInWhileSubscribed(viewModelScope)
-    val autoRefreshInterval: StateFlow<RefreshInterval> =
-        db.providers.autoRefreshInterval.stateInWhileSubscribed(viewModelScope)
+    val isDynamicColorEnabled: Pref<Boolean> = db.display.dynamicColor
+    val decimalPlaces: Pref<Int> = db.display.decimalPlaces
+    val dateFormat: Pref<String> = db.display.dateFormat
+    val isAutoRefreshEnabled: Pref<Boolean> = db.providers.autoRefresh
+    val autoRefreshInterval: Pref<RefreshInterval> = db.providers.autoRefreshInterval
 
     fun setApiProvider(api: ApiProvider) {
         persistAndRefreshRates { db.providers.apiProvider.set(api) }
