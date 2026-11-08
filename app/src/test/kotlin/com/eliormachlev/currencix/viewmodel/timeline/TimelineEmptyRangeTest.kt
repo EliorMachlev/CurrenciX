@@ -73,8 +73,7 @@ class TimelineEmptyRangeTest {
     }
 
     // Collected for as long as [model] lives, as a screen showing it would.
-    private fun <T> StateFlow<T>.observed(): StateFlow<T> =
-        also { flow -> collecting.launch { flow.collect {} } }
+    private fun <T> StateFlow<T>.observed(): StateFlow<T> = also { flow -> collecting.launch { flow.collect {} } }
 
     private fun idle() = shadowOf(Looper.getMainLooper()).idle()
 

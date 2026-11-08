@@ -45,7 +45,6 @@ class ReceiptLanguagesStateHolder(
     private val app: Application,
     private val dispatchers: AppDispatchers = AppDispatchers.production,
 ) : RetainedScope(dispatchers) {
-
     // Bumped after a change the flows below don't see (a file deleted).
     private val refresh = MutableStateFlow(0)
 

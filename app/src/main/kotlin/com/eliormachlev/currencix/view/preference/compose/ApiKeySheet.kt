@@ -9,6 +9,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.res.stringResource
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.model.ApiProvider
+import com.eliormachlev.currencix.view.compose.collectAsStateWithLifecycle
 import com.eliormachlev.currencix.viewmodel.preference.PreferenceSettings
 
 /** [provider]'s key, trimmed on the way in; how to get one is its own text. */
