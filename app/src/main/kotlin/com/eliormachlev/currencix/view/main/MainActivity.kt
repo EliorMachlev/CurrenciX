@@ -15,6 +15,8 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.retain.retain
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -22,7 +24,6 @@ import androidx.core.content.ContextCompat
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.splashscreen.SplashScreenViewProvider
 import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.window.layout.FoldingFeature
@@ -55,7 +56,7 @@ import com.eliormachlev.currencix.view.preference.FeesRoute
 import com.eliormachlev.currencix.view.preference.ReceiptLanguagesRoute
 import com.eliormachlev.currencix.view.preference.SettingsRoute
 import com.eliormachlev.currencix.view.timeline.TimelineRoute
-import com.eliormachlev.currencix.viewmodel.main.MainViewModel
+import com.eliormachlev.currencix.viewmodel.main.MainStateHolder
 import com.eliormachlev.currencix.viewmodel.main.Operator
 import com.eliormachlev.currencix.viewmodel.preference.PreferenceSettings
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -79,8 +80,12 @@ private const val SPLASH_EXIT_FADE_MILLIS = Motion.TURN_MILLIS / 4L
  * converter.
  */
 class MainActivity : ComponentActivity() {
-    private lateinit var viewModel: MainViewModel
-    private lateinit var converterHost: ConverterHost
+    // The converter's state, held by the composition (`retain`); set while composed,
+    // so hardware-keyboard input can reach it.
+    private var main: MainStateHolder? = null
+
+    // Whether the wordmark reveal plays: a cold start only, not a recreation.
+    private var playReveal = false
 
     // Set while composed; lets hardware-keyboard input check which screen is up.
     private var navigator: AppNavigator? = null
@@ -124,8 +129,7 @@ class MainActivity : ComponentActivity() {
         // pad for the status bar, each screen for the navigation bar.
         enableEdgeToEdge()
 
-        viewModel = ViewModelProvider(this, MainViewModel.factory(application))[MainViewModel::class.java]
-        converterHost = createConverterHost(playReveal = isColdStart)
+        playReveal = isColdStart
         // Only a fresh launch: a recreated Activity already applied it.
         if (savedInstanceState == null) launchRequest.value = ConverterLaunch.parse(intent)
 
@@ -189,8 +193,15 @@ class MainActivity : ComponentActivity() {
         val nav = rememberAppNavigator()
         val foldingFeature by foldingFeatureState
         val request by launchRequest
-        LaunchedEffect(request, nav) {
-            request?.let { apply(it, nav) }
+        val main = retain { MainStateHolder(application) }
+        val converterHost = remember(main) { createConverterHost(main) }
+        LaunchedEffect(converterHost) { converterHost.status.observe(this@MainActivity, this) }
+        DisposableEffect(main) {
+            this@MainActivity.main = main
+            onDispose { this@MainActivity.main = null }
+        }
+        LaunchedEffect(request, nav, main) {
+            request?.let { apply(it, nav, main) }
             launchRequest.value = null
         }
         DisposableEffect(nav) {
@@ -199,7 +210,7 @@ class MainActivity : ComponentActivity() {
         }
         CompositionLocalProvider(LocalAppSnackbar provides snackbar) {
             Box(Modifier.fillMaxSize()) {
-                AppNavHost(navigator = nav) { screen -> Destination(screen, nav, foldingFeature) }
+                AppNavHost(navigator = nav) { screen -> Destination(screen, nav, DestinationState(main, converterHost, foldingFeature)) }
                 AppSnackbarHost(snackbar, Modifier.align(Alignment.BottomCenter))
             }
         }
@@ -215,22 +226,23 @@ class MainActivity : ComponentActivity() {
     private fun apply(
         request: ConverterLaunch.Request,
         nav: AppNavigator,
+        main: MainStateHolder,
     ) {
         when (request) {
             is ConverterLaunch.Request.Convert -> {
                 AppShortcuts.reportUsed(this, request.pair)
-                viewModel.setCurrencyPair(request.pair)
-                request.amount?.let(viewModel.input::setAmount)
+                main.setCurrencyPair(request.pair)
+                request.amount?.let(main.input::setAmount)
                 nav.navigate(Screen.Converter)
             }
 
             ConverterLaunch.Request.OpenCart -> {
-                nav.navigate(Screen.Cart(viewModel.getBaseCurrency().value, viewModel.getDestinationCurrency().value))
+                nav.navigate(Screen.Cart(main.getBaseCurrency().value, main.getDestinationCurrency().value))
             }
 
             // Back from the chart lands on the converter, on the same pair.
             is ConverterLaunch.Request.OpenChart -> {
-                viewModel.setCurrencyPair(request.pair)
+                main.setCurrencyPair(request.pair)
                 nav.navigate(Screen.Converter)
                 nav.navigate(Screen.Timeline(request.pair.from, request.pair.to))
             }
@@ -241,8 +253,9 @@ class MainActivity : ComponentActivity() {
     private fun Destination(
         screen: Screen,
         nav: AppNavigator,
-        foldingFeature: FoldingFeature?,
+        state: DestinationState,
     ) {
+        val (main, converterHost, foldingFeature) = state
         when (screen) {
             Screen.Converter -> {
                 ConverterRoute(host = converterHost, navigator = nav, foldingFeature = foldingFeature)
@@ -254,8 +267,8 @@ class MainActivity : ComponentActivity() {
                     onBack = nav::pop,
                     foldingFeature = foldingFeature,
                     onConvertAt = { pair, date ->
-                        viewModel.setCurrencyPair(pair)
-                        viewModel.setHistoricalDate(date)
+                        main.setCurrencyPair(pair)
+                        main.setHistoricalDate(date)
                         nav.navigate(Screen.Converter)
                     },
                 )
@@ -297,17 +310,25 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    // What a destination is drawn from: the converter's state and host, and the fold.
+    private data class DestinationState(
+        val main: MainStateHolder,
+        val converterHost: ConverterHost,
+        val foldingFeature: FoldingFeature?,
+    )
+
     /**
-     * The converter screen's dependencies, built once per activity.
+     * The converter screen's dependencies, built once per composition of [main].
+     * Its status follows [main] from a `LaunchedEffect` in [AppContent].
      */
-    private fun createConverterHost(playReveal: Boolean): ConverterHost {
-        val status = ConverterStatus(this, viewModel, snackbar).also { it.observe(this) }
+    private fun createConverterHost(main: MainStateHolder): ConverterHost {
+        val status = ConverterStatus(this, main, snackbar)
         val heroCapture = LayerCapture()
         return ConverterHost(
-            viewModel = viewModel,
+            viewModel = main,
             preferences = PreferenceSettings(application),
             status = status,
-            share = ConversionShare(this, viewModel, heroCapture, status),
+            share = ConversionShare(this, main, heroCapture, status),
             wordmarkReveal =
                 WordmarkReveal(
                     play = playReveal,
@@ -348,7 +369,7 @@ class MainActivity : ComponentActivity() {
 
     private fun handleCharKey(key: Char?): Boolean {
         key ?: return false
-        val input = viewModel.input
+        val input = main?.input ?: return false
         val operator = Operator.fromHardware(key)
         when {
             operator != null -> input.addOperator(operator.display)
@@ -364,7 +385,7 @@ class MainActivity : ComponentActivity() {
 
     private fun handleControlKey(keyCode: Int): Boolean {
         if (keyCode != KeyEvent.KEYCODE_DEL) return false
-        viewModel.input.delete()
+        main?.input?.delete() ?: return false
         return true
     }
 

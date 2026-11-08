@@ -386,7 +386,6 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-runtime:$livecycleVersion")
     // The app lock: when the app as a whole leaves and comes back (view/lock/AppLock).
     implementation("androidx.lifecycle:lifecycle-process:$livecycleVersion")
-    implementation("androidx.lifecycle:lifecycle-viewmodel:$livecycleVersion")
     implementation("androidx.window:window:1.5.1")
     // downloader: OkHttp is the sole HTTP client. Timber-bridged logging
     // interceptor is wired up in HttpClientProvider; provider modules call
@@ -427,20 +426,18 @@ dependencies {
     // the screen is left for good (the role a ViewModel played).
     implementation("androidx.compose.runtime:runtime-retain")
     implementation("androidx.activity:activity-compose:1.13.0")
-    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:$livecycleVersion")
     // Bridges StateFlow → Compose (`collectAsStateWithLifecycle`), which is
     // lifecycle-aware in a way `collectAsState` isn't: it pauses collection
     // when the host goes to STOPPED and resumes on STARTED. Every screen
-    // collects its ViewModel's StateFlows through it.
+    // collects its state holder's StateFlows through it.
     implementation("androidx.lifecycle:lifecycle-runtime-compose:$livecycleVersion")
     // Navigation 3: the whole app is one Activity; screens are NavDisplay
-    // entries over a Compose-owned back stack (view/navigation). The ViewModel
-    // decorator scopes each screen's ViewModel to its back-stack entry, so a
-    // popped screen's state is cleared exactly as a finished Activity's was.
+    // entries over a Compose-owned back stack (view/navigation). The retain
+    // decorator scopes what each screen retains to its back-stack entry, so a
+    // popped screen's state is let go exactly as a finished Activity's was.
     val navigation3Version = "1.2.0"
     implementation("androidx.navigation3:navigation3-runtime:$navigation3Version")
     implementation("androidx.navigation3:navigation3-ui:$navigation3Version")
-    implementation("androidx.lifecycle:lifecycle-viewmodel-navigation3:$livecycleVersion")
     // glance: home-screen widget composed instead of RemoteViews-driven.
     val glanceVersion = "1.2.0"
     implementation("androidx.glance:glance-appwidget:$glanceVersion")

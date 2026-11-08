@@ -114,7 +114,7 @@ import com.eliormachlev.currencix.view.compose.theme.TABULAR_FIGURES
 import com.eliormachlev.currencix.view.compose.theme.stampInk
 import com.eliormachlev.currencix.view.main.spinner.CurrencyPickerSheet
 import com.eliormachlev.currencix.view.navigation.PillSide
-import com.eliormachlev.currencix.viewmodel.main.MainViewModel
+import com.eliormachlev.currencix.viewmodel.main.MainStateHolder
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.delay
@@ -385,7 +385,7 @@ private data class HeroState(
  */
 @Composable
 internal fun MainDisplay(
-    viewModel: MainViewModel,
+    viewModel: MainStateHolder,
     callbacks: MainDisplayCallbacks,
     dateFormatPattern: String,
     banner: BannerContent?,
@@ -428,7 +428,7 @@ internal fun MainDisplay(
 
 @Composable
 private fun observeHeroState(
-    viewModel: MainViewModel,
+    viewModel: MainStateHolder,
     footer: FooterState,
 ): HeroState {
     val context = LocalContext.current
@@ -485,7 +485,7 @@ private fun rememberAmount(
 @Composable
 internal fun ConverterCurrencyPicker(
     side: PillSide,
-    viewModel: MainViewModel,
+    viewModel: MainStateHolder,
     onDismiss: () -> Unit,
 ) {
     val rates by viewModel.getExchangeRates().collectAsStateWithLifecycle()

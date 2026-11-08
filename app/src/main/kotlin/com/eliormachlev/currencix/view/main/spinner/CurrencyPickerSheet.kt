@@ -6,10 +6,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.retain.retain
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.model.Rate
@@ -19,16 +19,10 @@ import com.eliormachlev.currencix.view.compose.collectAsStateWithLifecycle
 import com.eliormachlev.currencix.view.compose.currentApplication
 import com.eliormachlev.currencix.view.compose.dialogs.LedgerBottomSheet
 import com.eliormachlev.currencix.view.compose.rememberDatabase
-import com.eliormachlev.currencix.viewmodel.main.MainViewModel
+import com.eliormachlev.currencix.viewmodel.main.MainStateHolder
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import java.math.BigDecimal
-
-// A distinct key so this sheet's read-only MainViewModel instance doesn't
-// collide with the primary VM the hosting screen may already own on the same
-// ViewModelStore. Matches the intent of the pre-Compose
-// [SearchableSpinnerDialog], which scoped its VM to its own DialogFragment.
-private const val PICKER_MAIN_VM_KEY = "CurrencyPickerSheet.main"
 
 /**
  * Compose-native currency picker — a [LedgerBottomSheet] wrapping the shared
@@ -49,11 +43,8 @@ fun CurrencyPickerSheet(
     onDismiss: () -> Unit,
     selectedCurrency: Currency? = null,
 ) {
-    val mainViewModel: MainViewModel =
-        viewModel(
-            key = PICKER_MAIN_VM_KEY,
-            factory = MainViewModel.factory(currentApplication(), onlyCache = true),
-        )
+    val application = currentApplication()
+    val mainViewModel = retain { MainStateHolder(application, onlyCache = true) }
 
     LedgerBottomSheet(
         title = stringResource(id = R.string.picker_currency_title),

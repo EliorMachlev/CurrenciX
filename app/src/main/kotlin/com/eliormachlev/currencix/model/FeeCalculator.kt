@@ -5,7 +5,7 @@ import java.math.BigDecimal
 import java.math.MathContext
 
 /**
- * Pure fee-stacking math. Extracted from MainViewModel so it can be exercised
+ * Pure fee-stacking math. Extracted from MainStateHolder so it can be exercised
  * without an Android [android.app.Application] context.
  *
  * Inactive fees ([Fee.isActive] == false) are always skipped — the flag lets

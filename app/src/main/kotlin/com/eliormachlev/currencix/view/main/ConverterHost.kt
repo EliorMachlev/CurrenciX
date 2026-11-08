@@ -1,7 +1,7 @@
 package com.eliormachlev.currencix.view.main
 
 import com.eliormachlev.currencix.view.compose.theme.WordmarkReveal
-import com.eliormachlev.currencix.viewmodel.main.MainViewModel
+import com.eliormachlev.currencix.viewmodel.main.MainStateHolder
 import com.eliormachlev.currencix.viewmodel.preference.PreferenceSettings
 
 /**
@@ -11,7 +11,7 @@ import com.eliormachlev.currencix.viewmodel.preference.PreferenceSettings
  * one-shot wordmark reveal.
  */
 internal class ConverterHost(
-    val viewModel: MainViewModel,
+    val viewModel: MainStateHolder,
     val preferences: PreferenceSettings,
     val status: ConverterStatus,
     val share: ConversionShare,

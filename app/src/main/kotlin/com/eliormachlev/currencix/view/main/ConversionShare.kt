@@ -11,7 +11,7 @@ import com.eliormachlev.currencix.util.moneyText
 import com.eliormachlev.currencix.util.shareImageOrText
 import com.eliormachlev.currencix.util.toHumanReadableNumber
 import com.eliormachlev.currencix.view.compose.LayerCapture
-import com.eliormachlev.currencix.viewmodel.main.MainViewModel
+import com.eliormachlev.currencix.viewmodel.main.MainStateHolder
 import timber.log.Timber
 import java.math.BigDecimal
 import java.math.MathContext
@@ -33,7 +33,7 @@ private const val SHARE_FEE_NAME_SEPARATOR = ", "
  */
 internal class ConversionShare(
     private val context: Context,
-    private val viewModel: MainViewModel,
+    private val viewModel: MainStateHolder,
     val heroCapture: LayerCapture,
     private val status: ConverterStatus,
 ) {

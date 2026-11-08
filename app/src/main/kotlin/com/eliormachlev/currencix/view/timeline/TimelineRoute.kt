@@ -58,7 +58,6 @@ import com.eliormachlev.currencix.view.compose.ReadingDirection
 import com.eliormachlev.currencix.view.compose.ScreenScaffold
 import com.eliormachlev.currencix.view.compose.TopBarOverflowMenu
 import com.eliormachlev.currencix.view.compose.TopBarStyle
-import com.eliormachlev.currencix.view.compose.applicationViewModel
 import com.eliormachlev.currencix.view.compose.collectAsStateWithLifecycle
 import com.eliormachlev.currencix.view.compose.currentApplication
 import com.eliormachlev.currencix.view.compose.rememberDatabase
