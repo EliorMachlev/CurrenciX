@@ -15,7 +15,7 @@ The Activity keeps the splash, the XML theme, foldable posture, hardware-keyboar
 
 ## Two panes
 
-From 840 dp the converter stays on the left (40 % of the width, 360–480 dp) and the timeline or cart opens beside it. Each entry carries a `PaneRole`; `TwoPaneSceneStrategy` builds a two-pane scene when a detail sits on a list entry, keyed by the detail so switching details animates only that pane.
+From 840 dp wide and 480 dp tall (so not a phone, even turned sideways) the converter stays on the left (40 % of the width, 360–480 dp) and the timeline or cart opens beside it. Each entry carries a `PaneRole`; `TwoPaneSceneStrategy` builds a two-pane scene when a detail sits on a list entry, keyed by the detail so switching details animates only that pane.
 
 - In two panes the converter's shortcuts `replaceTop` the detail, so one back returns to the converter alone; the timeline beside it follows the converter's pair.
 - The converter picks its row or column layout from the space it's given (`BoxWithConstraints`), not the orientation.
