@@ -1,0 +1,5 @@
+- A phone turned sideways keeps the single-pane layout; two panes only where there is room.
+- Smoother state across rotation: the converter, cart, timeline, backup and receipt languages keep their place.
+- Receipt language changes you confirm are no longer lost if you rotate at that moment.
+- Native libraries are stored uncompressed, so the app installs faster.
+- Leaner release build: the HTTP logger is left out.
