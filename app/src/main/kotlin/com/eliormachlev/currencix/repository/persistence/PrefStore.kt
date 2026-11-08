@@ -5,22 +5,33 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.MutablePreferences
 import androidx.datastore.preferences.core.Preferences
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.Flow
 import java.util.concurrent.ConcurrentHashMap
 
 /**
  * A per-namespace preferences [DataStore], read synchronously and written
  * fire-and-forget (see [CachedStore]), with edits written as changes to
  * [MutablePreferences], the way SharedPreferences edits were.
+ *
+ * Holds a [CachedStore] rather than extending it.
  */
 class PrefStore internal constructor(
     store: DataStore<Preferences>,
     scope: CoroutineScope = storeScope,
-) : CachedStore<Preferences>(store, scope) {
+) {
+    internal val cached = CachedStore(store, scope)
+
+    /** The current preferences, blocking on the first call until the disk read completes. */
+    fun snapshot(): Preferences = cached.snapshot()
+
+    /** [snapshot] seen through [mapper], each change to it. */
+    fun <T> mappedFlow(mapper: (Preferences) -> T): Flow<T> = cached.mappedFlow(mapper)
+
     /** Applies [mutator]: visible to [snapshot] at once, on disk shortly after. */
-    fun edit(mutator: MutablePreferences.() -> Unit) = update { it.edited(mutator) }
+    fun edit(mutator: MutablePreferences.() -> Unit) = cached.update { it.edited(mutator) }
 
     /** [edit], returning once the change is on disk. */
-    suspend fun editAndAwait(mutator: MutablePreferences.() -> Unit) = updateAndAwait { it.edited(mutator) }
+    suspend fun editAndAwait(mutator: MutablePreferences.() -> Unit) = cached.updateAndAwait { it.edited(mutator) }
 }
 
 /** These preferences with [mutator] applied (a new set; this one is unchanged). */
