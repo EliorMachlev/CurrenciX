@@ -218,6 +218,19 @@ jobs:
           pip install --quiet --require-hashes -r .github/scripts/requirements.txt
           python3 .github/scripts/coverage-summary.py "app/build/reports/kover/report${FLAVOR}Debug.xml" "$FLAVOR" >> "$GITHUB_STEP_SUMMARY"
 
+      # The full report (XML for the comparison with master, HTML to browse),
+      # kept for a fortnight; the pull request's comment reads it back.
+      - name: Upload the coverage report
+        if: matrix.check == 'test'
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: coverage-${{ matrix.flavor }}
+          path: |
+            app/build/reports/kover/report${{ matrix.flavor }}Debug.xml
+            app/build/reports/kover/html${{ matrix.flavor }}Debug
+          retention-days: 14
+          if-no-files-found: warn
+
       # A failed test otherwise shows only as "exit code 1": put each one
       # (class, name, message) on the run as an error annotation, readable
       # from the checks page and the API without the full log.
@@ -226,6 +239,70 @@ jobs:
         run: |
           pip install --quiet --require-hashes -r .github/scripts/requirements.txt
           python3 .github/scripts/annotate-test-failures.py "app/build/test-results/**/*.xml"
+
+  # The F-Droid coverage as a comment on the pull request, with how far it
+  # moved from master's last run. Its own job so only it can write to the
+  # pull request. Not for forks, whose token is read-only.
+  coverage-comment:
+    if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      actions: read
+      pull-requests: write
+    steps:
+      - name: Harden the runner
+        uses: step-security/harden-runner@46b06cea07f9e64621fdf066ba77ac6915163d43 # v2.22.3
+        with:
+          egress-policy: audit
+
+      - name: Checkout the code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Download this run's coverage report
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: coverage-Fdroid
+          path: coverage
+
+      # Master's last green run, if its report is still kept: without it the
+      # comment just has no "change" column.
+      - name: Download master's coverage report
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+        run: |
+          run_id=$(gh run list --repo "$REPO" --workflow build.yaml --branch master --event push --status success --limit 1 --json databaseId --jq '.[0].databaseId // empty')
+          [ -n "$run_id" ] && gh run download "$run_id" --repo "$REPO" --name coverage-Fdroid --dir master-coverage || echo "No report from master to compare with."
+
+      - name: Write the comment and post it
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          MARKER: "<!-- coverage-report -->"
+        run: |
+          set -o pipefail
+          pip install --quiet --require-hashes -r .github/scripts/requirements.txt
+          args=(coverage/reportFdroidDebug.xml Fdroid)
+          [ -f master-coverage/reportFdroidDebug.xml ] && args+=(master-coverage/reportFdroidDebug.xml)
+          {
+            echo "$MARKER"
+            python3 .github/scripts/coverage-summary.py "${args[@]}"
+            echo
+            echo "The full report is in this run's \`coverage-Fdroid\` artifact."
+          } > comment.md
+          # One comment, updated by every push, found by its marker.
+          comment_id=$(gh api "repos/$REPO/issues/$PR_NUMBER/comments" --paginate | jq -s -r --arg marker "$MARKER" '[.[][] | select(.body | startswith($marker)) | .id][0] // empty')
+          if [ -n "$comment_id" ]; then
+            gh api --method PATCH "repos/$REPO/issues/comments/$comment_id" --field body=@comment.md
+          else
+            gh api --method POST "repos/$REPO/issues/$PR_NUMBER/comments" --field body=@comment.md
+          fi
 
   fdroid-release-build:
     # F-Droid reproducibility guard: the fdroid release APK must build unsigned
