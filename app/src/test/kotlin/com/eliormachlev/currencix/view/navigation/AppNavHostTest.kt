@@ -25,17 +25,17 @@ class ProbeRetained : RetainObserver {
         created++
     }
 
-    override fun onRetained() {}
+    override fun onRetained() = Unit
 
-    override fun onEnteredComposition() {}
+    override fun onEnteredComposition() = Unit
 
-    override fun onExitedComposition() {}
+    override fun onExitedComposition() = Unit
 
     override fun onRetired() {
         retired++
     }
 
-    override fun onUnused() {}
+    override fun onUnused() = Unit
 
     companion object {
         var created = 0

@@ -12,7 +12,7 @@ import kotlinx.coroutines.cancel
  * started survives a rotation and stops when the screen is gone for good
  * (what `viewModelScope` did for a ViewModel).
  */
-abstract class RetainedScope(
+open class RetainedScope(
     dispatchers: AppDispatchers = AppDispatchers.production,
 ) : RetainObserver {
     protected val scope = CoroutineScope(SupervisorJob() + dispatchers.main)
@@ -20,11 +20,11 @@ abstract class RetainedScope(
     /** Called once the holder is let go of, after its [scope] is cancelled (wipe what must not linger). */
     protected open fun onCleared() {}
 
-    override fun onRetained() {}
+    override fun onRetained() = Unit
 
-    override fun onEnteredComposition() {}
+    override fun onEnteredComposition() = Unit
 
-    override fun onExitedComposition() {}
+    override fun onExitedComposition() = Unit
 
     override fun onRetired() = clear()
 
