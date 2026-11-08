@@ -7,8 +7,8 @@ shields. Text widths are measured with DejaVu Sans (Verdana's metric twin) and f
 `textLength`, so every renderer draws the same box. Needs Pillow.
 """
 
-from html import escape
 from pathlib import Path
+from xml.sax.saxutils import escape
 
 from PIL import ImageFont
 
