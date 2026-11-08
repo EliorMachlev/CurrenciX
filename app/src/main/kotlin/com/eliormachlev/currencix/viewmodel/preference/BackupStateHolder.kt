@@ -57,6 +57,15 @@ class BackupStateHolder(
     }
 
     /**
+     * Closes the import confirmation and leaves its password intact: the sheet hands that
+     * password to the import, which wipes it once it has used it. [dismissDialog] would zero
+     * it first, and a restore with the right password would fail as a wrong one.
+     */
+    fun closeImportConfirmation() {
+        dialog = null
+    }
+
+    /**
      * Confirm the export password prompt: stash the (possibly null) password
      * for the launcher round-trip and clear the dialog so the SAF picker can
      * come up unobstructed. Returns true iff the caller should now fire the
