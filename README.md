@@ -62,7 +62,7 @@ Eight sources, with a fallback for when your main one is down: [Frankfurter](htt
 
 ## 📦 Get it
 
-Download the latest APK from [GitHub Releases](https://github.com/EliorMachlev/CurrenciX/releases): one signed APK for Android 13 or later on arm64-v8a devices (nearly all current phones), plus `SHA256SUMS`, SBOMs (CycloneDX and SPDX) of every library it ships and its signed build provenance. Versions before 1.0 are marked pre-releases. Android 17 and later also check a post-quantum signature; an F-Droid build is prepared.
+Download the latest APK from [GitHub Releases](https://github.com/EliorMachlev/CurrenciX/releases): one signed APK for Android 13 or later on arm64-v8a devices (nearly all current phones), plus `SHA256SUMS`, SBOMs (CycloneDX, and SPDX 3.0.1 from three generators) of the libraries it ships and the build and its signed build provenance. Versions before 1.0 are marked pre-releases. Android 17 and later also check a post-quantum signature; an F-Droid build is prepared.
 
 To check a download, from the folder holding the release files (the second command asks GitHub; for the offline variant, see [verifying a release](docs/markDown/engineering/release.md#verifying-a-release)):
 

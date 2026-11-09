@@ -138,9 +138,10 @@ jobs:
         run: rm -rf "$RUNNER_TEMP/signing" secrets.properties
 
       # The software bill of materials: every library the APK ships, with
-      # versions, hashes and licences, in the two formats audits ask for:
-      # CycloneDX (cyclonedxDirectBom) and SPDX (spdxSbom), both in
-      # app/build.gradle.kts and both from the same runtime classpath.
+      # versions, hashes and licences. CycloneDX (cyclonedxDirectBom) and
+      # the SPDX 2.3 file (spdxSbom) both come from app/build.gradle.kts and
+      # the same runtime classpath; the SPDX 3.0.1 files, from three
+      # generators, are written by the spdx3-sboms action.
       - name: Write the SBOMs
         env:
           VERSION: ${{ steps.version.outputs.name }}
@@ -148,13 +149,19 @@ jobs:
           ./gradlew :app:cyclonedxDirectBom :app:spdxSbom
           out=app/build/outputs/apk/fdroid/release
           cp app/build/reports/sbom/currencix-sbom.cdx.json "$out/currencix-${VERSION}-sbom.cdx.json"
-          cp app/build/spdx/release.spdx.json "$out/currencix-${VERSION}-sbom.spdx.json"
+
+      - name: Write the SPDX 3.0.1 SBOMs
+        uses: $/.github/actions/spdx3-sboms
+        with:
+          out-dir: app/build/outputs/apk/fdroid/release
+          name: currencix-${{ steps.version.outputs.name }}-sbom
+          version: ${{ steps.version.outputs.name }}
 
       - name: Write checksums
         working-directory: app/build/outputs/apk/fdroid/release
         run: |
           set -o pipefail
-          sha256sum ./*-release.apk ./*-sbom.cdx.json ./*-sbom.spdx.json | sed 's| \./| |' > SHA256SUMS
+          sha256sum ./*-release.apk ./*-sbom.cdx.json ./*-sbom.*.spdx3.json | sed 's| \./| |' > SHA256SUMS
 
       - name: Upload the APK
         id: upload
@@ -164,7 +171,7 @@ jobs:
           path: |
             app/build/outputs/apk/fdroid/release/*-release.apk
             app/build/outputs/apk/fdroid/release/*-sbom.cdx.json
-            app/build/outputs/apk/fdroid/release/*-sbom.spdx.json
+            app/build/outputs/apk/fdroid/release/*-sbom.*.spdx3.json
             app/build/outputs/apk/fdroid/release/SHA256SUMS
           if-no-files-found: error
 
@@ -225,7 +232,7 @@ jobs:
           subject-path: |
             release/*.apk
             release/*-sbom.cdx.json
-            release/*-sbom.spdx.json
+            release/*-sbom.*.spdx3.json
 
       # The same attestations as a file for the release: OpenSSF Scorecard's
       # Signed-Releases check only looks at release files, and takes a
