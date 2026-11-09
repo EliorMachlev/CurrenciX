@@ -19,6 +19,7 @@ import java.awt.font.FontRenderContext
 import java.awt.image.BufferedImage
 import java.io.FileInputStream
 import java.util.Properties
+import java.util.UUID
 import javax.imageio.ImageIO
 
 plugins {
@@ -921,7 +922,14 @@ spdxSbom {
             }
             document {
                 name.set("CurrenciX")
-                namespace.set("https://github.com/EliorMachlev/CurrenciX/spdx/" + android.defaultConfig.versionName)
+                // SPDX wants a new namespace for every document, so the CI run (and its attempt)
+                // is part of it; a build on a developer machine gets a random one.
+                val documentId =
+                    providers
+                        .environmentVariable("GITHUB_RUN_ID")
+                        .zip(providers.environmentVariable("GITHUB_RUN_ATTEMPT")) { run, attempt -> "$run-$attempt" }
+                        .orElse(providers.provider { UUID.randomUUID().toString() })
+                namespace.set(documentId.map { "https://github.com/EliorMachlev/CurrenciX/spdx/${android.defaultConfig.versionName}-$it" })
                 creator.set("Organization: CurrenciX")
                 packageSupplier.set("Organization: CurrenciX")
             }
