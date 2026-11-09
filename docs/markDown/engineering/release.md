@@ -4,7 +4,7 @@
 
 1. A PR titled `chore: version <x.y.z>` sets `versionName` and `versionCode` in [`app/build.gradle.kts`](../../../app/build.gradle.kts) ([version codes](#version-codes)) and adds the hand-written fastlane changelog for that code. Merge it once CI is green.
 2. Tag `master` (next section). The release workflow builds, signs and publishes; nothing else is needed.
-3. Check the release: the APK, `SHA256SUMS`, the two SBOMs and the provenance file are attached ([verify them](#verifying-a-release)).
+3. Check the release: the APK, `SHA256SUMS`, the four SBOMs and the provenance file are attached ([verify them](#verifying-a-release)).
 
 ## Releasing is pushing a tag
 
@@ -16,7 +16,7 @@ Tag a commit of `master` `v<versionName>` (`v0.1.1`) and push it, or, with no gi
 4. steps 1 to 3 are [`build-release.yaml`](../../../.github/workflows/build-release.yaml), a reusable workflow that `release-apk.yaml` calls; its `build` job holds the keys and has no token to sign with, and its `attest` job (tags only) holds the signing identity and never sees the keys: it attests the files' build provenance and uploads it as an in-toto provenance bundle (a release file is what OpenSSF Scorecard's Signed-Releases check reads; the file's name is set in the workflow). The attestation therefore names `build-release.yaml` as the builder, which is how the build reaches SLSA build level 3 by [GitHub's recipe](https://docs.github.com/en/actions/how-tos/secure-your-work/use-artifact-attestations/increase-security-rating);
 5. `release-apk.yaml`'s `publish` job, the only one allowed to write and one that never sees the keys or the signing identity, publishes the GitHub release "CurrenciX <version>" with those files.
 
-A tag whose version has a `-` (`v1.24.0-beta1`), or any `0.x` version (everything before 1.0), publishes a GitHub pre-release instead of a release. Run by hand instead (no tag), the workflow builds the signed APK, uploads it with the SBOM and `SHA256SUMS` as a run artifact, and previews the notes a tag would get; it publishes nothing. Nothing else can start it, so PRs never see the keys, and it builds without Gradle's cache (`cache-disabled`), so nothing a branch's run cached can reach the signed APKs.
+A tag whose version has a `-` (`v1.24.0-beta1`), or any `0.x` version (everything before 1.0), publishes a GitHub pre-release instead of a release. Run by hand instead (no tag), the workflow builds the signed APK, uploads it with the SBOMs and `SHA256SUMS` as a run artifact, and previews the notes a tag would get; it publishes nothing. Nothing else can start it, so PRs never see the keys, and it builds without Gradle's cache (`cache-disabled`), so nothing a branch's run cached can reach the signed APKs.
 
 **Release notes** are only the change list, from `.github/scripts/release-notes.py <tag>`: the squashed PR titles since the previous `v*` tag (the first release counted from the rebrand, [#89](https://github.com/EliorMachlev/CurrenciX/pull/89)), grouped **New** (`feat`), **Fixes** (`fix`), **Faster** (`perf`), **Translations** (`i18n`) and **Other changes**; `chore`, `ci`, `build`, `deps`, `refactor`, `test`, `docs`, `style` and `revert` are left out. So title PRs for users. The fastlane changelog ([`fastlane/metadata/android/en-US/changelogs/`](../../../fastlane/metadata/android/en-US/changelogs), ≤ 500 characters, one file per version code; see [F-Droid](#f-droid-draft-recipe-for-fdroiddata) for which code it must be named after) is written by hand.
 
@@ -26,9 +26,10 @@ Each release carries the APK, `SHA256SUMS` (the APK and the four SBOMs), the Cyc
 
 ```bash
 sha256sum --check --ignore-missing SHA256SUMS
+ls *-sbom.cdx.json *-sbom.gradle.spdx.json *-sbom.syft.spdx3.json *-sbom.msft.spdx3.json > /dev/null    # all four SBOMs are there (ls fails on a missing one)
 gh attestation verify *.apk --repo EliorMachlev/CurrenciX --signer-workflow EliorMachlev/CurrenciX/.github/workflows/build-release.yaml            # asks GitHub
 gh attestation verify *-sbom.cdx.json --repo EliorMachlev/CurrenciX --signer-workflow EliorMachlev/CurrenciX/.github/workflows/build-release.yaml  # the SBOMs are attested too
-for f in *-sbom.*.spdx*.json; do gh attestation verify "$f" --repo EliorMachlev/CurrenciX --signer-workflow EliorMachlev/CurrenciX/.github/workflows/build-release.yaml; done
+( for f in *-sbom.*.spdx*.json; do gh attestation verify "$f" --repo EliorMachlev/CurrenciX --signer-workflow EliorMachlev/CurrenciX/.github/workflows/build-release.yaml || exit 1; done ) &&
 apksigner verify --verbose --print-certs *.apk                                                                   # the signing certificate, below
 ```
 

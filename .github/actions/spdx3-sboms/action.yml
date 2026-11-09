@@ -81,12 +81,13 @@ runs:
         #    detection reads Gradle lockfiles, which this build doesn't keep,
         #    so they are written here from the resolved dependencies and
         #    removed again.
+        # The lockfiles go even if a later command fails.
+        trap "find . -name gradle.lockfile -not -path '*/build/*' -delete" EXIT
         ./gradlew -I "$ACTION_PATH/lock.init.gradle" :app:dependencies --write-locks --no-configuration-cache -q > /dev/null
         drop="$RUNNER_TEMP/sbom-drop"
         mkdir -p "$drop"
         "$tools/sbom-tool" generate -b "$drop" -bc . -pn CurrenciX -pv "$VERSION" -ps CurrenciX \
           -nsb "https://github.com/EliorMachlev/CurrenciX/spdx" -mi SPDX:3.0 -V Error
-        find . -name gradle.lockfile -not -path '*/build/*' -delete
         cp "$drop/_manifest/spdx_3.0/manifest.spdx.json" "$OUT_DIR/$NAME.msft.spdx3.json"
 
         # The Gradle and Syft files must pass the SPDX project's validator.
