@@ -7,6 +7,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.test.assertIsEnabled
 import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.hasSetTextAction
+import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
@@ -94,8 +95,8 @@ class RateAlertSheetsTest {
     fun `the sheet starts from today's rate and says where it is`() {
         setSheet()
 
-        compose.onNode(hasSetTextAction()).assertExists()
-        compose.onNodeWithText("3.5", substring = true, useUnmergedTree = true).assertExists()
+        compose.onNode(hasSetTextAction() and hasText(SEEDED_RATE)).assertExists()
+        compose.onNodeWithText(text(R.string.alert_sheet_now, SEEDED_RATE)).assertExists()
         compose.onNodeWithText(text(R.string.alert_sheet_background)).assertExists()
     }
 
@@ -198,5 +199,8 @@ class RateAlertSheetsTest {
 
     private companion object {
         const val SETTLE_MILLIS = 1_000L
+
+        // 3.5 shown to the alert's four decimals.
+        const val SEEDED_RATE = "3.5000"
     }
 }
