@@ -17,14 +17,14 @@ Every translatable string exists in all 31, and lint fails on a missing one (`Mi
 
 Fork, clone and open in Android Studio. JDK 21 or newer (CI uses 25). `./gradlew assembleFdroidDebug` should build cleanly.
 
-Branch from **remote master**, not your local branch, so nothing stale comes along; say so in the PR if it depends on another unmerged branch:
+Branch from **remote alpha**, not your local branch, so nothing stale comes along; say so in the PR if it depends on another unmerged branch:
 
 ```sh
-git fetch origin master
-git switch -c <new-branch> origin/master
+git fetch origin alpha
+git switch -c <new-branch> origin/alpha
 ```
 
-Any non-master push builds a debug APK artifact for review.
+Open the PR against `alpha`. Any push to a branch other than `alpha`, `prerelease` and `release` builds a debug APK artifact for review. How a change reaches a release, and which checks run at each stage, is in [branching.md](branching.md).
 
 ## Code style
 

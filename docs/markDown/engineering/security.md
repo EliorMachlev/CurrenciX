@@ -18,7 +18,7 @@ How each scanner and workflow is configured is in [ci-cd.md](ci-cd.md); this is 
 
 - **Signing keys** are local in `secrets.properties` (git-ignored with `*.jks`, `*.p12`, `/signing/`) and in CI only as `release` environment secrets, readable by the release build job alone ([release.md](release.md)).
 - **No API keys in source.** A user's key for Open Exchangerates or AllRatesToday is stored per provider, sealed with AES-256-GCM under an Android Keystore key (`KeystoreSecretBox`, via Tink's `AndroidKeystore` AEAD, which draws a fresh nonce per seal). The key never leaves the Keystore, so a copy of the app's files, a rooted phone or a device transfer gets nothing usable; if the Keystore key is lost, the API key reads as missing and is entered again. Keys travel in the `Authorization` header, never a URL, so never in logs or cached URLs; Chucker redacts the header.
-- **Gitleaks** scans the repository on every PR, every `master` push and weekly.
+- **Gitleaks** scans the repository on every PR, every push to `alpha`, `prerelease` and `release` and weekly.
 
 ## Backups
 

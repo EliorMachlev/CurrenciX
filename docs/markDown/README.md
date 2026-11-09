@@ -13,6 +13,7 @@ The user-facing side is the [website](https://currencix.machlev.org/) and the [R
 - [Build](engineering/build.md): toolchain, flavors, dependencies, tests and coverage, licence checks, fuzzing, dependency verification, baseline profiles
 - [Release](engineering/release.md): tags, signing (post-quantum), provenance, version codes, F-Droid; releases are on [GitHub](https://github.com/EliorMachlev/CurrenciX/releases)
 - [CI / CD](engineering/ci-cd.md): workflows, scanners, Dependabot, permissions
+- [Branches and the pipeline](engineering/branching.md): Dev, Alpha, Prerelease, Release, and which checks run where
 - [Security](engineering/security.md): supply chain, secrets, backups, network, signing
 - [Exceptions](engineering/exceptions.md): the only suppressed findings, and why
 - [Website](engineering/website.md): the GitHub Pages site

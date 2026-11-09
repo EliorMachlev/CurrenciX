@@ -7,8 +7,7 @@ name: Gradle wrapper
 # after Scorecard had looked. scorecard.yaml waits for this one.
 on:
   push:
-    branches:
-      - master
+    branches: [alpha, prerelease, release, master]
   pull_request:
   workflow_dispatch:
 
@@ -17,7 +16,7 @@ permissions:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
-  cancel-in-progress: ${{ github.ref != 'refs/heads/master' }}
+  cancel-in-progress: ${{ !contains(fromJSON('["refs/heads/alpha","refs/heads/prerelease","refs/heads/release","refs/heads/master"]'), github.ref) }}
 
 jobs:
   gradle-wrapper:

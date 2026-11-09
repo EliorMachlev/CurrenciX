@@ -9,6 +9,7 @@ name: Live providers
 # blocker.
 on:
   pull_request:
+    branches: [prerelease, release, master]
     paths:
       - 'app/src/main/kotlin/com/eliormachlev/currencix/model/**'
       - 'app/src/main/kotlin/com/eliormachlev/currencix/repository/**'

@@ -3,14 +3,14 @@
 ## Making a release
 
 1. A PR titled `chore: version <x.y.z>` sets `versionName` and `versionCode` in [`app/build.gradle.kts`](../../../app/build.gradle.kts) ([version codes](#version-codes)) and adds the hand-written fastlane changelog for that code. Merge it once CI is green.
-2. Tag `master` (next section). The release workflow builds, signs and publishes; nothing else is needed.
+2. Tag `release` (next section). The release workflow builds, signs and publishes; nothing else is needed.
 3. Check the release: the APK, `SHA256SUMS`, the four SBOMs and the provenance file are attached ([verify them](#verifying-a-release)).
 
 ## Releasing is pushing a tag
 
-Tag a commit of `master` `v<versionName>` (`v0.1.1`) and push it, or, with no git at hand, run **Tag a release** ([`tag-release.yaml`](../../../.github/workflows/tag-release.yaml)) on `master` from the Actions tab: it tags the current `master` with its `versionName` (refusing a tag that exists) and starts the release on the tag, since a tag made with the workflow's own token starts no workflow by itself. [`release-apk.yaml`](../../../.github/workflows/release-apk.yaml):
+Tag a commit of `release` `v<versionName>` (`v0.1.1`) and push it, or, with no git at hand, run **Tag a release** ([`tag-release.yaml`](../../../.github/workflows/tag-release.yaml)) on `master` from the Actions tab: it tags the current `master` with its `versionName` (refusing a tag that exists) and starts the release on the tag, since a tag made with the workflow's own token starts no workflow by itself. [`release-apk.yaml`](../../../.github/workflows/release-apk.yaml):
 
-1. checks the tag names the version being built and is on `master`, and that the certificate pins are at least 90 days from expiry (Android stops checking them after it; run the **Certificate pins** workflow with *update* first, see [security.md](security.md#certificate-pinning));
+1. checks the tag names the version being built and is on `release`, and that the certificate pins are at least 90 days from expiry (Android stops checking them after it; run the **Certificate pins** workflow with *update* first, see [security.md](security.md#certificate-pinning));
 2. decodes the keystores from the `release` environment's secrets into the runner's temp folder, builds `assembleFdroidRelease` (signing and verifying the APK), deletes the keys;
 3. writes the SBOMs (`:app:cyclonedxDirectBom`, CycloneDX 1.6, of the fdroid release runtime classpath, and three SPDX files from [`spdx3-sboms`](../../../.github/actions/spdx3-sboms/action.yml), each at the highest version its generator writes: the Gradle build view, SPDX 2.3; Syft's view of the repository, SPDX 3.0.1; the Microsoft SBOM tool's view, SPDX 3.0) and `SHA256SUMS`, and uploads the APK with them;
 4. steps 1 to 3 are [`build-release.yaml`](../../../.github/workflows/build-release.yaml), a reusable workflow that `release-apk.yaml` calls; its `build` job holds the keys and has no token to sign with, and its `attest` job (tags only) holds the signing identity and never sees the keys: it attests the files' build provenance and uploads it as an in-toto provenance bundle (a release file is what OpenSSF Scorecard's Signed-Releases check reads; the file's name is set in the workflow). The attestation therefore names `build-release.yaml` as the builder, which is how the build reaches SLSA build level 3 by [GitHub's recipe](https://docs.github.com/en/actions/how-tos/secure-your-work/use-artifact-attestations/increase-security-rating);

@@ -2,7 +2,7 @@ name: OpenSSF Scorecard
 
 on:
   push:
-    branches: [master]
+    branches: [release, master]
   schedule:
     - cron: '0 6 * * 1'
   workflow_dispatch:
@@ -39,7 +39,7 @@ jobs:
           REPO: ${{ github.repository }}
           SHA: ${{ github.sha }}
         run: |
-          runs="repos/$REPO/actions/workflows/gradle-wrapper.yaml/runs?head_sha=$SHA&branch=master"
+          runs="repos/$REPO/actions/workflows/gradle-wrapper.yaml/runs?head_sha=$SHA&branch=release"
           while true; do
             conclusion=$(gh api "$runs" --jq '[.workflow_runs[] | select(.status == "completed") | .conclusion] | if any(.[]; . == "success") then "success" elif length > 0 then .[0] else "" end')
             case "$conclusion" in

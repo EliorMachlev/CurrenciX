@@ -3,6 +3,7 @@ updates:
   # Gradle (app + helpers modules)
   - package-ecosystem: "gradle"
     directory: "/"
+    target-branch: "alpha"
     schedule:
       interval: "weekly"
       day: "monday"
@@ -40,6 +41,7 @@ updates:
   # GitHub Actions
   - package-ecosystem: "github-actions"
     directory: "/"
+    target-branch: "alpha"
     schedule:
       interval: "weekly"
       day: "monday"
@@ -65,6 +67,7 @@ updates:
   # compiled from requirements.in with
   # pip-compile, which Dependabot reruns.
   - package-ecosystem: "pip"
+    target-branch: "alpha"
     directories:
       - "/.github/scripts"
       - "/.github/semgrep"

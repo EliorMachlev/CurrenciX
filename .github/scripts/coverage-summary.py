@@ -2,10 +2,10 @@
 """
 Kover's XML report (JaCoCo's format) as a Markdown table for the run
 summary: line and branch coverage overall, then the ten least-covered
-packages with at least 20 lines. Given a second report (master's), the
+packages with at least 20 lines. Given a second report (alpha's), the
 table also shows how far each figure moved.
 
-    python3 .github/scripts/coverage-summary.py app/build/reports/kover/reportFdroidDebug.xml Fdroid [master.xml]
+    python3 .github/scripts/coverage-summary.py app/build/reports/kover/reportFdroidDebug.xml Fdroid [alpha.xml]
 """
 import sys
 
@@ -41,7 +41,7 @@ def main(report: str, flavor: str, baseline: str | None = None) -> None:
     total = counters(root)
     before = counters(ElementTree.parse(baseline).getroot()) if baseline else None
     print(f"## Unit test coverage ({flavor} debug)\n")
-    print("| | Covered | Missed | Coverage |" + (" Change vs master |" if before else ""))
+    print("| | Covered | Missed | Coverage |" + (" Change vs alpha |" if before else ""))
     print("|---|---|---|---|" + ("---|" if before else ""))
     for measure, label in MEASURES.items():
         covered, missed = total.get(measure, (0, 0))

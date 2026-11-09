@@ -1,15 +1,14 @@
 name: Build
 on:
   push:
-    branches:
-      - master
+    branches: [alpha, prerelease, release, master]
   pull_request:
   workflow_dispatch:
 # A newer push to the same PR or branch supersedes a run still going;
-# master's runs always finish.
+# the long-lived branches' runs always finish.
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
-  cancel-in-progress: ${{ github.ref != 'refs/heads/master' }}
+  cancel-in-progress: ${{ !contains(fromJSON('["refs/heads/alpha","refs/heads/prerelease","refs/heads/release","refs/heads/master"]'), github.ref) }}
 
 permissions:
   contents: read
@@ -218,7 +217,7 @@ jobs:
           pip install --quiet --require-hashes -r .github/scripts/requirements.txt
           python3 .github/scripts/coverage-summary.py "app/build/reports/kover/report${FLAVOR}Debug.xml" "$FLAVOR" >> "$GITHUB_STEP_SUMMARY"
 
-      # The full report (XML for the comparison with master, HTML to browse),
+      # The full report (XML for the comparison with alpha, HTML to browse),
       # kept for a fortnight; the pull request's comment reads it back.
       - name: Upload the coverage report
         if: matrix.check == 'test'
@@ -241,7 +240,7 @@ jobs:
           python3 .github/scripts/annotate-test-failures.py "app/build/test-results/**/*.xml"
 
   # The F-Droid coverage as a comment on the pull request, with how far it
-  # moved from master's last run. Its own job so only it can write to the
+  # moved from alpha's last run. Its own job so only it can write to the
   # pull request. Not for forks, whose token is read-only.
   coverage-comment:
     if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository
@@ -271,13 +270,13 @@ jobs:
 
       # Master's last green run, if its report is still kept: without it the
       # comment just has no "change" column.
-      - name: Download master's coverage report
+      - name: Download alpha's coverage report
         env:
           GH_TOKEN: ${{ github.token }}
           REPO: ${{ github.repository }}
         run: |
-          run_id=$(gh run list --repo "$REPO" --workflow build.yaml --branch master --event push --status success --limit 1 --json databaseId --jq '.[0].databaseId // empty')
-          [ -n "$run_id" ] && gh run download "$run_id" --repo "$REPO" --name coverage-Fdroid --dir master-coverage || echo "No report from master to compare with."
+          run_id=$(gh run list --repo "$REPO" --workflow build.yaml --branch alpha --event push --status success --limit 1 --json databaseId --jq '.[0].databaseId // empty')
+          [ -n "$run_id" ] && gh run download "$run_id" --repo "$REPO" --name coverage-Fdroid --dir alpha-coverage || echo "No report from alpha to compare with."
 
       - name: Write the comment and post it
         env:
@@ -289,7 +288,7 @@ jobs:
           set -o pipefail
           pip install --quiet --require-hashes -r .github/scripts/requirements.txt
           args=(coverage/reportFdroidDebug.xml Fdroid)
-          [ -f master-coverage/reportFdroidDebug.xml ] && args+=(master-coverage/reportFdroidDebug.xml)
+          [ -f alpha-coverage/reportFdroidDebug.xml ] && args+=(alpha-coverage/reportFdroidDebug.xml)
           {
             echo "$MARKER"
             python3 .github/scripts/coverage-summary.py "${args[@]}"

@@ -18,9 +18,7 @@ name: Benchmarks
 # still shows within a week.
 on:
   push:
-    branches-ignore:
-      - master
-      - 'dependabot/**'
+    branches: [prerelease, release, master]
     paths:
       - 'app/src/main/**'
       - 'app/build.gradle.kts'

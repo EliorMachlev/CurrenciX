@@ -53,7 +53,7 @@ jobs:
       - name: Checkout the code
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          # The tag's commit must be on master, which takes its history.
+          # The tag's commit must be on release, which takes its history.
           fetch-depth: 0
           persist-credentials: false
 
@@ -64,7 +64,7 @@ jobs:
           echo "name=$name" >> "$GITHUB_OUTPUT"
 
       # A release only from a tag that names the version being built, on a
-      # commit that is on master: a typo'd or stray tag publishes nothing.
+      # commit that is on release: a typo'd or stray tag publishes nothing.
       - name: Check the tag
         if: github.ref_type == 'tag'
         env:
@@ -75,8 +75,8 @@ jobs:
             echo "::error::Tag $TAG doesn't match versionName $VERSION (expected v$VERSION)"
             exit 1
           fi
-          if ! git merge-base --is-ancestor "$GITHUB_SHA" origin/master; then
-            echo "::error::Tag $TAG is on a commit that isn't on master"
+          if ! git merge-base --is-ancestor "$GITHUB_SHA" origin/release; then
+            echo "::error::Tag $TAG is on a commit that isn't on release"
             exit 1
           fi
 
