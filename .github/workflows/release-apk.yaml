@@ -101,3 +101,17 @@ jobs:
           # A suffix (1.24.0-beta1) or a 0.x version (before 1.0) is a pre-release.
           case "$VERSION" in *-* | 0.*) prerelease=(--prerelease) ;; esac
           gh release create "$TAG" release/* --title "CurrenciX $VERSION" --notes-file notes.md --verify-tag "${prerelease[@]}"
+
+  # Once the release is published: rebuild its tag and compare with what was
+  # published (release-reproducible.yaml). Gets no secrets; a mismatch fails
+  # this job and opens an issue, and leaves the release published.
+  verify:
+    if: github.ref_type == 'tag'
+    needs: publish
+    permissions:
+      contents: read
+      # Opens the issue when the rebuild differs.
+      issues: write
+    uses: $/.github/workflows/release-reproducible.yaml
+    with:
+      tag: ${{ github.ref_name }}
