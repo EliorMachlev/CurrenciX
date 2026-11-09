@@ -118,6 +118,6 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           BRANCH: ${{ github.ref_name }}
         run: |
-          for workflow in build.yaml screenshots.yaml apk-artifact.yaml detekt.yaml osv-scanner.yaml codeql.yaml gitleaks.yaml gradle-wrapper.yaml qodana.yaml semgrep.yaml; do
+          for workflow in build.yaml apk-artifact.yaml detekt.yaml gitleaks.yaml gradle-wrapper.yaml semgrep.yaml; do
             gh workflow run "$workflow" --ref "$BRANCH"
           done
