@@ -45,7 +45,12 @@ class CartMathTest {
     fun `a blank or malformed price is zero`() {
         assertAmount("0", evaluatePrice(""))
         assertAmount("0", evaluatePrice("   "))
-        assertAmount("0", evaluatePrice("3 +"))
+        assertAmount("0", evaluatePrice("abc"))
+    }
+
+    @Test
+    fun `an unfinished price keeps what was typed so far`() {
+        assertAmount("3", evaluatePrice("3 +"))
     }
 
     @Test
@@ -61,7 +66,7 @@ class CartMathTest {
     @Test
     fun `subtotal sums the rows, and is zero without a cart`() {
         assertAmount("0", subtotalOf(null))
-        assertAmount("12", subtotalOf(cartOf(item("a", "5"), item("b", "3", quantity = 2), item("c", ""))))
+        assertAmount("11", subtotalOf(cartOf(item("a", "5"), item("b", "3", quantity = 2), item("c", ""))))
     }
 
     @Test
