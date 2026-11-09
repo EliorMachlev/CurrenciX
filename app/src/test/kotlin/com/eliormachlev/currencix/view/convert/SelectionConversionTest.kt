@@ -2,6 +2,8 @@ package com.eliormachlev.currencix.view.convert
 
 import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.model.ExchangeRates
+import com.eliormachlev.currencix.model.Fee
+import com.eliormachlev.currencix.model.FeeCalculator
 import com.eliormachlev.currencix.model.Rate
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
@@ -54,5 +56,37 @@ class SelectionConversionTest {
         assertEquals(SelectionConversion.NoAmount, convert("hello"))
         assertEquals(SelectionConversion.NoRates, convertSelection("€10", null, Currency.USD, Currency.ILS))
         assertEquals(SelectionConversion.NoRates, convert("£10"))
+    }
+
+    @Test
+    fun `with no fee in force the final amount is the plain result`() {
+        val result = convert("€10") as SelectionConversion.Converted
+        assertEquals(false, result.hasFees)
+        assertEquals(0, result.result.compareTo(result.resultWithFees))
+    }
+
+    @Test
+    fun `a fee in force is applied the way the converter applies it`() {
+        val stack =
+            FeeCalculator.feeStack(
+                listOf(Fee.GlobalExchange(id = "wise", name = "Wise", percent = BigDecimal("2.5"))),
+                Currency.EUR,
+                Currency.ILS,
+            )
+        val result =
+            convertSelection("€10", rates, Currency.USD, Currency.ILS) { _, _ -> stack } as SelectionConversion.Converted
+        assertEquals(true, result.hasFees)
+        assertEquals(0, BigDecimal("40").compareTo(result.result))
+        assertEquals(0, BigDecimal("41.00").compareTo(result.resultWithFees))
+    }
+
+    @Test
+    fun `the fee is looked up for the pair actually converted`() {
+        val asked = mutableListOf<Pair<Currency, Currency>>()
+        convertSelection("₪40", rates, Currency.USD, Currency.ILS) { from, to ->
+            asked += from to to
+            BigDecimal.ONE
+        }
+        assertEquals(listOf(Currency.ILS to Currency.USD), asked)
     }
 }
