@@ -53,6 +53,14 @@ jobs:
         with:
           upload-result: true
           pr-mode: false
+          # Qodana's cache (Gradle's distribution and libraries among it) is
+          # keyed by branch, and a pull request's own branch never had one, so
+          # every PR run downloaded Gradle from services.gradle.org, whose
+          # HTTP 504s failed the required check. Without the branch in the
+          # fallback key a PR restores master's newest cache, and only master
+          # saves one (a branch can't write master's caches anyway).
+          additional-cache-key: qodana-2026.2-
+          cache-default-branch-only: true
       # When the project import fails dependency verification, name the
       # files it refused (an annotation on the PR; the scan's log is long).
       - name: List the files dependency verification refused
