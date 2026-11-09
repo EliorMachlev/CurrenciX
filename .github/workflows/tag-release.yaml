@@ -19,7 +19,7 @@ permissions:
 
 jobs:
   tag:
-    if: github.ref == 'refs/heads/release'
+    if: github.ref == 'refs/heads/Release'
     runs-on: ubuntu-latest
     timeout-minutes: 5
     permissions:

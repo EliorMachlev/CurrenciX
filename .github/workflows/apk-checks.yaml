@@ -9,7 +9,7 @@ name: APK checks
 # Not part of the build gate: a few release builds take a while.
 on:
   pull_request:
-    branches: [release, master]
+    branches: [Release]
     paths:
       - 'app/**'
       - 'ocr-engine/**'
@@ -28,7 +28,7 @@ on:
 # the long-lived branches' runs always finish.
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
-  cancel-in-progress: ${{ !contains(fromJSON('["refs/heads/alpha","refs/heads/prerelease","refs/heads/release","refs/heads/master"]'), github.ref) }}
+  cancel-in-progress: ${{ !contains(fromJSON('["refs/heads/Alpha","refs/heads/PreRelease","refs/heads/Release"]'), github.ref) }}
 
 permissions:
   contents: read
@@ -179,7 +179,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           REPO: ${{ github.repository }}
         run: |
-          runs=$(gh api "repos/$REPO/actions/workflows/build.yaml/runs?branch=alpha&event=push&status=success&per_page=20" --jq '.workflow_runs[].id')
+          runs=$(gh api "repos/$REPO/actions/workflows/build.yaml/runs?branch=Alpha&event=push&status=success&per_page=20" --jq '.workflow_runs[].id')
           for run in $runs; do
             # A failed request fails the step: it says nothing about whether there's a baseline.
             artifact=$(gh api "repos/$REPO/actions/runs/$run/artifacts" --jq '.artifacts[] | select(.name == "fdroid-release-apk" and (.expired | not)) | .id')

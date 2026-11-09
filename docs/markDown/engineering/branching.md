@@ -4,44 +4,13 @@ Work moves through four stages. Each stage has a long-lived branch except the fi
 
 | Stage | Branch | What lands here | Checks that must pass to get in |
 |---|---|---|---|
-| **Dev** | any short-lived branch (`feat/…`, `fix/…`, `dependabot/…`) | one change | the **Dev** checks, on the PR into `alpha` |
-| **Alpha** | `alpha` | squash-merged PRs | the **Alpha** checks, on the push and on the promotion PR into `prerelease` |
-| **Prerelease** | `prerelease` | `alpha`, promoted when it is stable | the **Prerelease** checks, on the promotion PR into `release` |
-| **Release** | `release` (was `master`) | `prerelease`, promoted when it is ready to ship | tag `v<versionName>`: signing, provenance, publishing ([release.md](release.md)) |
+| **Dev** | any short-lived branch (`feat/…`, `fix/…`, `dependabot/…`) | one change | the **Dev** checks, on the PR into `Alpha` |
+| **Alpha** | `Alpha` | squash-merged PRs | the **Alpha** checks, on the push and on the promotion PR into `PreRelease` |
+| **Prerelease** | `PreRelease` | `Alpha`, promoted when it is stable | the **Prerelease** checks, on the promotion PR into `Release` |
+| **Release** | `Release` (was `master`) | `PreRelease`, promoted when it is ready to ship | tag `v<versionName>`: signing, provenance, publishing ([release.md](release.md)) |
 
-New features stay on their own branch until they are merged into `alpha`. `release` is the default branch and the only one a tag may be on.
+New features stay on their own branch until they are merged into `Alpha`. `Alpha` is the default branch (Dependabot version updates and security updates both open against `Alpha`, the default branch.
 
-## Which checks run where
+## Setup
 
-Checks run on a pull request by the branch it targets, and on a push to `alpha`. A promotion PR's head is a commit that already passed the earlier stage, so its check runs are already on the SHA; the later stage adds its own on the PR. Workflows do not run on pushes to `prerelease` or `release`: a workflow that runs on a push to a branch named like a release is read by zizmor as publishing artifacts, and its cache-poisoning audit then fails any job that restores a cache. The promotion PR carries everything instead.
-
-| Tier | Runs on | Workflows |
-|---|---|---|
-| Dev | every PR (any base), and pushes to `alpha` | `build` (lint, tests, assemble), `detekt`, `gitleaks`, `semgrep`, `gradle-wrapper`, `zizmor`, `jactionlint`, `docs-checks`, `site`, `certificate-pins` |
-| Alpha | PRs into `prerelease` or `release`; pushes to `alpha` | `codeql`, `qodana`, `dependency-review`, `dependency-submission`, `osv-scanner`, `screenshots`, `live-providers` |
-| Prerelease | PRs into `release` | `apk-checks` (reproducible build, APK size against `alpha`'s latest), `benchmarks` (also every Sunday) |
-| Release | a `v*` tag on `release` | `release-apk` → `build-release` (signed APK, SBOMs, SLSA provenance), `tag-release`; `scorecard` and `dependency-cache` run on pushes to `release` |
-
-Scheduled and manual runs are unchanged. The debug APK in `apk-artifact` and the baseline profile run on any branch that is not one of the four long-lived ones.
-
-Baselines: screenshots, coverage and APK size are compared with `alpha`'s latest push.
-
-## Rulesets
-
-Required checks are set per branch in Settings → Rules, by the check names shown on a PR. Require only checks that report on every PR into that branch: a required check that a path filter or trigger skips stays pending and blocks the merge. These always report: `build` jobs, `detekt`, `gitleaks`, `semgrep`, `gradle-wrapper`, and (into `prerelease` and `release`) `codeql`, `qodana`, `dependency-review`, `osv-scanner`. These are path-filtered and so not required: `docs-checks`, `site`, `zizmor`, `jactionlint`, `certificate-pins`, `apk-checks`; `benchmarks` runs only on app-code changes and takes tens of minutes. Add an always-running gate job in front of any of them you want required.
-
-- `alpha`: pull request required, up to date, the always-reporting Dev checks. Squash merge.
-- `prerelease`: pull request from `alpha` only, up to date, plus the Alpha checks. Merge commit, so the PR keeps `alpha`'s check runs on the same commits.
-- `release`: pull request from `prerelease` only, up to date, the same required set as `prerelease`. Merge commit.
-- All three: no force pushes, no deletions. No linear-history rule on `prerelease` and `release`: a promotion is a merge commit.
-
-Dependabot security updates ignore `target-branch` and open against the default branch, `release`. Merge one there only as a hotfix, then merge `release` back into `alpha` so the branches do not drift; version updates go to `alpha`.
-
-## Moving to this layout (once)
-
-1. Merge the pipeline PR into `master`. Until the rename, every workflow also lists `master`, so nothing is skipped.
-2. Settings → Branches: rename `master` to `release` (GitHub redirects old URLs and moves open PRs); `git fetch origin && git branch -m master release && git branch -u origin/release release`.
-3. Create `alpha` and `prerelease` from `release`.
-4. Apply the rulesets above, and point the "Protection" ruleset at `release`.
-5. Retarget open PRs to `alpha`; Dependabot already targets `alpha`.
-6. In a follow-up, drop the leftover `master` entries from the trigger lists.
+The branches are `Alpha` (default), `PreRelease` and `Release`; GitHub matches branch names case-sensitively, so the workflow filters use exactly these spellings. Remaining by hand in Settings → Rules: the per-branch rulesets above, and the "Protection" ruleset pointed at all three branches.

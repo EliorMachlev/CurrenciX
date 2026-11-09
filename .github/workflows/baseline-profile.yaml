@@ -17,10 +17,9 @@ name: Baseline Profile
 on:
   push:
     branches-ignore:
-      - alpha
-      - prerelease
-      - release
-      - master
+      - Alpha
+      - PreRelease
+      - Release
     paths:
       - 'baselineprofile/**'
       - '.github/workflows/baseline-profile.yaml'

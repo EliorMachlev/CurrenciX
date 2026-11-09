@@ -2,7 +2,7 @@ name: OpenSSF Scorecard
 
 on:
   push:
-    branches: [release, master]
+    branches: [Alpha]
   schedule:
     - cron: '0 6 * * 1'
   workflow_dispatch:

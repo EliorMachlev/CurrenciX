@@ -7,14 +7,14 @@ name: Screenshots
 # own push run records them).
 on:
   push:
-    branches: [alpha, master]
+    branches: [Alpha]
   workflow_dispatch:
 
 # A newer push to the same PR or branch supersedes a run still going;
 # the long-lived branches' runs always finish.
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
-  cancel-in-progress: ${{ !contains(fromJSON('["refs/heads/alpha","refs/heads/prerelease","refs/heads/release","refs/heads/master"]'), github.ref) }}
+  cancel-in-progress: ${{ !contains(fromJSON('["refs/heads/Alpha","refs/heads/PreRelease","refs/heads/Release"]'), github.ref) }}
 
 permissions:
   contents: read
@@ -95,7 +95,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           REPO: ${{ github.repository }}
         run: |
-          run=$(gh api "repos/$REPO/actions/workflows/screenshots.yaml/runs?branch=alpha&event=push&status=success&per_page=1" --jq '.workflow_runs[0].id // empty')
+          run=$(gh api "repos/$REPO/actions/workflows/screenshots.yaml/runs?branch=Alpha&event=push&status=success&per_page=1" --jq '.workflow_runs[0].id // empty')
           name=""
           if [ -n "$run" ]; then
             name=$(gh api "repos/$REPO/actions/runs/$run/artifacts" --jq '[.artifacts[] | select((.name | startswith("screenshots-")) and (.expired | not))][0].name // empty')

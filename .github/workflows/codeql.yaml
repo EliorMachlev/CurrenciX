@@ -2,9 +2,9 @@ name: CodeQL
 
 on:
   push:
-    branches: [alpha, master]
+    branches: [Alpha]
   pull_request:
-    branches: [prerelease, release, master]
+    branches: [PreRelease, Release]
   schedule:
     - cron: '30 5 * * 1'
   workflow_dispatch:
@@ -13,7 +13,7 @@ on:
 # the long-lived branches' runs always finish.
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
-  cancel-in-progress: ${{ !contains(fromJSON('["refs/heads/alpha","refs/heads/prerelease","refs/heads/release","refs/heads/master"]'), github.ref) }}
+  cancel-in-progress: ${{ !contains(fromJSON('["refs/heads/Alpha","refs/heads/PreRelease","refs/heads/Release"]'), github.ref) }}
 
 permissions:
   contents: read

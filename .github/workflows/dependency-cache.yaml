@@ -4,9 +4,9 @@ name: Dependency cache
 # build resolves, Robolectric's Android framework jar among them. Maven
 # Central rate-limits GitHub's runners (HTTP 429 and 403), and a job whose
 # own setup-gradle cache missed one jar failed over it; with this cache a job
-# downloads only what changed since master's last build files.
+# downloads only what changed since Alpha's last build files.
 #
-# Saved only from master, so a branch can never write a cache other runs
+# Saved only from Alpha, so a branch can never write a cache other runs
 # read, and Gradle checks every file taken from it against
 # gradle/verification-metadata.xml. On a PR changing this workflow, the
 # action or the init script, it builds the cache without saving it, to show
@@ -14,7 +14,7 @@ name: Dependency cache
 # update-verification-metadata.yaml must start from an empty cache.
 on:
   push:
-    branches: [release, master]
+    branches: [Alpha]
     paths:
       - 'gradle/libs.versions.toml'
       - 'gradle/verification-metadata.xml'
@@ -133,9 +133,9 @@ jobs:
           rm -f "$RO_CACHE/modules-2/gc.properties"
           du -sh "$RO_CACHE" | tee -a "$GITHUB_STEP_SUMMARY"
 
-      # master's only: a manual run on a branch builds it without saving.
+      # Alpha's only: a manual run on a branch builds it without saving.
       - name: Save the cache
-        if: contains(fromJSON('["refs/heads/release","refs/heads/master"]'), github.ref)
+        if: github.ref == 'refs/heads/Alpha'
         uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: ${{ env.RO_CACHE }}

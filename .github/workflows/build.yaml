@@ -1,14 +1,14 @@
 name: Build
 on:
   push:
-    branches: [alpha, master]
+    branches: [Alpha]
   pull_request:
   workflow_dispatch:
 # A newer push to the same PR or branch supersedes a run still going;
 # the long-lived branches' runs always finish.
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
-  cancel-in-progress: ${{ !contains(fromJSON('["refs/heads/alpha","refs/heads/prerelease","refs/heads/release","refs/heads/master"]'), github.ref) }}
+  cancel-in-progress: ${{ !contains(fromJSON('["refs/heads/Alpha","refs/heads/PreRelease","refs/heads/Release"]'), github.ref) }}
 
 permissions:
   contents: read
@@ -275,7 +275,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           REPO: ${{ github.repository }}
         run: |
-          run_id=$(gh run list --repo "$REPO" --workflow build.yaml --branch alpha --event push --status success --limit 1 --json databaseId --jq '.[0].databaseId // empty')
+          run_id=$(gh run list --repo "$REPO" --workflow build.yaml --branch Alpha --event push --status success --limit 1 --json databaseId --jq '.[0].databaseId // empty')
           [ -n "$run_id" ] && gh run download "$run_id" --repo "$REPO" --name coverage-Fdroid --dir alpha-coverage || echo "No report from alpha to compare with."
 
       - name: Write the comment and post it

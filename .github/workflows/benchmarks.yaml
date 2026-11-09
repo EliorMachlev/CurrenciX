@@ -19,7 +19,7 @@ name: Benchmarks
 # week.
 on:
   pull_request:
-    branches: [release, master]
+    branches: [Release]
     paths:
       - 'app/src/main/**'
       - 'app/build.gradle.kts'

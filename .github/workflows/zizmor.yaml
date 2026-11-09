@@ -10,7 +10,7 @@ on:
       - '.github/workflows/**'
       - '.github/zizmor/**'
   push:
-    branches: [alpha, master]
+    branches: [Alpha]
     paths:
       - '.github/workflows/**'
       - '.github/zizmor/**'
@@ -22,7 +22,7 @@ on:
 # the long-lived branches' runs always finish.
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
-  cancel-in-progress: ${{ !contains(fromJSON('["refs/heads/alpha","refs/heads/prerelease","refs/heads/release","refs/heads/master"]'), github.ref) }}
+  cancel-in-progress: ${{ !contains(fromJSON('["refs/heads/Alpha","refs/heads/PreRelease","refs/heads/Release"]'), github.ref) }}
 
 permissions:
   contents: read

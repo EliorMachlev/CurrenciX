@@ -25,7 +25,7 @@ git fetch upstream alpha
 git switch -c <new-branch> upstream/alpha
 ```
 
-Open the PR against `alpha`. Any push to a branch other than `alpha`, `prerelease` and `release` builds a debug APK artifact for review. How a change reaches a release, and which checks run at each stage, is in [branching.md](branching.md).
+Open the PR against `Alpha`. Any push to a branch other than `Alpha`, `PreRelease` and `Release` builds a debug APK artifact for review. How a change reaches a release, and which checks run at each stage, is in [branching.md](branching.md).
 
 ## Code style
 

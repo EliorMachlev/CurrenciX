@@ -4,5 +4,5 @@ contact_links:
     url: https://github.com/EliorMachlev/CurrenciX/security/advisories/new
     about: Please don't open a public issue for a vulnerability; see SECURITY.md.
   - name: Documentation
-    url: https://github.com/EliorMachlev/CurrenciX/blob/release/docs/markDown/README.md
+    url: https://github.com/EliorMachlev/CurrenciX/blob/Release/docs/markDown/README.md
     about: Architecture, providers, build and release documentation.
