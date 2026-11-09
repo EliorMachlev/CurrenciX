@@ -69,6 +69,12 @@ object FeeCalculator {
         return acc
     }
 
+    /** [amount] with the fee [stack] on it: the final amount the converter shows. */
+    fun applyStack(
+        amount: BigDecimal,
+        stack: BigDecimal,
+    ): BigDecimal = amount.multiply(stack, MathContext.DECIMAL128)
+
     /**
      * Resolve the fees that actually participate for the given pair (specific
      * matches + single-select picks for global exchange/bank).

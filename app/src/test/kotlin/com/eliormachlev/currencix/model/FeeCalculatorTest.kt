@@ -249,4 +249,10 @@ class FeeCalculatorTest {
         // both apply: 1.02 * 1.01 = 1.0302
         near("1.0302", combined(fees, Currency.USD, Currency.EUR))
     }
+
+    @Test
+    fun `applying a stack gives the converter's final amount`() {
+        assertEquals(0, bd("41").compareTo(FeeCalculator.applyStack(bd("40"), bd("1.025"))))
+        assertEquals(0, bd("40").compareTo(FeeCalculator.applyStack(bd("40"), BigDecimal.ONE)))
+    }
 }
