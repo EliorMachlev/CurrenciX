@@ -90,19 +90,23 @@ runs:
           -nsb "https://github.com/EliorMachlev/CurrenciX/spdx" -mi SPDX:3.0 -V Error
         cp "$drop/_manifest/spdx_3.0/manifest.spdx.json" "$OUT_DIR/$NAME.msft.spdx3.json"
 
-        # The Gradle and Syft files must pass the SPDX project's validator.
-        # The Microsoft tool's SPDX 3.0 output does not (its specVersion is
-        # "3.0" and its CreationInfo is a blank node, which tools-java can't
-        # read), so it is checked only for being JSON with packages in it.
+        # Each file is validated by the tool that wrote it, as it supports
+        # it. The Gradle and Syft files must pass the SPDX project's
+        # validator (tools-java); that one does not accept the Microsoft
+        # tool's SPDX 3.0 (its specVersion is "3.0" and its CreationInfo a
+        # blank node), so the Microsoft file is validated by the tool's own
+        # `validate` instead, and must list packages.
         for file in "$OUT_DIR/$NAME.gradle.spdx.json" "$OUT_DIR/$NAME.syft.spdx3.json"; do
           spdx Verify "$file" 2>&1 | tee "$RUNNER_TEMP/verify.log"
           grep -q 'This SPDX Document is valid.' "$RUNNER_TEMP/verify.log" \
             || { echo "::error::$file did not validate"; exit 1; }
         done
-        python3 - "$OUT_DIR/$NAME.msft.spdx3.json" <<'PY'
+        result="$RUNNER_TEMP/msft-validation.json"
+        "$tools/sbom-tool" validate -b "$drop" -o "$result" -mi SPDX:3.0 -V Error
+        python3 - "$result" <<'PY'
         import json, sys
-        graph = json.load(open(sys.argv[1]))["@graph"]
-        packages = sum(1 for e in graph if e.get("type") == "software_Package")
-        if packages < 2:
-            sys.exit(f"::error::the Microsoft SBOM lists {packages} package(s); its Gradle lockfiles were not read")
+        result = json.load(open(sys.argv[1]))
+        packages = result["Summary"]["ValidationTelemetery"]["TotalPackagesInManifest"]
+        if result["Result"] != "Success" or packages < 2:
+            sys.exit(f"::error::the Microsoft SBOM tool's validation: {result['Result']}, {packages} package(s); {result['ValidationErrors']}")
         PY
