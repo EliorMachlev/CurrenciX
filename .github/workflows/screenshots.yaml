@@ -90,7 +90,7 @@ jobs:
       # change is often the point of the branch.
       - name: Get alpha's screenshots
         id: alpha
-        if: github.ref != 'refs/heads/alpha'
+        if: github.ref != 'refs/heads/Alpha'
         env:
           GH_TOKEN: ${{ github.token }}
           REPO: ${{ github.repository }}
