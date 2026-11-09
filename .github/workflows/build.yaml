@@ -338,9 +338,10 @@ jobs:
       - name: Assemble fdroid release (unsigned) and its SBOMs
         run: ./gradlew assembleFdroidRelease :app:cyclonedxDirectBom :app:spdxSbom
 
-      # The SPDX 3.0.1 files too, as the release attaches them (three
-      # generators, each checked): a change that breaks one fails here.
-      - name: Write the SPDX 3.0.1 SBOMs
+      # The SPDX files too, as the release attaches them (three generators,
+      # each at its highest SPDX version): a change that breaks one fails
+      # here.
+      - name: Write the SPDX SBOMs
         uses: $/.github/actions/spdx3-sboms
         with:
           out-dir: app/build/spdx3
@@ -354,6 +355,6 @@ jobs:
           path: |
             app/build/outputs/apk/fdroid/release/*.apk
             app/build/reports/sbom/currencix-sbom.cdx.json
-            app/build/spdx3/*.spdx3.json
+            app/build/spdx3/*.json
           retention-days: 14
           if-no-files-found: warn

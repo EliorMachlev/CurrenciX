@@ -8,7 +8,7 @@ Everything is in [`.github/workflows/`](../../../.github/workflows). Every actio
 |---|---|---|
 | [`build.yaml`](../../../.github/workflows/build.yaml) | PR, push → `master`, manual | The gate (below) |
 | [`release-apk.yaml`](../../../.github/workflows/release-apk.yaml) | `v*` tag, manual | Calls `build-release.yaml`, then publishes the GitHub release ([release.md](release.md)) |
-| [`build-release.yaml`](../../../.github/workflows/build-release.yaml) | Called by `release-apk.yaml` | Signed release APK, SBOMs (CycloneDX and three SPDX 3.0.1 files), checksums and the provenance attestation |
+| [`build-release.yaml`](../../../.github/workflows/build-release.yaml) | Called by `release-apk.yaml` | Signed release APK, SBOMs (CycloneDX and three SPDX files from different generators), checksums and the provenance attestation |
 | [`tag-release.yaml`](../../../.github/workflows/tag-release.yaml) | Manual, on `master` | Tags `master` `v<versionName>` (an existing tag fails it) and starts `release-apk.yaml` on the tag ([release.md](release.md#releasing-is-pushing-a-tag)) |
 | [`apk-artifact.yaml`](../../../.github/workflows/apk-artifact.yaml) | Push → non-master, manual | fdroid debug APK as an artifact, linked in the run summary |
 | [`apk-checks.yaml`](../../../.github/workflows/apk-checks.yaml) | PR touching the app or the build, push → `master`, weekly, manual | The unsigned fdroid release built twice, from two checkouts with no build cache, and compared byte for byte (any difference fails, with `diffoscope`'s account as an artifact); on PRs, `diffuse` compares the APK with master's latest in the run summary. Not part of the gate |
