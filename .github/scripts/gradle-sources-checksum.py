@@ -10,7 +10,7 @@ caller (this script makes no requests). An entry for an older Gradle is
 replaced.
 
     PROPS=gradle/wrapper/gradle-wrapper.properties
-    curl -fsSL --proto =https "$(python3 .github/scripts/gradle-sources-checksum.py url "$PROPS")" -o src.zip.sha256
+    curl -fsSL --proto =https --retry 6 --retry-delay 10 --retry-all-errors "$(python3 .github/scripts/gradle-sources-checksum.py url "$PROPS")" -o src.zip.sha256
     python3 .github/scripts/gradle-sources-checksum.py record "$PROPS" gradle/verification-metadata.xml src.zip.sha256
 """
 import pathlib
