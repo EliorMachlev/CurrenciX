@@ -9,7 +9,7 @@ The project favours simplicity; large additions are unlikely to be merged withou
 
 ## Translations
 
-32 languages: English and 31 translations (`res/values-*`; `values-en-rGB` only sets British formats), most inherited from upstream Currencies via Weblate. The fork runs no translation workflow yet: to add or correct a translation, open an issue first.
+32 languages: English and 31 translations (`res/values-*`; `values-en-rGB` only sets British formats), there is no translation platform yet: to add or correct a translation, open an issue first.
 
 Every translatable string exists in all 31, and lint fails on a missing one (`MissingTranslation`), so a new string arrives with its translations; bulk additions were machine translated, and native corrections are welcome. A string with nothing to translate (`%1$s → %2$s`) is `translatable="false"`.
 
