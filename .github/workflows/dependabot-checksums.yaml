@@ -1,7 +1,7 @@
 name: Dependabot checksums
 # A Dependabot bump that adds or changes a dependency fails every Gradle job
 # with "Dependency verification failed" until its checksums are recorded
-# (update-verification-metadata.yaml). Twice an hour this looks at the open
+# (update-verification-metadata.yaml). Every 15 minutes this looks at the open
 # Dependabot PRs and, for one whose Build failed that way, starts that
 # workflow on its branch, once per head commit. It checks out and runs nothing
 # from a PR: it reads the failed run's log and dispatches a workflow that
@@ -11,7 +11,7 @@ name: Dependabot checksums
 # every file recorded.
 on:
   schedule:
-    - cron: '7,37 * * * *'
+    - cron: '7,22,37,52 * * * *'
   workflow_dispatch:
 
 permissions: {}

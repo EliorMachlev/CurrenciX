@@ -76,7 +76,7 @@ CI fuzzes each target for two minutes per PR. A crash saves its input under `app
 
 ## Dependency verification
 
-[`gradle/verification-metadata.xml`](../../../gradle/verification-metadata.xml) holds the SHA-256 of every file the build downloads, and Gradle refuses anything unlisted or mismatched. After a dependency change, run **Update dependency checksums** in Actions on the branch (it commits them; on a Dependabot PR that fails verification, `dependabot-checksums.yaml` starts it within half an hour), or locally:
+[`gradle/verification-metadata.xml`](../../../gradle/verification-metadata.xml) holds the SHA-256 of every file the build downloads, and Gradle refuses anything unlisted or mismatched. After a dependency change, run **Update dependency checksums** in Actions on the branch (it commits them; on a Dependabot PR that fails verification, `dependabot-checksums.yaml` starts it within 15 minutes), or locally:
 
 ```bash
 RECORD=(--write-verification-metadata sha256 --no-configuration-cache)
