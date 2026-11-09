@@ -181,7 +181,9 @@ class ExchangeRatesRepository(
                 fetchRates(fresh).processResponse(
                     successFlag = { success },
                     errorMessage = { error },
-                    onSuccess = ::store,
+                    // Only a fetch that went upstream (fresh) is live: a plain get() can
+                    // fall back to a stale cached answer, which must not fire alerts.
+                    onSuccess = { rates -> store(rates, checkAlerts = fresh) },
                 )
             }
     }
@@ -198,12 +200,20 @@ class ExchangeRatesRepository(
      * with no UI visible, and the spinner in the hero card would flash on
      * next foregrounding for no user-facing reason.
      */
-    suspend fun refreshLatestRates(): Result<ExchangeRates> = fetchRates(fresh = true, patient = true).onSuccess(::store)
+    suspend fun refreshLatestRates(): Result<ExchangeRates> =
+        fetchRates(fresh = true, patient = true).onSuccess {
+            store(it, checkAlerts = true)
+        }
 
-    // New rates kept for the app and the widget, then checked against the rate alerts.
-    private fun store(rates: ExchangeRates) {
+    // New rates kept for the app and the widget, then checked against the rate
+    // alerts when [checkAlerts]: only rates that came from a live fetch, never
+    // an old cached answer served because the provider couldn't be reached.
+    private fun store(
+        rates: ExchangeRates,
+        checkAlerts: Boolean,
+    ) {
         db.rates.insertExchangeRates(rates)
-        checkRateAlerts(context, db, rates)
+        if (checkAlerts) checkRateAlerts(context, db, rates)
     }
 
     // The main provider's rates; if it fails while online, the fallback's
