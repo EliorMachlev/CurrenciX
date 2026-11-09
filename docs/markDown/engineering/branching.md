@@ -22,4 +22,8 @@ Rulesets: `Alpha` requires the Dev checks; `PreRelease` those plus the Alpha che
 
 ## Setup
 
-The branches are `Alpha` (default), `PreRelease` and `Release`; GitHub matches branch names case-sensitively, so the workflow filters use exactly these spellings. Rename `master` to `Release`, then make `Alpha` the default branch (Settings → General → Default branch): scheduled workflows run, and the dependency cache is saved, only on the default branch. Remaining by hand in Settings → Rules: the per-branch rulesets above, and the "Protection" ruleset pointed at all three branches.
+The three branches exist: `Alpha` (the default branch), `PreRelease` and `Release` (the former `master`). GitHub matches branch names case-sensitively, so the workflow filters use exactly these spellings. Scheduled workflows run, and the dependency cache is saved, only on the default branch.
+
+To set this up in a fork, create `Alpha` and `PreRelease` from `master` first, rename `master` to `Release`, then make `Alpha` the default branch (Settings → General → Default branch).
+
+Remaining by hand in Settings → Rules: the per-branch rulesets above, and the "Protection" ruleset pointed at all three branches.
