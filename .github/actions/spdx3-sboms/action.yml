@@ -65,12 +65,17 @@ runs:
         #    included. The plugin writes SPDX 2.3, its highest.
         cp app/build/spdx/release.spdx.json "$OUT_DIR/$NAME.gradle.spdx.json"
 
-        # 2. The filesystem view: whatever is in the checkout, which Gradle
-        #    ignores (workflows' actions, scripts' requirements, wrappers).
-        #    Build output and Git's own files are left out. Syft's highest is
-        #    SPDX 3.0 (a 3.0.1 document).
-        "$tools/syft" dir:. --exclude './**/build' --exclude './**/.gradle' --exclude './.git' \
-          -o "spdx-json@3.0=$OUT_DIR/$NAME.syft.spdx3.json" -q
+        # 2. The filesystem view: the repository's tracked files, which
+        #    Gradle ignores (workflows' actions, scripts' requirements,
+        #    wrappers). Scanned from a copy of just those files, so build
+        #    output, Git's own files and anything untracked (the runner's
+        #    caches, a signing key left behind) are never read. Syft's
+        #    highest is SPDX 3.0 (a 3.0.1 document).
+        src="$RUNNER_TEMP/sbom-source"
+        rm -rf "$src"
+        mkdir -p "$src"
+        git ls-files -z | tar --null -T - -cf - | tar -xf - -C "$src"
+        "$tools/syft" "dir:$src" -o "spdx-json@3.0=$OUT_DIR/$NAME.syft.spdx3.json" -q
 
         # 3. The Microsoft SBOM tool, at its highest, SPDX 3.0. Its component
         #    detection reads Gradle lockfiles, which this build doesn't keep,
