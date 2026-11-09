@@ -63,4 +63,17 @@ class RateCacheStaleTest {
             val cache = cacheWithOldEntry(Result.success("live"))
             assertEquals("live", cache.get(KEY, allowStale = false).getOrNull())
         }
+
+    @Test
+    fun `serving an old entry is reported so the caller can tell it from a live answer`() =
+        runBlocking {
+            var stale = 0
+            val old = cacheWithOldEntry(Result.failure(IOException("down")))
+            assertEquals("old", old.get(KEY, onStale = { stale++ }).getOrNull())
+            assertEquals(1, stale)
+
+            val live = cacheWithOldEntry(Result.success("live"))
+            assertEquals("live", live.get(KEY, onStale = { stale++ }).getOrNull())
+            assertEquals(1, stale)
+        }
 }

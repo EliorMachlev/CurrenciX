@@ -16,6 +16,9 @@ data class ExchangeRates(
     // Set when these rates came from the fallback provider because this one
     // — the user's main provider — couldn't be reached.
     val fallbackFrom: ApiProvider? = null,
+    // Set when these rates are an old cached answer served because the provider
+    // couldn't be reached. Not stored; only keeps rate alerts from firing on them.
+    val servedStale: Boolean = false,
 )
 
 fun ExchangeRates.rateFor(currency: Currency?): Rate? = currency?.let { c -> rates?.firstOrNull { it.currency == c } }

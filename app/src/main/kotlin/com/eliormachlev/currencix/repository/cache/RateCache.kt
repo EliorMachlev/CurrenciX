@@ -71,17 +71,19 @@ internal class RateCache<K : RateCacheKey, V : Any>(
      * behaviour in `ExchangeRatesRepository.postError`. A caller that must
      * not mistake an old value for an answer (a fallback provider, which is
      * only "in use" once it has answered) passes `allowStale = false` and
-     * gets the failure instead.
+     * gets the failure instead. [onStale] is called when the value returned is such
+     * an old entry, so a caller can tell it from a live answer.
      */
     suspend fun get(
         key: K,
         allowStale: Boolean = true,
+        onStale: () -> Unit = {},
     ): Result<V> {
         readFresh(key)?.let { return Result.success(it) }
         return dedupe
             .get(key, scope) { fetchWithRetry(key) }
             .recoverCatching { error ->
-                (if (allowStale) staleFallback(key) else null) ?: throw error
+                (if (allowStale) staleFallback(key) else null)?.also { onStale() } ?: throw error
             }
     }
 

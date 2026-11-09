@@ -200,10 +200,12 @@ class ExchangeRatesRepository(
      */
     suspend fun refreshLatestRates(): Result<ExchangeRates> = fetchRates(fresh = true, patient = true).onSuccess(::store)
 
-    // New rates kept for the app and the widget, then checked against the rate alerts.
+    // New rates kept for the app and the widget, then checked against the rate
+    // alerts, unless they are an old cached answer served because the provider
+    // couldn't be reached: alerts fire on live rates only.
     private fun store(rates: ExchangeRates) {
         db.rates.insertExchangeRates(rates)
-        checkRateAlerts(context, db, rates)
+        if (!rates.servedStale) checkRateAlerts(context, db, rates)
     }
 
     // The main provider's rates; if it fails while online, the fallback's
@@ -268,8 +270,9 @@ class ExchangeRatesRepository(
                 baseIso = provider.baseCurrencyIso(),
                 date = db.lastState.historicalDate.get(),
             )
-        val result = if (fresh) ratesCache.refresh(key) else ratesCache.get(key, allowStale)
-        return result.map { it.copy(provider = provider) }
+        var servedStale = false
+        val result = if (fresh) ratesCache.refresh(key) else ratesCache.get(key, allowStale, onStale = { servedStale = true })
+        return result.map { it.copy(provider = provider, servedStale = servedStale) }
     }
 
     /**
