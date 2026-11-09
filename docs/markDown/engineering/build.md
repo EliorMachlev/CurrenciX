@@ -3,7 +3,7 @@
 | Tool | Version |
 |---|---|
 | JDK | 21 or newer (CI uses 25). Bytecode targets 21. Hybrid signing runs on a JDK 25 toolchain Gradle fetches itself, since reading ML-DSA keys needs 24+ ([release.md](release.md#post-quantum-signing-android-17)) |
-| Gradle | 9.8.2 (wrapper) |
+| Gradle | 9.8.2 (wrapper; its download, from services.gradle.org, retries 5 times, 2 s apart, with a 30 s network timeout: a CI job once failed on a single HTTP 504, as the wrapper's default is one attempt) |
 | Android Gradle Plugin | 9.5.0 |
 | Kotlin | 2.4.21 |
 | SDK | min 33, compile 37.2 (Compose 1.13 needs 37.1+: `release(37) { minorApiLevel = 2 }`), target 37 |
