@@ -228,7 +228,11 @@ class ExchangeRatesRepository(
         coroutineScope {
             val main = db.providers.apiProvider.get()
             val backup = db.providers.fallbackProvider.get()
-            val fromBackup: suspend () -> Result<ExchangeRates> = { loadRates(backup, fresh).map { it.copy(fallbackFrom = main) } }
+            // A fallback only stands in once it has answered: an old cached
+            // answer (allowStale = false) would show as "Using <fallback>".
+            val fromBackup: suspend () -> Result<ExchangeRates> = {
+                loadRates(backup, fresh, allowStale = false).map { it.copy(fallbackFrom = main) }
+            }
             if (backup != main && cooldown.isCoolingDown(main.id)) {
                 val answer = fromBackup()
                 if (answer.isUsable { success }) return@coroutineScope answer
@@ -256,6 +260,7 @@ class ExchangeRatesRepository(
     private suspend fun loadRates(
         provider: ApiProvider,
         fresh: Boolean,
+        allowStale: Boolean = true,
     ): Result<ExchangeRates> {
         val key =
             RateCacheKey.RatesLatest(
@@ -263,7 +268,7 @@ class ExchangeRatesRepository(
                 baseIso = provider.baseCurrencyIso(),
                 date = db.lastState.historicalDate.get(),
             )
-        val result = if (fresh) ratesCache.refresh(key) else ratesCache.get(key)
+        val result = if (fresh) ratesCache.refresh(key) else ratesCache.get(key, allowStale)
         return result.map { it.copy(provider = provider) }
     }
 
