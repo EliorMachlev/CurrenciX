@@ -13,9 +13,9 @@
 A handy travel companion, not a tool for real-time financial business.
 
 [![Latest release](https://img.shields.io/github/v/release/EliorMachlev/CurrenciX?include_prereleases&label=release)](https://github.com/EliorMachlev/CurrenciX/releases)
-[![Build](https://github.com/EliorMachlev/CurrenciX/actions/workflows/build.yaml/badge.svg?branch=master&event=push)](https://github.com/EliorMachlev/CurrenciX/actions/workflows/build.yaml)
-[![CodeQL](https://github.com/EliorMachlev/CurrenciX/actions/workflows/codeql.yaml/badge.svg?branch=master&event=push)](https://github.com/EliorMachlev/CurrenciX/actions/workflows/codeql.yaml)
-[![Reproducible build](https://github.com/EliorMachlev/CurrenciX/actions/workflows/apk-checks.yaml/badge.svg?branch=master&event=push)](https://github.com/EliorMachlev/CurrenciX/actions/workflows/apk-checks.yaml)
+[![Build](https://github.com/EliorMachlev/CurrenciX/actions/workflows/build.yaml/badge.svg?branch=Alpha&event=push)](https://github.com/EliorMachlev/CurrenciX/actions/workflows/build.yaml)
+[![CodeQL](https://github.com/EliorMachlev/CurrenciX/actions/workflows/codeql.yaml/badge.svg?branch=Alpha&event=push)](https://github.com/EliorMachlev/CurrenciX/actions/workflows/codeql.yaml)
+[![Reproducible build](https://github.com/EliorMachlev/CurrenciX/actions/workflows/apk-checks.yaml/badge.svg?event=schedule)](https://github.com/EliorMachlev/CurrenciX/actions/workflows/apk-checks.yaml)
 
 [![OpenSSF Best Practices](https://www.bestpractices.dev/projects/15831/badge)](https://www.bestpractices.dev/projects/15831)
 [![OpenSSF Scorecard](https://img.shields.io/ossf-scorecard/github.com/EliorMachlev/CurrenciX?label=openssf+scorecard)](https://securityscorecards.dev/viewer/?uri=github.com/EliorMachlev/CurrenciX)

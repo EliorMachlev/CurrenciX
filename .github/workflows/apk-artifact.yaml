@@ -3,14 +3,16 @@ name: Build APK artifact
 on:
   push:
     branches-ignore:
-      - master
+      - Alpha
+      - PreRelease
+      - Release
   workflow_dispatch:
 
 # A newer push to the same PR or branch supersedes a run still going;
-# master's runs always finish.
+# the long-lived branches' runs always finish.
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
-  cancel-in-progress: ${{ github.ref != 'refs/heads/master' }}
+  cancel-in-progress: ${{ !contains(fromJSON('["refs/heads/Alpha","refs/heads/PreRelease","refs/heads/Release"]'), github.ref) }}
 
 permissions:
   contents: read

@@ -1,12 +1,12 @@
 name: Tag a release
-# Tags the current master "v<versionName>" (read from app/build.gradle.kts)
+# Tags the current release branch "v<versionName>" (read from app/build.gradle.kts)
 # and starts the Release workflow on that tag, which builds, signs and
 # publishes it (release-apk.yaml). For tagging without a local git checkout,
-# from the Actions tab: Tag a release → Run workflow, on master. A tag made
+# from the Actions tab: Tag a release → Run workflow, on release. A tag made
 # with the workflow's own token starts no workflow by itself, so this one
 # starts Release on the tag by hand. It refuses an existing tag and any
-# branch but master; Release still checks the tag names the version and is
-# on master before it publishes.
+# branch but release; Release still checks the tag names the version and is
+# on release before it publishes.
 on:
   workflow_dispatch:
 
@@ -19,7 +19,7 @@ permissions:
 
 jobs:
   tag:
-    if: github.ref == 'refs/heads/master'
+    if: github.ref == 'refs/heads/Release'
     runs-on: ubuntu-latest
     timeout-minutes: 5
     permissions:
@@ -36,7 +36,7 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: Tag master with its version
+      - name: Tag release with its version
         id: tag
         env:
           GH_TOKEN: ${{ github.token }}

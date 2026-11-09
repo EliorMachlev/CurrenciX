@@ -17,14 +17,15 @@ Every translatable string exists in all 31, and lint fails on a missing one (`Mi
 
 Fork, clone and open in Android Studio. JDK 21 or newer (CI uses 25). `./gradlew assembleFdroidDebug` should build cleanly.
 
-Branch from **remote master**, not your local branch, so nothing stale comes along; say so in the PR if it depends on another unmerged branch:
+Branch from **remote Alpha**, not your local branch, so nothing stale comes along; say so in the PR if it depends on another unmerged branch:
 
 ```sh
-git fetch origin master
-git switch -c <new-branch> origin/master
+git remote add upstream https://github.com/EliorMachlev/CurrenciX.git   # once, in a fork
+git fetch upstream Alpha
+git switch -c <new-branch> upstream/Alpha
 ```
 
-Any non-master push builds a debug APK artifact for review.
+Open the PR against `Alpha`. Any push to a branch other than `Alpha`, `PreRelease` and `Release` builds a debug APK artifact for review. How a change reaches a release, and which checks run at each stage, is in [branching.md](branching.md).
 
 ## Code style
 
@@ -48,7 +49,7 @@ The only exceptions are in [exceptions.md](exceptions.md), each with the reason 
 - [ ] `./gradlew check assembleDebug` passes (includes the Konsist tests)
 - [ ] New behaviour has tests; a bug fix has a test that fails without it (Robolectric for Android and Compose, plain JUnit otherwise)
 - [ ] `detekt` and `spotlessCheck` are clean, and nothing is suppressed beyond [exceptions.md](exceptions.md)
-- [ ] Changed a Compose screen? Look over its screenshots (the Screenshots workflow uploads them per push, and on a branch uploads the ones that differ from master's as `screenshot-changes-<sha>`; locally `./gradlew :app:recordRoborazziFdroidDebug --tests "com.eliormachlev.currencix.screenshots.*"`)
+- [ ] Changed a Compose screen? Look over its screenshots (the Screenshots workflow runs on pushes to `Alpha` and by hand: run it on your branch from the Actions tab, and it uploads the ones that differ from Alpha's as `screenshot-changes-<sha>`; locally `./gradlew :app:recordRoborazziFdroidDebug --tests "com.eliormachlev.currencix.screenshots.*"`)
 - [ ] Added a dependency? Check its licence works for F-Droid, and record its checksums ([build.md](build.md#dependency-verification))
 - [ ] Changed the website? `python3 .github/scripts/site-assets.py stamp docs` ([website.md](website.md))
 

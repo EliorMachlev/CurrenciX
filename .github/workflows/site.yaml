@@ -18,7 +18,7 @@ on:
       - "SECURITY.md"
       - ".github/workflows/site.yaml"
   push:
-    branches: [master]
+    branches: [Alpha]
     paths:
       - "docs/**"
       - ".github/scripts/site-assets.py"
@@ -30,7 +30,7 @@ on:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
-  cancel-in-progress: ${{ github.ref != 'refs/heads/master' }}
+  cancel-in-progress: ${{ !contains(fromJSON('["refs/heads/Alpha","refs/heads/PreRelease","refs/heads/Release"]'), github.ref) }}
 
 permissions:
   contents: read

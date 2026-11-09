@@ -2,20 +2,21 @@ name: Dependency submission
 # Sends GitHub's dependency graph every library the Gradle build resolves,
 # the build tools' own included: GitHub can't read Gradle build files by
 # itself, so without this Dependabot alerts and Dependency Review see almost
-# none of them. On master for the alerts; on each PR from this repository so
-# Dependency Review can compare the PR's libraries with master's (a fork's PR
-# has no token that may submit, so it's left to master's).
+# none of them. On Alpha for the alerts; on each PR from this repository so
+# Dependency Review can compare the PR's libraries with the base branch's (a fork's PR
+# has no token that may submit, so it's left to the base branch's).
 on:
   push:
-    branches: [master]
+    branches: [Alpha]
   pull_request:
+    branches: [PreRelease, Release]
   workflow_dispatch:
 
 # A newer push to the same PR or branch supersedes a run still going;
-# master's runs always finish.
+# the long-lived branches' runs always finish.
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
-  cancel-in-progress: ${{ github.ref != 'refs/heads/master' }}
+  cancel-in-progress: ${{ !contains(fromJSON('["refs/heads/Alpha","refs/heads/PreRelease","refs/heads/Release"]'), github.ref) }}
 
 permissions:
   contents: read

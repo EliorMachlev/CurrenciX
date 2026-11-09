@@ -4,9 +4,9 @@ name: OSV-Scanner
 # the release attaches. Needs no API key, unlike the NVD-based OWASP scan.
 on:
   push:
-    branches:
-      - master
+    branches: [Alpha]
   pull_request:
+    branches: [PreRelease, Release]
   schedule:
     - cron: '30 8 * * 1'
   workflow_dispatch:
@@ -16,7 +16,7 @@ permissions:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
-  cancel-in-progress: ${{ github.ref != 'refs/heads/master' }}
+  cancel-in-progress: ${{ !contains(fromJSON('["refs/heads/Alpha","refs/heads/PreRelease","refs/heads/Release"]'), github.ref) }}
 
 env:
   # The read-only dependency cache .github/actions/dependency-cache restores

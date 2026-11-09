@@ -6,8 +6,8 @@ name: Release
 # provenance are build-release.yaml, a reusable workflow this one calls; this
 # file decides when to run it and publishes what it made.
 #
-# - Push a tag "v<versionName>" (e.g. v0.1.1) on a commit of master, or run
-#   "Tag a release" (tag-release.yaml) on master, which tags it and starts
+# - Push a tag "v<versionName>" (e.g. v0.1.1) on a commit of release, or run
+#   "Tag a release" (tag-release.yaml) on release, which tags it and starts
 #   this run on the tag: the release is published with the APK, its SBOMs (CycloneDX JSON and three SPDX files (2.3, 3.0.1 and 3.0)) and
 #   checksums, its notes written from the commits since the last
 #   release (.github/scripts/release-notes.py). F-Droid picks up the same tag
@@ -21,7 +21,7 @@ name: Release
 # The signing keys are secrets of the "release" environment (Settings →
 # Environments → release), not of the repository, so only the build job of
 # build-release.yaml can read them; limit the environment's deployment branches and tags to "v*" (and
-# master, for a run by hand). The secrets it needs:
+# release, for a run by hand). The secrets it needs:
 #   RELEASE_KEYSTORE_B64      base64 of the release keystore (release.p12)
 #   RELEASE_KEYSTORE_PASSWORD its password
 #   HYBRID_KEYSTORE_B64       base64 of the hybrid keystore (hybrid.p12)
