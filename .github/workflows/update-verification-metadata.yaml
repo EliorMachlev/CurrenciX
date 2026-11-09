@@ -2,8 +2,9 @@ name: Update dependency checksums
 # gradle/verification-metadata.xml holds the SHA-256 of every library and
 # plugin the build downloads, and the build refuses any file that doesn't
 # match. A dependency update (a Dependabot PR) adds files it doesn't know
-# yet, so that PR's builds fail until the file is regenerated. Run this by
-# hand on that branch ("Use workflow from"), once the update looks right:
+# yet, so that PR's builds fail until the file is regenerated.
+# dependabot-checksums.yaml starts this on such a PR; to run it yourself, use
+# it on that branch ("Use workflow from"), once the update looks right:
 # it records the new checksums, commits them to the branch, and starts the
 # push checks on the new commit. The diff shows every checksum it added.
 on:
@@ -21,12 +22,14 @@ permissions:
   contents: read
 
 jobs:
-  update:
+  # Runs the build, which executes the dependencies' own code (plugins), so
+  # this job can only read: the token that can push lives in `commit`, which
+  # runs nothing but the steps below and takes one data file from here.
+  record:
     runs-on: ubuntu-latest
     timeout-minutes: 60
     permissions:
-      contents: write
-      actions: write
+      contents: read
     steps:
       - name: Harden the runner
         uses: step-security/harden-runner@46b06cea07f9e64621fdf066ba77ac6915163d43 # v2.22.3
@@ -56,16 +59,25 @@ jobs:
       - name: Record the checksums
         run: |
           RECORD=(--write-verification-metadata sha256 --no-configuration-cache)
-          ./gradlew "${RECORD[@]}" \
+          # A download can fail on a registry hiccup (a 504 happened): try
+          # each invocation twice. Recording is idempotent.
+          record() {
+            ./gradlew "${RECORD[@]}" "$@" || {
+              echo "::warning title=Checksums::Retrying after a failure: $*"
+              sleep 30
+              ./gradlew "${RECORD[@]}" "$@"
+            }
+          }
+          record \
             assembleFdroidDebug assemblePlayDebug \
             spotlessCheck detekt \
             assembleFdroidRelease :app:cyclonedxDirectBom :app:spdxSbom :app:owaspLibraries \
             :app:lintFdroidDebug :app:lintPlayDebug \
             :app:assembleFdroidBenchmarkRelease :baselineprofile:assembleFdroidBenchmarkRelease \
             :app:bundlePlayRelease
-          ./gradlew "${RECORD[@]}" :app:testFdroidDebugUnitTest :app:testPlayDebugUnitTest :app:koverXmlReportFdroidDebug :app:koverXmlReportPlayDebug :app:licenseeAndroidFdroidRelease
-          ./gradlew "${RECORD[@]}" :app:compileFdroidReleaseKotlin -PcomposeReports
-          ./gradlew "${RECORD[@]}" :app:testFdroidDebugUnitTest -PfuzzTests --tests "com.eliormachlev.currencix.FuzzTest.fuzzLaunchIntent"
+          record :app:testFdroidDebugUnitTest :app:testPlayDebugUnitTest :app:koverXmlReportFdroidDebug :app:koverXmlReportPlayDebug :app:licenseeAndroidFdroidRelease
+          record :app:compileFdroidReleaseKotlin -PcomposeReports
+          record :app:testFdroidDebugUnitTest -PfuzzTests --tests "com.eliormachlev.currencix.FuzzTest.fuzzLaunchIntent"
 
       # A file can be published with different bytes on different
       # repositories (a plugin's marker POM on Maven Central and on the
@@ -91,6 +103,41 @@ jobs:
           name: verification-metadata
           path: gradle/verification-metadata.xml
           retention-days: 7
+
+  commit:
+    needs: record
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+      actions: write
+    steps:
+      - name: Harden the runner
+        uses: step-security/harden-runner@46b06cea07f9e64621fdf066ba77ac6915163d43 # v2.22.3
+        with:
+          egress-policy: audit
+
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Download the recorded file
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: verification-metadata
+          path: ${{ runner.temp }}/recorded
+
+      # Data only: it must be XML with the right root, and it replaces the one
+      # file, so nothing else can ride along in the commit.
+      - name: Take the recorded file
+        run: |
+          python3 - "$RUNNER_TEMP/recorded/verification-metadata.xml" <<'PY'
+          import sys, xml.etree.ElementTree as ET
+          root = ET.parse(sys.argv[1]).getroot()
+          if not root.tag.endswith("verification-metadata"):
+              sys.exit(f"unexpected root element: {root.tag}")
+          PY
+          cp "$RUNNER_TEMP/recorded/verification-metadata.xml" gradle/verification-metadata.xml
 
       - name: Commit and push
         id: push
