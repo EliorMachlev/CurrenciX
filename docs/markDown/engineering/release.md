@@ -4,7 +4,7 @@
 
 1. A PR titled `chore: version <x.y.z>` sets `versionName` and `versionCode` in [`app/build.gradle.kts`](../../../app/build.gradle.kts) ([version codes](#version-codes)) and adds the hand-written fastlane changelog for that code. Merge it once CI is green.
 2. Tag `master` (next section). The release workflow builds, signs and publishes; nothing else is needed.
-3. Check the release: the APK, `SHA256SUMS`, the SBOM and the provenance file are attached ([verify them](#verifying-a-release)).
+3. Check the release: the APK, `SHA256SUMS`, the two SBOMs and the provenance file are attached ([verify them](#verifying-a-release)).
 
 ## Releasing is pushing a tag
 
@@ -12,7 +12,7 @@ Tag a commit of `master` `v<versionName>` (`v0.1.1`) and push it, or, with no gi
 
 1. checks the tag names the version being built and is on `master`, and that the certificate pins are at least 90 days from expiry (Android stops checking them after it; run the **Certificate pins** workflow with *update* first, see [security.md](security.md#certificate-pinning));
 2. decodes the keystores from the `release` environment's secrets into the runner's temp folder, builds `assembleFdroidRelease` (signing and verifying the APK), deletes the keys;
-3. writes the SBOM (`:app:cyclonedxDirectBom`, CycloneDX 1.6 of the fdroid release runtime classpath) and `SHA256SUMS`, and uploads the APK with them;
+3. writes the SBOMs (`:app:cyclonedxDirectBom`, CycloneDX 1.6, and `:app:spdxSbom`, SPDX 2.3, both of the fdroid release runtime classpath) and `SHA256SUMS`, and uploads the APK with them;
 4. steps 1 to 3 are [`build-release.yaml`](../../../.github/workflows/build-release.yaml), a reusable workflow that `release-apk.yaml` calls; its `build` job holds the keys and has no token to sign with, and its `attest` job (tags only) holds the signing identity and never sees the keys: it attests the files' build provenance and uploads it as an in-toto provenance bundle (a release file is what OpenSSF Scorecard's Signed-Releases check reads; the file's name is set in the workflow). The attestation therefore names `build-release.yaml` as the builder, which is how the build reaches SLSA build level 3 by [GitHub's recipe](https://docs.github.com/en/actions/how-tos/secure-your-work/use-artifact-attestations/increase-security-rating);
 5. `release-apk.yaml`'s `publish` job, the only one allowed to write and one that never sees the keys or the signing identity, publishes the GitHub release "CurrenciX <version>" with those files.
 
@@ -22,12 +22,13 @@ A tag whose version has a `-` (`v1.24.0-beta1`), or any `0.x` version (everythin
 
 ## Verifying a release
 
-Each release carries the APK, `SHA256SUMS` (APK and SBOM), the CycloneDX SBOM and the provenance bundle. From a folder with them:
+Each release carries the APK, `SHA256SUMS` (APK and both SBOMs), the CycloneDX and SPDX SBOMs and the provenance bundle. From a folder with them:
 
 ```bash
 sha256sum --check --ignore-missing SHA256SUMS
 gh attestation verify *.apk --repo EliorMachlev/CurrenciX --signer-workflow EliorMachlev/CurrenciX/.github/workflows/build-release.yaml            # asks GitHub
-gh attestation verify *-sbom.cdx.json --repo EliorMachlev/CurrenciX --signer-workflow EliorMachlev/CurrenciX/.github/workflows/build-release.yaml  # the SBOM is attested too
+gh attestation verify *-sbom.cdx.json --repo EliorMachlev/CurrenciX --signer-workflow EliorMachlev/CurrenciX/.github/workflows/build-release.yaml  # the SBOMs are attested too
+gh attestation verify *-sbom.spdx.json --repo EliorMachlev/CurrenciX --signer-workflow EliorMachlev/CurrenciX/.github/workflows/build-release.yaml
 apksigner verify --verbose --print-certs *.apk                                                                   # the signing certificate, below
 ```
 

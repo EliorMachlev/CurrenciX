@@ -138,20 +138,23 @@ jobs:
         run: rm -rf "$RUNNER_TEMP/signing" secrets.properties
 
       # The software bill of materials: every library the APK ships, with
-      # versions, hashes and licences (cyclonedxDirectBom in app/build.gradle.kts).
-      - name: Write the SBOM
+      # versions, hashes and licences, in the two formats audits ask for:
+      # CycloneDX (cyclonedxDirectBom) and SPDX (spdxSbom), both in
+      # app/build.gradle.kts and both from the same runtime classpath.
+      - name: Write the SBOMs
         env:
           VERSION: ${{ steps.version.outputs.name }}
         run: |
-          ./gradlew :app:cyclonedxDirectBom
-          cp app/build/reports/sbom/currencix-sbom.cdx.json \
-            "app/build/outputs/apk/fdroid/release/currencix-${VERSION}-sbom.cdx.json"
+          ./gradlew :app:cyclonedxDirectBom :app:spdxSbom
+          out=app/build/outputs/apk/fdroid/release
+          cp app/build/reports/sbom/currencix-sbom.cdx.json "$out/currencix-${VERSION}-sbom.cdx.json"
+          cp app/build/spdx/release.spdx.json "$out/currencix-${VERSION}-sbom.spdx.json"
 
       - name: Write checksums
         working-directory: app/build/outputs/apk/fdroid/release
         run: |
           set -o pipefail
-          sha256sum ./*-release.apk ./*-sbom.cdx.json | sed 's| \./| |' > SHA256SUMS
+          sha256sum ./*-release.apk ./*-sbom.cdx.json ./*-sbom.spdx.json | sed 's| \./| |' > SHA256SUMS
 
       - name: Upload the APK
         id: upload
@@ -161,6 +164,7 @@ jobs:
           path: |
             app/build/outputs/apk/fdroid/release/*-release.apk
             app/build/outputs/apk/fdroid/release/*-sbom.cdx.json
+            app/build/outputs/apk/fdroid/release/*-sbom.spdx.json
             app/build/outputs/apk/fdroid/release/SHA256SUMS
           if-no-files-found: error
 
@@ -172,7 +176,7 @@ jobs:
           {
             echo "### Signed release APK, CurrenciX ${VERSION}"
             echo
-            echo "[Download the APK](${ARTIFACT_URL}) (a zip: the APK, which installs on any 64-bit phone, its SBOM and SHA256SUMS)."
+            echo "[Download the APK](${ARTIFACT_URL}) (a zip: the APK, which installs on any 64-bit phone, its SBOMs and SHA256SUMS)."
             echo
             echo "Signed with the release key (v3.0, all Android versions) and the post-quantum hybrid signature (v3.2, Android 17+)."
           } >> "$GITHUB_STEP_SUMMARY"
@@ -221,6 +225,7 @@ jobs:
           subject-path: |
             release/*.apk
             release/*-sbom.cdx.json
+            release/*-sbom.spdx.json
 
       # The same attestations as a file for the release: OpenSSF Scorecard's
       # Signed-Releases check only looks at release files, and takes a
