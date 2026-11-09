@@ -13,6 +13,8 @@ The project favours simplicity; large additions are unlikely to be merged withou
 
 Every translatable string exists in all 31, and lint fails on a missing one (`MissingTranslation`), so a new string arrives with its translations; bulk additions were machine translated, and native corrections are welcome. A string with nothing to translate (`%1$s → %2$s`) is `translatable="false"`.
 
+The number of languages is written in the README (and its badge), the website, the store listing and a few docs. `LanguageCountTest` counts the `res/values-*` folders and fails when any of those says a different number, so adding or removing a language means updating them all in the same change.
+
 ## Setup
 
 Fork, clone and open in Android Studio. JDK 21 or newer (CI uses 25). `./gradlew assembleFdroidDebug` should build cleanly.
