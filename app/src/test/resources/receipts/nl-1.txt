@@ -1,0 +1,10 @@
+SUPERMARKT DE BOER
+Brood 2,15
+Melk 1,09
+BTW 9% 0,27
+Totaal 3,24
+Contant 5,00
+Wisselgeld 1,76
+=== expected
+Brood | 2.15
+Melk | 1.09

@@ -1,0 +1,10 @@
+SKLEP SPOŻYWCZY
+Chleb 4,50
+Mleko 3,20
+PTU A 0,33
+Razem 7,70
+Gotówka 10,00
+Reszta 2,30
+=== expected
+Chleb | 4.50
+Mleko | 3.20

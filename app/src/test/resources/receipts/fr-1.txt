@@ -1,0 +1,10 @@
+BOULANGERIE DUPONT
+Baguette 1,10
+Plateau fromages 1 234,50
+TVA 5,5% 0,06
+Total 1 235,60
+Espèces 1 240,00
+Rendu 4,40
+=== expected
+Baguette | 1.10
+Plateau fromages | 1234.50

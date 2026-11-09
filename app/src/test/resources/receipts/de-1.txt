@@ -1,0 +1,12 @@
+BIOMARKT SCHMIDT
+Vollkornbrot 2,49
+Äpfel 1 kg 3,99
+Mineralwasser 12,00 B
+Fahrradhelm 1.299,00
+Summe 1.317,48
+Rückgeld 1,52
+=== expected
+Vollkornbrot | 2.49
+Äpfel 1 kg | 3.99
+Mineralwasser | 12.00
+Fahrradhelm | 1299.00

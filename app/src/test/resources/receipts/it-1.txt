@@ -1,0 +1,11 @@
+ALIMENTARI ROSSI
+Pane 1,20
+Latte intero 1L 1,35
+Pasta 500g 0,99
+Totale 3,54
+Contanti 5,00
+Resto 1,46
+=== expected
+Pane | 1.20
+Latte intero 1L | 1.35
+Pasta 500g | 0.99

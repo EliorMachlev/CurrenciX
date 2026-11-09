@@ -1,0 +1,10 @@
+SUPERMERCADO LA PLAZA
+Leche entera 1,05
+Pan 0,85
+IVA 10% 0,19
+Total 1,90
+Efectivo 5,00
+Cambio 3,10
+=== expected
+Leche entera | 1.05
+Pan | 0.85

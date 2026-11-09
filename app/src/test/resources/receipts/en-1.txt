@@ -1,0 +1,10 @@
+CORNER STORE
+Milk 1L 6.90
+Bread 12.50A
+Cheese 1,234.50
+TOTAL 1,253.90
+VISA 1,253.90
+=== expected
+Milk 1L | 6.90
+Bread | 12.50
+Cheese | 1234.50
