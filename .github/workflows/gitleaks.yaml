@@ -18,8 +18,9 @@ permissions:
   contents: read
 
 env:
-  # Bump with a new release's tag (the cache key follows it).
-  GITLEAKS_VERSION: v8.24.3
+  # v8.30.1's commit, not its tag, which can be moved. Bump with a new
+  # release's commit (the cache key follows it).
+  GITLEAKS_VERSION: 83d9cd684c87d95d656c1458ef04895a7f1cbd8e
 
 jobs:
   gitleaks:
@@ -39,7 +40,7 @@ jobs:
       # binary: github.com's release downloads returned HTTP 504 and failed
       # whole runs, and Go checks every module against its checksum database,
       # so the pin is verified, not trusted. The binary is cached per version.
-      # (v8.24.3's module path is still the author's old one.)
+      # (v8.30.1's module path is still the author's old one.)
       - name: Restore gitleaks
         id: cache
         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
