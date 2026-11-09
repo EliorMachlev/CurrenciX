@@ -1,0 +1,9 @@
+BAKKAL AHMET
+Ekmek 5,00
+Süt 1L 32,50
+KDV %8 2,78
+TOPLAM 37,50
+Para üstü 2,50
+=== expected
+Ekmek | 5.00
+Süt 1L | 32.50

@@ -1,0 +1,7 @@
+Corner shop
+Bread 12
+Milk 7
+Total 19
+=== expected
+Bread | 12
+Milk | 7
