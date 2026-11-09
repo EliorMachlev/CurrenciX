@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Report a security vulnerability (private)
+    url: https://github.com/EliorMachlev/CurrenciX/security/advisories/new
+    about: Please don't open a public issue for a vulnerability; see SECURITY.md.
+  - name: Documentation
+    url: https://github.com/EliorMachlev/CurrenciX/blob/master/docs/markDown/README.md
+    about: Architecture, providers, build and release documentation.
