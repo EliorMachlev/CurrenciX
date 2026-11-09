@@ -17,6 +17,11 @@ concurrency:
 permissions:
   contents: read
 
+env:
+  # v8.30.1's commit, not its tag, which can be moved. Bump with a new
+  # release's commit (the cache key follows it).
+  GITLEAKS_COMMIT: 83d9cd684c87d95d656c1458ef04895a7f1cbd8e
+
 jobs:
   gitleaks:
     runs-on: ubuntu-latest
@@ -31,6 +36,44 @@ jobs:
         with:
           fetch-depth: 0
           persist-credentials: false
-      - uses: gitleaks/gitleaks-action@e0c47f4f8be36e29cdc102c57e68cb5cbf0e8d1e # v3.0.0
+      # Built from source at a pinned commit, not downloaded as a release
+      # binary: github.com's release downloads returned HTTP 504 and failed
+      # whole runs. The commit is fetched from git and checked to be the one
+      # pinned before it is built (`go install` at a commit is not enough: the
+      # Go module proxy can serve a tag's older cached source), and the build
+      # checks every dependency against the checksum database. The binary is
+      # cached per commit; the key names how it is built, so a binary built
+      # another way (an earlier `go install`) is never restored for it.
+      - name: Restore gitleaks
+        id: cache
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ${{ runner.temp }}/gitleaks-bin
+          key: gitleaks-built-from-git-${{ env.GITLEAKS_COMMIT }}-${{ runner.os }}-${{ runner.arch }}
+
+      - name: Build gitleaks
+        if: steps.cache.outputs.cache-hit != 'true'
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GOFLAGS: -trimpath
+        run: |
+          src="$RUNNER_TEMP/gitleaks-src"
+          mkdir -p "$RUNNER_TEMP/gitleaks-bin"
+          git init -q "$src"
+          for attempt in 1 2 3 4 5; do
+            git -C "$src" fetch -q --depth 1 https://github.com/gitleaks/gitleaks "$GITLEAKS_COMMIT" && break
+            [ "$attempt" = 5 ] && exit 1
+            echo "fetch failed (attempt $attempt)"; sleep $((attempt * 10))
+          done
+          git -C "$src" checkout -q FETCH_HEAD
+          test "$(git -C "$src" rev-parse HEAD)" = "$GITLEAKS_COMMIT"
+          for attempt in 1 2 3 4 5; do
+            (cd "$src" && go build -o "$RUNNER_TEMP/gitleaks-bin/gitleaks" .) && exit 0
+            echo "go build failed (attempt $attempt)"; sleep $((attempt * 10))
+          done
+          exit 1
+
+      # The whole history, every run: it is quick, and a leak in an old
+      # commit counts as much as one in a new one. Matches are redacted so
+      # a real secret never reaches the log.
+      - name: Scan the repository
+        run: ${{ runner.temp }}/gitleaks-bin/gitleaks git --no-banner --redact --verbose .
