@@ -59,7 +59,7 @@ jobs:
       - name: Install Dependency-Check
         run: |
           zip="$RUNNER_TEMP/dependency-check.zip"
-          curl -fsSL -o "$zip" "https://repo1.maven.org/maven2/org/owasp/dependency-check-cli/${DEPENDENCY_CHECK_VERSION}/dependency-check-cli-${DEPENDENCY_CHECK_VERSION}-release.zip"
+          curl -fsSL --retry 6 --retry-delay 10 --retry-all-errors -o "$zip" "https://repo1.maven.org/maven2/org/owasp/dependency-check-cli/${DEPENDENCY_CHECK_VERSION}/dependency-check-cli-${DEPENDENCY_CHECK_VERSION}-release.zip"
           echo "${DEPENDENCY_CHECK_SHA256}  $zip" | sha256sum --check --strict -
           unzip -q "$zip" -d "$RUNNER_TEMP"
 

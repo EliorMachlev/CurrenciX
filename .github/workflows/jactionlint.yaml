@@ -51,7 +51,7 @@ jobs:
       - name: Install jactionlint
         run: |
           archive="jactionlint_${JACTIONLINT_VERSION}_linux_amd64.tar.gz"
-          curl -sSfL --retry 3 -o "$RUNNER_TEMP/$archive" \
+          curl -sSfL --retry 6 --retry-delay 10 --retry-all-errors -o "$RUNNER_TEMP/$archive" \
             "https://github.com/jdx/jactionlint/releases/download/v${JACTIONLINT_VERSION}/$archive"
           echo "$JACTIONLINT_SHA256  $RUNNER_TEMP/$archive" | sha256sum -c -
           tar -xzf "$RUNNER_TEMP/$archive" -C "$RUNNER_TEMP" jactionlint

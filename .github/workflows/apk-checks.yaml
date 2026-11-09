@@ -160,7 +160,7 @@ jobs:
       - name: Install diffuse
         run: |
           zip="$RUNNER_TEMP/diffuse.zip"
-          curl -fsSL -o "$zip" "https://github.com/JakeWharton/diffuse/releases/download/${DIFFUSE_VERSION}/diffuse-${DIFFUSE_VERSION}.zip"
+          curl -fsSL --retry 6 --retry-delay 10 --retry-all-errors -o "$zip" "https://github.com/JakeWharton/diffuse/releases/download/${DIFFUSE_VERSION}/diffuse-${DIFFUSE_VERSION}.zip"
           echo "${DIFFUSE_SHA256}  $zip" | sha256sum --check --strict -
           unzip -q "$zip" -d "$RUNNER_TEMP"
           echo "$RUNNER_TEMP/diffuse-${DIFFUSE_VERSION}/bin" >> "$GITHUB_PATH"
