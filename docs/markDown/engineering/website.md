@@ -14,7 +14,7 @@ The Site workflow (`check docs`) fails while a version is stale or an inline scr
 
 ## Search engines and AI assistants
 
-Each page carries Open Graph and Twitter card tags, and the home page carries schema.org `MobileApplication` data (JSON-LD, which the CSP doesn't restrict as it isn't executed). [`robots.txt`](../../robots.txt) allows every crawler and points to [`sitemap.xml`](../../sitemap.xml), which lists the four pages (add a page there when you add one). [`llms.txt`](../../llms.txt) is a short, curated summary with links for AI assistants; keep its claims in step with the README and the features page. [`CITATION.cff`](../../../CITATION.cff) at the repository root lets tools cite the project. The repository's description and topics are set in GitHub's settings.
+Each page carries Open Graph and Twitter card tags, and the home page carries schema.org `MobileApplication` data (JSON-LD, which the CSP doesn't restrict as it isn't executed). [`robots.txt`](../../robots.txt) allows every crawler and points to [`sitemap.xml`](../../sitemap.xml), which lists the four pages (add a page there when you add one). [`llms.txt`](../../llms.txt) is a short, curated summary with links for AI assistants; keep its claims in step with the README and the features page. [`CITATION.cff`](../../../CITATION.cff) at the repository root lets tools cite the project. The repository's description and topics are set in GitHub's settings. `docs/llms-full.txt` is the same site and the provider and security documents as one plain-text file, built by `python3 .github/scripts/llms-full.py build docs`; the Site workflow fails a PR when it is stale.
 
 ## See also
 

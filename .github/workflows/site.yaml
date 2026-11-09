@@ -6,17 +6,25 @@ name: Site
 # has from before, and every inline script is allowed by its page's
 # Content-Security-Policy. After changing a file under docs/, run
 #   python3 .github/scripts/site-assets.py stamp docs
+# and rebuild the plain-text copy for AI assistants:
+#   python3 .github/scripts/llms-full.py build docs
 on:
   pull_request:
     paths:
       - "docs/**"
       - ".github/scripts/site-assets.py"
+      - ".github/scripts/llms-full.py"
+      - "docs/markDown/product/providers.md"
+      - "SECURITY.md"
       - ".github/workflows/site.yaml"
   push:
     branches: [master]
     paths:
       - "docs/**"
       - ".github/scripts/site-assets.py"
+      - ".github/scripts/llms-full.py"
+      - "docs/markDown/product/providers.md"
+      - "SECURITY.md"
       - ".github/workflows/site.yaml"
   workflow_dispatch:
 
@@ -42,3 +50,5 @@ jobs:
           persist-credentials: false
       - name: Check asset versions and inline scripts
         run: python3 .github/scripts/site-assets.py check docs
+      - name: Check docs/llms-full.txt is current
+        run: python3 .github/scripts/llms-full.py check docs

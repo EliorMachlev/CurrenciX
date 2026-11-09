@@ -11,6 +11,10 @@ Get the app: signed APKs, with SHA256SUMS, SBOMs and signed build provenance, ar
 - [Exchange rate providers](https://currencix.machlev.org/providers.html): the eight providers, currencies, update frequency, history and API keys
 - [Privacy policy](https://currencix.machlev.org/privacy.html): what the app stores, what it sends, and to whom
 
+## Everything in one file
+
+- [llms-full.txt](https://currencix.machlev.org/llms-full.txt): the four pages, the provider reference and the security policy as plain text
+
 ## Source and documentation
 
 - [Repository](https://github.com/EliorMachlev/CurrenciX): source code, issues and releases
