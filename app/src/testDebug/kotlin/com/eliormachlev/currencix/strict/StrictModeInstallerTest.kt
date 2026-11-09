@@ -17,7 +17,7 @@ class StrictModeInstallerTest {
     private val app: Application = ApplicationProvider.getApplicationContext()
 
     @Test
-    fun `installing sets both the thread and the VM policy`() {
+    fun installingSetsBothTheThreadAndTheVMPolicy() {
         val threadBefore = StrictMode.getThreadPolicy()
         val vmBefore = StrictMode.getVmPolicy()
         try {

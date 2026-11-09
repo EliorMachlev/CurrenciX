@@ -20,7 +20,7 @@ class CrashReporterInstallerTest {
     private val app: Application = ApplicationProvider.getApplicationContext()
 
     @Test
-    fun `under Robolectric the handler is left alone`() {
+    fun underRobolectricTheHandlerIsLeftAlone() {
         val before = Thread.getDefaultUncaughtExceptionHandler()
 
         app.installDebugCrashReporter()
@@ -29,7 +29,7 @@ class CrashReporterInstallerTest {
     }
 
     @Test
-    fun `on a real device build it installs a handler`() {
+    fun onARealDeviceBuildItInstallsAHandler() {
         val handlerBefore = Thread.getDefaultUncaughtExceptionHandler()
         val fingerprintBefore = Build.FINGERPRINT
         try {

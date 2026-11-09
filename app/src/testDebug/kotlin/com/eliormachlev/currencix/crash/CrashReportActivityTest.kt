@@ -52,7 +52,7 @@ class CrashReportActivityTest {
     }
 
     @Test
-    fun `shows the trace under a header`() {
+    fun showsTheTraceUnderAHeader() {
         val activity = launch("java.lang.IllegalStateException: boom")
 
         val texts =
@@ -67,14 +67,14 @@ class CrashReportActivityTest {
     }
 
     @Test
-    fun `copies the trace to the clipboard on entry`() {
+    fun copiesTheTraceToTheClipboardOnEntry() {
         launch("trace on entry")
 
         assertEquals("trace on entry", clipboardText())
     }
 
     @Test
-    fun `the copy button copies again and says so`() {
+    fun theCopyButtonCopiesAgainAndSaysSo() {
         val activity = launch("trace to copy")
         val copy = activity.views().filterIsInstance<Button>().first { it.text == context.getString(R.string.crash_copy) }
         context.getSystemService(ClipboardManager::class.java).clearPrimaryClip()
@@ -86,7 +86,7 @@ class CrashReportActivityTest {
     }
 
     @Test
-    fun `has a restart button`() {
+    fun hasARestartButton() {
         val activity = launch("trace")
 
         val labels =
@@ -100,7 +100,7 @@ class CrashReportActivityTest {
     }
 
     @Test
-    fun `a missing trace shows an empty screen instead of crashing`() {
+    fun aMissingTraceShowsAnEmptyScreenInsteadOfCrashing() {
         val activity = launch(trace = null)
 
         assertNotNull(activity.views().filterIsInstance<Button>().firstOrNull())
