@@ -19,6 +19,7 @@ import com.eliormachlev.currencix.util.PrivateRequests
 import com.eliormachlev.currencix.util.plantConsoleLogging
 import com.eliormachlev.currencix.util.setAppNightMode
 import com.eliormachlev.currencix.view.lock.AppLock
+import com.eliormachlev.currencix.view.widget.CurrencyWidget
 import com.eliormachlev.currencix.view.widget.publishWidgetPreviews
 import com.eliormachlev.currencix.worker.RateRefreshScheduler
 import kotlinx.coroutines.CoroutineScope
@@ -57,6 +58,8 @@ class CurrenciesApplication : Application() {
         keepPrivacyInStep()
         prewarmProviderDns()
         observeAutoRefreshPreference()
+        // Fee and pair changes redraw the widget even when no widget callback has run in this process.
+        CurrencyWidget.ensureRefreshBusBound(this)
         appScope.publishWidgetPreviews(this)
     }
 

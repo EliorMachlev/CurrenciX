@@ -69,9 +69,6 @@ object FeeCalculator {
         return acc
     }
 
-    /** Whether [stack] changes an amount at all (1 means no fee in force). */
-    fun hasFees(stack: BigDecimal): Boolean = stack.compareTo(BigDecimal.ONE) != 0
-
     /** [amount] with the fee [stack] on it: the final amount the converter shows. */
     fun applyStack(
         amount: BigDecimal,

@@ -59,6 +59,7 @@ import com.eliormachlev.currencix.repository.Database
 import com.eliormachlev.currencix.repository.persistence.WidgetRefreshBus
 import com.eliormachlev.currencix.util.AppDispatchers
 import com.eliormachlev.currencix.util.feePercentDelta
+import com.eliormachlev.currencix.util.isNeutralFeeStack
 import com.eliormachlev.currencix.util.roundForDisplay
 import com.eliormachlev.currencix.util.toHumanReadableNumber
 import com.eliormachlev.currencix.view.compose.theme.Spacing
@@ -349,7 +350,7 @@ private fun readSnapshot(
             ?.toHumanReadableNumber(context, decimalPlaces = scale)
     val feeText =
         feeStack
-            .takeIf(FeeCalculator::hasFees)
+            .takeUnless { it.isNeutralFeeStack() }
             ?.feePercentDelta(FEE_PERCENT_DECIMALS)
             ?.toHumanReadableNumber(context, suffix = "%", trim = true)
     val trend =

@@ -5,6 +5,7 @@ import com.eliormachlev.currencix.model.ExchangeRates
 import com.eliormachlev.currencix.model.FeeCalculator
 import com.eliormachlev.currencix.model.convert
 import com.eliormachlev.currencix.util.PriceParser
+import com.eliormachlev.currencix.util.isNeutralFeeStack
 import java.math.BigDecimal
 
 /** What the text-selection popup shows for the selected text. */
@@ -25,7 +26,7 @@ sealed interface SelectionConversion {
         val assumedFrom: Boolean,
         val feeStack: BigDecimal = BigDecimal.ONE,
     ) : SelectionConversion {
-        val hasFees: Boolean get() = FeeCalculator.hasFees(feeStack)
+        val hasFees: Boolean get() = !feeStack.isNeutralFeeStack()
         val resultWithFees: BigDecimal get() = FeeCalculator.applyStack(result, feeStack)
     }
 
