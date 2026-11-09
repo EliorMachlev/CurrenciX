@@ -68,14 +68,20 @@ internal class RateCache<K : RateCacheKey, V : Any>(
      * On upstream failure with any stale-but-present cached entry, the
      * stale value is returned so the UI can still render something rather
      * than error out — matches the existing "preserve last-known-good"
-     * behaviour in `ExchangeRatesRepository.postError`.
+     * behaviour in `ExchangeRatesRepository.postError`. A caller that must
+     * not mistake an old value for an answer (a fallback provider, which is
+     * only "in use" once it has answered) passes `allowStale = false` and
+     * gets the failure instead.
      */
-    suspend fun get(key: K): Result<V> {
+    suspend fun get(
+        key: K,
+        allowStale: Boolean = true,
+    ): Result<V> {
         readFresh(key)?.let { return Result.success(it) }
         return dedupe
             .get(key, scope) { fetchWithRetry(key) }
             .recoverCatching { error ->
-                staleFallback(key) ?: throw error
+                (if (allowStale) staleFallback(key) else null) ?: throw error
             }
     }
 
