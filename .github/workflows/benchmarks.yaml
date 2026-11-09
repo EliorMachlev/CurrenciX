@@ -11,10 +11,16 @@ name: Benchmarks
 #
 # Heavy (tens of minutes of emulator time): it runs when app code or the
 # benchmarks change, and a newer push to the same branch cancels a running one.
+# Not on Dependabot's branches (a bump of the Android Gradle plugin touches the
+# build files above, and a library bump doesn't touch the app, yet either held
+# its PR at "unstable" for the whole run): master gets the run every Sunday
+# instead, after the dependency cache is built, so a slowdown a bump caused
+# still shows within a week.
 on:
   push:
     branches-ignore:
       - master
+      - 'dependabot/**'
     paths:
       - 'app/src/main/**'
       - 'app/build.gradle.kts'
@@ -23,6 +29,8 @@ on:
       - '.github/workflows/benchmarks.yaml'
       - '.github/scripts/benchmark-*.py'
       - '.github/scripts/benchmark_results.py'
+  schedule:
+    - cron: '23 4 * * 0'
   workflow_dispatch:
 
 permissions:
