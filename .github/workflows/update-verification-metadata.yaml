@@ -59,7 +59,7 @@ jobs:
           ./gradlew "${RECORD[@]}" \
             assembleFdroidDebug assemblePlayDebug \
             spotlessCheck detekt \
-            assembleFdroidRelease :app:cyclonedxDirectBom :app:owaspLibraries \
+            assembleFdroidRelease :app:cyclonedxDirectBom :app:spdxSbom :app:owaspLibraries \
             :app:lintFdroidDebug :app:lintPlayDebug \
             :app:assembleFdroidBenchmarkRelease :baselineprofile:assembleFdroidBenchmarkRelease \
             :app:bundlePlayRelease

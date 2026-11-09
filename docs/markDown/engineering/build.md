@@ -82,7 +82,7 @@ CI fuzzes each target for two minutes per PR. A crash saves its input under `app
 RECORD=(--write-verification-metadata sha256 --no-configuration-cache)
 ./gradlew "${RECORD[@]}" \
   assembleFdroidDebug assemblePlayDebug \
-  spotlessCheck detekt assembleFdroidRelease :app:cyclonedxDirectBom :app:owaspLibraries \
+  spotlessCheck detekt assembleFdroidRelease :app:cyclonedxDirectBom :app:spdxSbom :app:owaspLibraries \
   :app:lintFdroidDebug :app:lintPlayDebug \
   :app:assembleFdroidBenchmarkRelease :baselineprofile:assembleFdroidBenchmarkRelease :app:bundlePlayRelease
 ./gradlew "${RECORD[@]}" :app:testFdroidDebugUnitTest :app:testPlayDebugUnitTest \

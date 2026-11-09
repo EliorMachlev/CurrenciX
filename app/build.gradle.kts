@@ -38,6 +38,8 @@ plugins {
     // CycloneDX SBOM of what the app ships; the release workflow attaches it
     // to each GitHub release.
     id("org.cyclonedx.bom") version "3.5.1"
+    // The same list as SPDX 2.3 JSON, for the release too.
+    id("org.spdx.sbom") version "0.12.0"
     // Kotlin classes for the Protobuf schema in src/main/proto (carts, trips,
     // fees, rate alerts on disk): plain generated code, no reflection.
     id("com.squareup.wire") version "7.1.2"
@@ -905,6 +907,26 @@ tasks.named<CyclonedxDirectTask>("cyclonedxDirectBom") {
     licenseChoice.set(LicenseChoice().apply { addExpression(Expression("GPL-3.0-or-later")) })
     jsonOutput.set(layout.buildDirectory.file("reports/sbom/$sbomFileName.json"))
     xmlOutput.set(layout.buildDirectory.file("reports/sbom/$sbomFileName.xml"))
+}
+
+// The SPDX twin of that SBOM, from the same runtime classpath:
+// `./gradlew :app:spdxSbom` writes app/build/spdx/currencix.spdx.json.
+spdxSbom {
+    targets {
+        create("release") {
+            configurations.set(listOf(sbomConfiguration))
+            scm {
+                uri.set("https://github.com/EliorMachlev/CurrenciX.git")
+                revision.set(providers.environmentVariable("GITHUB_SHA").orElse("unknown"))
+            }
+            document {
+                name.set("CurrenciX")
+                namespace.set("https://github.com/EliorMachlev/CurrenciX/spdx/" + android.defaultConfig.versionName)
+                creator.set("Organization: CurrenciX")
+                packageSupplier.set("Organization: CurrenciX")
+            }
+        }
+    }
 }
 
 // The same libraries as files, for the weekly OWASP Dependency-Check, which

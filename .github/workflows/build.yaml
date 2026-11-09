@@ -333,10 +333,10 @@ jobs:
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@8da46b539cd8fe6ab27ca75128919a18d757604c # v6.4.1
 
-      # The SBOM too, as the release attaches it: a change that breaks it
+      # The SBOMs too, as the release attaches them: a change that breaks one
       # fails here, not on release day.
-      - name: Assemble fdroid release (unsigned) and its SBOM
-        run: ./gradlew assembleFdroidRelease :app:cyclonedxDirectBom
+      - name: Assemble fdroid release (unsigned) and its SBOMs
+        run: ./gradlew assembleFdroidRelease :app:cyclonedxDirectBom :app:spdxSbom
 
       - name: Upload fdroid release APK
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
@@ -345,5 +345,6 @@ jobs:
           path: |
             app/build/outputs/apk/fdroid/release/*.apk
             app/build/reports/sbom/currencix-sbom.cdx.json
+            app/build/spdx/release.spdx.json
           retention-days: 14
           if-no-files-found: warn
