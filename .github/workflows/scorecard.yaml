@@ -38,8 +38,9 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           REPO: ${{ github.repository }}
           SHA: ${{ github.sha }}
+          BRANCH: ${{ github.ref_name }}
         run: |
-          runs="repos/$REPO/actions/workflows/gradle-wrapper.yaml/runs?head_sha=$SHA&branch=release"
+          runs="repos/$REPO/actions/workflows/gradle-wrapper.yaml/runs?head_sha=$SHA&branch=$BRANCH"
           while true; do
             conclusion=$(gh api "$runs" --jq '[.workflow_runs[] | select(.status == "completed") | .conclusion] | if any(.[]; . == "success") then "success" elif length > 0 then .[0] else "" end')
             case "$conclusion" in
