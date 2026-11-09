@@ -20,6 +20,7 @@ A handy travel companion, not a tool for real-time financial business.
 [![OpenSSF Best Practices](https://www.bestpractices.dev/projects/15831/badge)](https://www.bestpractices.dev/projects/15831)
 [![OpenSSF Scorecard](https://img.shields.io/ossf-scorecard/github.com/EliorMachlev/CurrenciX?label=openssf+scorecard)](https://securityscorecards.dev/viewer/?uri=github.com/EliorMachlev/CurrenciX)
 [![License: GPL-3.0-or-later](https://img.shields.io/badge/license-GPL--3.0--or--later-blue)](COPYING)
+[![32 languages](https://img.shields.io/badge/languages-32-blue)](docs/markDown/engineering/contributing.md#translations)
 [![Android 13+](https://img.shields.io/badge/Android-13%2B-3DDC84?logo=android&logoColor=white)](docs/markDown/engineering/build.md)
 [![Privacy: no ads, no analytics, no account](art/badges/privacy.svg)](https://currencix.machlev.org/privacy.html)
 

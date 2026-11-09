@@ -29,6 +29,6 @@ Choose from eight providers, with a second one to fall back on when the first is
 - Home-screen widget, Quick Settings tile and app shortcuts
 - Two panes on tablets and unfolded foldables
 - Optional app lock, encrypted backups, and background rate refresh
-- 33 languages
+- 32 languages
 
 No ads, no tracking, no account. Your settings stay on your phone.
