@@ -48,6 +48,7 @@ def patchedLibraries = [
     'org.bouncycastle:bcutil-jdk18on'            : '1.86',
     'org.freemarker:freemarker'                  : '2.3.35',
     'org.jdom:jdom2'                             : '2.0.6.1',
+    'org.jsoup:jsoup'                            : '1.23.2',
 ]
 
 // "33.4.0-jre" before "33.7.2-jre": the numbers, part by part.
