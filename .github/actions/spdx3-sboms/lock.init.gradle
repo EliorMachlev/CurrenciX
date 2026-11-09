@@ -1,0 +1,8 @@
+// Locks every configuration so that `dependencies --write-locks` writes a
+// gradle.lockfile per project, which the Microsoft SBOM tool's component
+// detection reads (it understands lockfiles, not Gradle build scripts). Used
+// only by the spdx3-sboms action, on the CI checkout: the lockfiles are
+// deleted after the run and never committed.
+allprojects {
+    dependencyLocking { lockAllConfigurations() }
+}

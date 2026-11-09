@@ -1,0 +1,112 @@
+name: Write the SPDX SBOMs
+description: >-
+  Writes the release's SPDX SBOMs from three generators, each a different
+  view of the same build and each at the highest SPDX version it writes
+  itself, unconverted: the Gradle build view (spdx-gradle-plugin, SPDX 2.3),
+  the filesystem view (Syft over the checkout, SPDX 3.0.1) and the Microsoft
+  SBOM tool's view (SPDX 3.0). The calling job runs `:app:spdxSbom` first
+  and has Java. Tools are downloaded at a pinned version and checked against
+  a pinned SHA-256.
+inputs:
+  out-dir:
+    description: Where the three files are written.
+    required: true
+  name:
+    description: >-
+      File name prefix; the files are <name>.gradle.spdx.json (SPDX 2.3),
+      <name>.syft.spdx3.json (3.0.1) and <name>.msft.spdx3.json (3.0).
+    required: true
+  version:
+    description: The version recorded in the Microsoft tool's document.
+    required: true
+runs:
+  using: composite
+  steps:
+    - name: Write the SBOMs
+      shell: bash
+      env:
+        OUT_DIR: ${{ inputs.out-dir }}
+        NAME: ${{ inputs.name }}
+        VERSION: ${{ inputs.version }}
+        ACTION_PATH: ${{ github.action_path }}
+        # Pinned: version and the SHA-256 of the download. tools-java's (the
+        # SPDX project's validator, used only to check files, never to
+        # change them) is confirmed by Maven Central's .sha1, Syft's by its
+        # checksums.txt; the SBOM tool publishes none, so its hash is the
+        # one first seen.
+        SPDX_TOOLS_VERSION: 2.0.7
+        SPDX_TOOLS_SHA256: bf99a8b2ffbea238c1451c6b4be568870f18b4aac93d0dbff755f2b0b7ce43f3
+        SYFT_VERSION: 1.54.0
+        SYFT_SHA256: 54a87372498168b2d033e876fd41fa4e8035b872699e525a57046e1f2f09c860
+        MS_SBOM_TOOL_VERSION: 4.1.5
+        MS_SBOM_TOOL_SHA256: bf5d4f99bc98c119d549d08fc02ae92598a7a42772f17317c01031a92632e05b
+      run: |
+        set -euo pipefail
+        tools="$RUNNER_TEMP/sbom-tools"
+        mkdir -p "$tools" "$OUT_DIR"
+
+        # Retries as the other downloads do: GitHub and Maven Central
+        # sometimes answer 429 or 5xx.
+        fetch() {
+          curl -fsSL --retry 6 --retry-delay 10 --retry-all-errors -o "$3" "$1"
+          echo "$2  $3" | sha256sum -c -
+        }
+        fetch "https://repo1.maven.org/maven2/org/spdx/tools-java/$SPDX_TOOLS_VERSION/tools-java-$SPDX_TOOLS_VERSION-jar-with-dependencies.jar" \
+          "$SPDX_TOOLS_SHA256" "$tools/tools-java.jar"
+        fetch "https://github.com/anchore/syft/releases/download/v$SYFT_VERSION/syft_${SYFT_VERSION}_linux_amd64.tar.gz" \
+          "$SYFT_SHA256" "$tools/syft.tar.gz"
+        tar -xzf "$tools/syft.tar.gz" -C "$tools" syft
+        fetch "https://github.com/microsoft/sbom-tool/releases/download/v$MS_SBOM_TOOL_VERSION/sbom-tool-linux-x64" \
+          "$MS_SBOM_TOOL_SHA256" "$tools/sbom-tool"
+        chmod +x "$tools/sbom-tool"
+        spdx() { java -jar "$tools/tools-java.jar" "$@"; }
+
+        # 1. The Gradle build view: what Gradle resolved, version rules
+        #    included. The plugin writes SPDX 2.3, its highest.
+        cp app/build/spdx/release.spdx.json "$OUT_DIR/$NAME.gradle.spdx.json"
+
+        # 2. The filesystem view: the repository's tracked files, which
+        #    Gradle ignores (workflows' actions, scripts' requirements,
+        #    wrappers). Scanned from a copy of just those files, so build
+        #    output, Git's own files and anything untracked (the runner's
+        #    caches, a signing key left behind) are never read. Syft's
+        #    highest is SPDX 3.0 (a 3.0.1 document).
+        src="$RUNNER_TEMP/sbom-source"
+        rm -rf "$src"
+        mkdir -p "$src"
+        git ls-files -z | tar --null -T - -cf - | tar -xf - -C "$src"
+        "$tools/syft" "dir:$src" -o "spdx-json@3.0=$OUT_DIR/$NAME.syft.spdx3.json" -q
+
+        # 3. The Microsoft SBOM tool, at its highest, SPDX 3.0. Its component
+        #    detection reads Gradle lockfiles, which this build doesn't keep,
+        #    so they are written here from the resolved dependencies and
+        #    removed again.
+        # The lockfiles go even if a later command fails.
+        trap "find . -name gradle.lockfile -not -path '*/build/*' -delete" EXIT
+        ./gradlew -I "$ACTION_PATH/lock.init.gradle" :app:dependencies --write-locks --no-configuration-cache -q > /dev/null
+        drop="$RUNNER_TEMP/sbom-drop"
+        mkdir -p "$drop"
+        "$tools/sbom-tool" generate -b "$drop" -bc . -pn CurrenciX -pv "$VERSION" -ps CurrenciX \
+          -nsb "https://github.com/EliorMachlev/CurrenciX/spdx" -mi SPDX:3.0 -V Error
+        cp "$drop/_manifest/spdx_3.0/manifest.spdx.json" "$OUT_DIR/$NAME.msft.spdx3.json"
+
+        # Each file is validated by the tool that wrote it, as it supports
+        # it. The Gradle and Syft files must pass the SPDX project's
+        # validator (tools-java); that one does not accept the Microsoft
+        # tool's SPDX 3.0 (its specVersion is "3.0" and its CreationInfo a
+        # blank node), so the Microsoft file is validated by the tool's own
+        # `validate` instead, and must list packages.
+        for file in "$OUT_DIR/$NAME.gradle.spdx.json" "$OUT_DIR/$NAME.syft.spdx3.json"; do
+          spdx Verify "$file" 2>&1 | tee "$RUNNER_TEMP/verify.log"
+          grep -q 'This SPDX Document is valid.' "$RUNNER_TEMP/verify.log" \
+            || { echo "::error::$file did not validate"; exit 1; }
+        done
+        result="$RUNNER_TEMP/msft-validation.json"
+        "$tools/sbom-tool" validate -b "$drop" -o "$result" -mi SPDX:3.0 -V Error
+        python3 - "$result" <<'PY'
+        import json, sys
+        result = json.load(open(sys.argv[1]))
+        packages = result["Summary"]["ValidationTelemetery"]["TotalPackagesInManifest"]
+        if result["Result"] != "Success" or packages < 2:
+            sys.exit(f"::error::the Microsoft SBOM tool's validation: {result['Result']}, {packages} package(s); {result['ValidationErrors']}")
+        PY

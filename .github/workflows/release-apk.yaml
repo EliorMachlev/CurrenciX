@@ -8,7 +8,7 @@ name: Release
 #
 # - Push a tag "v<versionName>" (e.g. v0.1.1) on a commit of master, or run
 #   "Tag a release" (tag-release.yaml) on master, which tags it and starts
-#   this run on the tag: the release is published with the APK, its SBOMs (CycloneDX and SPDX JSON) and
+#   this run on the tag: the release is published with the APK, its SBOMs (CycloneDX JSON and three SPDX files (2.3, 3.0.1 and 3.0)) and
 #   checksums, its notes written from the commits since the last
 #   release (.github/scripts/release-notes.py). F-Droid picks up the same tag
 #   (UpdateCheckMode: Tags).
