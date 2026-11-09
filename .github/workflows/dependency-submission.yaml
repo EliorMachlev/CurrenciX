@@ -7,7 +7,7 @@ name: Dependency submission
 # has no token that may submit, so it's left to master's).
 on:
   push:
-    branches: [alpha, prerelease, release, master]
+    branches: [alpha, master]
   pull_request:
     branches: [prerelease, release, master]
   workflow_dispatch:

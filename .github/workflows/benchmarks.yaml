@@ -9,16 +9,17 @@ name: Benchmarks
 # slowdown. No numbers (the software-GPU emulator sometimes reports no frame
 # stats) or no baseline yet: the check says so and passes.
 #
-# Heavy (tens of minutes of emulator time): it runs when app code or the
-# benchmarks change, and a newer push to the same branch cancels a running one.
-# Not on Dependabot's branches (a bump of the Android Gradle plugin touches the
-# build files above, and a library bump doesn't touch the app, yet either held
-# its PR at "unstable" for the whole run): master gets the run every Sunday
-# instead, after the dependency cache is built, so a slowdown a bump caused
-# still shows within a week.
+# Heavy (tens of minutes of emulator time): it runs on the promotion PR into
+# release when app code or the benchmarks change, and a newer push to that PR
+# cancels a running one. Never on feature or Dependabot PRs into alpha (a bump
+# of the Android Gradle plugin touches the build files above, and a library
+# bump doesn't touch the app, yet either held its PR at "unstable" for the
+# whole run): every Sunday it runs on the default branch instead, after the
+# dependency cache is built, so a slowdown a bump caused still shows within a
+# week.
 on:
-  push:
-    branches: [prerelease, release, master]
+  pull_request:
+    branches: [release, master]
     paths:
       - 'app/src/main/**'
       - 'app/build.gradle.kts'

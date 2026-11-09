@@ -13,18 +13,18 @@ New features stay on their own branch until they are merged into `alpha`. `relea
 
 ## Which checks run where
 
-A check that runs at a stage also runs at every later one, because promotion PRs carry the earlier stage's commit (its check runs are already on the SHA) and are re-run for the new base.
+Checks run on a pull request by the branch it targets, and on a push to `alpha`. A promotion PR's head is a commit that already passed the earlier stage, so its check runs are already on the SHA; the later stage adds its own on the PR. Workflows do not run on pushes to `prerelease` or `release`: a workflow that runs on a push to a branch named like a release is read by zizmor as publishing artifacts, and its cache-poisoning audit then fails any job that restores a cache. The promotion PR carries everything instead.
 
 | Tier | Runs on | Workflows |
 |---|---|---|
-| Dev | every PR (any base), and pushes to `alpha`, `prerelease`, `release` | `build` (lint, tests, assemble), `detekt`, `gitleaks`, `semgrep`, `gradle-wrapper`, `zizmor`, `jactionlint`, `docs-checks`, `site`, `certificate-pins` |
-| Alpha | PRs into `prerelease` or `release`; pushes to `alpha`, `prerelease`, `release` | `codeql`, `qodana`, `dependency-review`, `dependency-submission`, `osv-scanner`, `screenshots`, `live-providers` |
-| Prerelease | PRs into `release`; pushes to `prerelease`, `release` | `apk-checks` (reproducible build, APK size against what shipped), `benchmarks` |
-| Release | a `v*` tag on `release` | `release-apk` → `build-release` (signed APK, SBOMs, SLSA provenance), `tag-release`, `scorecard` |
+| Dev | every PR (any base), and pushes to `alpha` | `build` (lint, tests, assemble), `detekt`, `gitleaks`, `semgrep`, `gradle-wrapper`, `zizmor`, `jactionlint`, `docs-checks`, `site`, `certificate-pins` |
+| Alpha | PRs into `prerelease` or `release`; pushes to `alpha` | `codeql`, `qodana`, `dependency-review`, `dependency-submission`, `osv-scanner`, `screenshots`, `live-providers` |
+| Prerelease | PRs into `release` | `apk-checks` (reproducible build, APK size against `alpha`'s latest), `benchmarks` (also every Sunday) |
+| Release | a `v*` tag on `release` | `release-apk` → `build-release` (signed APK, SBOMs, SLSA provenance), `tag-release`; `scorecard` and `dependency-cache` run on pushes to `release` |
 
-Scheduled and manual runs are unchanged. Feature branches push no CI of their own beyond the PR (the debug APK in `apk-artifact` and the baseline profile run on any branch that is not one of the four long-lived ones).
+Scheduled and manual runs are unchanged. The debug APK in `apk-artifact` and the baseline profile run on any branch that is not one of the four long-lived ones.
 
-Baselines: screenshots and coverage are compared with `alpha`'s latest push; the APK size with `release`'s latest.
+Baselines: screenshots, coverage and APK size are compared with `alpha`'s latest push.
 
 ## Rulesets
 

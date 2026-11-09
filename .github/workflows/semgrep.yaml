@@ -3,7 +3,7 @@ name: Semgrep
 on:
   pull_request:
   push:
-    branches: [alpha, prerelease, release, master]
+    branches: [alpha, master]
   schedule:
     - cron: '0 9 * * 1'
   workflow_dispatch:

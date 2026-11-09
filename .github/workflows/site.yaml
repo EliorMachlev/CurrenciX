@@ -18,7 +18,7 @@ on:
       - "SECURITY.md"
       - ".github/workflows/site.yaml"
   push:
-    branches: [alpha, prerelease, release, master]
+    branches: [alpha, master]
     paths:
       - "docs/**"
       - ".github/scripts/site-assets.py"

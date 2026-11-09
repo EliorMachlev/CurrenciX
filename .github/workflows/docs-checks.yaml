@@ -13,7 +13,7 @@ on:
       - '.github/docs-checks/**'
       - '.github/workflows/docs-checks.yaml'
   push:
-    branches: [alpha, prerelease, release, master]
+    branches: [alpha, master]
     paths:
       - 'docs/**'
       - '*.md'

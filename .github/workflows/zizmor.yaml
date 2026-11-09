@@ -10,7 +10,7 @@ on:
       - '.github/workflows/**'
       - '.github/zizmor/**'
   push:
-    branches: [alpha, prerelease, release, master]
+    branches: [alpha, master]
     paths:
       - '.github/workflows/**'
       - '.github/zizmor/**'

@@ -7,7 +7,7 @@ name: Screenshots
 # own push run records them).
 on:
   push:
-    branches: [alpha, prerelease, release, master]
+    branches: [alpha, master]
   workflow_dispatch:
 
 # A newer push to the same PR or branch supersedes a run still going;

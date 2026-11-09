@@ -4,7 +4,7 @@ name: APK checks
 # - reproducible: built twice, from two checkouts in different directories
 #   with no build cache, and compared byte for byte; any difference fails,
 #   with diffoscope's account of it as an artifact.
-# - size (PRs): the PR's APK against release's latest, with
+# - size (PRs): the PR's APK against alpha's latest, with
 #   diffuse's breakdown (dex, resources, native, …) in the run summary.
 # Not part of the build gate: a few release builds take a while.
 on:
@@ -20,8 +20,6 @@ on:
       - 'gradle/**'
       - 'gradlew'
       - '.github/workflows/apk-checks.yaml'
-  push:
-    branches: [prerelease, release, master]
   schedule:
     - cron: '10 3 * * 3'
   workflow_dispatch:
@@ -172,36 +170,36 @@ jobs:
           name: pr-apk
           path: pr
 
-      # Build uploads each release push's unsigned fdroid release APKs, kept
+      # Build uploads each alpha push's unsigned fdroid release APKs, kept
       # 14 days: the newest push run whose upload hasn't expired. With none
-      # (no push to release in that time), the comparison is skipped, noted.
-      - name: Get release's APK
-        id: release
+      # (no push to alpha in that time), the comparison is skipped, noted.
+      - name: Get alpha's APK
+        id: alpha
         env:
           GH_TOKEN: ${{ github.token }}
           REPO: ${{ github.repository }}
         run: |
-          runs=$(gh api "repos/$REPO/actions/workflows/build.yaml/runs?branch=release&event=push&status=success&per_page=20" --jq '.workflow_runs[].id')
+          runs=$(gh api "repos/$REPO/actions/workflows/build.yaml/runs?branch=alpha&event=push&status=success&per_page=20" --jq '.workflow_runs[].id')
           for run in $runs; do
             # A failed request fails the step: it says nothing about whether there's a baseline.
             artifact=$(gh api "repos/$REPO/actions/runs/$run/artifacts" --jq '.artifacts[] | select(.name == "fdroid-release-apk" and (.expired | not)) | .id')
             if [ -n "$artifact" ]; then
-              gh run download "$run" --repo "$REPO" --name fdroid-release-apk --dir release
+              gh run download "$run" --repo "$REPO" --name fdroid-release-apk --dir alpha
               echo "found=true" >> "$GITHUB_OUTPUT"
               exit 0
             fi
           done
-          echo "::notice title=APK size::release has no unexpired release APK to compare with"
+          echo "::notice title=APK size::alpha has no unexpired release APK to compare with"
 
-      - name: Compare with release
-        if: steps.release.outputs.found == 'true'
+      - name: Compare with alpha
+        if: steps.alpha.outputs.found == 'true'
         run: |
-          # The largest of release's APKs: the only one, or the universal one
-          # of a release built before the per-CPU APKs were dropped.
-          old=$(find release -name '*.apk' -printf '%s %p\n' | sort -rn | head -1 | cut -d' ' -f2-)
+          # The largest of alpha's APKs: the only one, or the universal one
+          # of an alpha built before the per-CPU APKs were dropped.
+          old=$(find alpha -name '*.apk' -printf '%s %p\n' | sort -rn | head -1 | cut -d' ' -f2-)
           new=$(find pr -name '*.apk' | head -1)
           {
-            echo "## APK size against release (fdroid)"
+            echo "## APK size against alpha (fdroid)"
             echo
             echo '```'
             diffuse diff --apk "$old" "$new"
