@@ -3,7 +3,7 @@ name: Dependabot checksums
 # with "Dependency verification failed" until its checksums are recorded
 # (update-verification-metadata.yaml). Every 15 minutes this looks at the open
 # Dependabot PRs and, for one whose Build failed that way, starts that
-# workflow on its branch, once per head commit. It checks out and runs nothing
+# workflow on its branch, once per head commit (a failed run is retried once). It checks out and runs nothing
 # from a PR: it reads the failed run's log and dispatches a workflow that
 # already lives on the default branch, so a PR's code never runs with write
 # access. (A workflow_run trigger would react at once, but zizmor treats it as
@@ -49,10 +49,14 @@ jobs:
             # The branch name is built from the dependency's name: only use
             # it once it looks like Dependabot's.
             [[ "$branch" =~ ^dependabot/[A-Za-z0-9._/@+-]+$ ]] || continue
-            # The update already ran on this commit (it may have found
-            # nothing to record, or still be running).
-            ran=$(gh api "repos/${REPO}/actions/workflows/${UPDATE}/runs?branch=${branch}&head_sha=${sha}" --jq .total_count)
-            [ "$ran" = 0 ] || continue
+            # Skip a commit the update is running on, or finished on (it may
+            # have found nothing to record). A run that failed or was
+            # cancelled (a registry hiccup, a branch that moved mid-run) is
+            # tried again, twice at most.
+            runs=$(gh api "repos/${REPO}/actions/workflows/${UPDATE}/runs?branch=${branch}&head_sha=${sha}" \
+              --jq '[.workflow_runs[] | if (.conclusion | IN("failure", "cancelled", "timed_out")) then "failed" else "other" end] | [(map(select(. == "other")) | length), (map(select(. == "failed")) | length)] | @tsv')
+            read -r other failed <<<"$runs"
+            { [ "$other" = 0 ] && [ "$failed" -lt 2 ]; } || continue
             subject=$(gh api "repos/${REPO}/commits/${sha}" --jq '.commit.message | split("\n")[0]')
             [ "$subject" != "$RECORDED" ] || continue
             run=$(gh api "repos/${REPO}/actions/workflows/build.yaml/runs?head_sha=${sha}&event=pull_request&status=failure" --jq '.workflow_runs[0].id // empty')
