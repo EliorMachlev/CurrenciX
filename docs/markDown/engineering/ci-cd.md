@@ -31,6 +31,7 @@ Which workflow runs at which stage (Dev, Alpha, Prerelease, Release) is in [bran
 | [`scorecard.yaml`](../../../.github/workflows/scorecard.yaml) | Push → `Alpha`, weekly, manual | OpenSSF Scorecard (waits for the wrapper check on a push) |
 | [`dependency-cache.yaml`](../../../.github/workflows/dependency-cache.yaml) | Push → `Alpha` changing the build files, PR changing it or its action, weekly, manual | Builds the read-only dependency cache the other Gradle jobs restore (below) |
 | [`update-verification-metadata.yaml`](../../../.github/workflows/update-verification-metadata.yaml) | Manual | Records dependency checksums from an empty cache, commits them, then starts the Dev checks that need a run (build, APK, detekt, gitleaks, gradle-wrapper, Semgrep) on the new commit, because a push with `GITHUB_TOKEN` starts no workflows. The Alpha-tier scanners (CodeQL, Qodana, OSV, dependency-review) never run on a PR into `Alpha`, so there is nothing to start for them; a promotion PR runs them on its own events |
+| [`dependabot-checksums.yaml`](../../../.github/workflows/dependabot-checksums.yaml) | Twice an hour, manual | Looks at the open Dependabot PRs; for one whose Build failed with "Dependency verification failed" and has no checksum update on its head commit yet, starts `update-verification-metadata.yaml` on its branch. Runs and checks out nothing from the PR (a `workflow_run` trigger would react at once, but zizmor rejects it as insecure) |
 | [`certificate-pins.yaml`](../../../.github/workflows/certificate-pins.yaml) | Weekly, PR changing the pins, manual | Checks every host still serves a pinned key, and that the pins are at least 90 days from expiry ([security.md](security.md#certificate-pinning)); by hand with *update*, rewrites the pins in [`network_security_config.xml`](../../../app/src/main/res/xml/network_security_config.xml) from the chains served now, a year ahead, commits it and restarts the checks |
 | [`code-scanning-report.yaml`](../../../.github/workflows/code-scanning-report.yaml) | Manual | Saves the open code scanning alerts on `Release`, from every tool, as an artifact and a summary table on the run page |
 | [`zizmor.yaml`](../../../.github/workflows/zizmor.yaml) | PR or push → `Alpha` touching workflows, weekly, manual | zizmor (pinned by hash, [`.github/zizmor`](../../../.github/zizmor)) audits the workflows for what jactionlint doesn't: template injection, credentials a checkout leaves, cache poisoning, broad permissions, impostor actions. Every finding goes to code scanning; medium and above fail the job |
@@ -78,7 +79,7 @@ Weekly, Mondays, 7-day cooldown, in [`.github/dependabot.yml`](../../../.github/
 | `github-actions` | `/` | 5 |
 | `pip` | `/.github/scripts`, `/.github/semgrep`, `/.github/zizmor`, `/.github/docs-checks` (hash-pinned; one grouped PR) | 5 |
 
-Grouped: `androidx.*`; Kotlin; OkHttp; test dependencies; all actions; all Python packages. Robolectric's `android-all-instrumented` is ignored: it is updated by hand with Robolectric ([build.md](build.md#dependency-choices)). A Gradle update fails dependency verification until its checksums are recorded: run **Update dependency checksums** on its branch once the update looks right.
+Grouped: `androidx.*`; Kotlin; OkHttp; test dependencies; all actions; all Python packages. Robolectric's `android-all-instrumented` is ignored: it is updated by hand with Robolectric ([build.md](build.md#dependency-choices)). A Gradle update fails dependency verification until its checksums are recorded: [`dependabot-checksums.yaml`](../../../.github/workflows/dependabot-checksums.yaml) notices within half an hour and starts **Update dependency checksums** on the branch, which commits them (read that diff before merging). If it did not fix the build, or you want it sooner, run the workflow yourself on the branch.
 
 ## Permissions
 
@@ -95,6 +96,7 @@ Every workflow starts at `contents: read` ([`scorecard.yaml`](../../../.github/w
 | release-apk | the caller: `contents: write` on the publish job only, which never sees the keys; `id-token` and `attestations: write` only so the called workflow's `attest` job can have them |
 | build-release | reusable: `contents: read` for the build job, which holds the keys; `id-token` and `attestations: write` for the attest job only, which never sees them |
 | baseline-profile | `contents`, `actions: write` on its commit job only |
+| dependabot-checksums | `actions: write` (reads the failed log and dispatches the update), `pull-requests: read`, `contents: read`; no checkout |
 | commit-baseline-profiles, update-verification-metadata, certificate-pins (*update* only) | `contents`, `actions: write`: push to the branch, then dispatch the checks; no build in the commit workflow |
 | tag-release | `contents`, `actions: write`: create the tag through the API, then dispatch Release (`release-apk.yaml`) on it |
 | dependency-review | `pull-requests: write` |

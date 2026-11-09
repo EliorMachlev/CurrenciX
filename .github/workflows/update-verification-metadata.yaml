@@ -2,8 +2,9 @@ name: Update dependency checksums
 # gradle/verification-metadata.xml holds the SHA-256 of every library and
 # plugin the build downloads, and the build refuses any file that doesn't
 # match. A dependency update (a Dependabot PR) adds files it doesn't know
-# yet, so that PR's builds fail until the file is regenerated. Run this by
-# hand on that branch ("Use workflow from"), once the update looks right:
+# yet, so that PR's builds fail until the file is regenerated.
+# dependabot-checksums.yaml starts this on such a PR; to run it yourself, use
+# it on that branch ("Use workflow from"), once the update looks right:
 # it records the new checksums, commits them to the branch, and starts the
 # push checks on the new commit. The diff shows every checksum it added.
 on:

@@ -1,0 +1,62 @@
+name: Dependabot checksums
+# A Dependabot bump that adds or changes a dependency fails every Gradle job
+# with "Dependency verification failed" until its checksums are recorded
+# (update-verification-metadata.yaml). Twice an hour this looks at the open
+# Dependabot PRs and, for one whose Build failed that way, starts that
+# workflow on its branch, once per head commit. It checks out and runs nothing
+# from a PR: it reads the failed run's log and dispatches a workflow that
+# already lives on the default branch, so a PR's code never runs with write
+# access. (A workflow_run trigger would react at once, but zizmor treats it as
+# insecure.) The checksum commit is a plain commit on the PR, whose diff lists
+# every file recorded.
+on:
+  schedule:
+    - cron: '7,37 * * * *'
+  workflow_dispatch:
+
+permissions: {}
+
+concurrency:
+  group: dependabot-checksums
+  cancel-in-progress: false
+
+jobs:
+  dispatch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      actions: write
+      contents: read
+      pull-requests: read
+    steps:
+      - name: Harden the runner
+        uses: step-security/harden-runner@46b06cea07f9e64621fdf066ba77ac6915163d43 # v2.22.3
+        with:
+          egress-policy: audit
+
+      - name: Start the checksum update where it is needed
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          RECORDED: "build(deps): record the new dependencies' checksums"
+        run: |
+          UPDATE=update-verification-metadata.yaml
+          # Open Dependabot PRs from this repository: branch and head commit.
+          gh api --paginate "repos/${REPO}/pulls?state=open&per_page=100" \
+            --jq '.[] | select(.user.login == "dependabot[bot]" and .head.repo.full_name == "'"${REPO}"'") | [.head.ref, .head.sha] | @tsv' |
+          while IFS=$'\t' read -r branch sha; do
+            # The branch name is built from the dependency's name: only use
+            # it once it looks like Dependabot's.
+            [[ "$branch" =~ ^dependabot/[A-Za-z0-9._/@+-]+$ ]] || continue
+            # The update already ran on this commit (it may have found
+            # nothing to record, or still be running).
+            ran=$(gh api "repos/${REPO}/actions/workflows/${UPDATE}/runs?branch=${branch}&head_sha=${sha}" --jq .total_count)
+            [ "$ran" = 0 ] || continue
+            subject=$(gh api "repos/${REPO}/commits/${sha}" --jq '.commit.message | split("\n")[0]')
+            [ "$subject" != "$RECORDED" ] || continue
+            run=$(gh api "repos/${REPO}/actions/workflows/build.yaml/runs?head_sha=${sha}&event=pull_request&status=failure" --jq '.workflow_runs[0].id // empty')
+            [ -n "$run" ] || continue
+            gh run view "$run" --repo "$REPO" --log-failed | grep -q "Dependency verification failed" || continue
+            gh workflow run "$UPDATE" --repo "$REPO" --ref "$branch"
+            echo "::notice title=Dependabot checksums::Started the checksum update on ${branch}."
+          done
