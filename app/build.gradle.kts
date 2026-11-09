@@ -19,6 +19,7 @@ import java.awt.font.FontRenderContext
 import java.awt.image.BufferedImage
 import java.io.FileInputStream
 import java.util.Properties
+import java.util.UUID
 import javax.imageio.ImageIO
 
 plugins {
@@ -38,6 +39,8 @@ plugins {
     // CycloneDX SBOM of what the app ships; the release workflow attaches it
     // to each GitHub release.
     id("org.cyclonedx.bom") version "3.5.1"
+    // The same list as SPDX 2.3 JSON, for the release too.
+    id("org.spdx.sbom") version "0.12.0"
     // Kotlin classes for the Protobuf schema in src/main/proto (carts, trips,
     // fees, rate alerts on disk): plain generated code, no reflection.
     id("com.squareup.wire") version "7.1.2"
@@ -905,6 +908,33 @@ tasks.named<CyclonedxDirectTask>("cyclonedxDirectBom") {
     licenseChoice.set(LicenseChoice().apply { addExpression(Expression("GPL-3.0-or-later")) })
     jsonOutput.set(layout.buildDirectory.file("reports/sbom/$sbomFileName.json"))
     xmlOutput.set(layout.buildDirectory.file("reports/sbom/$sbomFileName.xml"))
+}
+
+// The SPDX twin of that SBOM, from the same runtime classpath:
+// `./gradlew :app:spdxSbom` writes app/build/spdx/currencix.spdx.json.
+spdxSbom {
+    targets {
+        create("release") {
+            configurations.set(listOf(sbomConfiguration))
+            scm {
+                uri.set("https://github.com/EliorMachlev/CurrenciX.git")
+                revision.set(providers.environmentVariable("GITHUB_SHA").orElse("unknown"))
+            }
+            document {
+                name.set("CurrenciX")
+                // SPDX wants a new namespace for every document, so the CI run (and its attempt)
+                // is part of it; a build on a developer machine gets a random one.
+                val documentId =
+                    providers
+                        .environmentVariable("GITHUB_RUN_ID")
+                        .zip(providers.environmentVariable("GITHUB_RUN_ATTEMPT")) { run, attempt -> "$run-$attempt" }
+                        .orElse(providers.provider { UUID.randomUUID().toString() })
+                namespace.set(documentId.map { "https://github.com/EliorMachlev/CurrenciX/spdx/${android.defaultConfig.versionName}-$it" })
+                creator.set("Organization: CurrenciX")
+                packageSupplier.set("Organization: CurrenciX")
+            }
+        }
+    }
 }
 
 // The same libraries as files, for the weekly OWASP Dependency-Check, which
