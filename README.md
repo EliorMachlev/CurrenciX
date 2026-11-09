@@ -75,7 +75,7 @@ For releases through v0.1.4, which `release-apk.yaml` attested itself, use `--si
 
 How a release is made and signed: [release](docs/markDown/engineering/release.md).
 
-The upstream **Currencies** app is on [Google Play](https://play.google.com/store/apps/details?id=de.salomax.currencies) and [F-Droid](https://f-droid.org/packages/de.salomax.currencies/) under its own package name. To build CurrenciX (`com.eliormachlev.currencix`) yourself ([build guide](docs/markDown/engineering/build.md)):
+To build CurrenciX (`com.eliormachlev.currencix`) yourself ([build guide](docs/markDown/engineering/build.md)):
 
 ```bash
 git clone https://github.com/EliorMachlev/CurrenciX.git

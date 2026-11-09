@@ -80,7 +80,7 @@ jobs:
           PROPS: gradle/wrapper/gradle-wrapper.properties
           SCRIPT: .github/scripts/gradle-sources-checksum.py
         run: |
-          curl -fsSL --proto =https "$(python3 "$SCRIPT" url "$PROPS")" -o "$RUNNER_TEMP/gradle-src.zip.sha256"
+          curl -fsSL --proto =https --retry 6 --retry-delay 10 --retry-all-errors "$(python3 "$SCRIPT" url "$PROPS")" -o "$RUNNER_TEMP/gradle-src.zip.sha256"
           python3 "$SCRIPT" record "$PROPS" gradle/verification-metadata.xml "$RUNNER_TEMP/gradle-src.zip.sha256"
 
       # What was recorded, to read when a later step or the checks fail.
