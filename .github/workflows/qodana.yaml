@@ -18,6 +18,10 @@ permissions:
   contents: read
 
 env:
+  # The CLI of the pinned qodana-action below: its common/cli.json at that
+  # tag. Bump both with the action (Dependabot opens that PR).
+  QODANA_CLI_VERSION: 2026.2.2
+  QODANA_CLI_SHA256: b1fc01fb5825f4c6382f9cedcfe97d4a8eeaaddc9f5384a3b5870ca63e231c6f
   # A PR's results go on its head commit, not GitHub's test merge with
   # master, which GitHub can rebuild after the run starts and the merge rule
   # would then wait on (see codeql.yaml).
@@ -48,11 +52,33 @@ jobs:
         with:
           java-version: 25
           distribution: temurin
+      # The action downloads its CLI from github.com's releases on every run,
+      # and a run of HTTP 504s there failed the required check. Installed
+      # here instead: retried, checked against the checksum the pinned action
+      # itself carries (common/cli.json at its tag), and cached.
+      - name: Restore the Qodana CLI
+        id: cli
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ${{ runner.temp }}/qodana-cli
+          key: qodana-cli-${{ env.QODANA_CLI_VERSION }}-${{ env.QODANA_CLI_SHA256 }}
+      - name: Install the Qodana CLI
+        if: steps.cli.outputs.cache-hit != 'true'
+        run: |
+          tgz="$RUNNER_TEMP/qodana.tar.gz"
+          curl -fsSL --retry 6 --retry-delay 5 --retry-all-errors -o "$tgz" \
+            "https://github.com/JetBrains/qodana-cli/releases/download/v${QODANA_CLI_VERSION}/qodana_linux_x86_64.tar.gz"
+          echo "${QODANA_CLI_SHA256}  $tgz" | sha256sum --check --strict -
+          mkdir -p "$RUNNER_TEMP/qodana-cli"
+          tar -xzf "$tgz" -C "$RUNNER_TEMP/qodana-cli"
+      - name: Put the Qodana CLI on the PATH
+        run: echo "$RUNNER_TEMP/qodana-cli" >> "$GITHUB_PATH"
       - name: Qodana Scan
         uses: JetBrains/qodana-action@3e8d76ff0e0241618abd808682f426afe84bab3f # v2026.2.2
         with:
           upload-result: true
           pr-mode: false
+          use-installed-cli: true
           # Qodana's cache (Gradle's distribution and libraries among it) is
           # keyed by branch, and a pull request's own branch never had one, so
           # every PR run downloaded Gradle from services.gradle.org, whose
