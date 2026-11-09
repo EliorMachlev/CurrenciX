@@ -29,8 +29,10 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.model.Currency
+import com.eliormachlev.currencix.model.FeeCalculator
 import com.eliormachlev.currencix.model.HomeCurrency
 import com.eliormachlev.currencix.repository.Database
+import com.eliormachlev.currencix.util.feePercentDelta
 import com.eliormachlev.currencix.util.money
 import com.eliormachlev.currencix.util.moneyText
 import com.eliormachlev.currencix.util.rememberHapticOnClick
@@ -52,6 +54,9 @@ private const val MAX_SELECTION_LENGTH = 200
 
 // The rate line ("1 EUR ≈ 3.6851 ILS") is shown finer than amounts.
 private const val RATE_DECIMALS = 4
+
+// The fee note's percentage, as on the converter's fee chip.
+private const val FEE_PERCENT_DECIMALS = 2
 
 private val CONTENT_PADDING = Spacing.XXLarge
 private val GAP = Spacing.Medium
@@ -79,7 +84,11 @@ class ConvertTextActivity : ComponentActivity() {
         blockScreenshots(db.privacy.blockScreenshots.get())
         val from = db.lastState.lastBaseCurrency.get() ?: HomeCurrency.defaultPair.from
         val to = db.lastState.lastDestinationCurrency.get() ?: HomeCurrency.defaultPair.to
-        val conversion = convertSelection(text, db.rates.getExchangeRatesBlocking(), from, to)
+        val conversion =
+            convertSelection(text, db.rates.getExchangeRatesBlocking(), from, to) { base, dest ->
+                // The converter's own fee math, so both show the same final amount.
+                FeeCalculator.feeStack(db.fees.fees.get(), base, dest, db.fees.activeExchangeId.get(), db.fees.activeBankId.get())
+            }
         val decimals = db.display.decimalPlaces.get()
         setContent {
             AppTheme(db.display) {
@@ -150,9 +159,17 @@ private fun ConvertedContent(
     val context = LocalContext.current
     val appName = stringResource(R.string.app_name)
     val source = remember(conversion) { money(context, conversion.amount, conversion.from, decimals) }
-    val result = remember(conversion) { money(context, conversion.result, conversion.to, decimals) }
+    // The final amount, fees included, as the converter shows it.
+    val finalAmount = conversion.resultWithFees
+    val result = remember(conversion) { money(context, finalAmount, conversion.to, decimals) }
     // What Copy pastes: the symbol in the language's writing order, as text.
-    val resultText = remember(conversion) { context.moneyText(conversion.result.toHumanReadableNumber(context, decimals), conversion.to) }
+    val resultText = remember(conversion) { context.moneyText(finalAmount.toHumanReadableNumber(context, decimals), conversion.to) }
+    val feeText =
+        remember(conversion) {
+            conversion.feeStack
+                .feePercentDelta(FEE_PERCENT_DECIMALS)
+                .toHumanReadableNumber(context, suffix = "%", trim = true)
+        }
     val rateValue = remember(conversion) { conversion.rate.toHumanReadableNumber(context, RATE_DECIMALS, trim = true) }
     val rate = stringResource(R.string.info_conversion, "1", conversion.from.iso4217Alpha(), rateValue, conversion.to.iso4217Alpha())
     AmountLine(conversion.from, source, MaterialTheme.typography.titleMedium, MaterialTheme.colorScheme.onSurfaceVariant)
@@ -160,6 +177,15 @@ private fun ConvertedContent(
     // The rate is math: left to right in every language, or a right-to-left
     // one would carry the leading "1" to the far end.
     Ltr { Text(rate, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant) }
+    if (conversion.hasFees) {
+        Ltr {
+            Text(
+                stringResource(R.string.fee_chip_label, feeText),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
+    }
     if (conversion.assumedFrom) {
         PromptMessage(stringResource(R.string.selection_assumed_currency, conversion.from.iso4217Alpha()))
     }
