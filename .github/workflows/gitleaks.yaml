@@ -17,6 +17,10 @@ concurrency:
 permissions:
   contents: read
 
+env:
+  # Bump with a new release's tag (the cache key follows it).
+  GITLEAKS_VERSION: v8.24.3
+
 jobs:
   gitleaks:
     runs-on: ubuntu-latest
@@ -31,6 +35,32 @@ jobs:
         with:
           fetch-depth: 0
           persist-credentials: false
-      - uses: gitleaks/gitleaks-action@e0c47f4f8be36e29cdc102c57e68cb5cbf0e8d1e # v3.0.0
+      # Built from source at a pinned release, not downloaded as a release
+      # binary: github.com's release downloads returned HTTP 504 and failed
+      # whole runs, and Go checks every module against its checksum database,
+      # so the pin is verified, not trusted. The binary is cached per version.
+      # (v8.24.3's module path is still the author's old one.)
+      - name: Restore gitleaks
+        id: cache
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ${{ runner.temp }}/gitleaks-bin
+          key: gitleaks-${{ env.GITLEAKS_VERSION }}-${{ runner.os }}-${{ runner.arch }}
+
+      - name: Build gitleaks
+        if: steps.cache.outputs.cache-hit != 'true'
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GOBIN: ${{ runner.temp }}/gitleaks-bin
+          GOFLAGS: -trimpath
+        run: |
+          for attempt in 1 2 3 4 5; do
+            go install "github.com/zricethezav/gitleaks/v8@${GITLEAKS_VERSION}" && exit 0
+            echo "go install failed (attempt $attempt)"; sleep $((attempt * 10))
+          done
+          exit 1
+
+      # The whole history, every run: it is quick, and a leak in an old
+      # commit counts as much as one in a new one. Matches are redacted so
+      # a real secret never reaches the log.
+      - name: Scan the repository
+        run: ${{ runner.temp }}/gitleaks-bin/gitleaks git --no-banner --redact --verbose .

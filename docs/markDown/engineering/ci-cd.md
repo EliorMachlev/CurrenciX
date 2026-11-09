@@ -20,7 +20,7 @@ Everything is in [`.github/workflows/`](../../../.github/workflows). Every actio
 | [`qodana.yaml`](../../../qodana.yaml) | PR, push → `master`, weekly, manual | JetBrains Qodana; when its project import fails dependency verification, lists the refused files ([`verification-report.py`](../../../.github/scripts/verification-report.py)) |
 | [`codeql.yaml`](../../../.github/workflows/codeql.yaml) | PR, push → `master`, weekly, manual | CodeQL on the Kotlin and the workflows |
 | [`semgrep.yaml`](../../../.github/workflows/semgrep.yaml) | PR, push → `master`, weekly, manual | SAST patterns |
-| [`gitleaks.yaml`](../../../.github/workflows/gitleaks.yaml) | PR, push → `master`, weekly, manual | Secrets in the repository |
+| [`gitleaks.yaml`](../../../.github/workflows/gitleaks.yaml) | PR, push → `master`, weekly, manual | Secrets in the repository (the whole history, with gitleaks built from a pinned release and cached) |
 | [`osv-scanner.yaml`](../../../.github/workflows/osv-scanner.yaml) | PR, push → `master`, weekly, manual | The release SBOM against OSV.dev |
 | [`owasp-dependency-check.yaml`](../../../.github/workflows/owasp-dependency-check.yaml) | Mondays and Thursdays, manual | Shipped libraries against the NVD |
 | [`dependency-submission.yaml`](../../../.github/workflows/dependency-submission.yaml) | PR from this repository, push → `master`, manual | Sends GitHub's dependency graph every library the Gradle build resolves (`gradle/actions/dependency-submission`), the build tools' included, which GitHub can't read from Gradle files itself; Dependabot alerts and Dependency Review rely on it |
