@@ -116,7 +116,7 @@ class CartKeypadControllerTest {
     }
 
     @Test
-    fun `brackets and percent are typed into a calculation`() {
+    fun `brackets are typed into a calculation`() {
         controller.openKeypadFor("row1", "50")
         controller.keypadCallbacks.onOperator(Operator.PLUS)
         controller.keypadCallbacks.onOpenParen()
@@ -124,9 +124,21 @@ class CartKeypadControllerTest {
         controller.keypadCallbacks.onCloseParen()
 
         assertEquals("50+(2)", unspaced(live))
+    }
+
+    @Test
+    fun `percent follows a number, and not a closing bracket`() {
+        controller.openKeypadFor("row1", "50")
+        assertTrue(controller.keypadKeys.value.percent)
 
         controller.keypadCallbacks.onPercent()
-        assertTrue(live.endsWith("%"))
+        assertEquals("50%", live)
+
+        controller.keypadCallbacks.onOperator(Operator.PLUS)
+        controller.keypadCallbacks.onOpenParen()
+        controller.keypadCallbacks.onDigit("2")
+        controller.keypadCallbacks.onCloseParen()
+        assertFalse(controller.keypadKeys.value.percent)
     }
 
     @Test
