@@ -7,7 +7,7 @@ name: Gradle wrapper
 # after Scorecard had looked. scorecard.yaml waits for this one.
 on:
   push:
-    branches: [alpha, master]
+    branches: [alpha, release, master]
   pull_request:
   workflow_dispatch:
 

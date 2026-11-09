@@ -33,7 +33,7 @@ jobs:
     timeout-minutes: 20
     permissions:
       contents: read
-      # Master's screenshots are another run's artifact.
+      # Alpha's screenshots are another run's artifact.
       actions: read
     steps:
       - name: Harden the runner
@@ -101,7 +101,7 @@ jobs:
             name=$(gh api "repos/$REPO/actions/runs/$run/artifacts" --jq '[.artifacts[] | select((.name | startswith("screenshots-")) and (.expired | not))][0].name // empty')
           fi
           if [ -z "$name" ]; then
-            echo "::notice title=Screenshots::Master has no screenshots to compare with yet"
+            echo "::notice title=Screenshots::alpha has no screenshots to compare with yet"
             exit 0
           fi
           gh run download "$run" --repo "$REPO" --name "$name" --dir "$RUNNER_TEMP/alpha-screenshots"

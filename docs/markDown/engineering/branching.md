@@ -28,12 +28,14 @@ Baselines: screenshots, coverage and APK size are compared with `alpha`'s latest
 
 ## Rulesets
 
-Required checks are set per branch in Settings → Rules. Names are the check names shown on a PR.
+Required checks are set per branch in Settings → Rules, by the check names shown on a PR. Require only checks that report on every PR into that branch: a required check that a path filter or trigger skips stays pending and blocks the merge. These always report: `build` jobs, `detekt`, `gitleaks`, `semgrep`, `gradle-wrapper`, and (into `prerelease` and `release`) `codeql`, `qodana`, `dependency-review`, `osv-scanner`. These are path-filtered and so not required: `docs-checks`, `site`, `zizmor`, `jactionlint`, `certificate-pins`, `apk-checks`; `benchmarks` runs only on app-code changes and takes tens of minutes. Add an always-running gate job in front of any of them you want required.
 
-- `alpha`: pull request required, up to date, the Dev checks.
-- `prerelease`: pull request from `alpha` only, up to date, the Dev and Alpha checks.
-- `release`: pull request from `prerelease` only, up to date, the Dev, Alpha and Prerelease checks (today's required set).
-- All three: no force pushes, no deletions, linear history; `alpha` squash-merges feature PRs, `prerelease` and `release` take promotions as a merge commit or a fast-forward so the SHA keeps its check runs.
+- `alpha`: pull request required, up to date, the always-reporting Dev checks. Squash merge.
+- `prerelease`: pull request from `alpha` only, up to date, plus the Alpha checks. Merge commit, so the PR keeps `alpha`'s check runs on the same commits.
+- `release`: pull request from `prerelease` only, up to date, the same required set as `prerelease`. Merge commit.
+- All three: no force pushes, no deletions. No linear-history rule on `prerelease` and `release`: a promotion is a merge commit.
+
+Dependabot security updates ignore `target-branch` and open against the default branch, `release`. Merge one there only as a hotfix, then merge `release` back into `alpha` so the branches do not drift; version updates go to `alpha`.
 
 ## Moving to this layout (once)
 

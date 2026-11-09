@@ -20,8 +20,9 @@ Fork, clone and open in Android Studio. JDK 21 or newer (CI uses 25). `./gradlew
 Branch from **remote alpha**, not your local branch, so nothing stale comes along; say so in the PR if it depends on another unmerged branch:
 
 ```sh
-git fetch origin alpha
-git switch -c <new-branch> origin/alpha
+git remote add upstream https://github.com/EliorMachlev/CurrenciX.git   # once, in a fork
+git fetch upstream alpha
+git switch -c <new-branch> upstream/alpha
 ```
 
 Open the PR against `alpha`. Any push to a branch other than `alpha`, `prerelease` and `release` builds a debug APK artifact for review. How a change reaches a release, and which checks run at each stage, is in [branching.md](branching.md).
