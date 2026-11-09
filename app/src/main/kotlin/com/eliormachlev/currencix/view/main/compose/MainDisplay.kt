@@ -1456,7 +1456,12 @@ private fun TimestampText(
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
-            modifier = Modifier.clickable(onClick = onProviderClick),
+            modifier =
+                Modifier.clickable(
+                    onClickLabel = stringResource(R.string.change_provider),
+                    role = Role.Button,
+                    onClick = onProviderClick,
+                ),
         )
     }
 }
