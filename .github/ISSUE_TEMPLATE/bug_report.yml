@@ -1,0 +1,67 @@
+name: Bug report
+description: Something doesn't work as expected
+labels: [bug]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened
+      description: What you did, what you expected, and what you saw instead. A screenshot helps.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Open the converter
+        2. ...
+    validations:
+      required: true
+  - type: input
+    id: app-version
+    attributes:
+      label: App version
+      description: Settings → About this app.
+      placeholder: "0.1.4"
+    validations:
+      required: true
+  - type: dropdown
+    id: source
+    attributes:
+      label: Installed from
+      options:
+        - GitHub release
+        - F-Droid
+        - Google Play
+        - Built from source
+        - Other
+    validations:
+      required: true
+  - type: input
+    id: android
+    attributes:
+      label: Android version and device
+      placeholder: "Android 15, Pixel 8"
+    validations:
+      required: true
+  - type: input
+    id: provider
+    attributes:
+      label: Rate provider shown
+      description: The provider named under the converter card, and any message in the status pill (for example "Bank of Israel unavailable").
+    validations:
+      required: false
+  - type: dropdown
+    id: connection
+    attributes:
+      label: Connection
+      description: Rate problems often depend on it.
+      options:
+        - Wi-Fi
+        - Mobile data, good signal
+        - Mobile data, weak signal
+        - Offline
+        - Not relevant
+    validations:
+      required: false

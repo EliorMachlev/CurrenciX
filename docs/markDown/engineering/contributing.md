@@ -58,4 +58,4 @@ PRs are squash-merged and the title becomes the commit, `type(scope): descriptio
 
 ## Reporting issues
 
-Open an issue with the Android version, app version (Settings → About this app), provider, steps to reproduce, and expected vs. actual behaviour.
+Open an issue from the [bug report form](../../../.github/ISSUE_TEMPLATE/bug_report.yml): the Android version, app version (Settings → About this app), where it was installed from, provider, connection, steps to reproduce, and expected vs. actual behaviour. There are also forms for [feature requests](../../../.github/ISSUE_TEMPLATE/feature_request.yml) and [translation corrections](../../../.github/ISSUE_TEMPLATE/translation.yml), and a [pull request template](../../../.github/pull_request_template.md) with the checklist above. Vulnerabilities go through [private reporting](../../../SECURITY.md) instead.
