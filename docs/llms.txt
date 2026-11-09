@@ -1,0 +1,25 @@
+# CurrenciX
+
+> CurrenciX is a free, open-source, private currency converter for Android 13 and later (arm64-v8a). It counts your card's or bank's fee into the price, takes rates from eight exchange-rate providers, and has a calculator keypad, rate charts and alerts, a travel cart with saved carts and trips, widgets, and receipt scanning. No ads, no analytics, no account. Licensed GPL-3.0-or-later.
+
+Get the app: signed APKs, with SHA256SUMS, SBOMs and signed build provenance, are on the GitHub Releases page.
+
+## Site
+
+- [Home](https://currencix.machlev.org/): what the app is and does
+- [Features](https://currencix.machlev.org/features.html): conversion, calculator, fees, charts, alerts, the cart, privacy and security
+- [Exchange rate providers](https://currencix.machlev.org/providers.html): the eight providers, currencies, update frequency, history and API keys
+- [Privacy policy](https://currencix.machlev.org/privacy.html): what the app stores, what it sends, and to whom
+
+## Everything in one file
+
+- [llms-full.txt](https://currencix.machlev.org/llms-full.txt): the four pages, the provider reference and the security policy as plain text
+
+## Source and documentation
+
+- [Repository](https://github.com/EliorMachlev/CurrenciX): source code, issues and releases
+- [Releases](https://github.com/EliorMachlev/CurrenciX/releases): APKs, checksums, SBOMs (CycloneDX and SPDX) and build provenance
+- [Documentation index](https://github.com/EliorMachlev/CurrenciX/blob/master/docs/markDown/README.md): architecture, providers, build, release, CI/CD and security
+- [Exchange rate providers (technical)](https://github.com/EliorMachlev/CurrenciX/blob/master/docs/markDown/product/providers.md)
+- [Security policy](https://github.com/EliorMachlev/CurrenciX/blob/master/SECURITY.md): reporting vulnerabilities, supply-chain checks, how to verify a release
+- [Contributing](https://github.com/EliorMachlev/CurrenciX/blob/master/docs/markDown/engineering/contributing.md)

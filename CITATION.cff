@@ -1,0 +1,17 @@
+cff-version: 1.2.0
+message: If you use CurrenciX, please cite it as below.
+type: software
+title: CurrenciX
+abstract: A free, open-source, private currency converter for Android that counts your card's fee into the price, with eight exchange-rate providers, charts, alerts and a travel cart.
+authors:
+  - given-names: Elior
+    family-names: Machlev
+license: GPL-3.0-or-later
+repository-code: https://github.com/EliorMachlev/CurrenciX
+url: https://currencix.machlev.org/
+keywords:
+  - android
+  - currency converter
+  - exchange rates
+  - open source
+  - privacy

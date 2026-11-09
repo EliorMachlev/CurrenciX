@@ -1,0 +1,458 @@
+# CurrenciX
+
+> CurrenciX is a free, open-source, private currency converter for Android 13 and later (arm64-v8a). It counts your card's or bank's fee into the price, takes rates from eight exchange-rate providers, and has a calculator keypad, rate charts and alerts, a travel cart with saved carts and trips, widgets, and receipt scanning. No ads, no analytics, no account. Licensed GPL-3.0-or-later.
+
+Get the app: signed APKs, with SHA256SUMS, SBOMs and signed build provenance, are on the GitHub Releases page.
+
+## Site
+
+- [Home](https://currencix.machlev.org/): what the app is and does
+- [Features](https://currencix.machlev.org/features.html): conversion, calculator, fees, charts, alerts, the cart, privacy and security
+- [Exchange rate providers](https://currencix.machlev.org/providers.html): the eight providers, currencies, update frequency, history and API keys
+- [Privacy policy](https://currencix.machlev.org/privacy.html): what the app stores, what it sends, and to whom
+
+## Everything in one file
+
+- [llms-full.txt](https://currencix.machlev.org/llms-full.txt): the four pages, the provider reference and the security policy as plain text
+
+## Source and documentation
+
+- [Repository](https://github.com/EliorMachlev/CurrenciX): source code, issues and releases
+- [Releases](https://github.com/EliorMachlev/CurrenciX/releases): APKs, checksums, SBOMs (CycloneDX and SPDX) and build provenance
+- [Documentation index](https://github.com/EliorMachlev/CurrenciX/blob/master/docs/markDown/README.md): architecture, providers, build, release, CI/CD and security
+- [Exchange rate providers (technical)](https://github.com/EliorMachlev/CurrenciX/blob/master/docs/markDown/product/providers.md)
+- [Security policy](https://github.com/EliorMachlev/CurrenciX/blob/master/SECURITY.md): reporting vulnerabilities, supply-chain checks, how to verify a release
+- [Contributing](https://github.com/EliorMachlev/CurrenciX/blob/master/docs/markDown/engineering/contributing.md)
+
+---
+
+<!-- index.html -->
+Skip to content
+Currenci
+# A currency converter that adds your card fee
+Type a price, pick your card's fee, and see what you'll really pay. CurrenciX is free, private and open source, for Android 13 and later.
+Get the source code  See every feature
+The first release is on its way to GitHub Releases and F-Droid.
+USD   EUR
+Price
+$
+Example rate: 1 USD =  EUR
+Your card's fee
+None 1% 1.75% 2.5% 3%
+Mid-market
+€ 89.34
+Card fee
++ € 2.23
+You pay
+€ 91.57
++2.5% card fee
+## The converter, part by part
+### Your pair, and a swap
+Two pills pick the currencies; the round button turns them around.
+### The true cost
+Your card's fee, counted in. The stamp says how much it adds.
+### Recent pairs
+The pairs you used last, under the result, to switch back in one tap.
+Currenci
+USD EUR
+$ 100.00
+At 0.8934 € 89.34
+With your card +2.5% € 91.57
+USD → AUD EUR → USD
+C ( ) % 7 8 9 4 5 6 1 2 3 0 .
+÷ × − +
+=
+### Shortcuts on top
+The rate chart, the cart, quick conversions and your history, one tap away.
+### Sums before you convert
+Add up a bill or take a percentage off; the line above the amount shows the sum.
+### A keypad made for money
+Brackets, percent and a brass rail of operators. Try it: the keys work.
+## A cart for the whole trip
+Every price in the currency you think in, with tip, split and budget. Open a row to see what the app does with it.
+- Steak $ 100.00 ≈ € 89.34 50 × 2 Typed as 50 × 2: the calculation stays under the name, the price on the right.
+- Fries $ 20.00 ≈ € 17.87 10 × 2 Every row shows its price in dollars and, under it, in euros.
+- Beer $ 60.00 ≈ € 53.60 30 × 2 Shared by everyone, as an item for no one in particular is.
+- Tip / tax $ 18.00 10% Tip A tip or tax on the subtotal, set once for the cart.
+- Total $ 198.00 € 181.32 Split 2 ways Subtotal $ 180.00, a 10% tip of $ 18.00, and your card's 2.50% conversion fee of € 4.42: € 181.32, or € 90.66 each.
+- Jordan Half € 90.66 Jordan Each person pays their own items plus a share of the shared ones; here everything is shared.
+- Nick Half € 90.66 Nick Pick who an item is for from its long-press menu, and the split follows.
+- Left in budget of € 240.00 € 58.68 On budget The bar under the total fills as the cart spends the budget.
+## On a phone
+Taken on an Android phone, in the app's own paper-and-ink colours.
+The converter, with a 2.5% card fee  Quick conversions, fee included  A cart, split between two  A year of rates
+## And the rest of what it does
+Rates from eight sources, a cart for the trip, and a phone that stays yours.
+Every feature, explained The rate providers
+### Rates
+- Eight providers ECB to Bank of Israel
+- A fallback provider When one is down
+- Past dates' rates Back to 2010
+- Charts A week to ten years
+- Rate alerts Checked on the phone
+### Converting
+- Paste a price Amount and currency
+- From any app Text selection menu
+- Starred currencies Your own order
+- Compare cards Cheapest first
+- Quick conversions Round amounts
+### The cart
+- Receipt scanning On the phone
+- Trips Dates, budget, checklist
+- Share and export Text, image, CSV, PDF
+### On your phone
+- Wallpaper colours Or paper and ink
+- Themes Light, dark, black
+- Languages 32
+- Widget, tile, shortcuts Home screen
+- Tablets and foldables Two panes
+### Privacy
+- Ads, analytics, accounts None
+- App lock Fingerprint or PIN
+- Private requests Look like anyone's
+- Backups Encrypted, to your file
+## Open, and checked on every change
+Every line is on GitHub. Each change runs Android Lint, detekt, Qodana, fuzz tests, CodeQL, Semgrep, Gitleaks and OSV-Scanner before it's merged; Scorecard rates the project weekly and the OWASP audit runs twice a week.
+GPL 3.0 Free software, all of it
+F-Droid ready Reproducible, no proprietary libraries
+CodeQL Code scanning
+Semgrep Security rules
+Gitleaks No secrets in the code
+Scorecard OpenSSF supply chain
+OSV-Scanner Known flaws in every library
+OWASP Dependency audit twice a week
+## Get CurrenciX
+There's no release yet, but you can build it today on any computer with Java 21.
+See how to build it Watch for releases
+
+---
+
+<!-- features.html -->
+Skip to content
+Currenci
+# Features
+Everything CurrenciX does, from the keypad to the receipt scanner.
+## Conversion
+-
+### Eight providers
+Central banks (the ECB through Frankfurter.app, Bank of Canada, Norges Bank, Bank Rossii, Bank of Israel), the European Commission's InforEuro, and Open Exchangerates or AllRatesToday with your own API key.
+-
+### A fallback provider
+When your main provider is down, rates come from a second one you pick, and the app says so. The next refresh tries the main one again.
+-
+### Starred currencies
+Keep the currencies you use at the top, in your own order. Search finds a currency by code, name or country.
+-
+### Recent pairs
+The pairs you used last sit under the converter, one tap to switch back. Swap either way with the round button. Abroad, the app offers the local currency against yours, once per country.
+-
+### Copy and paste
+Copy any amount, or paste a price you copied in another app: the app finds the amount and its currency.
+-
+### Convert from any app
+Select a price anywhere and pick Convert currency from the text-selection menu: a sheet converts it at once, offline, from the saved rates.
+## Calculator
+-
+### Full arithmetic
++, −, ×, ÷, brackets and percent, worked out before converting; = turns the result into the amount to carry on from.
+-
+### Expanded keypad
+An optional extra row of 00 / 0 / 000 (Settings → Converter). On a tablet or unfolded phone the keypad keeps to one side, in reach of one thumb.
+-
+### Hardware keyboard
+Type digits and operators on a physical keyboard, on tablets and foldables alike.
+## Fees
+-
+### Exchange and bank fees
+Add your card's or bureau's fee and see the true cost next to the mid-market result, for every pair or per pair.
+-
+### Compare cards
+With several cards saved, see what each would charge for the amount on screen, cheapest first, and switch with a tap.
+## Rates, charts and alerts
+-
+### Past dates
+Convert at any past date's rates, back to 2010 (how far depends on the provider).
+-
+### Rate charts
+A week, a month, a year, five years or a custom range of up to ten years, with high, low, average, median, the change, and how the latest rate compares with the period's average.
+-
+### An interactive chart
+Scrub to see the rate on any day, then convert at that day's rate or set an alert from it. Share the chart as an image.
+-
+### Rate alerts
+Get a notification when a pair reaches your rate, checked on your phone after each update. Tapping it opens the pair's chart.
+-
+### Quick conversions
+Your pair at round amounts sized to the currency (₩1,000 and up for won), or amounts you set, fees included, to copy or share.
+## Cart
+-
+### Prices in your currency
+A list of prices with quantities, converted into your currency, with tip or tax, a budget and the fees counted in.
+-
+### Splits and trips
+Split the total evenly or by who had what, and group saved carts into trips with a home currency, a budget, a destination and dates: spending per day, and a checklist before you go.
+-
+### Receipt scanning
+Scan a receipt to add its items, read on your phone; nothing is uploaded. Each language is downloaded only after you agree, and a trip's can be kept just until it ends.
+-
+### Share and export
+Share a cart as text, an image, CSV or PDF, or save it to a file to import again later.
+## Look and feel
+-
+### Material 3
+Colours from your wallpaper (on by default), or the app's own paper-and-ink palette.
+-
+### Light, dark and pure black
+Pick one or follow the system, with an OLED-friendly black.
+-
+### Tablets and foldables
+Two panes on wide screens: the converter beside the chart or the cart.
+-
+### 32 languages
+Translated into 31 languages besides English. Hebrew, Arabic and Farsi lay out right to left, while numbers stay left to right.
+-
+### Widget, tile and shortcuts
+A home-screen widget with its own pair and a trend line, a Quick Settings tile, and launcher shortcuts to your recent pairs.
+-
+### Accessibility
+TalkBack labels and spoken summaries, error messages in words, 48 dp touch targets, WCAG AA contrast, and layouts that hold at twice the font size.
+## Privacy and security
+-
+### No tracking
+No ads, no analytics, no account, no crash-reporting service. Nothing about you leaves your phone.
+-
+### App lock
+Optionally lock the app behind your fingerprint or screen lock, and keep it out of screenshots and Recents.
+-
+### Private requests
+Optionally make every rate request look the same as everyone else's.
+-
+### Your data stays local
+Settings, carts and alerts live in the app's private storage. Back them up to a file you choose, encrypted with a password if you like. API keys are sealed with a key the phone's Keystore holds. The app connects only to the rate providers you pick, and to GitHub for the receipt languages you choose.
+-
+### Pinned certificates
+Each rate server is trusted only with certificates from the few authorities it actually uses, so a certificate wrongly issued by any other authority is refused. New pins come with app updates.
+-
+### Few permissions
+Internet and network state for rates, biometrics for the optional lock, and notifications only once you set a rate alert. No location, contacts, storage, camera or microphone.
+
+---
+
+<!-- providers.html -->
+Skip to content
+Currenci
+# Providers
+Where the rates come from: eight sources, from central banks to interbank feeds. Most need no account.
+## The eight, by the currency they quote in
+Open a row for what it covers, how often it updates and what it needs.
+- EUR Frankfurter.app ~30 currencies No key A free, open-source service around the European Central Bank's reference rates, published every business day around 16:00 CET for about 30 major currencies. Its history goes back to 1999 (the app's date picker to 2010), and it's very reliable. No sign-up. Updates: Business days, about 16:00 CET. History: Yes, ECB data from 1999. Source: European Central Bank.
+- USD Open Exchangerates 160+ currencies Free key A commercial service with the widest coverage in the app: 160+ currencies, updated hourly. The free plan gives today's and past dates' rates (the app draws no chart from it). It needs a free account; you enter the key in Settings. Updates: Hourly. History: Past dates only, no chart. Source: Commercial aggregator.
+- EUR AllRatesToday ~160 currencies Key Mid-market rates from interbank data for about 160 currencies, updated about every minute. It needs your own API key. The free plan allows 300 requests in total, ever; each refresh and each chart range uses one, so pick a long refresh interval or a paid plan. Updates: About every minute. History: Yes. Source: Mid-market interbank rates.
+- EUR InforEuro ~150 currencies Inaccurate The European Commission's official monthly accounting rates for the euro, used for EU budgets and grants: about 150 currencies, once a month. Use it when you need the official EU rate. A month-old rate can be far from today's market, so the app lists it only with Show unreliable providers on. Updates: Monthly. History: Yes. Source: European Commission.
+- CAD Bank of Canada ~23 currencies No key Daily rates from Canada's central bank for about 23 currencies against the Canadian dollar, every business day. No key. Updates: Business days. History: Yes. Source: Central bank.
+- NOK Norges Bank ~40 currencies Often down Norway's central bank publishes about 40 rates against the krone every business day. No key. Its service is often down (HTTP 503), so the app lists it only with Show unreliable providers on. Updates: Business days. History: Yes. Source: Central bank.
+- RUB Bank Rossii ~44 currencies No key The Central Bank of Russia lists about 44 rates against the ruble every business day. Most useful for ruble conversions. Updates: Business days. History: Yes. Source: Central bank.
+- ILS Bank of Israel ~14 currencies No key The Bank of Israel's representative rates for about 14 currencies against the shekel, every business day. No key. Updates: Business days. History: Yes. Source: Central bank.
+## Side by side
+Provider Currencies Updates Quoted in History API key
+Frankfurter.app European Central Bank ~30 Business days, about 16:00 CET EUR Yes, ECB data from 1999 No
+Open Exchangerates Commercial aggregator 160+ Hourly USD Past dates only, no chart Free key
+AllRatesToday Mid-market interbank rates ~160 About every minute EUR Yes Key
+InforEuro European Commission ~150 Monthly EUR Yes No
+Bank of Canada Central bank ~23 Business days CAD Yes No
+Norges Bank Central bank ~40 Business days NOK Yes No
+Bank Rossii Central bank ~44 Business days RUB Yes No
+Bank of Israel Central bank ~14 Business days ILS Yes No
+## Choosing one in the app
+Settings → Exchange rates. Each provider says what it covers and how often it updates.
+The exchange rate settings  Picking a provider  With unreliable providers shown
+## Switching providers
+Open Settings → Exchange rates → Data provider and pick one; the next refresh uses it. You can pick a fallback provider there too: when the main one fails, the rates come from the fallback, the converter says so, and the next refresh tries the main one again.
+Providers that are often down (Norges Bank) or whose rates are inaccurate (InforEuro) are hidden until you turn on Settings → Exchange rates → Show unreliable providers ; then each says why. A provider you already use stays in the list either way.
+For a provider that needs an API key (Open Exchangerates and AllRatesToday), the app asks for it when you pick the provider, and you can change it in Settings. The key stays in the app's private storage and is sent only to that provider, in a request header, never in the address.
+### Their websites
+- Frankfurter.app, at frankfurter.dev
+- Open Exchangerates, at openexchangerates.org
+- AllRatesToday, at allratestoday.com
+- InforEuro, at the European Commission
+- Bank of Canada, at bankofcanada.ca
+- Norges Bank, at norges-bank.no
+- Bank Rossii, at cbr.ru
+- Bank of Israel, at boi.org.il
+### No longer offered
+fer.ee was removed when its domain stopped resolving and the project disappeared; exchangerate.host when the service shut down its free API.
+
+---
+
+<!-- privacy.html -->
+Skip to content
+Currenci
+# Privacy
+The short version: the app collects nothing. The full policy, last updated in November 2026, is below.
+## Summary
+CurrenciX does not collect, transmit, store, or share any personal data. The app has no account system, no analytics, no advertising SDK, and no crash-reporting service. Its network activity is fetching exchange rates from the providers you select, and, only if you scan receipts, a one-time download of the text reader's data (below).
+## Data collected by this app
+None. The app does not collect any data whatsoever from users.
+## Permissions
+The app requests these Android permissions:
+- android.permission.INTERNET — required to download exchange rates from the selected provider.
+- android.permission.ACCESS_NETWORK_STATE — lets the app check whether you're online before it asks for rates. It gives no access to network identifiers or traffic.
+- android.permission.USE_BIOMETRIC — only for the optional app lock (Settings → Security & privacy): it lets the app show the system's fingerprint, face or screen-lock prompt. The prompt is Android's; the app only learns whether you got through, never your fingerprint, face or PIN.
+- android.permission.POST_NOTIFICATIONS — only for rate alerts, and asked for only when you set your first one. Alerts are checked on your device against the rates the app already downloads; nothing about them leaves the phone.
+The app does not request access to your location, contacts, camera, microphone, storage, phone state, or any other sensitive permission. To offer the local currency when you travel, it reads which country's mobile network the phone is on, which needs no permission; that stays on the phone and is only compared with your phone's region.
+## Network activity
+For rates, the app makes outbound HTTPS requests only to the exchange rate provider you have selected in Settings and to the fallback provider set there (asked at the same time, in case the main one fails). The request contains:
+- The URL of the rates or history endpoint (publicly documented by each provider), with the currencies and dates asked for
+- Your device's standard HTTP headers (User-Agent, Accept-Encoding, etc.)
+- For Open Exchangerates or AllRatesToday, your API key for that provider, in a request header
+With Settings → Security & privacy → Private requests on, every request is sent the same way as everyone else's: a fixed app name instead of the usual software versions, and none of the cache identifiers a server could use to recognise your phone from one request to the next. Your IP address still reaches the provider, as with any connection.
+No personally identifiable information is included in these requests. The providers' own privacy policies govern how they handle server-side access logs.
+On Android 17 and later, look-ups of the providers' addresses go through Android's own resolver, as for any app.
+Reading receipts needs text-recognition data for each language you choose, downloaded once from Tesseract's public repository on GitHub ( raw.githubusercontent.com ). None is downloaded by default, English included: the first scan offers your app's language, a trip's language and English, names each download and its size, and every language is a choice you tick yourself. More can be added in Settings → Receipt languages, and any can be deleted there. The request is for a fixed public file and carries nothing about you; the file is checked against a fingerprint built into the app before it's used.
+Receipt photos are read entirely on your device and are never uploaded. A photo taken for a scan is deleted as soon as it has been read. The app has no camera permission: the photo comes from your camera app or the system photo picker.
+A receipt, read on the phone: the photo never leaves it.
+### Providers' privacy policies
+- Frankfurter.app — open-source proxy, no account required
+- AllRatesToday — account required; subject to their privacy policy
+- OpenExchangerates — account required; subject to their privacy policy
+- InforEuro (European Commission)
+- Bank of Canada
+- Norges Bank
+- Bank Rossii
+- Bank of Israel
+Where you pick the provider the app asks for rates.
+## Local storage
+The following data is stored locally on your device , in the app's private storage. It is never transmitted to any server:
+- Cached exchange rates and rate history
+- Selected currencies, recent pairs and the last historical date
+- Starred (favourite) currencies
+- Settings (theme, fees, provider choices, keypad, quick-conversion amounts, receipt languages, app lock, screenshot blocking) and any API keys you entered, sealed with a key the phone's Keystore holds
+- Carts, trips (with their destinations and dates) and rate alerts
+- A small diagnostic log and records of the app's last few crashes
+Nothing leaves the device unless you send it: a backup (with your API keys only when it has a password) or a cart export goes to a file you choose, and About this app → Report a problem shares the crash details (app and Android version, phone model, and where in the app's code it failed) only through the app you pick.
+This data is cleared when you uninstall the app. It can also be cleared via Android Settings → Apps → CurrenciX → Clear Data.
+Backups go to a file you choose.  An encrypted backup opens only with its password.
+## Third-party libraries
+CurrenciX does not include any third-party analytics, advertising, crash-reporting, or social-login SDK. The complete dependency list is public in the repository's app/build.gradle.kts file.
+## Children
+The app does not knowingly collect any data from children or from any user, regardless of age.
+## Changes to this policy
+If the privacy posture of the app ever changes materially, this page will be updated and the change will be noted in the release changelog.
+## Contact
+For privacy questions or concerns, open an issue on the GitHub repository .
+
+---
+
+<!-- docs/markDown/product/providers.md -->
+# Exchange rate providers
+
+The short version for users is on the [website](https://currencix.machlev.org/providers.html). Picked in **Settings → Exchange rates → Data provider**; a change takes effect on the next refresh. How they're fetched and cached: [networking](../engineering/architecture/networking.md).
+
+| Provider | Currencies | Updates | Base | Notes |
+|---|---|---|---|---|
+| [Frankfurter.app](https://frankfurter.dev/) | ~30 | Business days | EUR | European Central Bank data, back to 1999 |
+| [OpenExchangerates](https://openexchangerates.org/) | 160+ | Hourly | USD | Needs a (free) API key; past dates but no chart |
+| [AllRatesToday](https://allratestoday.com/) | ~160 | About every minute | EUR | Mid-market interbank; needs a key; the free plan is 300 requests ever |
+| [InforEuro](https://commission.europa.eu/funding-tenders/procedures-guidelines-tenders/information-contractors-and-beneficiaries/exchange-rate-inforeuro_en) | ~150 | Monthly | EUR | EU accounting rates; unreliable (inaccurate data) |
+| [Bank of Canada](https://www.bankofcanada.ca/rates/exchange/daily-exchange-rates/) | ~23 | Business days | CAD | |
+| [Norges Bank](https://www.norges-bank.no/en/topics/Statistics/exchange_rates/) | ~40 | Business days | NOK | Unreliable (frequent downtime) |
+| [Bank Rossii](https://cbr.ru/eng/currency_base/daily/) | ~44 | Business days | RUB | |
+| [Bank of Israel](https://www.boi.org.il/en/economic-roles/statistics/foreign-exchange-market/exchange-rates/) | ~14 | Business days | ILS | |
+
+Removed: fer.ee (domain gone; its id, 2, stays retired) and exchangerate.host (API shut down).
+
+## Picker order
+
+`ApiProvider.pickerOrder`: free providers under **Free**, then **Needs an API key**; within each, the more frequently updated first (`UpdateCadence`), then wider coverage and steadier service, which is the enum's order. Each row says how often it updates.
+
+## Unreliable providers
+
+Each provider has a `ProviderReliability`: `RELIABLE`, `DOWNTIME` (Norges Bank, with regular 503 outages) or `INACCURATE_DATA` (InforEuro's monthly accounting rates). Every picker hides unreliable ones unless **Show unreliable providers** is on (off by default), labelling them "Downtime" or "Inaccurate data", but always lists the provider already chosen, so a choice never vanishes from its own list. Nobody is switched away from one they already use.
+
+## Fallback provider
+
+**Settings → Exchange rates → Fallback provider** is used when the main one fails while online. Unset, it's the first free, reliable provider in picker order that isn't the main one (`defaultFallback`); the picker greys out the main provider. While its rates are on screen, the status pill says so ("Bank of Israel unavailable • Using Frankfurter.app") and names it as the source; every refresh tries the main provider first again. How the two are asked, and when a slow main provider is passed over: [networking](../engineering/architecture/networking.md#fallback-and-slow-providers).
+
+## Historical rates
+
+Every provider has past dates' rates; all but Open Exchangerates also have a timeline for the chart (its free plan has no time-series endpoint, so the chart explains that and offers another provider). The converter's date picker reaches back to 2010 (`HISTORICAL_MIN_YEAR`), the chart's custom range ten years (`TIMELINE_MAX_YEARS`); how far each provider's own data goes varies (Frankfurter's ECB data from 1999).
+
+## Providers that need a key
+
+Open Exchangerates and AllRatesToday take the user's own key, stored per provider and sealed ([security.md](../engineering/security.md#secrets)). Settings shows a key row, masked to its last four characters, for each provider in use that takes one, main or fallback; picking a keyed provider without a key, in any picker, goes straight to its key prompt. Without a key the provider fails at once, with no request. A 401, 403 or 429 reaches the user as "check your key", "your plan doesn't include this" or "you've used up your requests" (`explainKeyErrors`). AllRatesToday's description, hint and prompt say each refresh and chart range costs one request, and its refresh follows the user's interval.
+
+---
+
+<!-- SECURITY.md -->
+# Security Policy
+
+## Supported Versions
+
+Only the latest release is actively supported with security fixes.
+
+| Version | Supported |
+|---------|-----------|
+| Latest  | Yes       |
+| Older   | No        |
+
+### Support-period declaration (EU CRA readiness)
+
+For the purposes of the EU Cyber Resilience Act (Regulation (EU) 2024/2847) — which enters full application on 11 December 2027 — the declared **support period** for security updates on the latest release is **at least 24 months** from that release's publication date. Security-relevant fixes may be back-ported to the immediately preceding minor version on a best-effort basis; users are expected to upgrade to the latest release as their supported path.
+
+## Reporting a Vulnerability
+
+Please **do not** open a public GitHub Issue for security vulnerabilities.
+
+Report vulnerabilities privately via [GitHub's private vulnerability reporting](https://github.com/EliorMachlev/CurrenciX/security/advisories/new).
+
+Include:
+- Description of the vulnerability
+- Steps to reproduce
+- Potential impact
+- Android version and app version (Settings → About this app)
+
+You will receive a response within 7 days. If the vulnerability is confirmed, a fix will be released as soon as possible, and you will be credited in the release notes unless you prefer otherwise.
+
+### Coordinated Vulnerability Disclosure
+
+CurrenciX follows a **coordinated disclosure** model:
+
+1. Report privately via the channel above.
+2. Acknowledgement target: **7 days**.
+3. Triage and severity assessment: **14 days**.
+4. Fix + coordinated public disclosure: as soon as a fix is available. Reporter is credited unless anonymity is requested.
+5. If a reported issue is not a vulnerability, the reporter is told why within the triage window.
+
+Public disclosure before a fix is available is discouraged. Reporters who wish to disclose on a fixed schedule should say so in the initial report; a 90-day default disclosure window is honoured.
+
+### Actively exploited vulnerability reporting (EU CRA, from 11 September 2026)
+
+The CRA's vulnerability-reporting obligations apply from 11 September 2026. Any actively exploited vulnerability affecting a CurrenciX build distributed into the EU market in the course of a commercial activity will be reported to ENISA:
+
+- **Early warning**: within **24 hours** of the maintainer becoming aware.
+- **Vulnerability notification**: within **72 hours**.
+- **Final report**: within **14 days** of a fix or mitigation being available.
+
+Users affected by the vulnerability will be notified via the GitHub release notes and, where feasible, an in-app changelog entry.
+
+## Software Bill of Materials (SBOM)
+
+Each GitHub release carries four SBOMs, all listed in its `SHA256SUMS`: `currencix-<version>-sbom.cdx.json` (CycloneDX 1.6 JSON) and three SPDX JSON files from three generators, each written by its tool at the highest SPDX version the tool supports and not converted: `currencix-<version>-sbom.gradle.spdx.json` (SPDX 2.3), `currencix-<version>-sbom.syft.spdx3.json` (SPDX 3.0.1) and `currencix-<version>-sbom.msft.spdx3.json` (SPDX 3.0). The CycloneDX and the Gradle SPDX file enumerate every direct and transitive runtime dependency of the release APKs with version, licence and, where the repository publishes one, hash, to meet CRA Annex I Part II §1 and downstream supply-chain audit requests; they come from the CycloneDX Gradle plugin (`./gradlew :app:cyclonedxDirectBom`) and the SPDX Gradle plugin (`./gradlew :app:spdxSbom`), both configured in [`app/build.gradle.kts`](app/build.gradle.kts). The other two are different views of the same build: Syft's is a scan of the repository's tracked files, so it also lists what Gradle ignores (the workflows' actions, the scripts' requirements); the Microsoft SBOM tool's is built from Gradle lockfiles written during the run from every resolved configuration, so it also lists build and test tools the APK doesn't ship. All of them are written in the release workflow and on every PR's release build by the [`spdx3-sboms`](.github/actions/spdx3-sboms/action.yml) action, which validates each file: the Gradle and Syft files with the SPDX project's validator, and the Microsoft tool's file with the tool's own `sbom-tool validate` (the SPDX project's validator doesn't accept its SPDX 3.0, which labels its spec version "3.0" and writes its creation information in a form that validator can't read). Dependabot, OSV-Scanner (which reads this SBOM on every PR and weekly) and OWASP Dependency-Check (twice a week) watch the same dependencies for known vulnerabilities. Each release file also carries signed build provenance, attached to the release too: `gh attestation verify <file> --repo EliorMachlev/CurrenciX` shows which commit and workflow run built it ([how to verify a release](docs/markDown/engineering/release.md#verifying-a-release)). The build itself only accepts dependencies whose checksums are recorded in [`gradle/verification-metadata.xml`](gradle/verification-metadata.xml) ([how](docs/markDown/engineering/build.md#dependency-verification)).
+
+## Scope
+
+This app:
+- Requests only `INTERNET`, `ACCESS_NETWORK_STATE`, `POST_NOTIFICATIONS` (rate alerts, asked for at runtime) and `USE_BIOMETRIC` (the optional app lock); see [`docs/markDown/engineering/security.md`](docs/markDown/engineering/security.md#permissions)
+- Stores no personal data
+- Contains no accounts or payment flows; the optional app lock is checked on the device only
+- Communicates only with exchange rate providers (the one selected by the user, and the fallback provider, asked at the same time so its answer is ready if the first fails) and, for receipt scanning and only after the user agrees, GitHub for OCR language data and, in the Play build, Google Play for the receipt reader
+
+Issues related to third-party exchange rate APIs should be reported directly to those providers.
+
+## Related documents
+
+- [`docs/markDown/engineering/security.md`](docs/markDown/engineering/security.md) — full security posture (supply chain, secrets, network, code analysis).
+- [`docs/markDown/legal/compliance-posture.md`](docs/markDown/legal/compliance-posture.md) — regulatory applicability posture (EU AI Act, DSA/DMA, financial regimes, EAR/EU Dual-Use, CRA readiness).
+- [`docs/markDown/legal/privacy-policy.md`](docs/markDown/legal/privacy-policy.md) — privacy notice.
+- [`docs/markDown/legal/accessibility-statement.md`](docs/markDown/legal/accessibility-statement.md) — accessibility statement.
+- [`docs/markDown/legal/terms-of-service.md`](docs/markDown/legal/terms-of-service.md) — terms of service.
