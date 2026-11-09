@@ -2,10 +2,10 @@ package com.eliormachlev.currencix.view.convert
 
 import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.model.ExchangeRates
+import com.eliormachlev.currencix.model.FeeCalculator
 import com.eliormachlev.currencix.model.convert
 import com.eliormachlev.currencix.util.PriceParser
 import java.math.BigDecimal
-import java.math.MathContext
 
 /** What the text-selection popup shows for the selected text. */
 sealed interface SelectionConversion {
@@ -25,8 +25,8 @@ sealed interface SelectionConversion {
         val assumedFrom: Boolean,
         val feeStack: BigDecimal = BigDecimal.ONE,
     ) : SelectionConversion {
-        val hasFees: Boolean get() = feeStack.compareTo(BigDecimal.ONE) != 0
-        val resultWithFees: BigDecimal get() = result.multiply(feeStack, MathContext.DECIMAL128)
+        val hasFees: Boolean get() = FeeCalculator.hasFees(feeStack)
+        val resultWithFees: BigDecimal get() = FeeCalculator.applyStack(result, feeStack)
     }
 
     /** Nothing that reads as a number. */

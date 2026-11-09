@@ -69,9 +69,10 @@ internal fun <S, F, T> CachedStore<S>.fieldPref(
     field: (S) -> F,
     decode: (F) -> T,
     write: (S, T) -> S,
+    afterWrite: () -> Unit = {},
 ): Pref<T> {
     val decoded = LastResult<F, T>(same = { a, b -> a === b }, compute = decode)
-    return statePref(read = { decoded(field(it)) }, write = write)
+    return statePref(read = { decoded(field(it)) }, write = write, afterWrite = afterWrite)
 }
 
 /** This value seen as [T]: read through [decode], written through [encode]. */

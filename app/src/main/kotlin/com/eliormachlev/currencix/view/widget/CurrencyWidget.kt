@@ -53,10 +53,12 @@ import androidx.glance.text.TextStyle
 import com.eliormachlev.currencix.R
 import com.eliormachlev.currencix.model.Currency
 import com.eliormachlev.currencix.model.CurrencyPair
+import com.eliormachlev.currencix.model.FeeCalculator
 import com.eliormachlev.currencix.model.convert
 import com.eliormachlev.currencix.repository.Database
 import com.eliormachlev.currencix.repository.persistence.WidgetRefreshBus
 import com.eliormachlev.currencix.util.AppDispatchers
+import com.eliormachlev.currencix.util.feePercentDelta
 import com.eliormachlev.currencix.util.roundForDisplay
 import com.eliormachlev.currencix.util.toHumanReadableNumber
 import com.eliormachlev.currencix.view.compose.theme.Spacing
@@ -73,6 +75,10 @@ private const val WIDGET_DISPLAY_SCALE = 4
 
 // Amounts above one are prices, shown with cents.
 private const val WIDGET_AMOUNT_SCALE = 2
+
+// The fee shown after "As of ..." in the footer, with the converter's rounding.
+private const val FEE_PERCENT_DECIMALS = 2
+private const val FOOTER_SEPARATOR = " · "
 
 private val WIDGET_PADDING = Spacing.Medium
 private val RATE_FONT_SIZE = 18.sp
@@ -331,8 +337,21 @@ private fun readSnapshot(
 ): WidgetSnapshot {
     val rates = db.rates.getExchangeRatesBlocking()
     val scale = if (amount > BigDecimal.ONE) WIDGET_AMOUNT_SCALE else WIDGET_DISPLAY_SCALE
+    // The converter's own fee math, so the widget shows the same final amount.
+    val feeStack =
+        pair?.let { FeeCalculator.feeStack(db.fees.fees.get(), it.from, it.to, db.fees.activeExchangeId.get(), db.fees.activeBankId.get()) }
+            ?: BigDecimal.ONE
     val converted =
-        pair?.let { rates?.convert(amount, it.from, it.to) }?.roundForDisplay(scale)?.toHumanReadableNumber(context, decimalPlaces = scale)
+        pair
+            ?.let { rates?.convert(amount, it.from, it.to) }
+            ?.let { FeeCalculator.applyStack(it, feeStack) }
+            ?.roundForDisplay(scale)
+            ?.toHumanReadableNumber(context, decimalPlaces = scale)
+    val feeText =
+        feeStack
+            .takeIf(FeeCalculator::hasFees)
+            ?.feePercentDelta(FEE_PERCENT_DECIMALS)
+            ?.toHumanReadableNumber(context, suffix = "%", trim = true)
     val trend =
         if (withTrend && pair != null) {
             trendBitmap(
@@ -346,6 +365,7 @@ private fun readSnapshot(
         pair = pair,
         amount = amount,
         converted = converted,
+        feeText = feeText,
         date = formatRatesTimestamp(db.display.dateFormat.get(), rates?.date, rates?.time),
         hasAnyCachedRate = rates != null,
         trend = trend,
@@ -375,6 +395,8 @@ private data class WidgetSnapshot(
     val amount: BigDecimal,
     // Already formatted for the locale ("1,234.50").
     val converted: String?,
+    // The fees in force as a percentage ("+2.5%"); null when there are none.
+    val feeText: String?,
     val date: String?,
     val hasAnyCachedRate: Boolean,
     val trend: Bitmap?,
@@ -394,9 +416,22 @@ private data class WidgetSnapshot(
 
     fun footerLine(context: Context): String =
         when {
-            date != null -> context.getString(R.string.widget_footer_date, date)
-            hasAnyCachedRate -> context.getString(R.string.widget_no_rate)
-            else -> context.getString(R.string.widget_footer_empty)
+            date != null -> {
+                val asOf = context.getString(R.string.widget_footer_date, date)
+                if (feeText != null && converted != null) {
+                    asOf + FOOTER_SEPARATOR + context.getString(R.string.fee_chip_label, feeText)
+                } else {
+                    asOf
+                }
+            }
+
+            hasAnyCachedRate -> {
+                context.getString(R.string.widget_no_rate)
+            }
+
+            else -> {
+                context.getString(R.string.widget_footer_empty)
+            }
         }
 }
 
