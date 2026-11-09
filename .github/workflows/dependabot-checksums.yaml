@@ -40,6 +40,7 @@ jobs:
           REPO: ${{ github.repository }}
           RECORDED: "build(deps): record the new dependencies' checksums"
         run: |
+          set -o pipefail
           UPDATE=update-verification-metadata.yaml
           # Open Dependabot PRs from this repository: branch and head commit.
           gh api --paginate "repos/${REPO}/pulls?state=open&per_page=100" \
@@ -56,7 +57,10 @@ jobs:
             [ "$subject" != "$RECORDED" ] || continue
             run=$(gh api "repos/${REPO}/actions/workflows/build.yaml/runs?head_sha=${sha}&event=pull_request&status=failure" --jq '.workflow_runs[0].id // empty')
             [ -n "$run" ] || continue
-            gh run view "$run" --repo "$REPO" --log-failed | grep -q "Dependency verification failed" || continue
+            # Into a variable first: grep -q quits at the first match, which
+            # would make a piped gh fail under pipefail.
+            log=$(gh run view "$run" --repo "$REPO" --log-failed)
+            grep -q "Dependency verification failed" <<<"$log" || continue
             gh workflow run "$UPDATE" --repo "$REPO" --ref "$branch"
             echo "::notice title=Dependabot checksums::Started the checksum update on ${branch}."
           done
