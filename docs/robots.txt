@@ -1,0 +1,5 @@
+# Open source, public site: crawlers of search engines and AI assistants are welcome.
+User-agent: *
+Allow: /
+
+Sitemap: https://currencix.machlev.org/sitemap.xml

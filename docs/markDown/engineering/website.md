@@ -12,6 +12,10 @@ python3 .github/scripts/site-assets.py stamp docs
 
 The Site workflow (`check docs`) fails while a version is stale or an inline script isn't allowed by its page's CSP. `FontFilesTest` checks every bundled font, the app's and the site's, is a font file.
 
+## Search engines and AI assistants
+
+Each page carries a canonical URL, Open Graph and Twitter card tags, and the home page carries schema.org `MobileApplication` data (JSON-LD, which the CSP doesn't restrict as it isn't executed). [`robots.txt`](../../robots.txt) allows every crawler and points to [`sitemap.xml`](../../sitemap.xml), which lists the four pages (add a page there when you add one). [`llms.txt`](../../llms.txt) is a short, curated summary with links for AI assistants; keep its claims in step with the README and the features page. [`CITATION.cff`](../../../CITATION.cff) at the repository root lets tools cite the project. The repository's description and topics are set in GitHub's settings.
+
 ## See also
 
 - The README's privacy badge is a local file, so it loads nothing from an outside service: regenerate it with [`art/badges/generate.py`](../../../art/badges/generate.py), and keep its words as the [privacy policy](../legal/privacy-policy.md) says. The "APK checks" badge is the reproducible-build check ([`apk-checks.yaml`](../../../.github/workflows/apk-checks.yaml)).
