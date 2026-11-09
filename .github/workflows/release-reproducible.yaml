@@ -1,0 +1,177 @@
+name: Release reproducible
+# Rebuilds a published release's tag in a clean runner and compares the result
+# with the release as published: the APK entry by entry (the release is signed
+# and the rebuild is not, so the signature is left out) and the two CycloneDX
+# SBOMs by their components (.github/scripts/compare-release.py). A mismatch
+# fails the run, is in its summary, and opens an issue. F-Droid builds each
+# tag itself and compares it with the GitHub release's APK; this is the same
+# question asked on our side, so a release nobody can reproduce is known
+# before F-Droid skips it.
+#
+# - After each release: release-apk.yaml calls this as its last job, once the
+#   release is published (a failure there leaves the release published and
+#   the Release run red).
+# - Weekly, for the most recent release (a pre-release counts), in case a
+#   toolchain or a dependency's artifact changed under it.
+# - By hand, for any tag: Actions → Release reproducible → Run workflow.
+# The signing keys are never involved: the rebuild is unsigned and has no
+# secrets, and only the issue job may write (to issues).
+on:
+  schedule:
+    - cron: '41 4 * * 2'
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: The release tag to check (empty, the most recent release)
+        type: string
+        default: ''
+  workflow_call:
+    inputs:
+      tag:
+        description: The release tag to check (empty, the most recent release)
+        type: string
+        default: ''
+
+# Its own group: github.workflow would be the caller's name when called, and
+# the same group as the caller's would wait on itself.
+concurrency:
+  group: release-reproducible-${{ inputs.tag || 'latest' }}
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+env:
+  # Matches build.yaml: silences the JDK's CDS banner in forked JVMs.
+  JDK_JAVA_OPTIONS: -Xshare:off
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    outputs:
+      tag: ${{ steps.find.outputs.tag }}
+    steps:
+      - name: Harden the runner
+        uses: step-security/harden-runner@46b06cea07f9e64621fdf066ba77ac6915163d43 # v2.22.3
+        with:
+          egress-policy: audit
+
+      - name: Find the release
+        id: find
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          TAG_INPUT: ${{ inputs.tag }}
+        run: |
+          # The most recent release, pre-releases too (the "latest" release skips them).
+          tag="${TAG_INPUT:-$(gh api "repos/$REPO/releases?per_page=1" --jq '.[0].tag_name')}"
+          if [[ ! "$tag" =~ ^v[0-9][0-9A-Za-z.+-]*$ ]]; then
+            echo "::error title=No release::'$tag' is not a release tag"
+            exit 1
+          fi
+          echo "tag=$tag" >> "$GITHUB_OUTPUT"
+
+      # The tag is what is rebuilt; the comparison script comes from the ref
+      # this workflow runs on, since an older tag does not have it.
+      - name: Checkout the tag
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          path: tag
+          ref: ${{ steps.find.outputs.tag }}
+          persist-credentials: false
+      - name: Checkout the comparison script
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          path: tools
+          sparse-checkout: .github/scripts
+          persist-credentials: false
+
+      - name: Download the published APK and SBOM
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          TAG: ${{ steps.find.outputs.tag }}
+        run: |
+          set -o pipefail
+          gh release download "$TAG" --repo "$REPO" --dir release --pattern '*-release.apk' --pattern '*-sbom.cdx.json'
+          for pattern in '*-release.apk' '*-sbom.cdx.json'; do
+            count=$(find release -name "$pattern" | wc -l)
+            if [ "$count" -ne 1 ]; then
+              echo "::error title=Release assets::$TAG has $count files matching $pattern, expected one"
+              exit 1
+            fi
+          done
+
+      - name: Setup java environment
+        uses: actions/setup-java@b843ebf9b913146b38da2eaa7aeddf76074ae1ad # v6.1.0
+        with:
+          java-version: 25
+          distribution: temurin
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@8da46b539cd8fe6ab27ca75128919a18d757604c # v6.4.1
+
+      # As the release builds it, minus the signing keys: no build cache, and
+      # the same tasks for the APK and the CycloneDX SBOM.
+      - name: Rebuild the unsigned fdroid release and its SBOM
+        working-directory: tag
+        run: ./gradlew --no-build-cache --no-configuration-cache assembleFdroidRelease :app:cyclonedxDirectBom
+
+      - name: Compare with the release
+        env:
+          TAG: ${{ steps.find.outputs.tag }}
+        run: |
+          rebuilt=$(find tag/app/build/outputs/apk/fdroid/release -name '*.apk')
+          if [ "$(echo "$rebuilt" | wc -l)" -ne 1 ]; then
+            echo "::error title=Rebuild::expected one APK, found: $rebuilt"
+            exit 1
+          fi
+          status=0
+          python3 -I tools/.github/scripts/compare-release.py \
+            --release-apk release/*-release.apk --rebuilt-apk "$rebuilt" \
+            --release-sbom release/*-sbom.cdx.json --rebuilt-sbom tag/app/build/reports/sbom/currencix-sbom.cdx.json \
+            > report.md || status=$?
+          cat report.md >> "$GITHUB_STEP_SUMMARY"
+          if [ "$status" -ne 0 ]; then
+            echo "::error title=Not reproducible::the rebuild of $TAG differs from the published release (exit $status)"
+          fi
+          exit "$status"
+
+      - name: Keep the rebuild for a closer look
+        if: failure()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: rebuilt-release
+          path: |
+            tag/app/build/outputs/apk/fdroid/release/*.apk
+            tag/app/build/reports/sbom/currencix-sbom.cdx.json
+          retention-days: 14
+          if-no-files-found: ignore
+
+  # The only job that may write, and only to issues; it runs nothing from the
+  # repository.
+  report:
+    needs: check
+    if: ${{ failure() && needs.check.result == 'failure' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      issues: write
+    steps:
+      - name: Open an issue
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          TAG: ${{ needs.check.outputs.tag }}
+          RUN: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          set -o pipefail
+          title="Release ${TAG:-(unknown)}: the reproducibility check failed"
+          open=$(gh api "repos/$REPO/issues?state=open&per_page=100" | jq --arg title "$title" '[.[] | select(.title == $title)] | length')
+          if [ "$open" -gt 0 ]; then
+            echo "An issue is already open: $title"
+            exit 0
+          fi
+          body="The published release could not be reproduced from its tag, or the check could not run. What differs is in the run summary: $RUN"
+          gh api "repos/$REPO/issues" -f title="$title" -f body="$body"
