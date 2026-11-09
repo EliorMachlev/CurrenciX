@@ -42,13 +42,14 @@ jobs:
       # pinned before it is built (`go install` at a commit is not enough: the
       # Go module proxy can serve a tag's older cached source), and the build
       # checks every dependency against the checksum database. The binary is
-      # cached per commit.
+      # cached per commit; the key names how it is built, so a binary built
+      # another way (an earlier `go install`) is never restored for it.
       - name: Restore gitleaks
         id: cache
         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: ${{ runner.temp }}/gitleaks-bin
-          key: gitleaks-${{ env.GITLEAKS_COMMIT }}-${{ runner.os }}-${{ runner.arch }}
+          key: gitleaks-built-from-git-${{ env.GITLEAKS_COMMIT }}-${{ runner.os }}-${{ runner.arch }}
 
       - name: Build gitleaks
         if: steps.cache.outputs.cache-hit != 'true'
