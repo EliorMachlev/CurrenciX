@@ -419,7 +419,7 @@ dependencies {
     // The pre-release BOM: Compose 1.13.0-beta02 and Material 3 1.5.0-beta02,
     // for their text-field keyboard (IME) and list-prefetch fixes. Back to
     // `compose-bom` once both are stable.
-    val composeBomVersion = "2026.10.01"
+    val composeBomVersion = "2026.11.00"
     implementation(platform("androidx.compose:compose-bom-alpha:$composeBomVersion"))
     implementation("androidx.compose.ui:ui")
     implementation("androidx.compose.foundation:foundation")
