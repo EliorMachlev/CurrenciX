@@ -31,7 +31,7 @@ plugins {
     // Roborazzi drives the JVM screenshot-test task (recordRoborazzi{Flavor}Debug)
     // used by the .github/workflows/screenshots.yaml job. Runs on top of
     // Robolectric Native Graphics — no device or emulator required.
-    id("io.github.takahirom.roborazzi") version "1.77.0"
+    id("io.github.takahirom.roborazzi") version "1.78.0"
     // Consumes the baseline + startup profiles emitted by :baselineprofile and
     // bakes them into the release AAB / APK for ProfileInstaller to hand to
     // ART at install time. Version pinned at the root build script.
