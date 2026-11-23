@@ -100,7 +100,7 @@ val separateTestRuns = mapOf("fuzzTests" to fuzzTestClass, "liveProviders" to li
 // Robolectric release maps SDK 34 to (every test's @Config(sdk = [34])), so a
 // new Robolectric can need a new one: offline, a wrong one fails each test
 // with "Unable to locate dependency" rather than downloading.
-val robolectricVersion = "4.17"
+val robolectricVersion = "4.18"
 val robolectricAndroidAll = "org.robolectric:android-all-instrumented:14-robolectric-10818077-i7"
 // Declared on one configuration, resolved (that jar alone) through another.
 // The roles are set by hand: dependencyScope() and resolvable() are still @Incubating.
