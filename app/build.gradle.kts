@@ -400,7 +400,7 @@ dependencies {
     // split (src/debug vs src/release); release ships the library-no-op
     // artifact so the class references still resolve at compile time but
     // no UI / storage code is dragged into the shipped APK.
-    val chuckerVersion = "4.3.1"
+    val chuckerVersion = "4.4.0"
     debugImplementation("com.github.chuckerteam.chucker:library:$chuckerVersion")
     // Logs each call to Timber in debug builds only (src/debug/…/HttpLogger.kt).
     debugImplementation("com.squareup.okhttp3:logging-interceptor:$okHttpVersion")
