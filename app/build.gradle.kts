@@ -409,7 +409,7 @@ dependencies {
     // @Serializable classes (model/provider/api) through Retrofit's
     // converter; the app's own files go through its JSON tree
     // (repository/json).
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.12.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.13.0")
     // Retrofit: type-safe HTTP interfaces layered on top of the shared OkHttp
     // client (see util/RetrofitProvider.kt).
     val retrofitVersion = "3.0.0"
