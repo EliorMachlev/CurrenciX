@@ -38,7 +38,7 @@ plugins {
     id("androidx.baselineprofile")
     // CycloneDX SBOM of what the app ships; the release workflow attaches it
     // to each GitHub release.
-    id("org.cyclonedx.bom") version "3.5.1"
+    id("org.cyclonedx.bom") version "3.6.1"
     // The same list as SPDX 2.3 JSON, for the release too.
     id("org.spdx.sbom") version "0.12.0"
     // Kotlin classes for the Protobuf schema in src/main/proto (carts, trips,
