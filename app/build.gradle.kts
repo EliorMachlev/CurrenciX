@@ -500,7 +500,7 @@ dependencies {
     // CI can render every Compose surface without an emulator. The vintage
     // engine (already above) runs Robolectric's JUnit 4 test runner under
     // useJUnitPlatform().
-    val roborazziVersion = "1.77.0"
+    val roborazziVersion = "1.79.0"
     testImplementation("io.github.takahirom.roborazzi:roborazzi:$roborazziVersion")
     testImplementation("io.github.takahirom.roborazzi:roborazzi-compose:$roborazziVersion")
     testImplementation("org.robolectric:robolectric:$robolectricVersion")
